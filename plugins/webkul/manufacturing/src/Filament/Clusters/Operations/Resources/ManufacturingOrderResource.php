@@ -1109,7 +1109,7 @@ class ManufacturingOrderResource extends Resource
                             'heroicon-o-exclamation-triangle',
                             null,
                             (new ComponentAttributeBag)
-                                ->color(IconComponent::class, 'danger')
+                                ->color(IconComponent::class, 'warning')
                                 ->class(['fi-text-color-600'])
                                 ->merge([
                                     'style'         => 'color: var(--text)',

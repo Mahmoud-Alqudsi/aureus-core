@@ -266,6 +266,7 @@ class ProductQuantity extends Model
             'quantity'                => $qty,
             'product_uom_qty'         => $qty,
             'is_picked'               => true,
+            'is_inventory'            => true,
             'product_id'              => $this->product_id,
             'uom_id'                  => $this->uom->id,
             'source_location_id'      => $sourceLocation->id,
