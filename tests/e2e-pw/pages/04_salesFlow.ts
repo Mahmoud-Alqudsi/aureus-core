@@ -32,16 +32,20 @@ export class SalesFlowPage {
 
     async ensureSalesPluginInstalled() {
         const pluginPage = new PluginManagementPage(this.page);
-        await pluginPage.gotoPluginManagementPage();
-        await pluginPage.installPluginByName("Sales");
+
+        await pluginPage.installSalesEnvironment();
     }
 
     async gotoCustomersPage() {
         await this.page.goto("/admin/sale/orders/customers");
         await expect(this.page).toHaveURL(/sale\/orders\/customers/);
         await this.page.waitForLoadState("networkidle");
-        await expect(this.erpLocators.salesCustomerNewCreateButton).toBeVisible();
-        await expect(this.erpLocators.salesCustomersTable.first()).toBeVisible();
+        await expect(
+            this.erpLocators.salesCustomerNewCreateButton,
+        ).toBeVisible();
+        await expect(
+            this.erpLocators.salesCustomersTable.first(),
+        ).toBeVisible();
     }
 
     async createCustomer(customer: SalesCustomerData) {
@@ -58,7 +62,10 @@ export class SalesFlowPage {
         await this.expectSuccessToast();
     }
 
-    async editCustomer(originalName: string, updates: Partial<SalesCustomerData>) {
+    async editCustomer(
+        originalName: string,
+        updates: Partial<SalesCustomerData>,
+    ) {
         await this.gotoCustomersPage();
         await this.searchList(originalName);
         // await this.openRowActions();
@@ -89,7 +96,9 @@ export class SalesFlowPage {
     async gotoProductsPage() {
         await this.page.goto("/admin/sale/products/products");
         await expect(this.page).toHaveURL(/sale\/products\/products/);
-        await expect(this.erpLocators.salesProductNewCreateButton).toBeVisible();
+        await expect(
+            this.erpLocators.salesProductNewCreateButton,
+        ).toBeVisible();
         await expect(this.erpLocators.salesProductsTable.first()).toBeVisible();
     }
 
@@ -103,14 +112,19 @@ export class SalesFlowPage {
 
         if (product.invoicePolicy) {
             // invoice_policy renders as a native <select>; pick by its option value.
-            await this.erpLocators.salesProductInvoicePolicySelect.selectOption(product.invoicePolicy);
+            await this.erpLocators.salesProductInvoicePolicySelect.selectOption(
+                product.invoicePolicy,
+            );
         }
 
         await this.erpLocators.salesProductCreateButton.click();
         await this.expectSuccessToast();
     }
 
-    async editProduct(originalName: string, updates: Partial<SalesProductData>) {
+    async editProduct(
+        originalName: string,
+        updates: Partial<SalesProductData>,
+    ) {
         await this.gotoProductsPage();
         await this.searchList(originalName);
         await this.openRowActions();
@@ -150,13 +164,23 @@ export class SalesFlowPage {
         await this.erpLocators.salesQuotationCreateButton.click();
         await expect(this.page).toHaveURL(/quotations\/create/);
 
-        await this.selectBySearch(this.erpLocators.salesQuotationCustomerSelect, quotation.customerName);
-        await this.selectFirstOption(this.erpLocators.salesQuotationPaymentTermSelect);
+        await this.selectBySearch(
+            this.erpLocators.salesQuotationCustomerSelect,
+            quotation.customerName,
+        );
+        await this.selectFirstOption(
+            this.erpLocators.salesQuotationPaymentTermSelect,
+        );
 
         await this.erpLocators.salesQuotationAddProductButton.scrollIntoViewIfNeeded();
         await this.erpLocators.salesQuotationAddProductButton.click();
-        await this.selectBySearch(this.erpLocators.salesQuotationProductSelectInput.first(), quotation.productName);
-        await this.erpLocators.salesQuotationQuantityInput.first().fill(quotation.quantity);
+        await this.selectBySearch(
+            this.erpLocators.salesQuotationProductSelectInput.first(),
+            quotation.productName,
+        );
+        await this.erpLocators.salesQuotationQuantityInput
+            .first()
+            .fill(quotation.quantity);
 
         await this.erpLocators.salesQuotationSaveButton.click();
         await this.expectSuccessToast();
@@ -168,7 +192,9 @@ export class SalesFlowPage {
         await this.openRowActions();
         // await this.clickMenuAction(/Edit/i);
         await this.erpLocators.salesQuotationEditButton.click();
-        await this.erpLocators.salesQuotationQuantityInput.first().fill(quantity);
+        await this.erpLocators.salesQuotationQuantityInput
+            .first()
+            .fill(quantity);
         await this.erpLocators.salesQuotationSaveButton.click();
         await this.expectSuccessToast();
     }
@@ -189,9 +215,13 @@ export class SalesFlowPage {
     }
 
     async createInvoice() {
-        await expect(this.erpLocators.salesQuotationCreateInvoiceButton).toBeVisible();
+        await expect(
+            this.erpLocators.salesQuotationCreateInvoiceButton,
+        ).toBeVisible();
         await this.erpLocators.salesQuotationCreateInvoiceButton.click();
-        await expect(this.erpLocators.salesQuotationInvoiceSubmitButton).toBeVisible();
+        await expect(
+            this.erpLocators.salesQuotationInvoiceSubmitButton,
+        ).toBeVisible();
         await this.erpLocators.salesQuotationInvoiceSubmitButton.click();
         await this.expectSuccessToast();
     }
@@ -199,13 +229,17 @@ export class SalesFlowPage {
     // With the "Ordered Quantities" policy the Create Invoice button is shown as soon as the
     // order is confirmed.
     async expectCreateInvoiceButtonVisible() {
-        await expect(this.erpLocators.salesQuotationCreateInvoiceButton).toBeVisible();
+        await expect(
+            this.erpLocators.salesQuotationCreateInvoiceButton,
+        ).toBeVisible();
     }
 
     // With the "Delivered Quantities" policy the Create Invoice action is hidden until there
     // are delivered quantities to invoice, so the button is absent from the DOM.
     async expectCreateInvoiceButtonHidden() {
-        await expect(this.erpLocators.salesQuotationCreateInvoiceButton).toHaveCount(0);
+        await expect(
+            this.erpLocators.salesQuotationCreateInvoiceButton,
+        ).toHaveCount(0);
     }
 
     async sendQuotation() {
@@ -224,21 +258,27 @@ export class SalesFlowPage {
         const match = url.match(/\/(quotations|orders)\/(\d+)/);
 
         if (!match) {
-            throw new Error(`Unable to determine quotation/order id from URL: ${url}`);
+            throw new Error(
+                `Unable to determine quotation/order id from URL: ${url}`,
+            );
         }
 
         return { resource: match[1], id: match[2] };
     }
 
     async gotoOrderEdit(ref: { resource: string; id: string }) {
-        await this.page.goto(`/admin/sale/orders/${ref.resource}/${ref.id}/edit`);
+        await this.page.goto(
+            `/admin/sale/orders/${ref.resource}/${ref.id}/edit`,
+        );
         await this.page.waitForLoadState("networkidle");
     }
 
     async openInvoicesForCurrentQuotation(): Promise<string> {
         const { resource, id } = this.currentRecordRef();
         await this.page.goto(`/admin/sale/orders/${resource}/${id}/invoices`);
-        await expect(this.page).toHaveURL(new RegExp(`/${resource}/${id}/invoices`));
+        await expect(this.page).toHaveURL(
+            new RegExp(`/${resource}/${id}/invoices`),
+        );
         await expect(this.erpLocators.salesInvoicesTable.first()).toBeVisible();
 
         return id;
@@ -247,9 +287,16 @@ export class SalesFlowPage {
     async openDeliveriesForCurrentQuotation(): Promise<string> {
         const { resource, id } = this.currentRecordRef();
         await this.page.waitForLoadState("networkidle");
-        await this.page.goto(`/admin/sale/orders/${resource}/${id}/deliveries`, { waitUntil: "domcontentloaded" });
-        await expect(this.page).toHaveURL(new RegExp(`/${resource}/${id}/deliveries`));
-        await expect(this.erpLocators.salesQuotationDeliveriesTable.first()).toBeVisible();
+        await this.page.goto(
+            `/admin/sale/orders/${resource}/${id}/deliveries`,
+            { waitUntil: "domcontentloaded" },
+        );
+        await expect(this.page).toHaveURL(
+            new RegExp(`/${resource}/${id}/deliveries`),
+        );
+        await expect(
+            this.erpLocators.salesQuotationDeliveriesTable.first(),
+        ).toBeVisible();
 
         return id;
     }
@@ -257,10 +304,16 @@ export class SalesFlowPage {
     async validateFirstDeliveryForCurrentQuotation() {
         await this.openDeliveriesForCurrentQuotation();
         await this.erpLocators.salesQuotationDeliveryEditButton.click();
-        await expect(this.erpLocators.salesDeliveryValidateButton).toBeVisible();
+        await expect(
+            this.erpLocators.salesDeliveryValidateButton,
+        ).toBeVisible();
         await this.erpLocators.salesDeliveryValidateButton.click();
 
-        if (await this.erpLocators.salesDeliveryNoBackorderButton.isVisible().catch(() => false)) {
+        if (
+            await this.erpLocators.salesDeliveryNoBackorderButton
+                .isVisible()
+                .catch(() => false)
+        ) {
             await this.erpLocators.salesDeliveryNoBackorderButton.click();
         }
 
@@ -273,7 +326,9 @@ export class SalesFlowPage {
     }
 
     async expectValidationErrors() {
-        await expect(this.erpLocators.salesValidationMessage.first()).toBeVisible();
+        await expect(
+            this.erpLocators.salesValidationMessage.first(),
+        ).toBeVisible();
     }
 
     async searchList(keyword: string) {
@@ -286,7 +341,9 @@ export class SalesFlowPage {
     }
 
     async clickMenuAction(label: RegExp) {
-        const menuItem = this.page.getByRole("menuitem", { name: label }).first();
+        const menuItem = this.page
+            .getByRole("menuitem", { name: label })
+            .first();
         if (await menuItem.isVisible()) {
             await menuItem.click();
             return;
@@ -318,7 +375,9 @@ export class SalesFlowPage {
         await this.erpLocators.salesSelectOption.first().click();
     }
 
-    private async selectFirstOptionIfEmpty(trigger: ReturnType<Page["locator"]>) {
+    private async selectFirstOptionIfEmpty(
+        trigger: ReturnType<Page["locator"]>,
+    ) {
         const currentValue = (await trigger.textContent())?.trim() ?? "";
 
         if (!currentValue || /select an option/i.test(currentValue)) {

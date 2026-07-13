@@ -1,8 +1,7 @@
-import {  Page, expect } from '@playwright/test';
-import { ErpLocators } from '../locator/erp_locator';
+import { Page, expect } from "@playwright/test";
+import { ErpLocators } from "../locator/erp_locator";
 
 export class PluginManagementPage {
-
     /**
      * Page and Locators
      */
@@ -10,7 +9,7 @@ export class PluginManagementPage {
     readonly erpLocators: ErpLocators;
 
     constructor(page: Page) {
-        this.page = page
+        this.page = page;
 
         this.erpLocators = new ErpLocators(page);
     }
@@ -19,7 +18,7 @@ export class PluginManagementPage {
      * Navigate to Plugin Management Page
      */
     async gotoPluginManagementPage() {
-        await this.page.goto('/admin/plugins');
+        await this.page.goto("/admin/plugins");
         await expect(this.page).toHaveURL(/.*admin/);
         await expect(this.erpLocators.pluginSyncButton).toBeVisible();
     }
@@ -30,18 +29,23 @@ export class PluginManagementPage {
     async installAllPlugins() {
         const pluginCount = await this.erpLocators.pluginName.count();
         for (let i = 0; i < pluginCount; i++) {
-
             await this.erpLocators.pluginthreeDot.nth(i).click();
-            const checkInstalled = await this.erpLocators.pluginUninstallButton.nth(i).isVisible();
+            const checkInstalled = await this.erpLocators.pluginUninstallButton
+                .nth(i)
+                .isVisible();
 
             if (!checkInstalled) {
-                await this.page.waitForLoadState('networkidle');
+                await this.page.waitForLoadState("networkidle");
                 await this.erpLocators.pluginInstallButton.nth(0).click();
                 await this.page.waitForTimeout(3000); // Wait for 3 seconds to allow installation to complete
                 await this.erpLocators.pluginConfirmButton.click();
-                const pluginTitle = await this.erpLocators.pluginName.nth(i).innerText();
+                const pluginTitle = await this.erpLocators.pluginName
+                    .nth(i)
+                    .innerText();
                 console.log(`Installing Plugin: ${pluginTitle}`);
-                await expect(this.erpLocators.pluginSuccessMessage).toBeVisible();
+                await expect(
+                    this.erpLocators.pluginSuccessMessage,
+                ).toBeVisible();
             }
         }
     }
@@ -52,19 +56,24 @@ export class PluginManagementPage {
     async uninstallAllPlugins() {
         const pluginCount = await this.erpLocators.pluginName.count();
         for (let i = 0; i < pluginCount; i++) {
-
             await this.erpLocators.pluginthreeDot.nth(i).click();
-            const checkInstalled = await this.erpLocators.pluginUninstallButton.nth(0).isVisible();
+            const checkInstalled = await this.erpLocators.pluginUninstallButton
+                .nth(0)
+                .isVisible();
 
             if (checkInstalled) {
-                await this.page.waitForLoadState('networkidle');
+                await this.page.waitForLoadState("networkidle");
                 await this.page.waitForTimeout(2000);
                 await this.erpLocators.pluginUninstallButton.nth(0).click();
                 await this.page.waitForTimeout(5000);
                 await this.erpLocators.pluginConfirmButton.click();
-                const pluginTitle = await this.erpLocators.pluginName.nth(i).innerText();
+                const pluginTitle = await this.erpLocators.pluginName
+                    .nth(i)
+                    .innerText();
                 console.log(`Uninstalling Plugin: ${pluginTitle}`);
-                await expect(this.erpLocators.pluginSuccessMessage).toBeVisible();
+                await expect(
+                    this.erpLocators.pluginSuccessMessage,
+                ).toBeVisible();
             }
         }
     }
@@ -81,10 +90,22 @@ export class PluginManagementPage {
             return;
         }
 
-        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForLoadState("networkidle");
         await this.erpLocators.pluginInstallButton.first().click();
         await this.page.waitForTimeout(3000);
         await this.erpLocators.pluginConfirmButton.click();
         await expect(this.erpLocators.pluginSuccessMessage).toBeVisible();
+    }
+    /**
+     * Install Sales plugin with all required dependencies
+     */
+    async installSalesEnvironment() {
+        await this.gotoPluginManagementPage();
+
+        await this.installPluginByName("Products");
+        await this.installPluginByName("Accounts");
+        await this.installPluginByName("Invoices");
+        await this.installPluginByName("Payments");
+        await this.installPluginByName("Sales");
     }
 }
