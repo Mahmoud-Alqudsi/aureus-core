@@ -7,6 +7,7 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
+use Webkul\Chatter\Services\ChatterCleanupService;
 use Webkul\Inventory\Enums\ProductTracking;
 use Webkul\Inventory\Facades\Inventory as InventoryFacade;
 use Webkul\Inventory\Filament\Clusters\Products\Resources\ProductResource\Actions\UpdateQuantityAction;
@@ -15,8 +16,12 @@ use Webkul\Inventory\Filament\Clusters\Products\Resources\ProductResource\Suppor
 use Webkul\Inventory\Filament\Widgets\OperationTypeCardWidget;
 use Webkul\Inventory\Models\Move;
 use Webkul\Inventory\Models\MoveLine;
+use Webkul\Inventory\Models\Operation;
 use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\Inventory\Models\Route;
+use Webkul\Inventory\Models\Scrap;
+use Webkul\Inventory\Observers\ProductObserver;
+use Webkul\Inventory\Observers\UOMObserver;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
@@ -24,6 +29,7 @@ use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Product\Filament\Resources\ProductResource\Support\ProductSchemaRegistry;
 use Webkul\Product\Models\Product;
 use Webkul\Security\Models\User;
+use Webkul\Support\Models\UOM;
 
 class InventoryServiceProvider extends PackageServiceProvider
 {
@@ -135,12 +141,18 @@ class InventoryServiceProvider extends PackageServiceProvider
                         DB::table($table)->delete();
                     }
                 });
+
+                $command->endWith(function () {
+                    ChatterCleanupService::purgeForModels([Operation::class, Scrap::class]);
+                });
             })
             ->icon('inventories');
     }
 
     public function packageBooted(): void
     {
+        $this->registerObservers();
+
         $this->contributeProductSchema();
 
         $this->registerLivewireComponents();
@@ -149,6 +161,13 @@ class InventoryServiceProvider extends PackageServiceProvider
     public function registerLivewireComponents(): void
     {
         Livewire::component('inventories-operation-type-card', OperationTypeCardWidget::class);
+    }
+
+    protected function registerObservers(): void
+    {
+        UOM::observe(UOMObserver::class);
+
+        Product::observe(ProductObserver::class);
     }
 
     protected function contributeProductSchema(): void
