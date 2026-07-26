@@ -12,6 +12,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\View\PanelsRenderHook;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -78,6 +79,10 @@ class AdminPanelProvider extends PanelProvider
                     ]),
             ])
             ->globalSearch(provider: GlobalSearchProvider::class)
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_END,
+                fn () => view('filament.components.language-switcher'),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

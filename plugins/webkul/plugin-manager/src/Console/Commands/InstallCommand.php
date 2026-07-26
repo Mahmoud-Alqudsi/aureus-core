@@ -143,21 +143,21 @@ class InstallCommand extends Command
             $this->copyServiceProviderInApp();
         }
 
-        if ($this->starRepo) {
-            if ($this->confirm('Would you like to star our repo on GitHub?')) {
-                $repoUrl = "https://github.com/{$this->starRepo}";
+        // if ($this->starRepo) {
+        //     if ($this->confirm('Would you like to star our repo on GitHub?')) {
+        //         $repoUrl = "https://github.com/{$this->starRepo}";
 
-                if (PHP_OS_FAMILY == 'Darwin') {
-                    exec("open {$repoUrl}");
-                }
-                if (PHP_OS_FAMILY == 'Windows') {
-                    exec("start {$repoUrl}");
-                }
-                if (PHP_OS_FAMILY == 'Linux') {
-                    exec("xdg-open {$repoUrl}");
-                }
-            }
-        }
+        //         if (PHP_OS_FAMILY == 'Darwin') {
+        //             exec("open {$repoUrl}");
+        //         }
+        //         if (PHP_OS_FAMILY == 'Windows') {
+        //             exec("start {$repoUrl}");
+        //         }
+        //         if (PHP_OS_FAMILY == 'Linux') {
+        //             exec("xdg-open {$repoUrl}");
+        //         }
+        //     }
+        // }
 
         $package = $this->package->updateOrCreate();
 
