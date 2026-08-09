@@ -357,26 +357,26 @@ class InstallERP extends Command
     /**
      * Ask the user to star the GitHub repository.
      */
-    protected function askToStarGithubRepository(): void
-    {
-        if (! $this->confirm('Would you like to star our repo on GitHub?')) {
-            return;
-        }
+    // protected function askToStarGithubRepository(): void
+    // {
+    //     if (! $this->confirm('Would you like to star our repo on GitHub?')) {
+    //         return;
+    //     }
 
-        $repoUrl = 'https://github.com/aureuserp/aureuserp';
+    //     $repoUrl = 'https://github.com/aureuserp/aureuserp';
 
-        if (PHP_OS_FAMILY == 'Darwin') {
-            exec("open {$repoUrl}");
-        }
+    //     if (PHP_OS_FAMILY == 'Darwin') {
+    //         exec("open {$repoUrl}");
+    //     }
 
-        if (PHP_OS_FAMILY == 'Windows') {
-            exec("start {$repoUrl}");
-        }
+    //     if (PHP_OS_FAMILY == 'Windows') {
+    //         exec("start {$repoUrl}");
+    //     }
 
-        if (PHP_OS_FAMILY == 'Linux') {
-            exec("xdg-open {$repoUrl}");
-        }
-    }
+    //     if (PHP_OS_FAMILY == 'Linux') {
+    //         exec("xdg-open {$repoUrl}");
+    //     }
+    // }
 
     /**
      * Storage link command to create a symbolic link from "public/storage" to "storage/app/public".
