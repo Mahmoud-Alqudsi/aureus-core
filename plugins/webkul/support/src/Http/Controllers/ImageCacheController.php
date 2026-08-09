@@ -30,46 +30,9 @@ class ImageCacheController
      */
     public function getImage($filename)
     {
-        try {
-            $content = Cache::remember('aureus-logo', 10080, function () {
-                return base64_encode($this->getImageFromUrl(self::AUREUS_LOGO));
-            });
-        } catch (Exception $e) {
-            $content = '';
-        }
+        $transparentPixel = base64_encode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
 
-        return $this->buildResponse($content);
-    }
-
-    /**
-     * Init from given URL
-     *
-     * @param  string  $url
-     * @return string
-     */
-    public function getImageFromUrl($url)
-    {
-        $domain = config('app.url');
-
-        $options = [
-            'http' => [
-                'method'           => 'GET',
-                'protocol_version' => 1.1, // force use HTTP 1.1 for service mesh environment with envoy
-                'header'           => "Accept-language: en\r\n".
-                "Domain: $domain\r\n".
-                "User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36\r\n",
-            ],
-        ];
-
-        $context = stream_context_create($options);
-
-        if ($data = @file_get_contents($url, false, $context)) {
-            return $data;
-        }
-
-        throw new Exception(
-            'Unable to init from given url ('.$url.').'
-        );
+        return $this->buildResponse($transparentPixel);
     }
 
     /**
