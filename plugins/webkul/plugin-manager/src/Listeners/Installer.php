@@ -20,27 +20,8 @@ class Installer
      *
      * @return void
      */
-    public function installed()
+    public function installed(): void
     {
-        $user = User::first();
-
-        $httpClient = new Client;
-
-        try {
-            $httpClient->request('POST', self::API_ENDPOINT, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                ],
-                'json'    => [
-                    'domain' => config('app.url'),
-                    'email'  => $user?->email,
-                    'name'   => $user?->name,
-                ],
-            ]);
-        } catch (Exception $e) {
-            /**
-             * Skip the error
-             */
-        }
+        return;
     }
 }

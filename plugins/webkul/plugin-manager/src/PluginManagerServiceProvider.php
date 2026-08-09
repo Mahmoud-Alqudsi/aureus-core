@@ -39,7 +39,7 @@ class PluginManagerServiceProvider extends PackageServiceProvider
 
         $this->app->make(PermissionManager::class)->managePermissions();
 
-        // Event::listen('aureus.installed', 'Webkul\PluginManager\Listeners\Installer@installed');
+        Event::listen('aureus.installed', 'Webkul\PluginManager\Listeners\Installer@installed');
     }
 
     public function packageRegistered(): void

@@ -70,7 +70,7 @@ class InstallERP extends Command
 
         $this->markAsInstalled();
 
-        // Event::dispatch('aureus.installed');
+        Event::dispatch('aureus.installed');
 
         $this->info('🎉 ERP System installation completed successfully!');
     }
