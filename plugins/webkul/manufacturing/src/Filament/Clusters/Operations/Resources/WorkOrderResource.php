@@ -38,8 +38,8 @@ use Filament\Tables\Grouping\Group as TableGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
-use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Field\Filament\Infolists\Components\ProgressStepper as InfolistProgressStepper;
+use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Manufacturing\Enums\ManufacturingOrderState;
 use Webkul\Manufacturing\Enums\WorkCenterWorkingState;
 use Webkul\Manufacturing\Enums\WorkOrderState;
@@ -82,6 +82,11 @@ class WorkOrderResource extends Resource
         }
 
         return settings(OperationSettings::class)->enable_work_orders;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('manufacturingOrder');
     }
 
     public static function getModelLabel(): string

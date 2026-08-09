@@ -13,6 +13,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -36,12 +37,12 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Webkul\Field\Filament\Traits\HasCustomFields;
+use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Website\Filament\Admin\Resources\PageResource\Pages\CreatePage;
 use Webkul\Website\Filament\Admin\Resources\PageResource\Pages\EditPage;
 use Webkul\Website\Filament\Admin\Resources\PageResource\Pages\ListPages;
 use Webkul\Website\Filament\Admin\Resources\PageResource\Pages\ViewPage;
 use Webkul\Website\Models\Page as PageModel;
-use Webkul\Support\Enums\NavigationGroup;
 
 class PageResource extends Resource
 {
@@ -60,7 +61,7 @@ class PageResource extends Resource
         return __('website::filament/admin/resources/page.navigation.title');
     }
 
-    public static function getNavigationGroup(): string | \UnitEnum
+    public static function getNavigationGroup(): string|\UnitEnum
     {
         return NavigationGroup::Website;
     }
@@ -88,7 +89,20 @@ class PageResource extends Resource
                                     ->unique(PageModel::class, 'slug', ignoreRecord: true),
                                 RichEditor::make('content')
                                     ->label(__('website::filament/admin/resources/page.form.sections.general.fields.content'))
-                                    ->required(),
+                                    ->required()
+                                    ->resizableImages()
+                                    ->fileAttachmentsDirectory('website/pages')
+                                    ->fileAttachmentsVisibility('public')
+                                    ->textColors(TextColor::getDefaults())
+                                    ->customTextColors()
+                                    ->toolbarButtons([
+                                        ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link', 'textColor'],
+                                        ['h2', 'h3'],
+                                        ['alignStart', 'alignCenter', 'alignEnd'],
+                                        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                        ['table', 'grid', 'gridDelete', 'attachFiles'],
+                                        ['undo', 'redo'],
+                                    ]),
                             ]),
 
                         Section::make(__('website::filament/admin/resources/page.form.sections.seo.title'))
@@ -126,7 +140,6 @@ class PageResource extends Resource
     {
         return $table
             ->reorderableColumns()
-            ->columnManagerColumns(2)
             ->columns(static::mergeCustomTableColumns([
                 TextColumn::make('title')
                     ->label(__('website::filament/admin/resources/page.table.columns.title'))
