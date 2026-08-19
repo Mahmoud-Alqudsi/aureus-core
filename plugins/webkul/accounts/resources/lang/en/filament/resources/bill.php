@@ -112,6 +112,7 @@ return [
             'tax'              => 'Tax',
             'total'            => 'Total',
             'amount-due'       => 'Amount Due',
+            'payment-state'    => 'Payment State',
             'bill-currency'    => 'Bill Currency',
         ],
 

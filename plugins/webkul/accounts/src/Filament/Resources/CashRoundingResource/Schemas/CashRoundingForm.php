@@ -44,14 +44,14 @@ class CashRoundingForm
                                     ->required()
                                     ->autofocus(),
                                 Select::make('profit_account_id')
-                                    ->label(__('Profit Account'))
+                                    ->label(__('accounts::filament/resources/cash-rounding.form.fields.profit-account'))
                                     ->relationship('profitAccount', 'name')
                                     ->searchable()
                                     ->preload()
                                     ->required(),
 
                                 Select::make('loss_account_id')
-                                    ->label(__('Loss Account'))
+                                    ->label(__('accounts::filament/resources/cash-rounding.form.fields.loss-account'))
                                     ->relationship('lossAccount', 'name')
                                     ->searchable()
                                     ->preload()

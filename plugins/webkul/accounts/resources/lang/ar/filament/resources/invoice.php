@@ -122,6 +122,7 @@ return [
             'tax'              => 'الضريبة',
             'total'            => 'الإجمالي',
             'amount-due'       => 'المبلغ المستحق',
+            'payment-state'    => 'حالة الدفع',
             'invoice-currency' => 'عملة الفاتورة',
         ],
 

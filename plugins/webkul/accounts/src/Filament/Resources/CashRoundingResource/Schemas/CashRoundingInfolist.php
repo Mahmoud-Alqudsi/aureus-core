@@ -39,13 +39,13 @@ class CashRoundingInfolist
                                     ->icon('heroicon-o-adjustments-horizontal')
                                     ->formatStateUsing(fn (string $state): string => RoundingMethod::options()[$state]),
                                 TextEntry::make('profit_account_id')
-                                    ->label(__('Profit Account'))
+                                    ->label(__('accounts::filament/resources/cash-rounding.infolist.entries.profit-account'))
                                     ->formatStateUsing(function ($record) {
                                         return $record->profitAccount?->name;
                                     }),
 
                                 TextEntry::make('loss_account_id')
-                                    ->label(__('Loss Account'))
+                                    ->label(__('accounts::filament/resources/cash-rounding.infolist.entries.loss-account'))
                                     ->formatStateUsing(function ($record) {
                                         return $record->lossAccount?->name;
                                     }),

@@ -122,6 +122,7 @@ return [
             'tax'              => 'Taxe',
             'total'            => 'Total',
             'amount-due'       => 'Montant dû',
+            'payment-state'    => 'État du paiement',
             'invoice-currency' => 'Devise de la facture',
         ],
 

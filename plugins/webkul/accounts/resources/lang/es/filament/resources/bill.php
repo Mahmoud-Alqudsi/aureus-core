@@ -112,6 +112,7 @@ return [
             'tax'              => 'Impuesto',
             'total'            => 'Total',
             'amount-due'       => 'Importe pendiente',
+            'payment-state'    => 'Estado de pago',
             'bill-currency'    => 'Moneda de la factura',
         ],
 
