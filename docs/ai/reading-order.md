@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-25
+last_verified: 2026-08-29
 scope: global
 confidence: high
 ---
@@ -29,8 +29,8 @@ Then search for direct references with `rg`. Add a document or source area only 
 | Change Filament UI or panel configuration | `docs/architecture/overview.md`; `docs/architecture/plugin-registry.md` | The relevant `*Plugin.php`, `AdminPanelProvider`, `CustomerPanelProvider`, and discovered Filament classes |
 | Change an application-level provider, middleware, route, or exception handler | `docs/architecture/overview.md` | `bootstrap/app.php`, `bootstrap/providers.php`, `app/`, and the applicable root/plugin route files |
 | Change a Composer/autoload claim or dependency | `docs/architecture/plugin-registry.md` | `composer.json`, `composer.lock`, applicable plugin `composer.json`, and Composer-generated autoload configuration when needed |
-| Touch company, authentication, authorization, policy, raw-query, or ownership code | this file and `docs/ai/context.md` | The target implementation, its tests, related traits/scopes/providers, and direct call sites. Later-phase security documentation is non-authoritative until independently validated. |
-| Touch a database schema or persistence behaviour | this file and `docs/ai/context.md` | The model, migration, factory, tests, and every directly related plugin provider. Later-phase database documentation is non-authoritative until independently validated. |
+| Touch company, authentication, authorization, policy, raw-query, or ownership code | `docs/security/authorization.md`; `docs/security/multi-company.md`; `docs/security/ownership-scopes.md`; `docs/security/threat-model.md` | The target implementation, its tests, related traits/scopes/providers, and direct call sites. Consult the listed security documentation, then confirm against the implementation. |
+| Touch a database schema or persistence behaviour | `docs/database/overview.md`; `docs/database/company-isolation.md`; `docs/database/schema-conventions.md`; `docs/database/models-index.md`; `docs/database/relationships.md` | The model, migration, factory, tests, and every directly related plugin provider. Consult the listed database documentation, then confirm against the implementation. |
 
 ## Plugin change checklist
 

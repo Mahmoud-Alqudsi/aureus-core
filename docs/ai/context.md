@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-25
+last_verified: 2026-08-29
 scope: global
 confidence: high
 ---
@@ -36,6 +36,10 @@ Use these labels precisely:
 | Filament Shield | `4.2.0` | `composer.lock` → `bezhansalleh/filament-shield` |
 | Laravel Sanctum | `v4.3.3` | `composer.lock` → `laravel/sanctum` |
 | Composer merge plugin | `v2.1.0` | `composer.lock` → `wikimedia/composer-merge-plugin` |
+
+[VERIFIED]
+Evidence: `AGENTS.md`; `composer.lock` → `livewire/livewire`, `laravel/sanctum`
+Note: The repository's `AGENTS.md` claims Livewire is on v3. This is stale and incorrect; `composer.lock` confirms it is on `v4.3.3`. Direct inspection of `composer.lock` (lines 4135–4148) confirms `laravel/sanctum` is installed at `v4.3.3`.
 
 ## Repository map
 
