@@ -46,9 +46,8 @@ The `products` module serves as the foundational product master data, catalog ma
 5. **Packaging Specifications (`Packaging`)**:
    - Manages multi-quantity packaging configurations per product (`products_packagings`) with barcodes, quantities, and optional company scoping.
 
-6. **Flexible Multi-Tier Pricing & Discount Rules (`PriceRule`, `PriceRuleItem`, `PriceList`)**:
-   - Implements dynamic pricing rules (`products_price_rules`) and computation items (`products_price_rule_items`) supporting fixed prices, percentage discounts, and complex formula margins applied to products or categories based on min quantities and date windows.
-   - Provides currency/company price lists (`products_product_price_lists`).
+6. **Declarative Multi-Tier Pricing Data Structure (`PriceRule`, `PriceRuleItem`, `PriceList`)**:
+   - Defines database tables (`products_price_rules`, `products_price_rule_items`, `products_product_price_lists`) and models for multi-tier pricing rules (fixed, percentage, formula). Note that these models are currently declarative data structures with empty UI stubs (`PriceListResource`) and are not evaluated by the active sales quotation pricing engine.
 
 7. **Supplier Vendor Catalog & Pricelists (`ProductSupplier`)**:
    - Tracks vendor procurement pricing (`products_product_suppliers`), vendor part codes, vendor product names, delivery lead times (`delay`), quantity breaks (`min_qty`), discounts, and currency conversion.

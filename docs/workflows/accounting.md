@@ -324,7 +324,7 @@ Evidence: `plugins/webkul/accounts/src/Events/*.php`
 
 ## 14. Business Rules Observed
 
-1. **Strict Double-Entry Balance**: Manual journal entries must have equal debit and credit totals before posting.
+1. **Double-Entry Balance**: Automated operational workflows (invoices, bills, payments) generate balanced journal entries. However, manual journal entries created directly via API or draft moves lack debit/credit equality validation in `MoveWorkflow::assertPostable()` and can be posted with unbalanced sums.
 2. **Auto-Reconciliation on Direct Payment**: Direct invoice/bill payments via `PayAction` immediately reconcile the payment with the invoice line.
 3. **Suggestion-Based Standalone Matching**: Pre-existing unallocated payments or credit notes appear as suggestions on the invoice summary and require manual user confirmation to reconcile.
 4. **Exchange Gain/Loss Automation**: Reconciling foreign-currency transactions with currency residual discrepancies automatically generates a balancing exchange move.

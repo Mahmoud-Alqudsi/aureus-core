@@ -43,7 +43,7 @@ The sales workflow spans four collaborating plugins:
    - `POST /api/v1/sales/orders/{id}/set-as-quotation`: Resets a canceled order back to draft quotation (`OrderController::setAsQuotation`).
    - `POST /api/v1/sales/orders/{id}/toggle-lock`: Toggles administrative lock on confirmed order (`OrderController::toggleLock`).
 2. **Quotation Templates**:
-   - `QuotationTemplateResource` (`plugins/webkul/sales/src/Filament/Clusters/Configuration/Resources/QuotationTemplateResource.php`): Pre-populates lines, validity days, payment terms, and optional upsell items onto new quotations via `sale_order_template_id`.
+   - `QuotationTemplateResource` (`plugins/webkul/sales/src/Filament/Clusters/Configuration/Resources/QuotationTemplateResource.php`): Allows defining order templates in configuration (lines, validity days, payment terms). Note that `QuotationForm` in the admin UI does not currently expose a template selector input, though the model relationship exists on `Order::$sale_order_template_id`.
 
 [VERIFIED]
 Evidence: `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/QuotationResource.php`, `plugins/webkul/sales/src/Http/Controllers/API/V1/OrderController.php`

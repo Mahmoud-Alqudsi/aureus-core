@@ -679,7 +679,7 @@ sequenceDiagram
 1. **Cross-Company Stock Contamination**:
    - If moves are manually instantiated without `CrossCompanyTransferGuard`, inventory balances could accidentally transfer across tenant company boundaries.
 2. **Direct Database Quant Alteration**:
-   - Modifying `inventories_product_quantities` directly without generating corresponding `inventories_moves` breaks the double-entry audit trail and causes inventory valuation discrepancies with financial general ledgers.
+   - Modifying `inventories_product_quantities` directly without generating corresponding `inventories_moves` breaks the double-entry quantity audit trail between stock moves and on-hand quant balances (Note: Stock tracking in Aureus ERP is purely quantitative; no financial inventory valuation ledger entries or COGS entries are generated).
 3. **UOM Conversion Drift**:
    - Changing unit conversion ratios on units of measure with active transaction history can corrupt historical inventory ledger quantities.
 4. **Negative Stock on Unreserved Internal Moves**:

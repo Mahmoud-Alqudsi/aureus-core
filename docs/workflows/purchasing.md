@@ -186,7 +186,7 @@ Evidence: `plugins/webkul/purchases/src/Enums/OrderState.php`, `plugins/webkul/p
 2. **RFQ Generation**: From the `ManageRfqs` sub-navigation tab on `PurchaseAgreementResource`, buyers generate multiple child RFQs linked via `requisition_id`.
 3. **Closing Agreement**: When all call-off purchase orders complete (`DONE` or `CANCELED`), `PurchaseAgreementResource::canBeClosed()` returns true, allowing the buyer to close the agreement.
 
-### B. Multi-Tier Manager Approval Thresholds
+### B. Single-Tier Manager Approval Threshold Gate
 1. **Configuration**: Configured in `OrderSettings` (`enable_order_approval` boolean and `order_validation_amount` decimal).
 2. **Evaluation**: When a buyer confirms an RFQ (`ConfirmAction`), `OrderWorkflow::confirm()` compares `Order::total_amount >= order_validation_amount`.
 3. **Authorization Check**:
