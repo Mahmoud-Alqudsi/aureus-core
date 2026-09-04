@@ -177,13 +177,14 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **70 verified files** organized into 8 functional domains:
+The repository documentation consists of **72 verified files** organized into 9 functional domains:
 
 ```
 docs/
 ├── README.md                                 # Canonical documentation entry point (this file)
 ├── verification-matrix.md                    # Central verification tracking ledger (Phase 11)
 ├── ai/                                       # AI developer guidance & canonical rules (10 files)
+├── application/                              # Application foundation layer (1 file)
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (4 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
@@ -208,7 +209,14 @@ Authoritative rules and context governing AI coding behavior:
 | [`docs/ai/testing-rules.md`](ai/testing-rules.md) | Pest v4 test conventions, directory structure, and coverage audit |
 | [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md) | Prohibited antipatterns, forbidden classes, and false assumptions |
 
-### 2. Architecture Domain (`docs/architecture/`)
+### 2. Application Foundation Domain (`docs/application/`)
+Project-level architecture outside the plugin layer:
+
+| File Link | Primary Scope |
+| :--- | :--- |
+| [`docs/application/overview.md`](application/overview.md) | Providers, middleware (branding/locale), navigation shell (topbar/sidebar/language switcher), RTL/i18n CSS, database foundation, Scribe/API docs, build pipeline, E2E testing |
+
+### 3. Architecture Domain (`docs/architecture/`)
 Foundational frameworks and cross-cutting architectural mechanisms:
 
 | File Link | Primary Scope |
@@ -220,7 +228,7 @@ Foundational frameworks and cross-cutting architectural mechanisms:
 | [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md) | Plugin discovery, registration, lifecycle, installation, and dependency handling |
 | [`docs/architecture/change-impact.md`](architecture/change-impact.md) | Change Impact Analysis master control guide, blast radius assessment (Phase 11) |
 
-### 3. Database & Persistence Domain (`docs/database/`)
+### 4. Database & Persistence Domain (`docs/database/`)
 Single-database multi-company persistence models, conventions, and ERDs:
 
 | File Link | Primary Scope |
@@ -234,7 +242,7 @@ Single-database multi-company persistence models, conventions, and ERDs:
 | [`docs/database/erds/finance.md`](database/erds/finance.md) | Financial Domain ERD (`accounts`, `invoices`, `payments`, `accounting`) |
 | [`docs/database/erds/operations.md`](database/erds/operations.md) | Operations ERD (`products`, `inventories`, `manufacturing`, `purchases`, `sales`) |
 
-### 4. Security & Tenancy Domain (`docs/security/`)
+### 5. Security & Tenancy Domain (`docs/security/`)
 Authentication, authorization, multi-company access, and threat models:
 
 | File Link | Primary Scope |
@@ -244,7 +252,7 @@ Authentication, authorization, multi-company access, and threat models:
 | [`docs/security/ownership-scopes.md`](security/ownership-scopes.md) | Record-level ownership scoping, user hierarchy, and authorized user ID resolution |
 | [`docs/security/threat-model.md`](security/threat-model.md) | Threat boundaries, tenant cross-contamination hazards, and mitigation controls |
 
-### 5. Business Workflows Domain (`docs/workflows/`)
+### 6. Business Workflows Domain (`docs/workflows/`)
 Step-by-step state machine flows, actor roles, transactional operations, and audit trails:
 
 | File Link | Primary Scope |
@@ -257,17 +265,17 @@ Step-by-step state machine flows, actor roles, transactional operations, and aud
 | [`docs/workflows/hr.md`](workflows/hr.md) | Recruitment pipelines, job applications, employee onboarding, and leave requests |
 | [`docs/workflows/projects.md`](workflows/projects.md) | Project lifecycle, milestone scheduling, task management, and timesheet logging |
 
-### 6. Business Rules Domain (`docs/business-rules/`)
+### 7. Business Rules Domain (`docs/business-rules/`)
 Mathematical calculation engines, validation constraints, and financial invariants:
 
 | File Link | Primary Scope |
 | :--- | :--- |
 | [`docs/business-rules/accounting.md`](business-rules/accounting.md) | Double-entry balancing ($Debit = Credit$), foreign exchange, tax engines |
-| [`docs/business-rules/inventory.md`](business-rules/inventory.md) | Valuation models (Standard/AVCO/FIFO), removal strategies, on-hand calculations |
+| [`docs/business-rules/inventory.md`](business-rules/inventory.md) | Quantitative stock tracking, physical removal strategies (FIFO/LIFO), reservations, on-hand calculations |
 | [`docs/business-rules/purchasing.md`](business-rules/purchasing.md) | 3-way matching rules, vendor price lists, purchase approval thresholds |
-| [`docs/business-rules/sales.md`](business-rules/sales.md) | Price list cascading, promotional discounts, quotation expiry, credit checks |
+| [`docs/business-rules/sales.md`](business-rules/sales.md) | Pricing rules, promotional discounts, quotation expiry, customer credit-limit analysis |
 
-### 7. Verification & Control Domain
+### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:
 
 | File Link | Primary Scope |
@@ -327,6 +335,7 @@ Aureus ERP contains **28 domain plugins** located under `plugins/webkul/`. Plugi
 
 Quick links to primary architectural mechanisms:
 
+- **Application Foundation Layer**: [`docs/application/overview.md`](application/overview.md)
 - **Company Isolation Suite**: [`docs/database/company-isolation.md`](database/company-isolation.md) & [`docs/security/multi-company.md`](security/multi-company.md)
 - **Security & Authorization Model**: [`docs/security/authorization.md`](security/authorization.md) & [`docs/security/ownership-scopes.md`](security/ownership-scopes.md)
 - **Filament Panels & UI Engine**: [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md)
