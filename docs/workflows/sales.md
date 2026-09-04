@@ -177,7 +177,7 @@ Evidence: `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/Quotation
 
 ### B. Quotation Templates & Optional Products
 1. Users configure reusable order templates via `QuotationTemplateResource` (`sales_order_templates`).
-2. Selecting a template in `QuotationForm` auto-populates line items (`sales_order_template_products`), payment terms, and validity expiration date (`date_order + number_of_days`).
+2. Order templates (`OrderTemplate`) configure reusable lines (`sales_order_template_products`), payment terms, and validity duration. Note that while the model relation exists (`Order::$sale_order_template_id`), `QuotationForm` in the current admin UI does not expose a template selector, so template application is not operationally exposed during manual quotation creation.
 3. Optional upsell items (`sales_order_options`) can be defined alongside standard quotation lines.
 
 ---

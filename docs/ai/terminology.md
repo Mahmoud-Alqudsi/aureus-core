@@ -332,14 +332,17 @@ When writing code, developing plugins, generating migrations, configuring securi
 ### 17. Queue Processing vs Synchronous Execution
 
 - **Term / Class**: Queue Processing Architecture
-- **What it actually is**: The repository currently contains ZERO queue Job classes (`app/Jobs` and `plugins/webkul/*/src/Jobs` are absent, and no application or plugin class implements `Illuminate\Contracts\Queue\ShouldQueue`). Operations such as document posting, recalculations, invoice PDF generation, inventory quant updates, and notifications currently execute synchronously during request processing or via Artisan commands.
-- **Common misconception**: Assuming background asynchronous queue workers process invoice PDFs, stock ledger entries, or chatter notifications.
+- **What it actually is**: Zero traditional PHP queue Job classes were verified in the repository (`app/Jobs` and `plugins/webkul/*/src/Jobs` are absent, and zero Job classes implement `Illuminate\Contracts\Queue\ShouldQueue`). However, zero queue Job classes does NOT mean zero asynchronous behavior. The custom database notification class `Webkul\Chatter\Notifications\ChatterDatabaseNotification` implements `Illuminate\Contracts\Queue\ShouldQueue` and uses `Queueable`. In addition, deferred mechanisms, client-side polling (e.g. 30s topbar notification polling), and scheduled console tasks exist. Operations such as document posting, recalculations, invoice PDF generation, and inventory quant updates execute synchronously during request processing or via Artisan commands.
+- **Common misconception**: Assuming background asynchronous queue workers process invoice PDFs or stock ledger entries, or conversely treating "zero queue Job classes" and "zero asynchronous behavior" as equivalent.
 - **Evidence**:
-  - Zero classes in `app/` or `plugins/webkul/` implement `ShouldQueue`.
-  - `docs/architecture/overview.md:104`
+  - `plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php:11` implements `ShouldQueue`
+  - Zero traditional queue Job classes in `app/` or `plugins/webkul/*/src/`
+  - `docs/architecture/change-impact.md:553, 590`
+  - `docs/verification-matrix.md:95` (`TERM-011`)
 - **Prescriptive Rule**:
-  - Developers and AI agents MUST NOT assume background processing is handled by queued jobs.
-  - Developers MUST NOT silently introduce `ShouldQueue` on jobs or notifications without explicitly documenting the architectural addition and verifying worker infrastructure.
+  - Developers and AI agents MUST NOT assume background processing is handled by queued Job classes.
+  - Developers and AI agents MUST NOT treat "zero queue Job classes" and "zero asynchronous behavior" as equivalent, as `ChatterDatabaseNotification` implements `ShouldQueue`.
+  - Developers MUST NOT silently introduce new `ShouldQueue` implementations without explicitly documenting the architectural addition and verifying worker infrastructure.
 
 ---
 
