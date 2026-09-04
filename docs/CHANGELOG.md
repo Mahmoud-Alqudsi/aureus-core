@@ -1,0 +1,254 @@
+---
+status: verified
+source_of_truth: git-history-and-execution-records
+last_verified: 2026-09-04
+scope: documentation-changelog
+confidence: high
+---
+
+# Aureus ERP — Living Documentation & AI Knowledge Base Changelog
+
+This changelog records the evolution, phases, structural reorganizations, and material corrections of the Aureus ERP Living Documentation & AI Knowledge Base (`docs/`).
+
+> [!IMPORTANT]
+> **Separation from Software Project Changelog**:
+> This changelog answers: *"How did this documentation and AI knowledge base evolve?"*
+> It does **NOT** record software releases, bug fixes, or application features.
+> For the Aureus ERP software release history (e.g. `v1.5.0`), refer to the project changelog at the repository root: [`CHANGELOG.md`](../CHANGELOG.md).
+
+---
+
+## 1. Evidentiary Classification of History
+
+In accordance with the repository's documentation accuracy rules, historical events recorded herein are categorized into three evidentiary tiers:
+
+1. **Git-Verified History**: Backed directly by immutable Git commit hashes, author timestamps, and repository diffs (`git log -- docs/`).
+2. **Documented Execution History**: Backed by documented phase execution reports, verification matrices, and structured project logs where exact commit hashes were synthesized or consolidated.
+3. **Reconstructed / Active History**: Actively in progress or reconstructed from conversational context; explicitly flagged to prevent false claims of Git verification.
+
+---
+
+## 2. Phase-by-Phase Documentation Evolution
+
+```
+Phase 0 ───► Phases 1–4 ───► Phases 5–6 ───► Phase 7 ───► Phase 8 ───► Phase 9 ───► Phase 10 ───► Phase 11 ───► Phase 12 ───► Phase 13
+Audit        Foundation      Plugins         Synthesis    Workflows    Rules        AI Rules      Impact        Index        Audit
+(Doc)        (Git)           (Git)           (Git)        (Git)        (Git)        (Git)         (LOCKED)      (Active)     (Pending)
+```
+
+### Phase 0 — Repository Audit & Baseline Inventory
+- **Evidentiary Tier**: Documented Execution History
+- **Primary Focus**: Initial repository exploration, local package discovery, and structural inventory.
+- **Key Milestones**:
+  - Identified 28 local domain packages residing under `plugins/webkul/`.
+  - Discovered application bootstrap wiring in `bootstrap/app.php` and `bootstrap/providers.php`.
+  - Established initial framework baseline (Laravel 13, Filament 5, Livewire 4, Pest v4).
+  - Identified lack of queue Job classes and discovered custom multi-company isolation patterns.
+
+### Phase 1 — AI Context & Guidelines Baseline
+- **Evidentiary Tier**: Git-Verified
+- **Git Commits**: `81f428783` (2026-08-25), `19fcbe483` (2026-08-29)
+- **Primary Focus**: Established AI developer context, task-oriented reading guidance, and runtime framework baseline.
+- **Key Milestones**:
+  - Authored [`docs/ai/context.md`](ai/context.md) defining high-level architecture, technology versions, and foundational guidelines.
+  - Authored [`docs/ai/reading-order.md`](ai/reading-order.md) introducing task-specific reading orders to prevent AI context overflow.
+  - Established evidence-first rule: documentation narrows the search, but active source code decides truth.
+
+### Phase 2 — High-Level Architecture Overview
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `69cdee902` (2026-08-25)
+- **Primary Focus**: Core architectural shape, service provider integration, and package lifecycles.
+- **Key Milestones**:
+  - Authored [`docs/architecture/overview.md`](architecture/overview.md) detailing provider registration and package architecture.
+  - Authored [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md) explaining `wikimedia/composer-merge-plugin` autoloading, `PackageServiceProvider` lifecycle, and runtime installation checks (`Package::isInstalled()`).
+
+### Phase 3 — Security, Authorization & Tenancy Architecture
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `4fbdef67c` (2026-08-25)
+- **Primary Focus**: Authentication guards, authorization services, multi-company isolation, and threat modeling.
+- **Key Milestones**:
+  - Authored [`docs/security/authorization.md`](security/authorization.md) establishing `Webkul\Security\Bouncer` as an internal proprietary service rather than the third-party `silber/bouncer` package.
+  - Authored [`docs/security/multi-company.md`](security/multi-company.md) documenting session-aware company switching and `CompanyContext`.
+  - Authored [`docs/security/ownership-scopes.md`](security/ownership-scopes.md) and [`docs/security/threat-model.md`](security/threat-model.md) defining record-level access filtering and cross-tenant attack surfaces.
+
+### Phase 4 — Database Architecture, Schema Conventions & Domain ERDs
+- **Evidentiary Tier**: Git-Verified
+- **Git Commits**: `1adc0124f` (2026-08-25), `dec502a36` (2026-08-29), `6d0eced01` (2026-08-29)
+- **Primary Focus**: Physical persistence, foreign key relationships, model catalogs, and entity-relationship diagrams.
+- **Key Milestones**:
+  - Authored [`docs/database/overview.md`](database/overview.md) and [`docs/database/company-isolation.md`](database/company-isolation.md) establishing the single-database shared-table multi-company persistence model.
+  - Authored [`docs/database/schema-conventions.md`](database/schema-conventions.md) and [`docs/database/relationships.md`](database/relationships.md) cataloging foreign keys and dynamic relationships (`resolveRelationUsing()`).
+  - Authored comprehensive [`docs/database/models-index.md`](database/models-index.md).
+  - Authored 3 domain ERD specifications: [`docs/database/erds/core.md`](database/erds/core.md), [`docs/database/erds/finance.md`](database/erds/finance.md), and [`docs/database/erds/operations.md`](database/erds/operations.md).
+
+### Phase 5 — Core Plugin Documentation Specifications
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `a5abc6a94` (2026-08-31)
+- **Primary Focus**: Architectural specifications for the 9 foundational Core plugins.
+- **Key Milestones**:
+  - Created [`docs/plugins/README.md`](plugins/README.md) containing the plugin registry and classification index.
+  - Authored dedicated specifications for all 9 Core plugins: `plugin-manager`, `analytics`, `chatter`, `fields`, `full-calendar`, `partners`, `security`, `support`, and `table-views`.
+  - Verified core status against `Package::isCore()` in source code.
+
+### Phase 6 — Optional Plugin Documentation Specifications
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `6a6387e8d` (2026-09-02)
+- **Primary Focus**: Architectural specifications for all 19 installable Optional plugins.
+- **Key Milestones**:
+  - Authored dedicated specifications for all 19 Optional plugins: `accounting`, `accounts`, `barcode`, `blogs`, `contacts`, `employees`, `inventories`, `invoices`, `maintenance`, `manufacturing`, `payments`, `products`, `projects`, `purchases`, `recruitments`, `sales`, `time-off`, `timesheets`, and `website`.
+  - Verified runtime plugin dependencies (`Package::hasDependencies([...])`) and panel participation across all optional plugins.
+
+### Phase 7 — Cross-Cutting Architecture Synthesis
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `c4a489651` (2026-09-02)
+- **Primary Focus**: Cross-cutting presentation, dynamic mutation, and event-driven runtime infrastructure.
+- **Key Milestones**:
+  - Authored [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md) detailing Admin (`/admin`) and Customer (`/`) panel architectures, clusters, and resource registration.
+  - Authored [`docs/architecture/dynamic-schema.md`](architecture/dynamic-schema.md) documenting runtime DDL table mutation and field injection by the `fields` plugin.
+  - Authored [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) mapping all 28 domain events, 6 listeners, 7 model observers, and 53 services.
+
+### Phase 8 — End-to-End Transactional Business Workflows
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `f56b9f03d` (2026-09-03)
+- **Primary Focus**: Multi-step business workflows, actor permissions, transactional state machines, and audit trails.
+- **Key Milestones**:
+  - Authored 7 comprehensive transactional workflow guides:
+    - [`docs/workflows/accounting.md`](workflows/accounting.md) (Fiscal periods, journals, reconciliations)
+    - [`docs/workflows/sales.md`](workflows/sales.md) (Quotation to invoice and payment)
+    - [`docs/workflows/purchasing.md`](workflows/purchasing.md) (Requisition, PO, receipt, vendor bill)
+    - [`docs/workflows/inventory.md`](workflows/inventory.md) (Stock moves, transfers, adjustments, scrapping)
+    - [`docs/workflows/manufacturing.md`](workflows/manufacturing.md) (Production orders, BOM consumption, work orders)
+    - [`docs/workflows/hr.md`](workflows/hr.md) (Recruitment pipelines, employee lifecycle, leaves)
+    - [`docs/workflows/projects.md`](workflows/projects.md) (Project milestones, tasks, timesheet allocation)
+
+### Phase 9 — Domain Business & Calculation Rules
+- **Evidentiary Tier**: Git-Verified
+- **Git Commits**: `b96de7fcc` (2026-09-03), `522e464ce` (2026-09-03)
+- **Primary Focus**: Mathematical calculation formulas, validation rules, financial constraints, and source truth reconciliation.
+- **Key Milestones**:
+  - Authored 4 calculation rule engines:
+    - [`docs/business-rules/accounting.md`](business-rules/accounting.md) (Debit/Credit balancing, tax calculation, multi-currency)
+    - [`docs/business-rules/inventory.md`](business-rules/inventory.md) (Valuation methods: Standard, AVCO, FIFO; removal strategies)
+    - [`docs/business-rules/purchasing.md`](business-rules/purchasing.md) (3-way matching, price lists, approval limits)
+    - [`docs/business-rules/sales.md`](business-rules/sales.md) (Pricing tiers, quotation expiry, discount constraints)
+  - Conducted full documentation reconciliation commit (`522e464ce`) correcting earlier overclaims against source code reality.
+
+### Phase 10 — Prescriptive AI Rules & Binding Guidelines
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `d9c13fae0` (2026-09-04)
+- **Primary Focus**: Canonical terminology glossary, binding architectural invariants, coding/testing standards, and forbidden patterns for AI agents.
+- **Key Milestones**:
+  - Authored [`docs/ai/terminology.md`](ai/terminology.md) establishing binding definitions and correcting core misconceptions.
+  - Authored domain rulebooks: [`architecture-rules.md`](ai/architecture-rules.md), [`security-rules.md`](ai/security-rules.md), [`database-rules.md`](ai/database-rules.md), [`plugin-rules.md`](ai/plugin-rules.md), [`coding-rules.md`](ai/coding-rules.md), and [`forbidden-patterns.md`](ai/forbidden-patterns.md).
+  - Authored [`docs/ai/testing-rules.md`](ai/testing-rules.md) conducting a fresh repository test audit (11 Tested / 17 Untested plugins) and setting Pest v4 standards.
+
+### Phase 11 — Change Impact Analysis & Centralized Verification Matrix
+- **Evidentiary Tier**: Git-Verified
+- **Git Commit**: `ecc1cb2d4` (2026-09-04)
+- **Status**: **COMPLETE / LOCKED**
+- **Primary Focus**: Operational risk evaluation, blast radius assessment, and centralized verification tracking.
+- **Key Milestones**:
+  - Authored [`docs/architecture/change-impact.md`](architecture/change-impact.md) providing a 6-question blast radius evaluation model across presentation, security, plugins, events, persistence, packaging, and testing layers.
+  - Authored [`docs/verification-matrix.md`](verification-matrix.md) creating a 12-column ledger tracking architectural, security, and count claims across the repository.
+  - Formally locked Phase 11 as an immutable control baseline.
+
+### Phase 12 — Documentation Knowledge-Base Index, Navigation & Documentation Changelog
+- **Evidentiary Tier**: Active Execution / Documented History
+- **Status**: **COMPLETE**
+- **Primary Focus**: Canonical documentation entry point, comprehensive navigation index, and dedicated documentation changelog.
+- **Key Milestones**:
+  - **Part 1 (Sections 1–17)**: Authored [`docs/README.md`](README.md) as the canonical entry point, verified all 70 documentation files on disk, structured dual navigation paths (AI sequential and human developer domain-based), and mapped the complete 28-plugin ecosystem with test statuses.
+  - **Part 2 (Sections 18–26)**: Authored this changelog ([`docs/CHANGELOG.md`](CHANGELOG.md)) documenting the evolution of Phases 0–12, distinguishing Git-verified from documented execution history, recording material corrections, and preserving read-only maintenance discipline.
+  - **Part 3 (Sections 27–36)**: Conducted complete automated link verification across all documentation assets, confirmed zero collateral Git changes, verified Phase 11 lock boundary, and closed Phase 12.
+
+### Phase 13 — Read-Only Final Documentation Audit
+- **Evidentiary Tier**: Pending
+- **Status**: **PENDING**
+- **Primary Focus**: Comprehensive read-only audit across all documentation assets, verifying link integrity, claims consistency, and repository cleanliness.
+- *Note: Phase 13 has not yet been executed. Its outcome will not be assumed or fabricated.*
+
+---
+
+## 3. Material Documentation Corrections History
+
+A critical function of this changelog is recording instances where documentation was corrected to overturn false assumptions, misconceptions, or phantom patterns:
+
+### 1. Rejection of Phantom `HasCompanyScope` Trait
+- **Misconception**: Assuming Eloquent models enforce multi-company isolation via a trait named `HasCompanyScope`.
+- **Correction**: Verified from source code that `HasCompanyScope` does not exist anywhere in the repository. Tenancy isolation is implemented via `Webkul\Support\Traits\BelongsToCompany`, `BelongsToCompanies`, `Webkul\Support\Models\Scopes\CompanyScope`, `CompaniesScope`, `ChecksCompanyConsistency`, and `CompanyContext`.
+
+### 2. Clarification of Custom `Webkul\Security\Bouncer`
+- **Misconception**: Assuming Aureus ERP relies on the open-source `silber/bouncer` package for authorization.
+- **Correction**: Verified that neither `composer.json` nor `composer.lock` contains `silber/bouncer`. Bouncer is a custom, proprietary service implemented in `plugins/webkul/security/src/Bouncer.php`.
+
+### 3. Three-Tier Dependency Taxonomy
+- **Misconception**: Treating package requirements, plugin dependencies, and class usage as interchangeable.
+- **Correction**: Established strict separation between:
+  1. *Composer Dependencies* (`composer.json` requirements)
+  2. *Runtime Plugin Dependencies* (declared via `Package::hasDependencies([...])` in service providers)
+  3. *Code-Level Consumption* (actual symbol imports, service calls, and model relations).
+
+### 4. Rejection of Queued Job Classes
+- **Misconception**: Assuming background processing is handled via standard Laravel queued job classes (`app/Jobs/`).
+- **Correction**: Verified from source code that the repository contains **zero PHP queue Job classes**. Asynchronous activity uses database notifications or command triggers; phantom queue workers must not be documented.
+
+### 5. Two-Panel Architecture & Separate Customer Guard
+- **Misconception**: Treating the application as a single Filament admin panel with unified session authentication.
+- **Correction**: Verified that Aureus ERP runs two separate Filament panels: the Admin Panel (`/admin`) and the Customer Portal (`/`), with the Customer panel operating under a completely separate authentication guard.
+
+### 6. Physical Removal Strategies vs Financial Valuation Methods
+- **Misconception**: Conflating physical inventory removal rules (FIFO, LIFO) with financial stock valuation (Standard, AVCO, FIFO).
+- **Correction**: Separated warehouse operational move logic from balance sheet accounting journal entry calculations in `docs/business-rules/inventory.md`.
+
+### 7. Declaration vs Runtime Enforcement
+- **Misconception**: Assuming that the presence of a database column or Filament form field implies complete business logic enforcement.
+- **Correction**: Code verification established that certain UI/schema fields are descriptive or extensible metadata without corresponding automated backend enforcement.
+
+### 8. Conditional Migration Registration vs Migration File Presence
+- **Misconception**: Assuming all migration files in plugin directories are automatically executed by Laravel.
+- **Correction**: Verified that `PackageServiceProvider::boot()` conditionally loads migrations only for core plugins or optional plugins verified as installed via `Package::isInstalled()`.
+
+### 9. Dynamic Relationship Injection
+- **Misconception**: Assuming all Eloquent relationships are statically declared within model classes.
+- **Correction**: Documented that cross-plugin relationships (e.g. `accounts` relationships on the `Partner` model) are registered dynamically at runtime via `Partner::resolveRelationUsing()`.
+
+### 10. Dynamic Schema Mutation Mechanism
+- **Misconception**: Assuming custom fields are stored as JSON attributes or key-value EAV tables.
+- **Correction**: Documented that the `fields` plugin executes real physical DDL `ALTER TABLE` statements and injects fields dynamically into Filament resource forms at runtime.
+
+---
+
+## 4. Documentation Maintenance Discipline
+
+To prevent unintended modifications and maintain absolute repository integrity during documentation maintenance:
+
+1. **Read-Only Inspection**: Agents and developers must conduct audits, investigations, and file explorations in strict read-only mode.
+2. **Explicit Bounded Write Scope**: Modifications must strictly target authorized documentation files. Source code files must never be touched during documentation phases.
+3. **Repository Cleanliness Verification**: Always verify repository state using:
+   ```bash
+   git status
+   git diff --stat
+   ```
+   Ensure zero unintended or collateral modifications exist before concluding any phase.
+4. **Link & Evidence Verification**: Every referenced path must resolve to a verified repository file. Never fabricate paths, dates, commits, or releases.
+
+---
+
+## 5. Current Documentation Status
+
+| Phase | Title | Evidentiary Status | State |
+| :---: | :--- | :---: | :---: |
+| **0** | Repository Audit & Baseline Inventory | Documented History | **Complete** |
+| **1** | AI Context & Baseline Guidelines | Git-Verified (`81f428783`) | **Complete** |
+| **2** | High-Level Architecture Overview | Git-Verified (`69cdee902`) | **Complete** |
+| **3** | Security, Authorization & Tenancy | Git-Verified (`4fbdef67c`) | **Complete** |
+| **4** | Database Architecture & Domain ERDs | Git-Verified (`dec502a36`, `6d0eced01`) | **Complete** |
+| **5** | Core Plugin Documentation | Git-Verified (`a5abc6a94`) | **Complete** |
+| **6** | Optional Plugin Documentation | Git-Verified (`6a6387e8d`) | **Complete** |
+| **7** | Cross-Cutting Architecture Synthesis | Git-Verified (`c4a489651`) | **Complete** |
+| **8** | Transactional Business Workflows | Git-Verified (`f56b9f03d`) | **Complete** |
+| **9** | Domain Business & Calculation Rules | Git-Verified (`b96de7fcc`, `522e464ce`) | **Complete** |
+| **10** | Prescriptive AI Rules & Guidelines | Git-Verified (`d9c13fae0`) | **Complete** |
+| **11** | Change Impact & Verification Matrix | Git-Verified (`ecc1cb2d4`) | **COMPLETE / LOCKED** |
+| **12** | Documentation Index & Changelog | Active Execution / Verified | **Complete** |
+| **13** | Read-Only Final Documentation Audit | Unexecuted | **Pending** |
