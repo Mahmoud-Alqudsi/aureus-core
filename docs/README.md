@@ -97,7 +97,7 @@ The following architectural distinctions are binding across the entire repositor
   - `Webkul\Support\Traits\BelongsToCompany`: Model trait attaching `CompanyScope` and auto-setting `company_id`.
   - `Webkul\Support\Traits\BelongsToCompanies`: Model trait for entities belonging to multiple companies.
   - `Webkul\Support\Traits\ChecksCompanyConsistency`: Validates foreign key relational consistency across company boundaries.
-  - `Webkul\Security\Http\Middleware\RestrictToAllowedCompanies`: HTTP gate blocking unauthorized company switching.
+  - `Webkul\Support\Traits\RestrictToAllowedCompanies`: Model trait applying `AllowedCompanyScope` to restrict company queries to user-assigned companies (unauthorized company switching sanitized via `CompanyContext`).
 
 ### 2. Authorization Service (Custom Bouncer)
 - `Webkul\Security\Bouncer` (and its facade `Webkul\Security\Facades\Bouncer`) is an **internal Aureus implementation** (`plugins/webkul/security/src/Bouncer.php`).

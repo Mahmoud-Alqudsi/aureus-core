@@ -898,7 +898,7 @@ stateDiagram-v2
 - Receipt Planner Service: `plugins/webkul/purchases/src/Services/ReceiptPlanner.php:19`
 - Biller Service: `plugins/webkul/purchases/src/Services/Biller.php:10`
 - Document Generator: `plugins/webkul/purchases/src/Services/DocumentGenerator.php:8`
-- Sequence Service Usage: `plugins/webkul/purchases/src/Models/Order.php:254`, `PurchaseServiceProvider.php:89`, `database/seeders/SequenceSeeder.php:12`
+- Sequence Service Usage: `plugins/webkul/purchases/src/Models/Order.php:254`, `PurchaseServiceProvider.php:89`, `plugins/webkul/purchases/database/seeders/SequenceSeeder.php:12`
 - Routes: `plugins/webkul/purchases/routes/api.php:1-35`, `plugins/webkul/purchases/routes/web.php:1-11`
 - Settings: `plugins/webkul/purchases/src/Settings/OrderSettings.php:7`, `plugins/webkul/purchases/src/Settings/ProductSettings.php:7`
 - Tests: `plugins/webkul/purchases/tests/Feature/Workflows/PurchaseOrderTest.php:1`, `plugins/webkul/purchases/tests/Feature/Workflows/OrderBillingTest.php:1`

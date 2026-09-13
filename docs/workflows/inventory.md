@@ -357,14 +357,14 @@ Evidence: `plugins/webkul/inventories/src/Services/MoveCompleter.php:86-94,258-2
 ## 10. Authorization / Security
 
 1. **Permissions Matrix**:
-   - Enforced by `OperationPolicy`, `MovePolicy`, `ScrapPolicy`, `LotPolicy`, `OrderPointPolicy`, and `WarehousePolicy`.
+   - Enforced by operation-specific policies (`DeliveryPolicy`, `ReceiptPolicy`, `InternalTransferPolicy`), alongside `ScrapPolicy`, `LotPolicy`, `OrderPointPolicy`, and `WarehousePolicy` (`OperationPolicy` is not an inventories policy).
    - Uses `HasScopedPermissions` to support granular `GLOBAL`, `GROUP`, and `INDIVIDUAL` resource scopes.
 2. **Multi-Tenant Company Scoping**:
    - `Operation`, `Move`, `MoveLine`, `ProductQuantity`, `Scrap`, and `Lot` models implement `BelongsToCompany` and global `CompanyScope`.
    - `ChecksCrossCompanyTransfer` prevents executing stock transfers across mismatched company boundaries unless transit locations are configured.
 
 [VERIFIED]
-Evidence: `plugins/webkul/inventories/src/Policies/OperationPolicy.php`, `plugins/webkul/inventories/src/Policies/ScrapPolicy.php`
+Evidence: `plugins/webkul/inventories/src/Policies/DeliveryPolicy.php`, `plugins/webkul/inventories/src/Policies/ReceiptPolicy.php`, `plugins/webkul/inventories/src/Policies/InternalTransferPolicy.php`, `plugins/webkul/inventories/src/Policies/ScrapPolicy.php`
 
 ---
 

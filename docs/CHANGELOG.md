@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-04
+last_verified: 2026-09-13
 scope: documentation-changelog
 confidence: high
 ---
@@ -183,6 +183,29 @@ Audit        Foundation      Plugins         Synthesis    Workflows    Rules    
     4. **CLOSURE-12 (Framework Versions)**: Re-verified versions against `composer.lock` (Laravel 13.21.1, Filament 5.7.6, Livewire 4.3.3). Retained `AGENTS.md` Livewire v3 claim as `[KNOWN STALE PROJECT ARTIFACT]` outside documentation closure scope.
     5. **CLOSURE-08 (Inventory Valuation Semantic Boundary)**: Reconciled historical Phase 9 milestone entry in `docs/CHANGELOG.md:131` to explicitly distinguish the initial draft description from the subsequent reconciliation in `522e464ce`, confirming purely quantitative stock tracking, physical removal strategies (FIFO/LIFO), and zero monetary valuation layer.
 
+### Phase 1 — Final Documentation Baseline Validation & Closure (Micro-Reconciliation)
+- **Evidentiary Tier**: Git-Verified Diff
+- **Status**: **COMPLETE / READY FOR INTEGRATION**
+- **Primary Focus**: Micro-reconciliation of audited repository discrepancies (REC-001 through REC-014) across the living documentation baseline before integration into `develop`.
+- **Scope & Architectural Boundaries**:
+  - Strictly limited to documentation baseline reconciliation; this milestone involves **zero application feature development**, zero source-code modifications, zero test changes, zero database migration modifications, and zero Composer/configuration alterations.
+  - Successfully resolves all findings identified in the read-only empirical audit without altering runtime application behavior or introducing unverified architectural claims.
+- **Key Micro-Reconciliations Implemented**:
+  - **REC-001 ([`docs/README.md`](README.md))**: Documented `RestrictToAllowedCompanies` as `Webkul\Support\Traits\RestrictToAllowedCompanies` (an Eloquent model trait applying `AllowedCompanyScope` with `CompanyContext` sanitization) rather than HTTP middleware.
+  - **REC-002 ([`docs/ai/terminology.md`](ai/terminology.md))**: Reconciled core AI terminology: corrected dual User model architecture (`App\Models\User` as unused Laravel scaffold vs `Webkul\Security\Models\User` as runtime authenticatable bound via `AppServiceProvider::register()` and `config/auth.php`), corrected `InstallCommand` path, updated ownership trait to `HasOwnershipScope`, clarified `PermissionRegistrar` and `Webkul\Security\Bouncer` authorization architecture, and corrected `PartnerCompanyProperty` model ownership to the `accounts` plugin.
+  - **REC-003 ([`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md))**: Replaced obsolete `InstallPluginCommand.php` reference with `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`.
+  - **REC-004 ([`docs/architecture/change-impact.md`](architecture/change-impact.md))**: Reconciled change impact references and blast-radius evaluation entries for `RestrictToAllowedCompanies`, `HasOwnershipScope`, `InstallCommand`, and `PartnerCompanyProperty`.
+  - **REC-005 ([`docs/verification-matrix.md`](verification-matrix.md))**: Updated verification matrix claims `TERM-005`, `SEC-003`, `SEC-007`, and `DEP-002` to match active code reality.
+  - **REC-006 ([`docs/architecture/events-catalog.md`](architecture/events-catalog.md))**: Corrected `CompanyContext` path to `plugins/webkul/support/src/Services/CompanyContext.php`.
+  - **REC-007 ([`docs/database/schema-conventions.md`](database/schema-conventions.md))**: Replaced stale migration filenames with active repository migration filenames (`2024_11_13_052541_create_custom_fields_table.php`, `2025_01_05_100751_create_products_products_table.php`, `2024_12_10_092657_create_companies_table.php`, `2026_03_31_064247_create_manufacturing_orders_table.php`, `2024_12_11_051916_create_employees_departments_table.php`).
+  - **REC-008 ([`docs/database/erds/finance.md`](database/erds/finance.md))**: Reconciled stale finance migration timestamps across `accounts`, `sales`, and `purchases` relationships.
+  - **REC-009 ([`docs/workflows/accounting.md`](workflows/accounting.md))**: Corrected Invoice Filament action paths to `InvoiceResource/Actions/` and renamed draft action to `ResetToDraftAction`.
+  - **REC-010 ([`docs/workflows/inventory.md`](workflows/inventory.md))**: Reconciled inventory policies to operation-specific policies (`DeliveryPolicy`, `ReceiptPolicy`, `InternalTransferPolicy`), clarifying that `OperationPolicy` does not exist.
+  - **REC-011 ([`docs/workflows/sales.md`](workflows/sales.md))**: Reconciled `QuotationTemplateResource` to reflect repository reality (child pages exist under `QuotationTemplateResource/Pages/`, but parent resource class file is absent).
+  - **REC-012 ([`docs/plugins/accounts.md`](plugins/accounts.md))**: Removed reference to nonexistent `plugins/webkul/accounts/routes/web.php`, confirming only `routes/api.php` is defined.
+  - **REC-013 ([`docs/plugins/purchases.md`](plugins/purchases.md))**: Corrected sequence seeder path to `plugins/webkul/purchases/database/seeders/SequenceSeeder.php:12`.
+  - **REC-014 ([`docs/CHANGELOG.md`](CHANGELOG.md))**: Recorded Phase 1 documentation baseline validation & closure milestone.
+
 ---
 
 ## 3. Material Documentation Corrections History
@@ -268,3 +291,4 @@ To prevent unintended modifications and maintain absolute repository integrity d
 | **11** | Change Impact & Verification Matrix | Git-Verified (`ecc1cb2d4`) | **COMPLETE / LOCKED** |
 | **12** | Documentation Index & Changelog | Active Execution / Verified | **Complete** |
 | **13** | Read-Only Final Documentation Audit | Git-Verified (`3ad3da082`) | **COMPLETE / LOCKED** |
+| **Phase 1 Closure** | Documentation Baseline Micro-Reconciliation | Git-Verified Diff | **COMPLETE / READY FOR INTEGRATION** |

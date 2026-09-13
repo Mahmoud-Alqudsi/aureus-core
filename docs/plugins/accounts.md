@@ -760,7 +760,7 @@ Defined in `plugins/webkul/accounts/routes/api.php` under middleware group `['au
 - `bills` (`BillController`, standard API resource) + workflow endpoints (`confirm`, `cancel`, `pay`, `reverse`, `reset-to-draft`, `set-as-checked`)
 - `refunds` (`RefundController`, standard API resource) + workflow endpoints (`confirm`, `cancel`, `pay`, `reset-to-draft`, `set-as-checked`)
 
-*Web Routes: None defined (`plugins/webkul/accounts/routes/web.php` does not exist).*
+*Web Routes: None defined (the verified routes directory contains only `routes/api.php`).*
 
 ---
 

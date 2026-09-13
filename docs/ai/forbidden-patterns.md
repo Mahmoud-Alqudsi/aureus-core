@@ -66,12 +66,12 @@ Every pattern documented here has occurred in this repository or in historical a
 - **What it looks like**: Adding a requirement to `composer.json` and assuming it dictates Aureus ERP plugin installation order, or adding `use Webkul\Account\Models\Move;` and assuming the `accounts` plugin is installed in the database.
 - **Why it is tempting**: In standard standalone PHP packages, `composer.json` is the sole dependency mechanism.
 - **Specific Aureus ERP instance(s)**:
-  - Aureus ERP plugin installation order is governed exclusively by `$package->hasDependencies([...])` executed by `InstallPluginCommand`.
+  - Aureus ERP plugin installation order is governed exclusively by `$package->hasDependencies([...])` executed by `InstallCommand`.
   - None of the 9 Core Plugins declare `hasDependencies()`, yet they import classes across packages.
   - Optional plugins importing other optional plugin models without declaring `hasDependencies()` or checking `Package::isPluginInstalled()` crash at runtime when the dependency is uninstalled.
 - **Evidence**:
   - `plugins/webkul/plugin-manager/src/Package.php:111`
-  - `plugins/webkul/plugin-manager/src/Console/Commands/InstallPluginCommand.php`
+  - `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`
   - `docs/architecture/plugin-registry.md`
 - **Rule that prevents it**:
   - A plugin MUST declare installation-order prerequisites exclusively via `Package::hasDependencies([...])`.

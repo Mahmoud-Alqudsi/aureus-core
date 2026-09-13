@@ -29,7 +29,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 ### 1. Company Isolation Mechanisms
 
 - **Term / Class**: Multi-Company Isolation Suite (`BelongsToCompany`, `BelongsToCompanies`, `CompanyContext`, `CompanyScope`, `CompaniesScope`, `RestrictToAllowedCompanies`, `ChecksCompanyConsistency`)
-- **What it actually is**: A modular suite of Eloquent traits, global query scopes, middleware, and domain guards provided by `plugins/webkul/support/` and `plugins/webkul/security/` that provide opt-in, session-aware multi-company tenancy filtering and relational referential integrity.
+- **What it actually is**: A modular suite of Eloquent traits, global query scopes, services, and domain guards provided by `plugins/webkul/support/` that provide opt-in, session-aware multi-company tenancy filtering and relational referential integrity.
 - **Common misconception**: Assuming a trait or query scope named `HasCompanyScope` exists, or assuming that multi-company isolation is enforced automatically without explicit model traits or guards.
 - **Evidence**:
   - `plugins/webkul/support/src/Traits/BelongsToCompany.php`
@@ -38,7 +38,7 @@ When writing code, developing plugins, generating migrations, configuring securi
   - `plugins/webkul/support/src/Models/Scopes/CompanyScope.php`
   - `plugins/webkul/support/src/Models/Scopes/CompaniesScope.php`
   - `plugins/webkul/support/src/Traits/ChecksCompanyConsistency.php`
-  - `plugins/webkul/security/src/Http/Middleware/RestrictToAllowedCompanies.php`
+  - `plugins/webkul/support/src/Traits/RestrictToAllowedCompanies.php`
   - The repository contains zero occurrences of `HasCompanyScope`.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT reference, import, or assume the existence of `HasCompanyScope`.
@@ -106,18 +106,19 @@ When writing code, developing plugins, generating migrations, configuring securi
 ### 5. User Models Architecture
 
 - **Term / Class**: `Webkul\Security\Models\User` vs `App\Models\User`
-- **What it actually is**: Two distinct User model classes connected by class inheritance:
-  - `Webkul\Security\Models\User`: The domain package model in `plugins/webkul/security/src/Models/User.php` containing all ERP core security traits (`HasApiTokens`, `HasFactory`, `Notifiable`, `HasRoles`, `BelongsToCompanies`), company relationships, and status attributes.
-  - `App\Models\User`: The root application model in `app/Models/User.php` which directly extends `Webkul\Security\Models\User` and serves as the authenticatable identity for the application `admin` panel and Laravel auth guards.
-- **Common misconception**: Confusing the two classes as interchangeable, assuming they are duplicate independent models, or attempting to reimplement ERP security features inside `App\Models\User`.
+- **What it actually is**: Two distinct User model classes related by container and authentication binding rather than class inheritance:
+  - `Webkul\Security\Models\User`: The domain package model in `plugins/webkul/security/src/Models/User.php` containing all ERP core security traits (`HasApiTokens`, `HasFactory`, `Notifiable`, `HasRoles`, `BelongsToCompanies`), company relationships, and status attributes. This is the actual authenticatable entity used at runtime by both the admin guard and API tokens.
+  - `App\Models\User`: The root application model in `app/Models/User.php` which is an unused Laravel scaffold extending the standard Laravel `Illuminate\Foundation\Auth\User as Authenticatable`.
+- **Common misconception**: Assuming `App\Models\User` extends `Webkul\Security\Models\User` via class inheritance, or assuming `App\Models\User` is the active authenticatable model at runtime.
 - **Evidence**:
-  - `app/Models/User.php:12` (`class User extends \Webkul\Security\Models\User`)
+  - `app/Models/User.php:11` (`class User extends Authenticatable`)
+  - `app/Providers/AppServiceProvider.php:19` (`$this->app->bind(Authenticatable::class, User::class)` where `User` is `Webkul\Security\Models\User`)
+  - `config/auth.php:3, 73` (`use Webkul\Security\Models\User;` and `'model' => env('AUTH_MODEL', User::class)`)
   - `plugins/webkul/security/src/Models/User.php`
-  - `config/auth.php:70` (`'model' => env('AUTH_MODEL', App\Models\User::class)`)
 - **Prescriptive Rule**:
   - Local plugin code and domain relationships MUST type-hint and reference `Webkul\Security\Models\User` or resolve through `config('auth.providers.users.model')`.
-  - Global application-level services, panel providers, and auth configurations MUST reference `App\Models\User`.
-  - Developers MUST NOT redefine core user relationships or traits in `App\Models\User` that are already established in `Webkul\Security\Models\User`.
+  - Developers and AI agents MUST recognize that runtime authentication is wired via container binding and configuration, NOT class inheritance on `App\Models\User`.
+  - Developers MUST NOT attempt to subclass or reimplement core security features inside `App\Models\User`.
 
 ---
 
@@ -126,12 +127,12 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Term / Class**: Plugin Dependencies (Composer Require vs `Package::hasDependencies()` vs Code-Level Consumption)
 - **What it actually is**: Three completely distinct dependency tiers within the Aureus ERP ecosystem:
   1. **Composer Dependency** (`require` in `plugins/webkul/<plugin>/composer.json` or root `composer.json`): Governs PHP class autoloading and external package distribution.
-  2. **Runtime / Installation-Order Dependency** (`Package::hasDependencies([...])`): Declared inside a plugin's `*ServiceProvider::configureCustomPackage()`. Consumed exclusively by `InstallPluginCommand` to orchestrate database migration, seed order, and dependency verification.
+  2. **Runtime / Installation-Order Dependency** (`Package::hasDependencies([...])`): Declared inside a plugin's `*ServiceProvider::configureCustomPackage()`. Consumed exclusively by `InstallCommand` to orchestrate database migration, seed order, and dependency verification.
   3. **Code-Level Consumption**: Mere PHP imports (`use Webkul\...`) or cross-plugin model references in code without any formal runtime declaration.
 - **Common misconception**: Believing that adding a dependency to `composer.json` establishes Aureus plugin installation ordering, or assuming that importing a class from another plugin automatically makes it a registered runtime plugin dependency.
 - **Evidence**:
   - `plugins/webkul/plugin-manager/src/Package.php:111` (`hasDependencies()`)
-  - `plugins/webkul/plugin-manager/src/Console/Commands/InstallPluginCommand.php`
+  - `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`
   - `docs/architecture/plugin-registry.md`
   - None of the 9 Core Plugins declare runtime plugin dependencies (`hasDependencies()`), yet they consume code across packages.
 - **Prescriptive Rule**:
@@ -144,37 +145,38 @@ When writing code, developing plugins, generating migrations, configuring securi
 ### 7. OwnerSource Kinds
 
 - **Term / Class**: `OwnerSource` Resolution Kinds (`column`, `relation`, `pivot`, `followers`)
-- **What it actually is**: The four established architectural mechanisms by which `Webkul\Security\Traits\HasOwner` and `Webkul\Security\Services\PermissionService` locate the owning party or parties of a record during `INDIVIDUAL` or `GROUP` authorization checks:
+- **What it actually is**: The four established architectural mechanisms by which `Webkul\Security\Traits\HasOwnershipScope`, `Webkul\Security\Bouncer`, and `Webkul\Security\PermissionRegistrar` locate the owning party or parties of a record during `INDIVIDUAL` or `GROUP` authorization checks:
   1. `column`: Direct foreign key on the model's physical table (e.g., `user_id`, `creator_id`, `assigned_to`).
   2. `relation`: An Eloquent relation method pointing to the owning entity (e.g., `creator()`, `user()`).
   3. `pivot`: A many-to-many relationship resolving through an intermediate join table.
   4. `followers`: Dynamic followers list resolving ownership through `chatter_followers`.
-- **Common misconception**: Assuming that record-level ownership in Aureus ERP is solely determined by a hardcoded `user_id` column on the table.
+- **Common misconception**: Assuming that record-level ownership in Aureus ERP is solely determined by a hardcoded `user_id` column on the table, or referring to the ownership trait as `HasOwner`.
 - **Evidence**:
-  - `plugins/webkul/security/src/Traits/HasOwner.php`
-  - `plugins/webkul/security/src/Services/PermissionService.php`
+  - `plugins/webkul/security/src/Traits/HasOwnershipScope.php`
+  - `plugins/webkul/security/src/Bouncer.php`
+  - `plugins/webkul/security/src/PermissionRegistrar.php`
   - `docs/security/ownership-scopes.md`
 - **Prescriptive Rule**:
-  - When configuring models with `HasOwner`, developers MUST explicitly define the owner source using one of the four established kinds (`column`, `relation`, `pivot`, `followers`).
+  - When configuring models with `HasOwnershipScope`, developers MUST explicitly define the owner source using one of the four established kinds (`column`, `relation`, `pivot`, `followers`).
   - Developers MUST NOT assume a default `user_id` column exists on every owned model.
 
 ---
 
 ### 8. CompanyProperty (EAV Cast vs Model/Table)
 
-- **Term / Class**: `Webkul\Account\Casts\CompanyProperty` vs `Webkul\Partner\Models\PartnerCompanyProperty`
-- **What it actually is**: Two completely different system entities serving distinct purposes across different plugins:
+- **Term / Class**: `Webkul\Account\Casts\CompanyProperty` vs `Webkul\Account\Models\PartnerCompanyProperty`
+- **What it actually is**: Two completely different system entities serving distinct purposes:
   - `Webkul\Account\Casts\CompanyProperty`: An Eloquent custom attribute Cast (`plugins/webkul/accounts/src/Casts/CompanyProperty.php`) implementing `CastsAttributes`. It serializes and deserializes company-specific dynamic configuration properties stored in JSON/text attributes (EAV pattern).
-  - `Webkul\Partner\Models\PartnerCompanyProperty`: A concrete Eloquent Model (`plugins/webkul/partners/src/Models/PartnerCompanyProperty.php`) backed by the physical database table `partner_company_properties` (`partners_partner_company_properties`), managing partner accounting property links (such as payable/receivable accounts per company).
-- **Common misconception**: Confusing the custom Eloquent Cast `CompanyProperty` with the Eloquent Model `PartnerCompanyProperty`.
+  - `Webkul\Account\Models\PartnerCompanyProperty`: A concrete Eloquent Model owned and defined by the `accounts` plugin (`plugins/webkul/accounts/src/Models/PartnerCompanyProperty.php`) backed by the physical database table `partners_partner_company_properties`, managing partner accounting property links (such as payable/receivable accounts per company).
+- **Common misconception**: Confusing the custom Eloquent Cast `CompanyProperty` with the Eloquent Model `PartnerCompanyProperty`, or assuming `PartnerCompanyProperty` is defined in the `partners` plugin.
 - **Evidence**:
   - `plugins/webkul/accounts/src/Casts/CompanyProperty.php`
-  - `plugins/webkul/partners/src/Models/PartnerCompanyProperty.php`
-  - `plugins/webkul/accounts/src/Models/PartnerCompanyProperty.php` (proxy model)
+  - `plugins/webkul/accounts/src/Models/PartnerCompanyProperty.php`
+  - Table `partners_partner_company_properties`
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT confuse the `CompanyProperty` cast with the `PartnerCompanyProperty` model.
   - When defining model casts for company-specific serialized properties, developers MUST use `Webkul\Account\Casts\CompanyProperty`.
-  - When persisting partner-company accounting configurations, developers MUST query the model `Webkul\Partner\Models\PartnerCompanyProperty` (or `Webkul\Account\Models\PartnerCompanyProperty`).
+  - When persisting partner-company accounting configurations, developers MUST query the model `Webkul\Account\Models\PartnerCompanyProperty`.
 
 ---
 

@@ -134,13 +134,13 @@ Evidence: `plugins/webkul/accounts/src/Services/MoveWorkflow.php:238-285`, `plug
 | Action | UI Trigger / Location | Code Path | System Behavior |
 | :--- | :--- | :--- | :--- |
 | **Post / Confirm** | "Confirm" button on header (`ConfirmAction`) | `MoveWorkflow::post()` | Validates balancing, assigns permanent sequence number (`GEN/YYYY/#####`), sets `state = POSTED`, `posted_before = true`, dispatches `MoveConfirmed`. |
-| **Reset to Draft** | "Reset to Draft" button on header (`DraftAction`) | `MoveWorkflow::resetToDraft()` | 1. Un-reconciles all linked debits/credits via `Reconciler::unReconcile()`.<br>2. Verifies entry is not an exchange difference entry.<br>3. Sets `state = DRAFT`.<br>4. Dispatches `MoveDrafted`. Lines become editable again. |
+| **Reset to Draft** | "Reset to Draft" button on header (`ResetToDraftAction`) | `MoveWorkflow::resetToDraft()` | 1. Un-reconciles all linked debits/credits via `Reconciler::unReconcile()`.<br>2. Verifies entry is not an exchange difference entry.<br>3. Sets `state = DRAFT`.<br>4. Dispatches `MoveDrafted`. Lines become editable again. |
 | **Reverse** | "Reverse" button on header (`ReverseAction`) | `MoveWorkflow::reverse()` | 1. Replicates move and lines.<br>2. Inverts debits and credits.<br>3. Links `reversed_entry_id = $move->id`.<br>4. Posts reverse move.<br>5. Auto-reconciles original and reverse lines via `Reconciler::reconcileReversals()`.<br>6. Dispatches `MoveReversed`. |
 | **Cancel** | "Cancel" button on header (`CancelAction`) | `MoveWorkflow::cancel()` | 1. Un-reconciles all linked debits/credits via `Reconciler::unReconcile()`.<br>2. Sets `state = CANCEL`.<br>3. Dispatches `MoveCancelled`. |
 | **Duplicate** | Standard Filament table/page duplicate action | Model replication | Copies header attributes and lines into a brand-new draft move with `name = null` and `posted_before = false`. |
 
 [VERIFIED]
-Evidence: `plugins/webkul/accounts/src/Services/MoveWorkflow.php:40-182`, `plugins/webkul/accounts/src/Filament/Resources/Invoice/Actions/`
+Evidence: `plugins/webkul/accounts/src/Services/MoveWorkflow.php:40-182`, `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource/Actions/`
 
 ---
 
@@ -355,9 +355,9 @@ Evidence: `plugins/webkul/accounts/src/Services/`
 | **Exchange Difference Service** | `plugins/webkul/accounts/src/Services/ExchangeDifferenceRecorder.php` | `ExchangeDifferenceRecorder::buildExchangeMove()`, `differenceFor()` |
 | **Move Calculator Service** | `plugins/webkul/accounts/src/Services/MoveCalculator.php` | `MoveCalculator::recompute()`, `computeAmounts()` |
 | **Invoice Summary Component** | `plugins/webkul/accounts/src/Livewire/InvoiceSummary.php` | `InvoiceSummary::reconcileAction()`, `unReconcileAction()` |
-| **Filament Confirm Action** | `plugins/webkul/accounts/src/Filament/Resources/Invoice/Actions/ConfirmAction.php` | `ConfirmAction::setUp()` |
-| **Filament Reverse Action** | `plugins/webkul/accounts/src/Filament/Resources/Invoice/Actions/ReverseAction.php` | `ReverseAction::setUp()` |
-| **Filament Draft Action** | `plugins/webkul/accounts/src/Filament/Resources/Invoice/Actions/DraftAction.php` | `DraftAction::setUp()` |
+| **Filament Confirm Action** | `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource/Actions/ConfirmAction.php` | `ConfirmAction::setUp()` |
+| **Filament Reverse Action** | `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource/Actions/ReverseAction.php` | `ReverseAction::setUp()` |
+| **Filament Draft Action** | `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource/Actions/ResetToDraftAction.php` | `ResetToDraftAction::setUp()` |
 | **Journal Entry Resource** | `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalEntryResource.php` | `JournalEntryResource` definition |
 | **Balance Sheet Page** | `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/BalanceSheet.php` | `BalanceSheet` report query |
 
@@ -377,7 +377,7 @@ flowchart TD
     subgraph MoveActions ["Document Lifecycle Actions"]
         CONF_ACT["ConfirmAction ('customers.invoice.confirm')"]
         REV_ACT["ReverseAction ('customers.invoice.reverse')"]
-        DFT_ACT["DraftAction ('customers.invoice.draft')"]
+        DFT_ACT["ResetToDraftAction ('customers.invoice.reset-to-draft')"]
         CAN_ACT["CancelAction ('customers.invoice.cancel')"]
     end
 

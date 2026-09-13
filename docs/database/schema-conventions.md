@@ -56,7 +56,7 @@ Shared foundational tables defined by the `support` plugin omit plugin prefixes 
 
 ### 4. Non-Universal Plugin Exceptions
 A few specialized plugins also define unprefixed or uniquely named tables:
-- **Fields**: `custom_fields` (in `plugins/webkul/fields/database/migrations/2024_11_21_142134_create_custom_fields_table.php`)
+- **Fields**: `custom_fields` (in `plugins/webkul/fields/database/migrations/2024_11_13_052541_create_custom_fields_table.php`)
 - **Security**: `teams`, `user_team`, `user_invitations` (in `plugins/webkul/security/database/migrations/`)
 - **Plugin Manager**: `plugins`, `plugin_dependencies` (in `plugins/webkul/support/database/migrations/` and `plugin-manager/`)
 - **Table Views**: `table_views`, `table_view_favorites` (in `plugins/webkul/table-views/database/migrations/`)
@@ -64,9 +64,9 @@ A few specialized plugins also define unprefixed or uniquely named tables:
 
 Evidence:
 - `database/migrations/0001_01_01_000000_create_users_table.php`
-- `plugins/webkul/products/database/migrations/2024_12_11_070420_create_products_products_table.php`
-- `plugins/webkul/support/database/migrations/2024_11_08_085959_create_companies_table.php`
-- `plugins/webkul/fields/database/migrations/2024_11_21_142134_create_custom_fields_table.php`
+- `plugins/webkul/products/database/migrations/2025_01_05_100751_create_products_products_table.php`
+- `plugins/webkul/support/database/migrations/2024_12_10_092657_create_companies_table.php`
+- `plugins/webkul/fields/database/migrations/2024_11_13_052541_create_custom_fields_table.php`
 
 ---
 
@@ -161,9 +161,9 @@ Nullable columns in migrations represent optional associations, draft transactio
 > A column's `nullable()` status in the database does not dictate business validity. Application Form Requests and Filament resource validation rules determine whether a field is required during user input.
 
 Evidence:
-- `plugins/webkul/products/database/migrations/2024_12_11_070420_create_products_products_table.php` (`company_id` nullable)
-- `plugins/webkul/manufacturing/database/migrations/2025_01_08_000001_create_manufacturing_orders_table.php` (`company_id` required)
-- `plugins/webkul/employees/database/migrations/2024_12_04_071817_create_employees_departments_table.php` (`parent_id`, `manager_id` nullable)
+- `plugins/webkul/products/database/migrations/2025_01_05_100751_create_products_products_table.php` (`company_id` nullable)
+- `plugins/webkul/manufacturing/database/migrations/2026_03_31_064247_create_manufacturing_orders_table.php` (`company_id` required)
+- `plugins/webkul/employees/database/migrations/2024_12_11_051916_create_employees_departments_table.php` (`parent_id`, `manager_id` nullable)
 
 ---
 
@@ -204,7 +204,7 @@ Evidence:
 
 Evidence:
 - `database/migrations/0001_01_01_000000_create_users_table.php` (`softDeletes`)
-- `plugins/webkul/products/database/migrations/2024_12_11_070420_create_products_products_table.php` (`softDeletes`)
+- `plugins/webkul/products/database/migrations/2025_01_05_100751_create_products_products_table.php` (`softDeletes`)
 - `plugins/webkul/sales/database/migrations/2025_02_05_102851_create_sales_order_lines_table.php` (No soft deletes)
 
 ---
@@ -247,7 +247,7 @@ Aureus ERP defines **38 JSON / JSONB columns** in database migrations (Breakdown
 
 Evidence:
 - `plugins/webkul/chatter/database/migrations/2024_12_23_062355_create_chatter_messages_table.php` (`$table->json('properties')->nullable()`)
-- `plugins/webkul/fields/database/migrations/2024_11_21_142134_create_custom_fields_table.php` (`$table->json('options')->nullable()`)
+- `plugins/webkul/fields/database/migrations/2024_11_13_052541_create_custom_fields_table.php` (`$table->json('options')->nullable()`)
 - `plugins/webkul/website/database/migrations/2026_08_13_000001_make_website_pages_translatable.php` (`jsonb` conversion)
 
 ---

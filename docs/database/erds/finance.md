@@ -644,22 +644,22 @@ erDiagram
 - [VERIFIED] **accounts_account_moves.journal_id → accounts_journals.id**
   - Evidence: `plugins/webkul/accounts/src/Models/Move.php`
   - Symbol: `Move::journal()`
-  - Migration: `plugins/webkul/accounts/database/migrations/2025_01_30_104445_create_accounts_account_moves_table.php` (`cascadeOnDelete()`)
+  - Migration: `plugins/webkul/accounts/database/migrations/2025_02_11_055303_create_accounts_account_moves_table.php` (`cascadeOnDelete()`)
 
 - [VERIFIED] **accounts_account_move_lines.move_id → accounts_account_moves.id**
   - Evidence: `plugins/webkul/accounts/src/Models/MoveLine.php`, `plugins/webkul/accounts/src/Models/Move.php`
   - Symbol: `MoveLine::move()`, `Move::lines()`
-  - Migration: `plugins/webkul/accounts/database/migrations/2025_01_30_104446_create_accounts_account_move_lines_table.php` (`cascadeOnDelete()`)
+  - Migration: `plugins/webkul/accounts/database/migrations/2025_02_11_071210_create_accounts_account_move_lines_table.php` (`cascadeOnDelete()`)
 
 - [VERIFIED] **accounts_account_move_lines.account_id → accounts_accounts.id**
   - Evidence: `plugins/webkul/accounts/src/Models/MoveLine.php`
   - Symbol: `MoveLine::account()`
-  - Migration: `plugins/webkul/accounts/database/migrations/2025_01_30_104446_create_accounts_account_move_lines_table.php` (`nullOnDelete()`)
+  - Migration: `plugins/webkul/accounts/database/migrations/2025_02_11_071210_create_accounts_account_move_lines_table.php` (`nullOnDelete()`)
 
 - [VERIFIED] **accounts_account_payments.move_id → accounts_account_moves.id**
   - Evidence: `plugins/webkul/accounts/src/Models/Payment.php`
   - Symbol: `Payment::move()`, `Payment::generateJournalEntry()`
-  - Migration: `plugins/webkul/accounts/database/migrations/2025_01_30_110000_create_accounts_account_payments_table.php` (`nullOnDelete()`)
+  - Migration: `plugins/webkul/accounts/database/migrations/2025_02_11_055302_create_accounts_account_payments_table.php` (`nullOnDelete()`)
 
 - [VERIFIED] **accounts_accounts_move_payment.payment_id / invoice_id → accounts_account_payments.id / accounts_account_moves.id**
   - Evidence: `plugins/webkul/accounts/src/Models/Payment.php`, `plugins/webkul/accounts/src/Models/Move.php`
@@ -694,12 +694,12 @@ erDiagram
 - [VERIFIED] **sales_order_invoices.order_id / move_id → sales_orders.id / accounts_account_moves.id**
   - Evidence: `plugins/webkul/sales/src/Models/Invoice.php`, `plugins/webkul/sales/src/Models/Order.php`
   - Symbol: `Invoice::salesOrders()`, `Order::invoices()`
-  - Migration: `plugins/webkul/sales/database/migrations/2025_01_31_100000_create_sales_order_invoices_table.php` (`cascadeOnDelete()`)
+  - Migration: `plugins/webkul/sales/database/migrations/2025_03_05_124400_create_sales_order_invoices_table.php` (`cascadeOnDelete()`)
 
 - [VERIFIED] **purchases_order_account_moves.order_id / move_id → purchases_orders.id / accounts_account_moves.id**
   - Evidence: `plugins/webkul/purchases/src/Models/Order.php`
   - Symbol: `Order::accountMoves()`, `Order::bills()`
-  - Migration: `plugins/webkul/purchases/database/migrations/2025_01_31_110000_create_purchases_order_account_moves_table.php` (`cascadeOnDelete()`)
+  - Migration: `plugins/webkul/purchases/database/migrations/2025_02_11_142937_create_purchases_order_account_moves_table.php` (`cascadeOnDelete()`)
 
 ---
 

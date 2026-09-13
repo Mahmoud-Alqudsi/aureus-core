@@ -422,4 +422,4 @@ Evidence: Source-code scan and AST reflection over all `plugins/webkul/*/src/`
 | Model Observers | `plugins/webkul/inventories/src/Observers/{CompanyObserver,ProductObserver,UOMObserver}.php`<br>`plugins/webkul/manufacturing/src/Observers/{WarehouseObserver,MoveObserver}.php`<br>`plugins/webkul/products/src/Observers/{ProductAttributeObserver,UOMObserver}.php` | [VERIFIED] |
 | SequenceService Implementation | `plugins/webkul/support/src/Services/SequenceService.php` | [VERIFIED] |
 | Chatter Notification System | `plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php` | [VERIFIED] |
-| Multi-Company Context Engine | `plugins/webkul/support/src/CompanyContext.php` | [VERIFIED] |
+| Multi-Company Context Engine | `plugins/webkul/support/src/Services/CompanyContext.php` | [VERIFIED] |
