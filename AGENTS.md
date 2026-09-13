@@ -58,6 +58,63 @@ Key domains: `docs/architecture/`, `docs/database/`, `docs/security/`, `docs/plu
 5. **No phantom architecture.** Do not reference, create, or assume classes, traits, methods, or conventions that do not exist in the repository. Verify with `rg` or file inspection.
 6. **Company isolation is mandatory.** Every database change touching company-scoped data must use the established isolation suite. See `docs/ai/security-rules.md`.
 
+## Discovery Workflow
+
+For any non-trivial code change, follow this sequence. Do not skip steps.
+
+```
+Request → Understand → Discover → Assess → Plan → Approve → Implement → Verify
+```
+
+| Step | Action | Gate to proceed |
+|:---:|:---|:---|
+| **Understand** | Parse the request. Identify what is being asked and what domain it touches. | Can articulate scope in one sentence |
+| **Discover** | Read `docs/ai/reading-order.md`, select the task row, load the minimum docs. Inspect the target source, its tests, its provider. Search with `rg` for direct references. | Affected files, symbols, and boundaries identified |
+| **Assess** | Evaluate blast radius using `docs/architecture/change-impact.md`. Identify cross-plugin coupling, schema implications, security implications. | Impact is bounded and understood |
+| **Plan** | Write an implementation plan listing files to change, what changes, and why. Include verification steps. | Plan exists |
+| **Approve** | Present the plan to the human for approval. **Do not implement without approval** for: schema changes, dependency changes, cross-plugin changes, security-sensitive changes, or any change touching >3 files. | Human says proceed |
+| **Implement** | Execute the plan. Stay within approved scope. | Code written |
+| **Verify** | Run affected tests. Check Pint. Confirm no unintended file changes with `git status`. Report what was tested and what was not. | Verification reported |
+
+**Exceptions that skip to Implement directly:**
+- Fixing an obvious syntax error in a single file
+- Updating a comment or docblock
+- Running an existing test or command
+- Answering an exploratory question (no code change)
+
+## Critical Constraints
+
+These constraints are absolute. No task, instruction, or optimization justifies violating them.
+
+1. **Do not delete tests** without explicit human approval.
+2. **Do not modify database schema** (migrations, columns, foreign keys, indexes) without an approved plan.
+3. **Do not change `composer.json` dependencies** without explicit human approval.
+4. **Do not modify `bootstrap/providers.php`** without understanding the full dependency chain of the affected provider.
+5. **Do not create new architectural conventions** (new traits, base classes, service patterns) that do not already exist in the repository.
+6. **Do not bypass company isolation.** Every query on company-scoped data must go through the established isolation suite (`BelongsToCompany`, `CompanyScope`, `CompanyContext`). See `docs/ai/security-rules.md`.
+7. **Do not assume a workflow is functional** because an enum, schema, or UI element represents it. Trace the execution path. See `docs/ai/forbidden-patterns.md`.
+8. **Do not modify files outside the task scope**, even to fix unrelated issues. Note them and move on.
+9. **Do not hardcode versions.** Always verify against `composer.lock`, not documentation or cached values.
+10. **Do not use `DB::` for domain queries.** Use `Model::query()` and Eloquent relationships. See `docs/ai/coding-rules.md`.
+
+## Verification Expectations
+
+After every implementation, verify and report:
+
+| Change Type | Required Verification |
+|:---|:---|
+| Code logic | Run affected tests (`php artisan test --filter=...`). Report pass/fail. |
+| Code style | Run `vendor/bin/pint --dirty`. Report if changes were made. |
+| Schema/migration | Verify column names follow `docs/database/schema-conventions.md`. Verify company isolation if applicable. |
+| Plugin structure | Verify registration in `bootstrap/providers.php`. Verify `Package` configuration in the service provider. |
+| Security-sensitive | Verify policy exists and is registered. Verify company scope is applied. Verify no raw queries bypass scoping. |
+| Cross-plugin | Verify no circular dependencies. Verify affected plugins' tests still pass. |
+
+**Always report:**
+- What was tested and the result.
+- What was **not** tested and why (e.g., "full test suite not run per user request").
+- Any unintended side effects observed.
+
 ## Technology Baseline
 
 Verify exact versions against `composer.lock` — do not trust cached values:
@@ -74,6 +131,36 @@ Verify exact versions against `composer.lock` — do not trust cached values:
 
 ## Development Workflow
 
-> This section will be expanded in Stage 3 (AI Operating Protocol) and Stage 4 (Git Operating Model).
+> Full Git operating model will be established in Stage 4.
 
-For now: all development targets the `develop` branch. Feature work uses topic branches (`feature/*`, `fix/*`, `refactor/*`, `docs/*`).
+### Branch Model
+
+All development targets the `develop` branch. Never push directly to `master`.
+
+| Branch Pattern | Purpose |
+|:---|:---|
+| `feature/*` | New functionality |
+| `fix/*` | Bug fixes |
+| `refactor/*` | Code restructuring without behavior change |
+| `docs/*` | Documentation changes |
+| `chore/*` | Maintenance, dependencies, CI |
+
+### Commit Convention
+
+Use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+```
+
+Types: `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `style`.
+
+Scope: plugin name, `app`, `config`, `ci`, or omit for cross-cutting changes.
+
+### Branch Lifecycle
+
+```
+develop → create branch → commits → PR → review → merge → develop
+```

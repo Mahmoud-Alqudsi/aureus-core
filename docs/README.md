@@ -52,11 +52,12 @@ When verifying behavior, resolving conflicting statements, or implementing featu
 ## Quick Start
 
 ### For AI Coding Agents
-1. **Start Here**: Review this index (`docs/README.md`).
-2. **Determine Reading Scope**: Consult [`docs/ai/reading-order.md`](ai/reading-order.md) to load only the task-specific documents required for your current objective.
-3. **Enforce Canonical Vocabulary**: Check [`docs/ai/terminology.md`](ai/terminology.md) before authoring code, models, or documentation to avoid known architectural pitfalls.
-4. **Assess Blast Radius**: Review [`docs/architecture/change-impact.md`](architecture/change-impact.md) before altering cross-cutting services, traits, or database tables.
-5. **Verify Against Matrix**: Corroborate critical claims against [`docs/verification-matrix.md`](verification-matrix.md).
+1. **Start Here**: Begin at [`AGENTS.md`](../AGENTS.md) — the canonical AI entry point with operating protocol, discovery workflow, and critical constraints.
+2. **Load Context**: Read [`docs/ai/context.md`](ai/context.md) for system architecture baseline.
+3. **Determine Reading Scope**: Consult [`docs/ai/reading-order.md`](ai/reading-order.md) to load only the task-specific documents required for your current objective.
+4. **Enforce Canonical Vocabulary**: Check [`docs/ai/terminology.md`](ai/terminology.md) before authoring code, models, or documentation to avoid known architectural pitfalls.
+5. **Assess Blast Radius**: Review [`docs/architecture/change-impact.md`](architecture/change-impact.md) before altering cross-cutting services, traits, or database tables.
+6. **Verify Against Matrix**: Corroborate critical claims against [`docs/verification-matrix.md`](verification-matrix.md).
 
 ### For Human Developers
 1. **System Overview**: Read [`docs/architecture/overview.md`](architecture/overview.md) to understand provider registration and package architecture.
@@ -123,7 +124,7 @@ Always distinguish between:
 Autonomous AI agents must follow this reading order to build reliable context without context window exhaustion:
 
 ```
-docs/README.md (Entry Point)
+AGENTS.md (AI Entry Point — Operating Protocol & Constraints)
        ↓
 docs/ai/context.md (System Architecture & Baseline)
        ↓
