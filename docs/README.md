@@ -178,7 +178,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **72 verified files** organized into 9 functional domains:
+The repository documentation consists of **73 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -189,6 +189,7 @@ docs/
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (4 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
+├── development/                              # Development workflow & Git operating model (1 file)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -275,6 +276,13 @@ Mathematical calculation engines, validation constraints, and financial invarian
 | [`docs/business-rules/inventory.md`](business-rules/inventory.md) | Quantitative stock tracking, physical removal strategies (FIFO/LIFO), reservations, on-hand calculations |
 | [`docs/business-rules/purchasing.md`](business-rules/purchasing.md) | 3-way matching rules, vendor price lists, purchase approval thresholds |
 | [`docs/business-rules/sales.md`](business-rules/sales.md) | Pricing rules, promotional discounts, quotation expiry, customer credit-limit analysis |
+
+### Development & Workflow Domain (`docs/development/`)
+Repository topology, branch hierarchy, commit conventions, merge strategy, and upstream synchronization baseline:
+
+| File Link | Primary Scope |
+| :--- | :--- |
+| [`docs/development/git-workflow.md`](development/git-workflow.md) | Git branching, commits, merge strategy, and high-level upstream relationship |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:

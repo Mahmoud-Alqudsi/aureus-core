@@ -131,11 +131,11 @@ Verify exact versions against `composer.lock` — do not trust cached values:
 
 ## Development Workflow
 
-> Full Git operating model will be established in Stage 4.
+The canonical detailed Git operating model is documented in [`docs/development/git-workflow.md`](docs/development/git-workflow.md).
 
 ### Branch Model
 
-All development targets the `develop` branch. Never push directly to `master`.
+All normal development targets `develop`. Direct pushes to `master` and `develop` are prohibited by project policy.
 
 | Branch Pattern | Purpose |
 |:---|:---|
