@@ -178,7 +178,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **74 verified files** organized into 10 functional domains:
+The repository documentation consists of **75 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -189,7 +189,7 @@ docs/
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (4 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
-├── development/                              # Development workflow & Git operating model (2 files)
+├── development/                              # Development workflow & Git operating model (3 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -278,12 +278,13 @@ Mathematical calculation engines, validation constraints, and financial invarian
 | [`docs/business-rules/sales.md`](business-rules/sales.md) | Pricing rules, promotional discounts, quotation expiry, customer credit-limit analysis |
 
 ### Development & Workflow Domain (`docs/development/`)
-Repository topology, branch hierarchy, commit conventions, merge strategy, and GitHub repository governance:
+Repository topology, branch hierarchy, commit conventions, merge strategy, GitHub repository governance, and CI/testing baseline:
 
 | File Link | Primary Scope |
 | :--- | :--- |
 | [`docs/development/git-workflow.md`](development/git-workflow.md) | Git branching, commits, merge strategy, and high-level upstream relationship |
 | [`docs/development/github-governance.md`](development/github-governance.md) | GitHub governance, PR controls, branch protection reality, merge rules, and issue templates |
+| [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and governance findings |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:
