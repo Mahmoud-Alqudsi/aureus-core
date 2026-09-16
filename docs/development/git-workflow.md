@@ -106,11 +106,12 @@ develop
 
 1. **Source**: Normal topic branches must always branch off the latest `develop`.
 2. **Target**: Normal topic branches must target `develop` as their pull request base.
-3. **Prohibition of Direct Pushes**:
+3. **Upstream Synchronization Exception**: An upstream synchronization starts from the latest `master` in a short-lived `chore/upstream-sync-<date>` branch. That branch is the only permitted Pull Request source targeting `master`; after its reviewed merge, the resulting `master` update is promoted to `develop` through a reviewed Pull Request.
+4. **Prohibition of Direct Pushes**:
    - Direct pushes to `develop` are **strictly prohibited by project policy**.
    - Direct pushes to `master` are **strictly prohibited by project policy**.
-   - All code changes must enter `develop` through reviewed Pull Requests.
-4. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same reviewed Pull Request lifecycle. A priority label or expedited review may change response time, but it does not change the branch topology or bypass verification.
+   - All code, documentation, configuration, and upstream synchronization changes must enter protected branches through reviewed Pull Requests.
+5. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same reviewed Pull Request lifecycle. A priority label or expedited review may change response time, but it does not change the branch topology or bypass verification.
 
 > [!NOTE]
 > Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Operational Stage O5. Upstream synchronization exceptions are defined in Operational Stage O7.
@@ -138,6 +139,8 @@ All topic branches must strictly adhere to the standardized prefix naming format
 | `chore` | Maintenance tasks, dependency updates, tooling adjustments | `chore/update-dependencies` |
 
 `hotfix/*` and `release/*` are intentionally not allowed branch types. See [Protected-Branch Policy](#8-protected-branch-policy) for urgent-fix and release handling.
+
+`chore/upstream-sync-<date>` is a narrowly scoped exception: it branches from `master`, targets `master`, and exists only for the reviewed upstream synchronization flow. It does not authorize general chores to target `master`.
 
 ### Naming Constraints
 
@@ -254,11 +257,12 @@ develop  ───► Protected by Policy: Direct push prohibited.
 
 1. **`master` Protection**:
    - Direct pushes to `master` are prohibited.
-   - Updates occur solely via upstream synchronization procedures.
+   - Updates occur only through a reviewed `chore/upstream-sync-<date>` Pull Request that preserves upstream lineage with a merge commit.
 2. **`develop` Protection**:
    - Direct pushes to `develop` are prohibited.
    - All code, documentation, and configuration changes must arrive via Pull Request.
    - Changes to `develop` require a reviewed Pull Request.
+   - The `master`-to-`develop` promotion after an upstream synchronization is also a reviewed Pull Request and uses a merge commit.
 
 > [!IMPORTANT]
 > This section outlines the normative project policy. GitHub-level enforcement mechanisms (such as branch protection rules, required reviews, and automated CI gates) belong to Operational Stage O5.
