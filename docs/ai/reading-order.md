@@ -19,7 +19,7 @@ Read the smallest set that can establish the changed behaviour and its immediate
 3. This file
 4. The target source file, its nearest tests, and the owning provider/configuration file
 
-Then search for direct references with `rg`. Before naming, creating, or changing a model, trait, service, table, policy, or documentation term, read `docs/ai/terminology.md`. Add a document or source area only when the task or that search result makes it relevant.
+Then search for direct references with `rg`. Before naming, creating, or changing a model, trait, service, table, policy, or documentation term, read `docs/ai/terminology.md`. Add a document or source area only when the task or that search result makes it relevant. If a matching repository skill is available under `.agents/skills/`, load it after this baseline; it supplements but never replaces the canonical rules.
 
 ## Task-oriented reading sets
 

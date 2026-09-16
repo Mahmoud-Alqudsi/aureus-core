@@ -132,7 +132,9 @@ Verify exact versions against `composer.lock` — do not trust cached values:
 
 ## Development Workflow
 
-The canonical detailed Git operating model is documented in [`docs/development/git-workflow.md`](docs/development/git-workflow.md), the GitHub repository governance policy is documented in [`docs/development/github-governance.md`](docs/development/github-governance.md), the CI & testing governance baseline is documented in [`docs/development/ci-testing-governance.md`](docs/development/ci-testing-governance.md), the upstream synchronization procedure is documented in [`docs/development/upstream-sync.md`](docs/development/upstream-sync.md), and documentation-change lifecycle and ownership-by-role are governed by [`docs/development/change-management.md`](docs/development/change-management.md).
+The canonical detailed Git operating model is documented in [`docs/development/git-workflow.md`](docs/development/git-workflow.md), the GitHub repository governance policy is documented in [`docs/development/github-governance.md`](docs/development/github-governance.md), the CI & testing governance baseline is documented in [`docs/development/ci-testing-governance.md`](docs/development/ci-testing-governance.md), the upstream synchronization procedure is documented in [`docs/development/upstream-sync.md`](docs/development/upstream-sync.md), documentation-change lifecycle and ownership-by-role are governed by [`docs/development/change-management.md`](docs/development/change-management.md), and the repository-scoped AI skills are indexed in [`docs/development/ai-skills.md`](docs/development/ai-skills.md).
+
+Repository skills in `.agents/skills/` supplement these rules for a narrow task type. They never override this file or grant operational authority; use only a skill whose description matches the task.
 
 ### Branch Model
 

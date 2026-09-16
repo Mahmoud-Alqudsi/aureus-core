@@ -42,6 +42,19 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
+### O9 — AI Skills & Developer Automation
+
+- **Evidentiary Tier**: Active branch implementation.
+- **Status**: **Complete / Committed**.
+- **Primary Focus**: Adding repository-scoped, narrowly triggered AI skills that route work to established canonical controls.
+- **Recorded Controls**:
+  - Added six instruction-only skills under `.agents/skills/` for plugin, API, schema, test/CI, documentation, and upstream synchronization work.
+  - Added [`docs/development/ai-skills.md`](development/ai-skills.md) to define discovery, skill boundaries, maintenance, and the threshold for future deterministic automation.
+  - Narrowed `.gitignore` so only the reviewed `.agents/skills/` subtree is versioned; other local `.agents` content remains ignored.
+  - Kept skills subordinate to `AGENTS.md` and the source-of-truth hierarchy; no skill adds credentials, scripts, remote mutation, or authority to bypass approvals.
+
+---
+
 ## 2. Phase-by-Phase Documentation Evolution
 
 ```
