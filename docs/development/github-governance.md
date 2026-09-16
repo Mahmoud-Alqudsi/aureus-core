@@ -163,7 +163,7 @@ develop (GitHub Default & Primary Integration Branch)
 1. **Branch Source**: All normal topic branches must branch from the latest `develop`.
 2. **Branch Target**: All normal topic branches must target `develop` as their Pull Request base.
 3. **Branch Naming**: Must adhere to `<type>/<description>` using kebab-case and lowercase characters. Allowed types: `feature`, `fix`, `refactor`, `docs`, `chore`. Generic branch names (`temp`, `test`, `wip`, `patch`) are forbidden.
-4. **Upstream Synchronization Pull Request**: The sole exception to the normal branch target is `chore/upstream-sync-<date>`, created from the latest `master` and opened as a Pull Request to `master`. Its reviewed merge preserves upstream lineage; the subsequent `master`-to-`develop` promotion is also a reviewed Pull Request.
+4. **Upstream Synchronization Pull Request**: The sole exception to the normal branch target is `chore/upstream-sync-<date>`, created from the latest `master` and opened as a Pull Request to `master`; a history-preserving recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. Their reviewed merges preserve lineage; the subsequent `master`-to-`develop` promotion is also a reviewed Pull Request.
 5. **Direct Push Prohibition**:
    - Direct pushes to `develop` are prohibited by project policy (`POLICY`).
    - Direct pushes to `master` are prohibited by project policy (`POLICY`).
@@ -177,7 +177,7 @@ develop (GitHub Default & Primary Integration Branch)
 ### PR Expectations and Workflow
 
 - **Mandatory PR Entry**: Every change entering `develop` or `master` must arrive via Pull Request.
-- **Target Branch**: Normal topic Pull Requests target `develop`. Only an authorized `chore/upstream-sync-<date>` branch may target `master` for the upstream synchronization procedure; its resulting `master` commit is then promoted to `develop` through a separate Pull Request.
+- **Target Branch**: Normal topic Pull Requests target `develop`. Only authorized `chore/upstream-sync-<date>` and `chore/upstream-sync-rollback-<date>` branches may target `master` for upstream synchronization or its history-preserving recovery; the resulting `master` commit is then promoted to `develop` through a separate Pull Request.
 
 ### Pull Request Template
 
@@ -266,9 +266,9 @@ The effective-rules endpoint confirms that each target receives `pull_request`, 
    - Each Pull Request condenses into exactly one descriptive Conventional Commit.
    - **No Commit Thresholds**: Squash merging applies universally, regardless of topic branch commit count.
 2. **Upstream Synchronization**:
-   - Upstream synchronization is a separate Git operation governed by Operational Stage O7.
+   - Upstream synchronization is a separate Git operation canonically documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
    - Preserves complete upstream vendor commit lineage and author attribution via Merge Commits (`--no-ff`).
-   - Detailed operational merge procedures, conflict handling, and validation scripts belong strictly to **Operational Stage O7 (Upstream Integration)**.
+   - Detailed operational merge procedures, conflict handling, safety checkpoints, and validation steps belong to that runbook.
 3. **GitHub Repository Merge Settings Consideration**:
    - Repository settings in GitHub govern PR merges via the GitHub UI.
    - Any recommended configuration of GitHub PR merge options (such as defaulting to Squash Merge for topic branches) must **not** restrict or conflict with upstream synchronization procedures that require Merge Commits (`--no-ff`), noting that upstream synchronization procedures may execute via command line or separate integration workflows outside general UI PR restrictions.

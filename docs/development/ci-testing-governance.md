@@ -68,7 +68,7 @@ The purpose of this document is to define the technical verification and testing
 - **Automated Test Code Modification**: Fixing failing tests, refactoring test helpers, or modifying test suites in `tests/` or `plugins/webkul/*/tests/` belongs to future development phases.
 - **Application Code & Migrations**: Modifying domain code in `app/`, `plugins/`, `database/`, or `config/` is strictly prohibited.
 - **GitHub Platform Mutations**: Modifying repository settings, rulesets, or branch protection rules on GitHub is prohibited without explicit authorization.
-- **Upstream Synchronization Execution**: Operational merge procedures and synchronization scripts belong strictly to **Operational Stage O7 (Upstream Integration)**.
+- **Upstream Synchronization Execution**: Operational merge procedures and synchronization runbooks are canonically documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
 
 ---
 

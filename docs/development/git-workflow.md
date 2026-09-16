@@ -106,7 +106,7 @@ develop
 
 1. **Source**: Normal topic branches must always branch off the latest `develop`.
 2. **Target**: Normal topic branches must target `develop` as their pull request base.
-3. **Upstream Synchronization Exception**: An upstream synchronization starts from the latest `master` in a short-lived `chore/upstream-sync-<date>` branch. That branch is the only permitted Pull Request source targeting `master`; after its reviewed merge, the resulting `master` update is promoted to `develop` through a reviewed Pull Request.
+3. **Upstream Synchronization Exception**: An upstream synchronization starts from the latest `master` in a short-lived `chore/upstream-sync-<date>` branch. A history-preserving upstream recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. These are the only permitted Pull Request sources targeting `master`; after a reviewed merge, the resulting `master` update is promoted to `develop` through a reviewed Pull Request.
 4. **Prohibition of Direct Pushes**:
    - Direct pushes to `develop` are **strictly prohibited by project policy**.
    - Direct pushes to `master` are **strictly prohibited by project policy**.
@@ -114,7 +114,7 @@ develop
 5. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same reviewed Pull Request lifecycle. A priority label or expedited review may change response time, but it does not change the branch topology or bypass verification.
 
 > [!NOTE]
-> Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Operational Stage O5. Upstream synchronization exceptions are defined in Operational Stage O7.
+> Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Operational Stage O5. Upstream synchronization exceptions and operational runbooks are documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
 
 ---
 
@@ -140,7 +140,7 @@ All topic branches must strictly adhere to the standardized prefix naming format
 
 `hotfix/*` and `release/*` are intentionally not allowed branch types. See [Protected-Branch Policy](#8-protected-branch-policy) for urgent-fix and release handling.
 
-`chore/upstream-sync-<date>` is a narrowly scoped exception: it branches from `master`, targets `master`, and exists only for the reviewed upstream synchronization flow. It does not authorize general chores to target `master`.
+`chore/upstream-sync-<date>` and `chore/upstream-sync-rollback-<date>` are narrowly scoped exceptions: they branch from the protected upstream baseline, target `master`, and exist only for reviewed upstream synchronization or its history-preserving recovery. They do not authorize general chores to target `master`.
 
 ### Naming Constraints
 
@@ -257,7 +257,7 @@ develop  ───► Protected by Policy: Direct push prohibited.
 
 1. **`master` Protection**:
    - Direct pushes to `master` are prohibited.
-   - Updates occur only through a reviewed `chore/upstream-sync-<date>` Pull Request that preserves upstream lineage with a merge commit.
+   - Updates occur only through a reviewed `chore/upstream-sync-<date>` Pull Request that preserves upstream lineage with a merge commit, or a reviewed `chore/upstream-sync-rollback-<date>` recovery Pull Request.
 2. **`develop` Protection**:
    - Direct pushes to `develop` are prohibited.
    - All code, documentation, and configuration changes must arrive via Pull Request.
@@ -281,7 +281,7 @@ develop  ───► Protected by Policy: Direct push prohibited.
 3. Stable releases use immutable Semantic Version tags in the form `v<major>.<minor>.<patch>`. Pre-releases append a hyphenated label, for example `v1.6.0-rc.1`.
 4. Creating or pushing a `v*` tag to `origin` requires explicit human authorization. The `docker_publish.yml` workflow publishes a Docker image for every pushed `v*` tag; a stable tag on the default branch may also update the `latest` image tag.
 5. Do not move, delete, or reuse published release tags. Correct a released defect with a new `fix/*` Pull Request and a new version tag.
-6. Upstream version tags are not release candidates for `origin` and must not be pushed automatically. Their synchronization is governed by Operational Stage O7.
+6. Upstream version tags are not release candidates for `origin` and must not be pushed automatically. The upstream synchronization safety procedure is defined in [`upstream-sync.md`](upstream-sync.md).
 
 ---
 
@@ -295,4 +295,4 @@ The repository maintains an active relationship with the upstream open-source Au
 
 ### Scope Boundary Notice
 
-This document establishes the high-level topological roles and branch relationships. Detailed operational workflows for upstream synchronization—including merge procedures, conflict resolution protocols, and automation scripts—belong strictly to **Operational Stage O7 (Upstream Synchronization & Merge Strategy)**. No upstream synchronization actions or procedures should be executed or assumed outside Operational Stage O7.
+This document establishes the high-level topological roles and branch relationships. Detailed operational workflows for upstream synchronization—including step-by-step merge procedures, safety checkpoints, conflict resolution protocols, and rollback strategies—are canonically defined in [`docs/development/upstream-sync.md`](upstream-sync.md). No upstream synchronization actions or procedures should be executed or assumed outside this documented runbook.

@@ -160,7 +160,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **75 verified files** organized into 10 functional domains:
+The repository documentation consists of **76 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -171,7 +171,7 @@ docs/
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (4 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
-├── development/                              # Development workflow & Git operating model (3 files)
+├── development/                              # Development workflow & Git operating model (4 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -267,6 +267,7 @@ Repository topology, branch hierarchy, commit conventions, merge strategy, GitHu
 | [`docs/development/git-workflow.md`](development/git-workflow.md) | Git branching, commits, merge strategy, and high-level upstream relationship |
 | [`docs/development/github-governance.md`](development/github-governance.md) | GitHub governance, PR controls, branch protection reality, merge rules, and issue templates |
 | [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and governance findings |
+| [`docs/development/upstream-sync.md`](development/upstream-sync.md) | Operational runbook for upstream synchronization, 3-layer safety preflight, conflict resolution, and rollback |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:
@@ -428,11 +429,11 @@ The active governance and remediation program uses **Operational Stages `O0`–`
 | **O0** | Scope control and working-tree inventory | **Complete** | Read-only inventory completed; no source or configuration changes found. |
 | **O1** | Documentation baseline reconciliation | **Complete / Committed** | Platform facts, stale Livewire references, and internal links reconciled against repository evidence. |
 | **O2** | Operational terminology and status model | **Complete / Committed** | Historical phases and operational stages are explicitly separated. |
-| **O3** | AI knowledge architecture and operating protocol | **Core navigation complete / O7 companion pending** | Plugin, company-scoped, API, and security routes are committed; the upstream route is committed with its O7 runbook. |
+| **O3** | AI knowledge architecture and operating protocol | **Complete / Committed** | Plugin, company-scoped, API, security, and upstream synchronization routes are available from the canonical navigation set. |
 | **O4** | Git operating model | **Complete / Committed** | `fix/*` is the urgent-fix path; releases are approved immutable tags on verified `develop` commits, with no `hotfix/*` or `release/*` branches. |
 | **O5** | GitHub governance | **Complete / Verified** | Active no-bypass rulesets protect `develop` and `master`; PR review, conversation resolution, deletion, and force-push controls are verified. CI status checks remain O6 work. |
 | **O6** | CI, testing, and quality gates | **Baseline audited / Remediation pending** | Workflow and quality findings are documented; implementation is separate work. |
-| **O7** | Upstream integration runbook | **In progress** | Runbook is drafted; command validation and final review remain. |
+| **O7** | Upstream integration runbook | **Complete / Committed** | Protected-branch PR workflow, history-preserving recovery, conflict protocol, workflow review, and tag safety are documented; execution remains explicitly authorized work. |
 | **O8** | Change management and knowledge maintenance | **Not started** | Lifecycle, update triggers, and ownership rules are not yet adopted. |
 | **O9** | AI skills and developer automation | **Not started** | Skills will reference canonical rules after the operating model is stable. |
 | **O10** | Final knowledge-base readiness audit | **Not started** | Scenario-based agent audits and final integration review remain. |
