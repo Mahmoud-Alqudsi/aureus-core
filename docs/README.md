@@ -430,7 +430,7 @@ The active governance and remediation program uses **Operational Stages `O0`–`
 | **O2** | Operational terminology and status model | **Complete / Committed** | Historical phases and operational stages are explicitly separated. |
 | **O3** | AI knowledge architecture and operating protocol | **Core navigation complete / O7 companion pending** | Plugin, company-scoped, API, and security routes are committed; the upstream route is committed with its O7 runbook. |
 | **O4** | Git operating model | **Complete / Committed** | `fix/*` is the urgent-fix path; releases are approved immutable tags on verified `develop` commits, with no `hotfix/*` or `release/*` branches. |
-| **O5** | GitHub governance | **Enforcement contract committed / Platform application pending** | Two no-bypass rulesets protect `develop` and `master`; an authorized administrator must apply and verify them. CI status checks remain O6 work. |
+| **O5** | GitHub governance | **Complete / Verified** | Active no-bypass rulesets protect `develop` and `master`; PR review, conversation resolution, deletion, and force-push controls are verified. CI status checks remain O6 work. |
 | **O6** | CI, testing, and quality gates | **Baseline audited / Remediation pending** | Workflow and quality findings are documented; implementation is separate work. |
 | **O7** | Upstream integration runbook | **In progress** | Runbook is drafted; command validation and final review remain. |
 | **O8** | Change management and knowledge maintenance | **Not started** | Lifecycle, update triggers, and ownership rules are not yet adopted. |

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-15
+last_verified: 2026-09-17
 scope: repository-governance
 confidence: high
 ---
@@ -168,7 +168,7 @@ develop (GitHub Default & Primary Integration Branch)
    - Direct pushes to `develop` are prohibited by project policy (`POLICY`).
    - Direct pushes to `master` are prohibited by project policy (`POLICY`).
    - All code, documentation, configuration, and upstream synchronization changes must arrive via reviewed Pull Request.
-6. **Enforcement Distinction**: While direct push prohibition is strict project policy, technical server-side push rejection via GitHub ruleset is **`NOT VERIFIED`** due to lack of API credentials in the environment.
+6. **Enforcement Distinction**: Server-side protection is **`VERIFIED`**: active repository rulesets require Pull Requests for both protected branches and block deletion and force pushes. Required status checks remain deliberately deferred to O6.
 
 ---
 
@@ -191,7 +191,7 @@ The repository provides a standardized Pull Request template located at [`.githu
 ### PR Review Governance
 
 - **Project Review Expectations**: Pull Requests require one independent approving review before merging into `develop` or `master` as established by project policy (`POLICY`).
-- **GitHub Server-Side Review Enforcement**: Server-side mandatory approving reviews and dismissal settings on GitHub are **`NOT VERIFIED`** via API.
+- **GitHub Server-Side Review Enforcement**: **`VERIFIED`** by GitHub API: both protected branches require one approval from someone other than the latest pusher, dismiss stale approvals after new reviewable commits, and require conversation resolution.
 - **CI Workflow Execution vs. Merge Gating**:
   - Automated CI workflows (`pest_tests.yml`, `playwright_tests.yml`, `translations_check.yml`) execute on Pull Requests targeting `develop` and `master` (**`VERIFIED`**).
   - The execution of these workflows does **NOT** prove that GitHub blocks merging when checks fail; required status check gating on GitHub is **`NOT VERIFIED`**.
@@ -208,24 +208,24 @@ The repository provides a standardized Pull Request template located at [`.githu
 
 | Mechanism | Target Branches | Documented Policy | GitHub-Side Enforcement |
 | :--- | :--- | :--- | :--- |
-| **Direct Push Block** | `develop`, `master` | Prohibited by project policy | **NOT VERIFIED** |
-| **Force-Push Restriction** | `develop`, `master` | Prohibited on shared branches | **NOT VERIFIED** |
-| **Branch Deletion Restriction** | `develop`, `master` | Prohibited on shared branches | **NOT VERIFIED** |
-| **Required Approving Reviews** | `develop`, `master` | One independent approval required before merge | **NOT VERIFIED** |
+| **Direct Push Block** | `develop`, `master` | Prohibited by project policy | **VERIFIED** (`pull_request` rules) |
+| **Force-Push Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`non_fast_forward` rules) |
+| **Branch Deletion Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`deletion` rules) |
+| **Required Approving Reviews** | `develop`, `master` | One independent approval required before merge | **VERIFIED** (one approval; latest-push approval required) |
 | **Required Status Checks** | `develop`, `master` | CI checks run; ruleset gating deferred | **DEFERRED (Operational Stage O6)** |
-| **Conversation Resolution** | `develop`, `master` | Required before merge | **NOT VERIFIED** |
-| **Merge Strategy Controls** | `develop`, `master` | Squash for normal topics; merge commits for approved upstream paths | **NOT VERIFIED** |
+| **Conversation Resolution** | `develop`, `master` | Required before merge | **VERIFIED** |
+| **Merge Strategy Controls** | Repository-wide | Squash and merge commits enabled; rebase disabled | **VERIFIED** (source-specific choice remains review-governed) |
 
 ### Declarative Rulesets
 
-Inspection of `.github/` confirms that **no declarative ruleset files exist** in the repository. Server-side GitHub branch protection rules or repository rulesets could not be programmatically verified due to private repository access constraints.
+Inspection of `.github/` confirms that **no declarative ruleset files exist** in the repository; rulesets are GitHub server-side configuration. Their active state and effective branch rules were verified through the GitHub API on 2026-09-17.
 
 ### Approved Platform Configuration Contract
 
 The following rulesets are the approved O5 enforcement target. They are deliberately split so that the ordinary development flow and the upstream baseline can be audited independently.
 
 | Ruleset | Target | Required controls | Explicit exclusions / rationale |
-| :--- | :--- | :--- |
+| :--- | :--- | :--- | :--- |
 | `protect-develop` | `refs/heads/develop` | Require a Pull Request; require one approving review; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | Do not require linear history: the reviewed `master`-to-`develop` upstream promotion must retain its merge commit. Required CI checks are deferred to O6. |
 | `protect-upstream-baseline` | `refs/heads/master` | Require a Pull Request; require one approving review; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | The permitted source is the reviewed `chore/upstream-sync-<date>` procedure. Required CI checks are deferred to O6. |
 
@@ -233,11 +233,18 @@ Both rulesets must have no standing bypass actor. An exceptional change requires
 
 ### Repository Merge Settings Contract
 
-Repository merge settings must enable **Squash Merge** and **Merge Commits**, and disable **Rebase Merge**. GitHub cannot select a merge method by target branch: reviewers enforce Squash Merge for normal topic Pull Requests, while the two documented upstream paths use Merge Commits. Merge Queue remains disabled until O6 makes every required validation workflow compatible with the `merge_group` event.
+Repository merge settings must enable **Squash Merge** and **Merge Commits**, and disable **Rebase Merge**. GitHub can constrain merge methods by target branch, but it cannot distinguish normal topic Pull Requests from `master`-to-`develop` upstream promotions because both target `develop`; reviewers therefore enforce Squash Merge for normal topics and Merge Commits for the documented upstream paths. Merge Queue remains disabled until O6 makes every required validation workflow compatible with the `merge_group` event.
 
 ### Application and Verification Procedure
 
-An authorized repository administrator must apply the two rulesets and merge settings in GitHub. The operator then records the ruleset names, identifiers, target branches, and effective rule settings in this document using direct GitHub API or settings evidence. Do not mark a control **`VERIFIED`** merely because this contract is documented.
+The approved configuration was applied and verified on 2026-09-17 by direct GitHub API inspection:
+
+| Ruleset | Identifier | Target | Enforcement | Verified controls |
+| :--- | :--- | :--- | :--- | :--- |
+| `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Pull Request, one independent approval, stale-approval dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
+| `protect-upstream-baseline` | `23566566` | `refs/heads/master` | `active` | Pull Request, one independent approval, stale-approval dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
+
+The effective-rules endpoint confirms that each target receives `pull_request`, `deletion`, and `non_fast_forward` rules. Repository merge settings are also verified as Squash Merge enabled, Merge Commits enabled, and Rebase Merge disabled. Required CI status checks were intentionally not added and remain O6 work.
 
 ---
 
@@ -356,25 +363,25 @@ Every governance control and observation in this document is classified accordin
 The audit identified the following genuine, evidence-based governance findings:
 
 ### GOV-001: Direct Push Restriction on `develop` and `master`
-- **Classification**: **`POLICY`** (GitHub Enforcement: **`NOT VERIFIED`**)
-- **Evidence**: `docs/development/git-workflow.md` Section 3 establishes project policy prohibiting direct pushes to `develop` and `master`. Server-side push rejection on GitHub has not been independently verified via API.
-- **Impact**: Direct pushes to `develop` or `master` are prohibited by project policy, but GitHub-side technical enforcement has not been independently verified.
-- **Recommended Action**: Configure a GitHub Repository Ruleset blocking direct pushes to `develop` and `master`.
-- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
+- **Classification**: **`VERIFIED`**
+- **Evidence**: Active GitHub rulesets `23566563` and `23566566` apply `pull_request` rules to `develop` and `master`; the effective-rules endpoint confirms both applications.
+- **Impact**: Direct updates to either protected branch must use a Pull Request.
+- **Recommended Action**: Re-verify ruleset state after any repository-administration change.
+- **Owning Operational Stage**: O5 (`COMPLETE`).
 
 ### GOV-002: Mandatory PR Review Enforcement
-- **Classification**: **`POLICY`** (GitHub Enforcement: **`NOT VERIFIED`**)
-- **Evidence**: `docs/development/git-workflow.md` requires PR reviews prior to integration into `develop`. GitHub server-side approval requirements are unverified via API.
-- **Impact**: Unreviewed changes could theoretically be merged if platform rules do not block them.
-- **Recommended Action**: Configure one required independent approval, stale-approval dismissal, and conversation resolution in the O5 rulesets.
-- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
+- **Classification**: **`VERIFIED`**
+- **Evidence**: Both active rulesets require one approving review, dismissal of stale approvals, approval by someone other than the latest pusher, and resolution of review threads.
+- **Impact**: An unreviewed or superseded approval cannot merge into either protected branch.
+- **Recommended Action**: Maintain at least one independent collaborator capable of reviewing protected-branch Pull Requests.
+- **Owning Operational Stage**: O5 (`COMPLETE`).
 
 ### GOV-003: GitHub Repository Merge Button Configuration
-- **Classification**: **`POLICY`** (GitHub Enforcement: **`NOT VERIFIED`**)
-- **Evidence**: Project policy specifies Squash Merge for normal topic branches and Merge Commits for upstream synchronization (`docs/development/git-workflow.md` Section 7). GitHub repository UI merge button restrictions are unverified via API.
-- **Impact**: Non-squash merges could inadvertently be selected in the GitHub UI for topic PRs if settings allow all merge types.
-- **Recommended Action**: Enable Squash Merge and Merge Commits, disable Rebase Merge, and enforce the documented merge method in review. GitHub has no per-target merge-method restriction that can safely distinguish normal topic Pull Requests from approved upstream promotions.
-- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
+- **Classification**: **`VERIFIED`** (repository settings) / **`POLICY`** (source-specific method selection)
+- **Evidence**: GitHub API confirms Squash Merge and Merge Commits enabled, with Rebase Merge disabled. The distinction between a normal topic Pull Request and the `master`-to-`develop` upstream promotion remains a reviewer-enforced policy because both target `develop`.
+- **Impact**: Rebase Merge cannot be selected; reviewers must select Squash Merge for normal topics and Merge Commits for documented upstream paths.
+- **Recommended Action**: Re-verify merge settings after repository-administration changes.
+- **Owning Operational Stage**: O5 (`COMPLETE`).
 
 ### GOV-004: Issue Template Redundancy
 - **Classification**: **`RECOMMENDED`**
@@ -418,13 +425,13 @@ To preserve strict architectural boundaries across roadmap phases, the following
 | **Default Branch** | `develop` | `develop` | **VERIFIED** | `git ls-remote --symref origin HEAD`, `git symbolic-ref refs/remotes/origin/HEAD` | O5 |
 | **Branch Role: develop** | Primary integration branch | Primary integration branch | **VERIFIED** | `git ls-remote --symref origin HEAD`, `docs/development/git-workflow.md` | O5 |
 | **Branch Role: master** | Upstream synchronization baseline | Upstream synchronization baseline | **POLICY** | `docs/development/git-workflow.md`, commit history | O5 |
-| **Direct Push Restriction on develop & master** | Prohibited on `develop` & `master` | Prohibited by policy; server-side block unverified | **POLICY** | `docs/development/git-workflow.md` Section 3 (GitHub enforcement: `NOT VERIFIED`) | O5 |
+| **Direct Push Restriction on develop & master** | Prohibited on `develop` & `master` | Active Pull Request rules block direct updates | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
 | **Pull Request Template** | Present | Present at `.github/PULL_REQUEST_TEMPLATE.md` | **VERIFIED** | File inspection `.github/PULL_REQUEST_TEMPLATE.md` | O5 |
-| **Pull Request Requirement for protected branches** | Mandatory for `develop` and `master` | Mandatory by policy; server-side enforcement unverified | **POLICY** | `docs/development/git-workflow.md` (GitHub enforcement: `NOT VERIFIED`) | O5 |
-| **Pull Request Review Requirement** | One independent approval before merge | Required by policy; server-side approval unverified | **POLICY** | `docs/development/git-workflow.md` (GitHub enforcement: `NOT VERIFIED`) | O5 |
-| **Topic Branch Merge Strategy** | Squash Merge | Established by policy; observed in PR #8 | **POLICY** | `docs/development/git-workflow.md` Section 7, commit `76aa5f9a6` (GitHub enforcement: `NOT VERIFIED`) | O5 |
+| **Pull Request Requirement for protected branches** | Mandatory for `develop` and `master` | Active rulesets require Pull Requests | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
+| **Pull Request Review Requirement** | One independent approval before merge | Active rulesets require one approval, latest-push approval, and conversation resolution | **VERIFIED** | GitHub rulesets `23566563`, `23566566` | O5 |
+| **Topic Branch Merge Strategy** | Squash Merge | Established by policy; Squash Merge enabled and Rebase Merge disabled | **POLICY** | `docs/development/git-workflow.md`; GitHub repository settings | O5 |
 | **Upstream Integration Merge Strategy** | Merge Commit (`--no-ff`) | Established by policy; observed in history | **POLICY** | `docs/development/git-workflow.md` Section 7 & 9, commits `15a76bf09`, `49e330b5e` | O5 / O7 |
-| **Branch Protection / Rulesets** | Configured on GitHub | Server-side protection unverified via API | **NOT VERIFIED** | Repository file inspection; GitHub API unverified | O5 |
+| **Branch Protection / Rulesets** | Configured on GitHub | Two active repository rulesets protect `develop` and `master` | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
 | **CODEOWNERS** | Configured if needed | Absent across repository | **NOT CONFIGURED** | Inspected `.github/CODEOWNERS`, `CODEOWNERS`, `docs/CODEOWNERS` | O5 |
 | **Issue Templates** | Form-based templates | `bug.yml`, `bug_report.md`, `feature_request.yml` present | **VERIFIED** | Inspected `.github/ISSUE_TEMPLATE/` directory | O5 |
 | **GitHub Actions Workflows** | Active on PRs | 4 workflows active; permissions `contents: read` | **VERIFIED** | Inspected `.github/workflows/` directory | O5 |
@@ -439,6 +446,6 @@ This governance specification is verified against active repository configuratio
 
 - **Status**: `verified`
 - **Source of Truth**: `repository-configuration`
-- **Last Verified**: `2026-09-15`
+- **Last Verified**: `2026-09-17`
 - **Scope**: `repository-governance`
 - **Confidence**: `high`
