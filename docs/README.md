@@ -160,7 +160,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **76 verified files** organized into 10 functional domains:
+The repository documentation consists of **77 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -171,7 +171,7 @@ docs/
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (4 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
-├── development/                              # Development workflow & Git operating model (4 files)
+├── development/                              # Development workflow, Git operations & knowledge maintenance (5 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -268,6 +268,7 @@ Repository topology, branch hierarchy, commit conventions, merge strategy, GitHu
 | [`docs/development/github-governance.md`](development/github-governance.md) | GitHub governance, PR controls, branch protection reality, merge rules, and issue templates |
 | [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and governance findings |
 | [`docs/development/upstream-sync.md`](development/upstream-sync.md) | Operational runbook for upstream synchronization, 3-layer safety preflight, conflict resolution, and rollback |
+| [`docs/development/change-management.md`](development/change-management.md) | Change lifecycle, knowledge-maintenance triggers, evidence discipline, review cadence, and PR documentation record |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:
@@ -434,6 +435,6 @@ The active governance and remediation program uses **Operational Stages `O0`–`
 | **O5** | GitHub governance | **Complete / Verified** | Active no-bypass rulesets protect `develop` and `master`; PR review, conversation resolution, deletion, and force-push controls are verified. CI status checks remain O6 work. |
 | **O6** | CI, testing, and quality gates | **Baseline audited / Remediation pending** | Workflow and quality findings are documented; implementation is separate work. |
 | **O7** | Upstream integration runbook | **Complete / Committed** | Protected-branch PR workflow, history-preserving recovery, conflict protocol, workflow review, and tag safety are documented; execution remains explicitly authorized work. |
-| **O8** | Change management and knowledge maintenance | **Not started** | Lifecycle, update triggers, and ownership rules are not yet adopted. |
+| **O8** | Change management and knowledge maintenance | **Complete / Committed** | Event-driven lifecycle, documentation-impact triggers, evidence discipline, ownership-by-role, quarterly review, and PR recording requirements are adopted. |
 | **O9** | AI skills and developer automation | **Not started** | Skills will reference canonical rules after the operating model is stable. |
 | **O10** | Final knowledge-base readiness audit | **Not started** | Scenario-based agent audits and final integration review remain. |

@@ -132,7 +132,7 @@ Verify exact versions against `composer.lock` — do not trust cached values:
 
 ## Development Workflow
 
-The canonical detailed Git operating model is documented in [`docs/development/git-workflow.md`](docs/development/git-workflow.md), the GitHub repository governance policy is documented in [`docs/development/github-governance.md`](docs/development/github-governance.md), the CI & testing governance baseline is documented in [`docs/development/ci-testing-governance.md`](docs/development/ci-testing-governance.md), and the upstream synchronization procedure is documented in [`docs/development/upstream-sync.md`](docs/development/upstream-sync.md).
+The canonical detailed Git operating model is documented in [`docs/development/git-workflow.md`](docs/development/git-workflow.md), the GitHub repository governance policy is documented in [`docs/development/github-governance.md`](docs/development/github-governance.md), the CI & testing governance baseline is documented in [`docs/development/ci-testing-governance.md`](docs/development/ci-testing-governance.md), the upstream synchronization procedure is documented in [`docs/development/upstream-sync.md`](docs/development/upstream-sync.md), and documentation-change lifecycle and ownership-by-role are governed by [`docs/development/change-management.md`](docs/development/change-management.md).
 
 ### Branch Model
 

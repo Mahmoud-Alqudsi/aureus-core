@@ -28,6 +28,20 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
+## Operational Governance Maintenance
+
+### O8 — Change Management & Knowledge Maintenance
+
+- **Evidentiary Tier**: Active branch implementation.
+- **Status**: **Complete / Committed**.
+- **Primary Focus**: Establishing an event-driven lifecycle for keeping the Living Documentation and AI guidance aligned with authoritative repository evidence.
+- **Recorded Controls**:
+  - Added [`docs/development/change-management.md`](development/change-management.md) defining responsibilities by change role, impact triggers, evidence standards, quarterly review, and PR recording requirements.
+  - Connected the policy to [`AGENTS.md`](../AGENTS.md), the AI reading-order matrix, the canonical documentation index, and the pull-request template.
+  - Preserved the boundary between documentation controls and implementation/platform enforcement: updating a policy does not itself execute upstream synchronization, alter CI, or modify GitHub rulesets.
+
+---
+
 ## 2. Phase-by-Phase Documentation Evolution
 
 ```
