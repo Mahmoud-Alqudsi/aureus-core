@@ -121,7 +121,7 @@ Always distinguish between:
 
 ## Recommended AI Navigation Path
 
-Autonomous AI agents must follow this reading order to build reliable context without context window exhaustion:
+Autonomous AI agents must use a task-scoped route that builds reliable context without context window exhaustion:
 
 ```
 AGENTS.md (AI Entry Point — Operating Protocol & Constraints)
@@ -130,29 +130,11 @@ docs/ai/context.md (System Architecture & Baseline)
        ↓
 docs/ai/reading-order.md (Task-Specific Route Guide)
        ↓
-docs/ai/terminology.md (Canonical Glossary & Invariants)
-       ↓
-docs/ai/architecture-rules.md (Structural Rules)
-       ↓
-docs/ai/security-rules.md (Auth & Multi-Company Rules)
-       ↓
-docs/ai/database-rules.md (Schema & Persistence Rules)
-       ↓
-docs/ai/plugin-rules.md (Plugin Lifecycle & Dependency Rules)
-       ↓
-docs/ai/coding-rules.md (PHP 8.3 & Laravel Conventions)
-       ↓
-docs/ai/testing-rules.md (Pest v4 Coverage & Standards)
-       ↓
-docs/ai/forbidden-patterns.md (Prohibited Practices)
-       ↓
-docs/architecture/change-impact.md (Blast Radius Control)
-       ↓
-docs/verification-matrix.md (Evidence Ledger & Tracking)
+Task row → selected rules, system knowledge, source, tests, and provider/configuration
 ```
 
 > [!NOTE]
-> For the complete task-oriented reading guide and source inspection checklist, refer directly to [`docs/ai/reading-order.md`](ai/reading-order.md). Do not duplicate its matrix.
+> Read [`docs/ai/terminology.md`](ai/terminology.md) before naming, creating, or changing a model, trait, service, table, policy, or documentation term. For the complete task-oriented reading guide and source inspection checklist, refer directly to [`docs/ai/reading-order.md`](ai/reading-order.md). Do not duplicate its matrix.
 
 ---
 
@@ -424,7 +406,9 @@ To maintain the integrity and stability of the Living Documentation and the repo
 
 ---
 
-## Documentation Status
+## Historical Documentation Status
+
+The phases in this section are the closed historical documentation program. They describe how the knowledge base was built; they do not assign work in the active governance roadmap below.
 
 | Phase | Description | Status |
 | :---: | :--- | :---: |
@@ -432,3 +416,23 @@ To maintain the integrity and stability of the Living Documentation and the repo
 | **Phase 11** | Change Impact Analysis & Verification Matrix | **Complete / Locked** |
 | **Phase 12** | Documentation Entry Point (`docs/README.md`) & Documentation Changelog (`docs/CHANGELOG.md`) | **Complete** |
 | **Phase 13** | Read-Only Final Documentation Audit | **Complete / Locked** |
+
+---
+
+## Operational Remediation Roadmap
+
+The active governance and remediation program uses **Operational Stages `O0`–`O10`**. It is intentionally separate from the historical documentation phases above. A stage status describes this branch's implementation state; it does not imply that a control is enforced on GitHub or merged into `develop`.
+
+| Stage | Scope | Branch status | Completion boundary |
+| :---: | :--- | :--- | :--- |
+| **O0** | Scope control and working-tree inventory | **Complete** | Read-only inventory completed; no source or configuration changes found. |
+| **O1** | Documentation baseline reconciliation | **Complete / Committed** | Platform facts, stale Livewire references, and internal links reconciled against repository evidence. |
+| **O2** | Operational terminology and status model | **Complete / Committed** | Historical phases and operational stages are explicitly separated. |
+| **O3** | AI knowledge architecture and operating protocol | **Core navigation complete / O7 companion pending** | Plugin, company-scoped, API, and security routes are committed; the upstream route is committed with its O7 runbook. |
+| **O4** | Git operating model | **Implemented / Decision pending** | Hotfix and release-branch policy still require an explicit project decision. |
+| **O5** | GitHub governance | **Policy implemented / Enforcement pending** | GitHub rulesets and administrative controls require authorized platform changes. |
+| **O6** | CI, testing, and quality gates | **Baseline audited / Remediation pending** | Workflow and quality findings are documented; implementation is separate work. |
+| **O7** | Upstream integration runbook | **In progress** | Runbook is drafted; command validation and final review remain. |
+| **O8** | Change management and knowledge maintenance | **Not started** | Lifecycle, update triggers, and ownership rules are not yet adopted. |
+| **O9** | AI skills and developer automation | **Not started** | Skills will reference canonical rules after the operating model is stable. |
+| **O10** | Final knowledge-base readiness audit | **Not started** | Scenario-based agent audits and final integration review remain. |

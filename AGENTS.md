@@ -22,11 +22,12 @@ When sources disagree, follow this precedence — higher levels override lower:
 
 ### AI Governance Rules — `docs/ai/`
 
-Prescriptive rules that AI agents **must** follow. Start with:
+Prescriptive rules that AI agents **must** follow. Start with this orientation pair:
 
 1. [`docs/ai/context.md`](docs/ai/context.md) — System context and architecture baseline
 2. [`docs/ai/reading-order.md`](docs/ai/reading-order.md) — Task-specific reading sets (read only what is relevant)
-3. [`docs/ai/terminology.md`](docs/ai/terminology.md) — Canonical vocabulary and common misconceptions
+
+Read [`docs/ai/terminology.md`](docs/ai/terminology.md) before naming, creating, or changing a model, trait, service, table, policy, or documentation term; also read it whenever the task itself concerns canonical terminology. Then load domain-specific rules only when the task or a direct source reference requires them.
 
 Then load domain-specific rules as needed:
 

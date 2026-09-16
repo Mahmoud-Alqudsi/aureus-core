@@ -8,7 +8,7 @@ confidence: high
 
 # GitHub Governance
 
-This document defines the canonical GitHub-level repository governance policy, controls, and administrative reconciliation for Aureus ERP. It establishes how development and collaboration are governed on GitHub, reconciling the Phase 4 Git Operating Model with repository reality and verifiable remote settings.
+This document defines the canonical GitHub-level repository governance policy, controls, and administrative reconciliation for Aureus ERP. It establishes how development and collaboration are governed on GitHub, reconciling the Operational Stage O4 Git Operating Model with repository reality and verifiable remote settings.
 
 ---
 
@@ -20,25 +20,25 @@ The purpose of this document is to define the GitHub governance layer that opera
 
 ```
 +-------------------------------------------------------------------+
-|                    GitHub Governance (Phase 5)                    |
+|                    GitHub Governance (Operational Stage O5)       |
 |   Default branch, PR controls, rulesets, merge rules, permissions |
 +-------------------------------------------------------------------+
                                   │
                                   ▼
 +-------------------------------------------------------------------+
-|                  Git Operating Model (Phase 4)                    |
+|                  Git Operating Model (Operational Stage O4)       |
 |   Branch hierarchy, commit convention, topology, merge semantics  |
 +-------------------------------------------------------------------+
                                   │
                                   ▼
 +-------------------------------------------------------------------+
-|               Continuous Integration & Testing (Phase 6)          |
+|               Continuous Integration & Testing (Operational O6)   |
 |      Workflow definitions, test suites, required status checks    |
 +-------------------------------------------------------------------+
                                   │
                                   ▼
 +-------------------------------------------------------------------+
-|                  Upstream Integration (Phase 7)                   |
+|                  Upstream Integration (Operational Stage O7)      |
 |     Lineage synchronization, upstream tracking, conflict protocols|
 +-------------------------------------------------------------------+
 ```
@@ -60,11 +60,11 @@ The purpose of this document is to define the GitHub governance layer that opera
 - **Issue Governance**: Audit of active issue templates and forms in `.github/ISSUE_TEMPLATE/`.
 - **Governance Findings & Evidence Matrix**: Comprehensive audit ledger mapping controls to verified repository evidence.
 
-### Out-of-Scope (Phase Boundaries)
+### Out-of-Scope (Operational Stage Boundaries)
 
-- **CI / Test Suite Implementation**: Workflow implementation, test matrix design, and automated test fixes belong strictly to **Phase 6 (CI / Testing)**.
-- **Upstream Synchronization Execution**: Operational merge procedures, automated sync scripts, and conflict resolution belong strictly to **Phase 7 (Upstream Integration)**.
-- **Upstream Knowledge Synchronization**: Reconciling upstream documentation changes into the living knowledge base belongs strictly to **Phase 8 (Upstream -> Knowledge Synchronization)**.
+- **CI / Test Suite Implementation**: Workflow implementation, test matrix design, and automated test fixes belong strictly to **Operational Stage O6 (CI / Testing)**.
+- **Upstream Synchronization Execution**: Operational merge procedures, automated sync scripts, and conflict resolution belong strictly to **Operational Stage O7 (Upstream Integration)**.
+- **Upstream Knowledge Synchronization**: Reconciling upstream documentation changes into the living knowledge base belongs strictly to **Operational Stage O8 (Change Management & Knowledge Maintenance)**.
 - **Application Code & Infrastructure**: Modifying Laravel/Filament application code, database migrations, package dependencies, or environment configurations is prohibited during governance phases.
 - **Unauthorized GitHub Mutations**: Modifying GitHub server-side repository settings, branch protection rules, or rulesets without explicit human authorization is strictly prohibited.
 
@@ -81,7 +81,7 @@ Aureus ERP operates a dual-remote topology separating upstream open-source devel
 |               Tracks upstream Webkul / Aureus               |
 +-------------------------------------------------------------+
                                │
-                               │ periodic synchronization (Phase 7)
+                               │ periodic synchronization (Operational Stage O7)
                                ▼
 +-------------------------------------------------------------+
 |                           origin                            |
@@ -144,9 +144,9 @@ The default branch configuration was directly audited and verified across both G
 
 ## 5. Branch Governance
 
-### Reconciliation with Phase 4 Operating Model
+### Reconciliation with Operational Stage O4 Git Operating Model
 
-The repository's branch governance directly reconciles the Phase 4 Git operating model with platform-level controls:
+The repository's branch governance directly reconciles the Operational Stage O4 Git operating model with platform-level controls:
 
 ```
 develop (GitHub Default & Primary Integration Branch)
@@ -176,11 +176,11 @@ develop (GitHub Default & Primary Integration Branch)
 ### PR Expectations and Workflow
 
 - **Mandatory PR Entry**: All non-upstream changes entering `develop` must arrive via Pull Request.
-- **Target Branch**: Must be `develop`. PRs targeting `master` are prohibited except during Phase 7 upstream synchronization procedures.
+- **Target Branch**: Must be `develop`. PRs targeting `master` are prohibited except during Operational Stage O7 upstream synchronization procedures.
 
 ### Pull Request Template
 
-The repository provides a standardized Pull Request template located at [`.github/PULL_REQUEST_TEMPLATE.md`](file:///home/mahmoud/projects/aureuserp/.github/PULL_REQUEST_TEMPLATE.md) (42 lines):
+The repository provides a standardized Pull Request template located at [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md) (42 lines):
 - **Description**: Clear explanation of change context and purpose.
 - **Related Issue**: Traceability link (`Closes #`).
 - **Type of Change**: Categorization (`Bug fix`, `New feature`, `Breaking change`, `Documentation update`, `Refactor`, `Tests`).
@@ -194,9 +194,9 @@ The repository provides a standardized Pull Request template located at [`.githu
 - **CI Workflow Execution vs. Merge Gating**:
   - Automated CI workflows (`pest_tests.yml`, `playwright_tests.yml`, `translations_check.yml`) execute on Pull Requests targeting `develop` and `master` (**`VERIFIED`**).
   - The execution of these workflows does **NOT** prove that GitHub blocks merging when checks fail; required status check gating on GitHub is **`NOT VERIFIED`**.
-  - Formal CI gating, test strategy, and required status check rulesets belong strictly to **Phase 6 (CI / Testing)**.
+  - Formal CI gating, test strategy, and required status check rulesets belong strictly to **Operational Stage O6 (CI / Testing)**.
 - **Template and Operational Reality**:
-  - The existence of [`.github/PULL_REQUEST_TEMPLATE.md`](file:///home/mahmoud/projects/aureuserp/.github/PULL_REQUEST_TEMPLATE.md) is **`VERIFIED`**.
+  - The existence of [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md) is **`VERIFIED`**.
   - Historical Pull Request usage is documented in Git history (e.g., PR #8 squash merge commit `76aa5f9a6`), but historical PR usage does not prove active GitHub server-side PR enforcement.
 
 ---
@@ -211,7 +211,7 @@ The repository provides a standardized Pull Request template located at [`.githu
 | **Force-Push Restriction** | `develop`, `master` | Prohibited on shared branches | **NOT VERIFIED** |
 | **Branch Deletion Restriction** | `develop`, `master` | Prohibited on shared branches | **NOT VERIFIED** |
 | **Required Approving Reviews** | `develop` | Policy requires review prior to merge | **NOT VERIFIED** |
-| **Required Status Checks** | `develop`, `master` | CI checks run; ruleset gating deferred | **DEFERRED (Phase 6)** |
+| **Required Status Checks** | `develop`, `master` | CI checks run; ruleset gating deferred | **DEFERRED (Operational Stage O6)** |
 | **Conversation Resolution** | `develop` | Recommended policy | **NOT VERIFIED** |
 | **Linear History Requirement** | `develop` | Maintained via Squash Merge policy | **NOT VERIFIED** |
 
@@ -224,7 +224,7 @@ Inspection of `.github/` confirms that **no declarative ruleset files exist** in
 When GitHub configuration changes are authorized, the project recommends establishing a GitHub Repository Ruleset targeting `develop` and `master`:
 - Enforce deletion restrictions and force-push blocks.
 - Require Pull Requests before merging with conversation resolution.
-- Require passing CI status checks (codified under Phase 6).
+- Require passing CI status checks (codified under Operational Stage O6).
 - Status: **`PENDING AUTHORIZATION`** (will not be applied without explicit authorization).
 
 ---
@@ -247,9 +247,9 @@ When GitHub configuration changes are authorized, the project recommends establi
    - Each Pull Request condenses into exactly one descriptive Conventional Commit.
    - **No Commit Thresholds**: Squash merging applies universally, regardless of topic branch commit count.
 2. **Upstream Synchronization**:
-   - Upstream synchronization is a separate Git operation governed by Phase 7.
+   - Upstream synchronization is a separate Git operation governed by Operational Stage O7.
    - Preserves complete upstream vendor commit lineage and author attribution via Merge Commits (`--no-ff`).
-   - Detailed operational merge procedures, conflict handling, and validation scripts belong strictly to **Phase 7 (Upstream Integration)**.
+   - Detailed operational merge procedures, conflict handling, and validation scripts belong strictly to **Operational Stage O7 (Upstream Integration)**.
 3. **GitHub Repository Merge Settings Consideration**:
    - Repository settings in GitHub govern PR merges via the GitHub UI.
    - Any recommended configuration of GitHub PR merge options (such as defaulting to Squash Merge for topic branches) must **not** restrict or conflict with upstream synchronization procedures that require Merge Commits (`--no-ff`), noting that upstream synchronization procedures may execute via command line or separate integration workflows outside general UI PR restrictions.
@@ -279,20 +279,20 @@ A comprehensive search across the repository confirms that **no CODEOWNERS file 
 
 ### Audited Issue Templates
 
-Inspection of [`.github/ISSUE_TEMPLATE/`](file:///home/mahmoud/projects/aureuserp/.github/ISSUE_TEMPLATE/) confirms the presence of 3 templates:
+Inspection of [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/) confirms the presence of 3 templates:
 
 | Template File | Format | Issue Type | Governance Attributes |
 | :--- | :--- | :--- | :--- |
-| [`bug.yml`](file:///home/mahmoud/projects/aureuserp/.github/ISSUE_TEMPLATE/bug.yml) | GitHub Issue Form (YAML) | Bug Report (`labels: ["Bug"]`) | Prerequisites validation, affected version, environment preconditions (PHP, MySQL, OS, browser), reproduction steps, actual vs expected behavior, screenshots, context |
-| [`bug_report.md`](file:///home/mahmoud/projects/aureuserp/.github/ISSUE_TEMPLATE/bug_report.md) | Legacy Markdown Template | Bug Report (`labels: bug`) | Freeform markdown bug report covering similar fields |
-| [`feature_request.yml`](file:///home/mahmoud/projects/aureuserp/.github/ISSUE_TEMPLATE/feature_request.yml) | GitHub Issue Form (YAML) | Feature Request (`labels: ['Feature Request']`) | Problem description, proposed solution, alternatives considered, additional context |
+| [`bug.yml`](../../.github/ISSUE_TEMPLATE/bug.yml) | GitHub Issue Form (YAML) | Bug Report (`labels: ["Bug"]`) | Prerequisites validation, affected version, environment preconditions (PHP, MySQL, OS, browser), reproduction steps, actual vs expected behavior, screenshots, context |
+| [`bug_report.md`](../../.github/ISSUE_TEMPLATE/bug_report.md) | Legacy Markdown Template | Bug Report (`labels: bug`) | Freeform markdown bug report covering similar fields |
+| [`feature_request.yml`](../../.github/ISSUE_TEMPLATE/feature_request.yml) | GitHub Issue Form (YAML) | Feature Request (`labels: ['Feature Request']`) | Problem description, proposed solution, alternatives considered, additional context |
 
 ### Observations and Recommendations
 
 1. **Template Redundancy**: Having both `bug.yml` (modern form) and `bug_report.md` (legacy template) active causes duplicate bug reporting options in GitHub's issue chooser UI.
 2. **Missing Structured Categories**: Structured issue forms do not yet exist for documentation updates, refactorings, or upstream synchronization tasks.
 3. **Recommendation**: In a future governance maintenance phase, consolidate bug reporting by deprecating `bug_report.md` in favor of `bug.yml`, and consider structured forms for `docs.yml` and `refactor.yml`.
-4. **Implementation Boundary**: This finding is a **governance recommendation only** (**`RECOMMENDED`**). No files in `.github/ISSUE_TEMPLATE/` are created, renamed, or deleted during Phase 5.
+4. **Implementation Boundary**: This finding is a **governance recommendation only** (**`RECOMMENDED`**). No files in `.github/ISSUE_TEMPLATE/` are created, renamed, or deleted during Operational Stage O5.
 
 ---
 
@@ -300,21 +300,21 @@ Inspection of [`.github/ISSUE_TEMPLATE/`](file:///home/mahmoud/projects/aureuser
 
 ### Verified Workflow Files
 
-Inspection of [`.github/workflows/`](file:///home/mahmoud/projects/aureuserp/.github/workflows/) confirms 4 active workflows:
+Inspection of [`.github/workflows/`](../../.github/workflows/) confirms 4 active workflows:
 
 | Workflow File | Triggers (`on:`) | Target Branches | Permissions | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
-| [`pest_tests.yml`](file:///home/mahmoud/projects/aureuserp/.github/workflows/pest_tests.yml) | `push`, `pull_request` | `master`, `develop` | `contents: read` | Automated Pest v4 unit/feature tests across MySQL 8.0 & PostgreSQL 16 on PHP 8.3 |
-| [`playwright_tests.yml`](file:///home/mahmoud/projects/aureuserp/.github/workflows/playwright_tests.yml) | `push`, `pull_request`, `merge_group`, `workflow_dispatch` | `master`, `develop` | `contents: read` | End-to-end browser testing with Playwright (6 shards) on MySQL & PostgreSQL |
-| [`translations_check.yml`](file:///home/mahmoud/projects/aureuserp/.github/workflows/translations_check.yml) | `push`, `pull_request` | `master`, `develop` | `contents: read` | Translation consistency checks (`php artisan translations:check --details`) |
-| [`docker_publish.yml`](file:///home/mahmoud/projects/aureuserp/.github/workflows/docker_publish.yml) | `push` (tags `v*`), `workflow_dispatch` | Tags matching `v*` | `contents: read` | Multi-architecture production Docker image build and publish to Docker Hub |
+| [`pest_tests.yml`](../../.github/workflows/pest_tests.yml) | `push`, `pull_request` | `master`, `develop` | `contents: read` | Automated Pest v4 unit/feature tests across MySQL 8.0 & PostgreSQL 16 on PHP 8.3 |
+| [`playwright_tests.yml`](../../.github/workflows/playwright_tests.yml) | `push`, `pull_request`, `merge_group`, `workflow_dispatch` | `master`, `develop` | `contents: read` | End-to-end browser testing with Playwright (6 shards) on MySQL & PostgreSQL |
+| [`translations_check.yml`](../../.github/workflows/translations_check.yml) | `push`, `pull_request` | `master`, `develop` | `contents: read` | Translation consistency checks (`php artisan translations:check --details`) |
+| [`docker_publish.yml`](../../.github/workflows/docker_publish.yml) | `push` (tags `v*`), `workflow_dispatch` | Tags matching `v*` | `contents: read` | Multi-architecture production Docker image build and publish to Docker Hub |
 
 ### Governance Analysis and CI Boundary
 
 - **Concurrency Controls**: `pest_tests.yml`, `playwright_tests.yml`, and `translations_check.yml` configure `${{ github.workflow }}-${{ github.ref }}` concurrency groups with `cancel-in-progress: true` to conserve CI runner resources.
 - **Least-Privilege Permissions**: All 4 workflows explicitly declare `contents: read`. This least-privilege permission is verified for these specific workflow files; it does not constitute an audit of the overall repository token settings.
 - **Required Status Checks**: While workflows trigger on Pull Requests targeting `develop` and `master`, whether they are enforced as mandatory blocking status checks in GitHub rulesets is **`NOT VERIFIED`**.
-- **Phase Boundary Notice**: Formal CI gating, status check ruleset requirements, test matrix reliability, and test runner strategy belong strictly to **Phase 6 (CI / Testing)**.
+- **Operational Stage Boundary Notice**: Formal CI gating, status check ruleset requirements, test matrix reliability, and test runner strategy belong strictly to **Operational Stage O6 (CI / Testing)**.
 
 ---
 
@@ -334,7 +334,7 @@ Every governance control and observation in this document is classified accordin
 
 ### Special Constraints
 
-1. **Autonomous AI Agents**: "Autonomous AI Agent" is **NOT** a native GitHub permission role. AI coding agents operate strictly through the identity, credentials, SSH keys, or tokens under which they are executed. AI operating rules belong to [`AGENTS.md`](file:///home/mahmoud/projects/aureuserp/AGENTS.md) and [`docs/ai/`](file:///home/mahmoud/projects/aureuserp/docs/ai/).
+1. **Autonomous AI Agents**: "Autonomous AI Agent" is **NOT** a native GitHub permission role. AI coding agents operate strictly through the identity, credentials, SSH keys, or tokens under which they are executed. AI operating rules belong to [`AGENTS.md`](../../AGENTS.md) and [`docs/ai/`](../ai/).
 2. **Hotfix Governance**: No formal hotfix governance policy was established in the audited sources. Standard `fix/*` topic branch lifecycles apply to all bug resolution. Dedicated emergency hotfix workflows remain **`NOT CONFIGURED`**.
 
 ---
@@ -348,42 +348,42 @@ The audit identified the following genuine, evidence-based governance findings:
 - **Evidence**: `docs/development/git-workflow.md` Section 3 establishes project policy prohibiting direct pushes to `develop` and `master`. Server-side push rejection on GitHub has not been independently verified via API.
 - **Impact**: Direct pushes to `develop` or `master` are prohibited by project policy, but GitHub-side technical enforcement has not been independently verified.
 - **Recommended Action**: Configure a GitHub Repository Ruleset blocking direct pushes to `develop` and `master`.
-- **Owning Phase**: Phase 5 (`PENDING AUTHORIZATION`).
+- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
 
 ### GOV-002: Mandatory PR Review Enforcement
 - **Classification**: **`POLICY`** (GitHub Enforcement: **`NOT VERIFIED`**)
 - **Evidence**: `docs/development/git-workflow.md` requires PR reviews prior to integration into `develop`. GitHub server-side approval requirements are unverified via API.
 - **Impact**: Unreviewed changes could theoretically be merged if platform rules do not block them.
 - **Recommended Action**: Configure required approvals in GitHub rulesets when team scaling warrants.
-- **Owning Phase**: Phase 5 (`PENDING AUTHORIZATION`).
+- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
 
 ### GOV-003: GitHub Repository Merge Button Configuration
 - **Classification**: **`POLICY`** (GitHub Enforcement: **`NOT VERIFIED`**)
 - **Evidence**: Project policy specifies Squash Merge for normal topic branches and Merge Commits for upstream synchronization (`docs/development/git-workflow.md` Section 7). GitHub repository UI merge button restrictions are unverified via API.
 - **Impact**: Non-squash merges could inadvertently be selected in the GitHub UI for topic PRs if settings allow all merge types.
 - **Recommended Action**: If GitHub PR merge options are configured, ensure Squash Merge is the designated method for normal topic Pull Requests targeting `develop`, while preserving capability for Merge Commits (`--no-ff`) where required for upstream synchronization, or noting that local upstream synchronization procedures execute outside GitHub UI PR restrictions.
-- **Owning Phase**: Phase 5 (`PENDING AUTHORIZATION`).
+- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
 
 ### GOV-004: Issue Template Redundancy
 - **Classification**: **`RECOMMENDED`**
 - **Evidence**: `.github/ISSUE_TEMPLATE/` contains both `bug.yml` (YAML form) and `bug_report.md` (legacy Markdown).
 - **Impact**: Causes duplicate bug report options in the GitHub issue chooser UI.
-- **Recommended Action**: In a future governance maintenance phase, deprecate and remove legacy `bug_report.md` in favor of `bug.yml`. This remains a recommendation only; no template files are modified in Phase 5.
-- **Owning Phase**: Phase 5 (`PENDING AUTHORIZATION`).
+- **Recommended Action**: In a future governance maintenance stage, deprecate and remove legacy `bug_report.md` in favor of `bug.yml`. This remains a recommendation only; no template files are modified in Operational Stage O5.
+- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
 
 ### GOV-005: CODEOWNERS Configuration
 - **Classification**: **`NOT CONFIGURED`**
 - **Evidence**: No `CODEOWNERS` file exists in `.github/`, root, or `docs/`.
 - **Impact**: Reviewers must be manually assigned on all Pull Requests.
 - **Recommended Action**: Retain current unconfigured status for centralized maintainer model; plan modular ownership if team expands.
-- **Owning Phase**: Phase 5 (`RECOMMENDED`).
+- **Owning Operational Stage**: O5 (`RECOMMENDED`).
 
 ### GOV-006: Automated CI Status Checks Gating
 - **Classification**: **`DEFERRED`**
 - **Evidence**: `.github/workflows/pest_tests.yml`, `playwright_tests.yml`, and `translations_check.yml` run on PRs, but ruleset gating is unverified.
 - **Impact**: PRs could be merged even if automated test suites fail.
-- **Recommended Action**: Formally codify required status checks during Phase 6 CI governance.
-- **Owning Phase**: Phase 6 (CI / Testing).
+- **Recommended Action**: Formally codify required status checks during Operational Stage O6 CI governance.
+- **Owning Operational Stage**: O6 (CI / Testing).
 
 ---
 
@@ -391,33 +391,33 @@ The audit identified the following genuine, evidence-based governance findings:
 
 To preserve strict architectural boundaries across roadmap phases, the following governance areas are formally deferred:
 
-| Deferred Control Area | Owning Phase | Scope and Governance Responsibilities |
+| Deferred Control Area | Owning Operational Stage | Scope and Governance Responsibilities |
 | :--- | :--- | :--- |
-| **CI Gating & Required Status Checks** | **Phase 6 — CI / Testing** | Codifying required status checks in GitHub rulesets; establishing test matrix reliability; configuring failure notifications and coverage thresholds. |
-| **Upstream Synchronization Procedures** | **Phase 7 — Upstream Integration** | Defining operational sync commands; vendor conflict resolution protocols; verification procedures for vendor alignment; tag synchronization. |
-| **Living Knowledge Synchronization** | **Phase 8 — Upstream -> Knowledge Synchronization** | Reconciling upstream schema and feature modifications against the living documentation suite (`docs/`); updating architecture specs and ERDs. |
+| **CI Gating & Required Status Checks** | **O6 — CI / Testing** | Codifying required status checks in GitHub rulesets; establishing test matrix reliability; configuring failure notifications and coverage thresholds. |
+| **Upstream Synchronization Procedures** | **O7 — Upstream Integration** | Defining operational sync commands; vendor conflict resolution protocols; verification procedures for vendor alignment; tag synchronization. |
+| **Living Knowledge Synchronization** | **O8 — Change Management & Knowledge Maintenance** | Reconciling upstream schema and feature modifications against the living documentation suite (`docs/`); updating architecture specs and ERDs. |
 
 ---
 
 ## 15. Evidence Matrix
 
-| Area | Expected State | Actual State | Classification | Evidence Source | Phase |
+| Area | Expected State | Actual State | Classification | Evidence Source | Operational Stage |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Default Branch** | `develop` | `develop` | **VERIFIED** | `git ls-remote --symref origin HEAD`, `git symbolic-ref refs/remotes/origin/HEAD` | Phase 5 |
-| **Branch Role: develop** | Primary integration branch | Primary integration branch | **VERIFIED** | `git ls-remote --symref origin HEAD`, `docs/development/git-workflow.md` | Phase 5 |
-| **Branch Role: master** | Upstream synchronization baseline | Upstream synchronization baseline | **POLICY** | `docs/development/git-workflow.md`, commit history | Phase 5 |
-| **Direct Push Restriction on develop & master** | Prohibited on `develop` & `master` | Prohibited by policy; server-side block unverified | **POLICY** | `docs/development/git-workflow.md` Section 3 (GitHub enforcement: `NOT VERIFIED`) | Phase 5 |
-| **Pull Request Template** | Present | Present at `.github/PULL_REQUEST_TEMPLATE.md` | **VERIFIED** | File inspection `.github/PULL_REQUEST_TEMPLATE.md` | Phase 5 |
-| **Pull Request Requirement for develop** | Mandatory for `develop` | Mandatory by policy; practiced in history | **POLICY** | `docs/development/git-workflow.md`, PR #8 commit `76aa5f9a6` (GitHub enforcement: `NOT VERIFIED`) | Phase 5 |
-| **Pull Request Review Requirement** | Review prior to merge | Required by policy; server-side approval unverified | **POLICY** | `docs/development/git-workflow.md` (GitHub enforcement: `NOT VERIFIED`) | Phase 5 |
-| **Topic Branch Merge Strategy** | Squash Merge | Established by policy; observed in PR #8 | **POLICY** | `docs/development/git-workflow.md` Section 7, commit `76aa5f9a6` (GitHub enforcement: `NOT VERIFIED`) | Phase 5 |
-| **Upstream Integration Merge Strategy** | Merge Commit (`--no-ff`) | Established by policy; observed in history | **POLICY** | `docs/development/git-workflow.md` Section 7 & 9, commits `15a76bf09`, `49e330b5e` | Phase 5 / Phase 7 |
-| **Branch Protection / Rulesets** | Configured on GitHub | Server-side protection unverified via API | **NOT VERIFIED** | Repository file inspection; GitHub API unverified | Phase 5 |
-| **CODEOWNERS** | Configured if needed | Absent across repository | **NOT CONFIGURED** | Inspected `.github/CODEOWNERS`, `CODEOWNERS`, `docs/CODEOWNERS` | Phase 5 |
-| **Issue Templates** | Form-based templates | `bug.yml`, `bug_report.md`, `feature_request.yml` present | **VERIFIED** | Inspected `.github/ISSUE_TEMPLATE/` directory | Phase 5 |
-| **GitHub Actions Workflows** | Active on PRs | 4 workflows active; permissions `contents: read` | **VERIFIED** | Inspected `.github/workflows/` directory | Phase 5 |
-| **Required Status Checks Gating** | Enforced gating | Workflows execute; gating deferred | **DEFERRED** | Inspected `.github/workflows/` directory | Phase 6 |
-| **Upstream Sync Procedure** | Documented procedure | Dual-remote topology active; execution deferred | **DEFERRED** | Phase 4 docs, git remotes | Phase 7 |
+| **Default Branch** | `develop` | `develop` | **VERIFIED** | `git ls-remote --symref origin HEAD`, `git symbolic-ref refs/remotes/origin/HEAD` | O5 |
+| **Branch Role: develop** | Primary integration branch | Primary integration branch | **VERIFIED** | `git ls-remote --symref origin HEAD`, `docs/development/git-workflow.md` | O5 |
+| **Branch Role: master** | Upstream synchronization baseline | Upstream synchronization baseline | **POLICY** | `docs/development/git-workflow.md`, commit history | O5 |
+| **Direct Push Restriction on develop & master** | Prohibited on `develop` & `master` | Prohibited by policy; server-side block unverified | **POLICY** | `docs/development/git-workflow.md` Section 3 (GitHub enforcement: `NOT VERIFIED`) | O5 |
+| **Pull Request Template** | Present | Present at `.github/PULL_REQUEST_TEMPLATE.md` | **VERIFIED** | File inspection `.github/PULL_REQUEST_TEMPLATE.md` | O5 |
+| **Pull Request Requirement for develop** | Mandatory for `develop` | Mandatory by policy; practiced in history | **POLICY** | `docs/development/git-workflow.md`, PR #8 commit `76aa5f9a6` (GitHub enforcement: `NOT VERIFIED`) | O5 |
+| **Pull Request Review Requirement** | Review prior to merge | Required by policy; server-side approval unverified | **POLICY** | `docs/development/git-workflow.md` (GitHub enforcement: `NOT VERIFIED`) | O5 |
+| **Topic Branch Merge Strategy** | Squash Merge | Established by policy; observed in PR #8 | **POLICY** | `docs/development/git-workflow.md` Section 7, commit `76aa5f9a6` (GitHub enforcement: `NOT VERIFIED`) | O5 |
+| **Upstream Integration Merge Strategy** | Merge Commit (`--no-ff`) | Established by policy; observed in history | **POLICY** | `docs/development/git-workflow.md` Section 7 & 9, commits `15a76bf09`, `49e330b5e` | O5 / O7 |
+| **Branch Protection / Rulesets** | Configured on GitHub | Server-side protection unverified via API | **NOT VERIFIED** | Repository file inspection; GitHub API unverified | O5 |
+| **CODEOWNERS** | Configured if needed | Absent across repository | **NOT CONFIGURED** | Inspected `.github/CODEOWNERS`, `CODEOWNERS`, `docs/CODEOWNERS` | O5 |
+| **Issue Templates** | Form-based templates | `bug.yml`, `bug_report.md`, `feature_request.yml` present | **VERIFIED** | Inspected `.github/ISSUE_TEMPLATE/` directory | O5 |
+| **GitHub Actions Workflows** | Active on PRs | 4 workflows active; permissions `contents: read` | **VERIFIED** | Inspected `.github/workflows/` directory | O5 |
+| **Required Status Checks Gating** | Enforced gating | Workflows execute; gating deferred | **DEFERRED** | Inspected `.github/workflows/` directory | O6 |
+| **Upstream Sync Procedure** | Documented procedure | Dual-remote topology active; execution deferred | **DEFERRED** | O4 docs, git remotes | O7 |
 
 ---
 

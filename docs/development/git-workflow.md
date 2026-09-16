@@ -104,7 +104,7 @@ develop
    - All code changes must enter `develop` through reviewed Pull Requests.
 
 > [!NOTE]
-> Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Phase 5. Upstream synchronization exceptions are defined in Phase 7.
+> Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Operational Stage O5. Upstream synchronization exceptions are defined in Operational Stage O7.
 
 ---
 
@@ -250,7 +250,7 @@ develop  ───► Protected by Policy: Direct push prohibited.
    - Changes to `develop` require a reviewed Pull Request.
 
 > [!IMPORTANT]
-> This section outlines the normative project policy. GitHub-level enforcement mechanisms (such as branch protection rules, required reviews, and automated CI gates) belong to Phase 5.
+> This section outlines the normative project policy. GitHub-level enforcement mechanisms (such as branch protection rules, required reviews, and automated CI gates) belong to Operational Stage O5.
 
 ---
 
@@ -264,4 +264,4 @@ The repository maintains an active relationship with the upstream open-source Au
 
 ### Scope Boundary Notice
 
-This document establishes the high-level topological roles and branch relationships. Detailed operational workflows for upstream synchronization—including merge procedures, conflict resolution protocols, and automation scripts—belong strictly to **Phase 7 (Upstream Synchronization & Merge Strategy)**. No upstream synchronization actions or procedures should be executed or assumed outside Phase 7.
+This document establishes the high-level topological roles and branch relationships. Detailed operational workflows for upstream synchronization—including merge procedures, conflict resolution protocols, and automation scripts—belong strictly to **Operational Stage O7 (Upstream Synchronization & Merge Strategy)**. No upstream synchronization actions or procedures should be executed or assumed outside Operational Stage O7.
