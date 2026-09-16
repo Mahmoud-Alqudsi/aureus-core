@@ -177,12 +177,12 @@ Every pattern documented here has occurred in this repository or in historical a
 
 ### 10. Stale Documentation ≠ Source of Truth
 
-- **What it looks like**: Reading `AGENTS.md` where it states `livewire/livewire (LIVEWIRE) - v3` and developing Livewire v3 components.
+- **What it looks like**: Reading a stale historical document that describes Livewire v3 and developing Livewire v3 components.
 - **Why it is tempting**: Root project guideline files like `AGENTS.md` and `README.md` are presumed to be authoritative by AI agents.
 - **Specific Aureus ERP instance(s)**:
-  - `AGENTS.md:19` explicitly claims Livewire is on v3. However, `composer.lock` proves that `livewire/livewire` is installed at `v4.3.3`. Writing v3 code leads to syntax errors and broken component lifecycles.
+  - A historical `AGENTS.md` revision claimed Livewire v3; the current [`AGENTS.md`](../../AGENTS.md) and `composer.lock` agree that `livewire/livewire` is installed at `v4.3.3`. Writing v3 code leads to syntax errors and broken component lifecycles.
 - **Evidence**:
-  - `AGENTS.md:19`
+  - [`AGENTS.md`](../../AGENTS.md)
   - `composer.lock` (line entries for `livewire/livewire` specifying `v4.3.3`)
   - `docs/ai/context.md:40-43`
 - **Rule that prevents it**:

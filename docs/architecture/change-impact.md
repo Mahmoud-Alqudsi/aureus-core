@@ -833,7 +833,7 @@ The following historical discrepancies identified during Phases 0–10 are prese
 ┌────┬──────────────┬──────────────────────────────┬─────────────────────────────────────────────────────┬──────────────────┐
 │ ID │ Source Phase │ Affected Document / Symbol   │ Documented Discrepancy                              │ Current Status   │
 ├────┼──────────────┼──────────────────────────────┼─────────────────────────────────────────────────────┼──────────────────┤
-│ C1 │ Phase 10     │ AGENTS.md:19                 │ States Livewire v3; composer.lock proves Livewire v4│ Pending update   │
+│ C1 │ Phase 10     │ AGENTS.md                    │ Historical Livewire v3 claim; current file states v4 │ Resolved         │
 │ C2 │ Phase 4      │ SupportServiceProvider.php   │ Declares missing migration 'email_templates'        │ Pending fix      │
 │ C3 │ Phase 4      │ SupportServiceProvider.php   │ Missing registration for companies unique index     │ Pending fix      │
 │ C4 │ Phase 4      │ TimeOffServiceProvider.php   │ Missing registration for default leave types        │ Pending fix      │

@@ -69,7 +69,7 @@ tests/
 
 ### AppServiceProvider
 
-**File**: [`app/Providers/AppServiceProvider.php`](app/Providers/AppServiceProvider.php)
+**File**: [`app/Providers/AppServiceProvider.php`](../../app/Providers/AppServiceProvider.php)
 
 Responsibilities:
 
@@ -107,7 +107,7 @@ Evidence: `bootstrap/providers.php` lines 35–67
 
 ### ApplyBrandSettings
 
-**File**: [`app/Http/Middleware/ApplyBrandSettings.php`](app/Http/Middleware/ApplyBrandSettings.php)
+**File**: [`app/Http/Middleware/ApplyBrandSettings.php`](../../app/Http/Middleware/ApplyBrandSettings.php)
 
 Dynamically applies company-specific branding at request time by reading from `Webkul\Support\Settings\BrandSettings`:
 
@@ -123,7 +123,7 @@ Evidence: `app/Http/Middleware/ApplyBrandSettings.php` lines 48–107
 
 ### SetLocale
 
-**File**: [`app/Http/Middleware/SetLocale.php`](app/Http/Middleware/SetLocale.php)
+**File**: [`app/Http/Middleware/SetLocale.php`](../../app/Http/Middleware/SetLocale.php)
 
 Resolves the application locale using a priority chain:
 
@@ -147,7 +147,7 @@ Evidence: `app/Http/Middleware/SetLocale.php` lines 18–43; `bootstrap/app.php`
 
 ### App\Models\User
 
-**File**: [`app/Models/User.php`](app/Models/User.php)
+**File**: [`app/Models/User.php`](../../app/Models/User.php)
 
 A standard Laravel scaffold User model with `HasApiTokens`, `HasFactory`, `Notifiable`. **This model is effectively unused at runtime** because `AppServiceProvider` binds `Authenticatable` → `Webkul\Security\Models\User`. The Security plugin's User model is the actual authenticatable entity used by both guards.
 
@@ -162,7 +162,7 @@ Evidence: `app/Models/User.php`; `app/Providers/AppServiceProvider.php` line 19;
 
 ### Customized Topbar
 
-**File**: [`resources/views/vendor/filament-panels/livewire/topbar.blade.php`](resources/views/vendor/filament-panels/livewire/topbar.blade.php) (339 lines)
+**File**: [`resources/views/vendor/filament-panels/livewire/topbar.blade.php`](../../resources/views/vendor/filament-panels/livewire/topbar.blade.php) (339 lines)
 
 This is a **vendor override** of Filament's default topbar that adds significant custom behavior:
 
@@ -177,7 +177,7 @@ Evidence: `resources/views/vendor/filament-panels/livewire/topbar.blade.php` lin
 
 ### Customized Sidebar
 
-**File**: [`resources/views/vendor/filament-panels/livewire/sidebar.blade.php`](resources/views/vendor/filament-panels/livewire/sidebar.blade.php) (172 lines)
+**File**: [`resources/views/vendor/filament-panels/livewire/sidebar.blade.php`](../../resources/views/vendor/filament-panels/livewire/sidebar.blade.php) (172 lines)
 
 A **vendor override** of Filament's default sidebar with these modifications:
 
@@ -191,8 +191,8 @@ Evidence: `resources/views/vendor/filament-panels/livewire/sidebar.blade.php` li
 ### Language Switcher
 
 **Files**:
-- [`resources/views/filament/components/language-switcher.blade.php`](resources/views/filament/components/language-switcher.blade.php) — used in both admin and customer panels via `PanelsRenderHook::GLOBAL_SEARCH_END`
-- [`resources/views/filament/components/auth-language-switcher.blade.php`](resources/views/filament/components/auth-language-switcher.blade.php) — used on authentication pages
+- [`resources/views/filament/components/language-switcher.blade.php`](../../resources/views/filament/components/language-switcher.blade.php) — used in both admin and customer panels via `PanelsRenderHook::GLOBAL_SEARCH_END`
+- [`resources/views/filament/components/auth-language-switcher.blade.php`](../../resources/views/filament/components/auth-language-switcher.blade.php) — used on authentication pages
 
 Both components:
 - Read supported locales from `config('app.supported_locales')`
@@ -206,7 +206,7 @@ Evidence: `resources/views/filament/components/language-switcher.blade.php`; `ap
 
 ### Navigation Icons
 
-**Directory**: [`resources/svg/`](resources/svg/) (21 SVG files)
+**Directory**: [`resources/svg/`](../../resources/svg/) (21 SVG files)
 
 Custom SVG icons used by the `NavigationGroup` enum and the app switcher grid for module identification:
 
@@ -240,7 +240,7 @@ Evidence: `config/app.php` lines 99–130; `lang/` directory listing
 
 ### RTL CSS Architecture
 
-**File**: [`resources/css/app.css`](resources/css/app.css) (306 lines)
+**File**: [`resources/css/app.css`](../../resources/css/app.css) (306 lines)
 
 The application implements RTL support through a comprehensive CSS override strategy:
 
@@ -295,9 +295,9 @@ Evidence: `database/migrations/` directory listing; `plugins/webkul/plugin-manag
 
 | Seeder | Role | Called By |
 |:---|:---|:---|
-| [`DatabaseSeeder`](database/seeders/DatabaseSeeder.php) | Orchestrates: calls `SecurityDatabaseSeeder` → `SupportDatabaseSeeder` → `PluginSeeder` | `db:seed` or `erp:install` |
-| [`ShieldSeeder`](database/seeders/ShieldSeeder.php) | Creates `panel_user` role and 56 direct permissions (CRUD for roles, users, teams, fields, tasks) | Called during `erp:install` flow |
-| [`CurrencySeeder`](database/seeders/CurrencySeeder.php) | Seeds 40 international currencies into `Webkul\Support\Models\Currency` | Called during `erp:install` flow |
+| [`DatabaseSeeder`](../../database/seeders/DatabaseSeeder.php) | Orchestrates: calls `SecurityDatabaseSeeder` → `SupportDatabaseSeeder` → `PluginSeeder` | `db:seed` or `erp:install` |
+| [`ShieldSeeder`](../../database/seeders/ShieldSeeder.php) | Creates `panel_user` role and 56 direct permissions (CRUD for roles, users, teams, fields, tasks) | Called during `erp:install` flow |
+| [`CurrencySeeder`](../../database/seeders/CurrencySeeder.php) | Seeds 40 international currencies into `Webkul\Support\Models\Currency` | Called during `erp:install` flow |
 
 **Installation chain**: `erp:install` (in `plugin-manager`) → runs migrations → calls `DatabaseSeeder` → delegates to plugin-specific seeders for permissions, default data, and system configuration.
 
@@ -308,7 +308,7 @@ Evidence: `database/seeders/DatabaseSeeder.php`; `database/seeders/ShieldSeeder.
 
 | Factory | Model | Note |
 |:---|:---|:---|
-| [`UserFactory`](database/factories/UserFactory.php) | `Webkul\Security\Models\User` | **Not** `App\Models\User`; generates name, email, verified timestamp, hashed password |
+| [`UserFactory`](../../database/factories/UserFactory.php) | `Webkul\Security\Models\User` | **Not** `App\Models\User`; generates name, email, verified timestamp, hashed password |
 
 [VERIFIED]
 Evidence: `database/factories/UserFactory.php` lines 25, 32–41
@@ -319,7 +319,7 @@ Evidence: `database/factories/UserFactory.php` lines 25, 32–41
 
 ### Configuration
 
-**File**: [`config/scribe.php`](config/scribe.php)
+**File**: [`config/scribe.php`](../../config/scribe.php)
 
 | Setting | Value |
 |:---|:---|
@@ -333,7 +333,7 @@ Evidence: `database/factories/UserFactory.php` lines 25, 32–41
 
 - **Root `routes/api.php` is empty**. All API routes are registered by individual plugins (accounts, partners, products, sales, security, support).
 - **Scribe generates** OpenAPI YAML files to `.scribe/endpoints/` (10 files covering 9 API groups + 1 custom).
-- **Scalar viewer** at [`resources/views/scribe/index.blade.php`](resources/views/scribe/index.blade.php) renders the Scalar API reference using the generated OpenAPI spec.
+- **Scalar viewer** at [`resources/views/scribe/index.blade.php`](../../resources/views/scribe/index.blade.php) renders the Scalar API reference using the generated OpenAPI spec.
 - **Customization files**: `.scribe/auth.md` and `.scribe/intro.md` provide the authentication guide and introduction text injected into the generated documentation.
 
 [VERIFIED]
@@ -345,7 +345,7 @@ Evidence: `config/scribe.php`; `.scribe/` directory; `resources/views/scribe/ind
 
 ### Vite Configuration
 
-**File**: [`vite.config.js`](vite.config.js)
+**File**: [`vite.config.js`](../../vite.config.js)
 
 Entry points:
 1. `resources/css/app.css` — Application CSS with Tailwind and RTL support
@@ -372,7 +372,7 @@ Evidence: `vite.config.js`; `postcss.config.js`; `tailwind.config.js`; `package.
 
 ### Application Bootstrap
 
-**File**: [`bootstrap/app.php`](bootstrap/app.php)
+**File**: [`bootstrap/app.php`](../../bootstrap/app.php)
 
 1. **Routing**: Registers `routes/web.php`, `routes/api.php`, `routes/console.php`, and health check at `/up`.
 2. **Global web middleware**: Appends `SetLocale` to the web middleware stack.
@@ -407,7 +407,7 @@ Documented in [`docs/ai/testing-rules.md`](../ai/testing-rules.md). Application-
 
 ### E2E Testing (Playwright)
 
-**Directory**: [`tests/e2e-pw/`](tests/e2e-pw/)
+**Directory**: [`tests/e2e-pw/`](../../tests/e2e-pw/)
 
 A Playwright-based end-to-end test suite with the following structure:
 
@@ -429,14 +429,14 @@ Evidence: `tests/` directory listing; `tests/e2e-pw/` complete file listing
 
 | Config File | Architectural Significance |
 |:---|:---|
-| [`config/app.php`](config/app.php) | `supported_locales` (5 locales with RTL flags), `currency` (base currency code) |
-| [`config/auth.php`](config/auth.php) | Dual guards (`web` → `Webkul\Security\Models\User`, `customer` → `Webkul\Website\Models\Partner`), dual password brokers |
-| [`config/filament-shield.php`](config/filament-shield.php) | Permission generation rules, super admin configuration |
-| [`config/permission.php`](config/permission.php) | Spatie Permission model classes, cache configuration |
-| [`config/sanctum.php`](config/sanctum.php) | Stateful domains, API token guard |
-| [`config/scribe.php`](config/scribe.php) | API documentation generation, route matching, authentication strategy |
-| [`config/query-builder.php`](config/query-builder.php) | Spatie QueryBuilder defaults for API filtering |
-| [`config/settings.php`](config/settings.php) | Spatie Laravel Settings configuration |
+| [`config/app.php`](../../config/app.php) | `supported_locales` (5 locales with RTL flags), `currency` (base currency code) |
+| [`config/auth.php`](../../config/auth.php) | Dual guards (`web` → `Webkul\Security\Models\User`, `customer` → `Webkul\Website\Models\Partner`), dual password brokers |
+| [`config/filament-shield.php`](../../config/filament-shield.php) | Permission generation rules, super admin configuration |
+| [`config/permission.php`](../../config/permission.php) | Spatie Permission model classes, cache configuration |
+| [`config/sanctum.php`](../../config/sanctum.php) | Stateful domains, API token guard |
+| [`config/scribe.php`](../../config/scribe.php) | API documentation generation, route matching, authentication strategy |
+| [`config/query-builder.php`](../../config/query-builder.php) | Spatie QueryBuilder defaults for API filtering |
+| [`config/settings.php`](../../config/settings.php) | Spatie Laravel Settings configuration |
 
 Standard Laravel configuration files (cache, database, filesystems, logging, mail, queue, session) use default framework settings and are not architecturally significant.
 
@@ -444,9 +444,9 @@ Standard Laravel configuration files (cache, database, filesystems, logging, mai
 
 | File | Purpose |
 |:---|:---|
-| [`.env.example`](.env.example) | Environment template: MySQL default, database sessions/cache/queue, log channel, NativePHP barcode config |
-| [`pint.json`](pint.json) | Laravel Pint code style: `laravel` preset, `concat_space: none`, `=> align` operator spacing |
-| [`docker-compose.yml`](docker-compose.yml) | Docker configuration with production setup under `docker/production/` |
+| [`.env.example`](../../.env.example) | Environment template: MySQL default, database sessions/cache/queue, log channel, NativePHP barcode config |
+| [`pint.json`](../../pint.json) | Laravel Pint code style: `laravel` preset, `concat_space: none`, `=> align` operator spacing |
+| [`docker-compose.yml`](../../docker-compose.yml) | Docker configuration with production setup under `docker/production/` |
 
 [VERIFIED]
 Evidence: `config/` directory listing; `.env.example`; `pint.json`; `docker-compose.yml`
