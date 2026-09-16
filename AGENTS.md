@@ -138,6 +138,8 @@ The canonical detailed Git operating model is documented in [`docs/development/g
 
 All normal development targets `develop`. Direct pushes to `master` and `develop` are prohibited by project policy.
 
+Urgent defects use `fix/*` from `develop` and still require review and verification; the project has no `hotfix/*` or `release/*` branches. Version tags are created only from verified `develop` commits with explicit human authorization because pushing a `v*` tag publishes a Docker image. See [`docs/development/git-workflow.md`](docs/development/git-workflow.md).
+
 | Branch Pattern | Purpose |
 |:---|:---|
 | `feature/*` | New functionality |

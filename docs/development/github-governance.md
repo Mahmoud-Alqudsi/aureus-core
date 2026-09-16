@@ -335,7 +335,7 @@ Every governance control and observation in this document is classified accordin
 ### Special Constraints
 
 1. **Autonomous AI Agents**: "Autonomous AI Agent" is **NOT** a native GitHub permission role. AI coding agents operate strictly through the identity, credentials, SSH keys, or tokens under which they are executed. AI operating rules belong to [`AGENTS.md`](../../AGENTS.md) and [`docs/ai/`](../ai/).
-2. **Hotfix Governance**: No formal hotfix governance policy was established in the audited sources. Standard `fix/*` topic branch lifecycles apply to all bug resolution. Dedicated emergency hotfix workflows remain **`NOT CONFIGURED`**.
+2. **Urgent Fix & Release Branches**: The project intentionally has no `hotfix/*` or `release/*` branches. Urgent defects use the normal reviewed `fix/*` lifecycle from `develop`; releases are approved version tags on verified `develop` commits. See [`git-workflow.md`](git-workflow.md#8-protected-branch-policy).
 
 ---
 

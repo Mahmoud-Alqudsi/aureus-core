@@ -72,6 +72,14 @@ develop
 - **Topic Branches (`feature/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`)**:
   Isolated, short-lived development branches dedicated to specific tasks.
 
+### Intentional Branch Omissions
+
+The project intentionally has no dedicated `hotfix/*` or `release/*` branch classes:
+
+- Urgent defect work uses the normal `fix/*` lifecycle from `develop`; urgency does not authorize a direct push or bypass a Pull Request.
+- A release is a verified commit already integrated into `develop`, identified by an approved version tag. It is not a separately maintained release branch.
+- `master` remains exclusively the upstream synchronization baseline and must not be repurposed as a hotfix or release branch.
+
 ---
 
 ## 3. Branch Source and Target Rules
@@ -102,6 +110,7 @@ develop
    - Direct pushes to `develop` are **strictly prohibited by project policy**.
    - Direct pushes to `master` are **strictly prohibited by project policy**.
    - All code changes must enter `develop` through reviewed Pull Requests.
+4. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same reviewed Pull Request lifecycle. A priority label or expedited review may change response time, but it does not change the branch topology or bypass verification.
 
 > [!NOTE]
 > Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Operational Stage O5. Upstream synchronization exceptions are defined in Operational Stage O7.
@@ -127,6 +136,8 @@ All topic branches must strictly adhere to the standardized prefix naming format
 | `refactor` | Code restructuring without altering external behavior | `refactor/plugin-service-providers` |
 | `docs` | Documentation additions, corrections, or updates | `docs/api-documentation` |
 | `chore` | Maintenance tasks, dependency updates, tooling adjustments | `chore/update-dependencies` |
+
+`hotfix/*` and `release/*` are intentionally not allowed branch types. See [Protected-Branch Policy](#8-protected-branch-policy) for urgent-fix and release handling.
 
 ### Naming Constraints
 
@@ -251,6 +262,22 @@ develop  ───► Protected by Policy: Direct push prohibited.
 
 > [!IMPORTANT]
 > This section outlines the normative project policy. GitHub-level enforcement mechanisms (such as branch protection rules, required reviews, and automated CI gates) belong to Operational Stage O5.
+
+### Urgent-Fix Handling
+
+1. Create `fix/<description>` from the latest `develop`.
+2. Keep the change narrowly scoped, including a regression test when the defect is testable.
+3. Open a Pull Request to `develop`, identifying urgency, affected components, verification performed, and any customer or security impact.
+4. Use the normal squash-merge policy after the required review. No emergency path permits direct pushes, rebases of shared branches, or a merge to `master`.
+
+### Release and Version-Tag Policy
+
+1. A release candidate must already be a verified commit reachable from `develop`; a release branch is not created.
+2. The release Pull Request must include the applicable project changelog update and record verification results before a tag is considered.
+3. Stable releases use immutable Semantic Version tags in the form `v<major>.<minor>.<patch>`. Pre-releases append a hyphenated label, for example `v1.6.0-rc.1`.
+4. Creating or pushing a `v*` tag to `origin` requires explicit human authorization. The `docker_publish.yml` workflow publishes a Docker image for every pushed `v*` tag; a stable tag on the default branch may also update the `latest` image tag.
+5. Do not move, delete, or reuse published release tags. Correct a released defect with a new `fix/*` Pull Request and a new version tag.
+6. Upstream version tags are not release candidates for `origin` and must not be pushed automatically. Their synchronization is governed by Operational Stage O7.
 
 ---
 
