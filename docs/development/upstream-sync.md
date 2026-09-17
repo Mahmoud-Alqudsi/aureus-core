@@ -166,7 +166,7 @@ git merge upstream/master --no-ff -m "Merge updates from upstream/master (${UPST
 ```
 
 > [!IMPORTANT]
-> Do not check out `master` and merge into it locally. GitHub ruleset `protect-upstream-baseline` requires the resulting change to enter `master` through a reviewed Pull Request.
+> Do not check out `master` and merge into it locally. GitHub ruleset `protect-upstream-baseline` requires the resulting change to enter `master` through an authorized, self-reviewed Pull Request.
 
 ---
 
@@ -250,7 +250,7 @@ gh pr create \
   --body "Upstream target: ${UPSTREAM_TARGET}\n\nValidation: <record completed validation>"
 ```
 
-The reviewer must confirm the conflict-resolution record, the validation evidence, tag safety, and any incoming workflow review. Merge this Pull Request with **Merge Commit**, not Squash or Rebase. After the required independent approval and CI checks applicable at that time, confirm the result:
+The responsible maintainer must confirm the conflict-resolution record, self-review the changes, record validation evidence, confirm tag safety, and review any incoming workflow changes. Merge this Pull Request with **Merge Commit**, not Squash or Rebase. After the required authorization and applicable CI checks at that time, confirm the result:
 
 ```bash
 # [B] Refresh the protected baseline after GitHub merges the Pull Request
@@ -276,7 +276,7 @@ gh pr create \
   --body "Source master commit: $(git rev-parse origin/master)\n\nValidation: <record PR and local validation evidence>"
 ```
 
-The reviewer must select **Merge Commit** after the required review and applicable CI checks complete. Then verify protected-branch parity:
+The responsible maintainer must select **Merge Commit** after self-review, required authorization, and applicable CI checks complete. Then verify protected-branch parity:
 
 ```bash
 # [B] Refresh protected references
@@ -318,7 +318,7 @@ RECOVERY_BRANCH="chore/upstream-sync-rollback-$(date -u +%Y%m%d)-$(git rev-parse
 git switch --create "${RECOVERY_BRANCH}" "origin/${TARGET_BRANCH}"
 git revert -m "${MAINLINE_PARENT}" "${MERGE_COMMIT}"
 
-# [D] 3. Push the recovery branch, then open a reviewed Pull Request to the target.
+# [D] 3. Push the recovery branch, then open an authorized, self-reviewed Pull Request to the target.
 git push --set-upstream origin "${RECOVERY_BRANCH}"
 gh pr create \
   --base "${TARGET_BRANCH}" \
@@ -327,7 +327,7 @@ gh pr create \
   --body "Reverts: ${MERGE_COMMIT}\n\nReason: <record approved reason>"
 ```
 
-For a rollback targeting `master`, merge the reviewed recovery Pull Request with **Merge Commit**, then promote the resulting `master` change to `develop` through the reviewed procedure in Section 10. For a rollback targeting `develop` only, use the project-approved Merge Commit path for this upstream recovery. No rollback permits a direct push to `master` or `develop`.
+For a rollback targeting `master`, merge the authorized, self-reviewed recovery Pull Request with **Merge Commit**, then promote the resulting `master` change to `develop` through the authorized, self-reviewed procedure in Section 10. For a rollback targeting `develop` only, use the project-approved Merge Commit path for this upstream recovery. No rollback permits a direct push to `master` or `develop`.
 
 > [!NOTE]
 > `git revert -m <parent>` accepts one mainline-parent selector. The commit message is supplied by Git's normal editor or with `--no-edit` when the generated message is sufficient; `-m` is not a message option.

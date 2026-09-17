@@ -72,7 +72,7 @@ The purpose of this document is to define the GitHub governance layer that opera
 
 ## 3. Repository / Remote Topology
 
-Aureus ERP operates a dual-remote topology separating upstream open-source development from downstream private enterprise extensions:
+Aureus ERP operates a dual-remote topology separating upstream open-source development from downstream public enterprise development:
 
 ```
 +-------------------------------------------------------------+
@@ -96,7 +96,7 @@ Aureus ERP operates a dual-remote topology separating upstream open-source devel
    - Represents the public upstream fork tracking vendor updates.
    - Synchronized periodically into `origin/master`.
 2. **`origin` (`Mahmoud-Alqudsi/aureus-core`)**:
-   - Represents the private development and integration repository.
+   - Represents the public development and integration repository.
    - Hosts all daily development, feature branches, pull requests, and automated testing pipelines.
 3. **`master` Branch Role**:
    - **Upstream Synchronization Baseline**.
@@ -117,7 +117,7 @@ Aureus ERP operates a dual-remote topology separating upstream open-source devel
 
 ### Governance Decision and Verification
 
-A formal governance decision has been enacted establishing `develop` as the canonical GitHub default branch of the private `origin` repository:
+A formal governance decision has been enacted establishing `develop` as the canonical GitHub default branch of the public `origin` repository:
 
 ```
 Canonical Default Branch: develop
@@ -163,11 +163,11 @@ develop (GitHub Default & Primary Integration Branch)
 1. **Branch Source**: All normal topic branches must branch from the latest `develop`.
 2. **Branch Target**: All normal topic branches must target `develop` as their Pull Request base.
 3. **Branch Naming**: Must adhere to `<type>/<description>` using kebab-case and lowercase characters. Allowed types: `feature`, `fix`, `refactor`, `docs`, `chore`. Generic branch names (`temp`, `test`, `wip`, `patch`) are forbidden.
-4. **Upstream Synchronization Pull Request**: The sole exception to the normal branch target is `chore/upstream-sync-<date>`, created from the latest `master` and opened as a Pull Request to `master`; a history-preserving recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. Their reviewed merges preserve lineage; the subsequent `master`-to-`develop` promotion is also a reviewed Pull Request.
+4. **Upstream Synchronization Pull Request**: The sole exception to the normal branch target is `chore/upstream-sync-<date>`, created from the latest `master` and opened as a Pull Request to `master`; a history-preserving recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. Their authorized, self-reviewed merges preserve lineage; the subsequent `master`-to-`develop` promotion is also an authorized, self-reviewed Pull Request.
 5. **Direct Push Prohibition**:
    - Direct pushes to `develop` are prohibited by project policy (`POLICY`).
    - Direct pushes to `master` are prohibited by project policy (`POLICY`).
-   - All code, documentation, configuration, and upstream synchronization changes must arrive via reviewed Pull Request.
+   - All code, documentation, configuration, and upstream synchronization changes must arrive via a self-reviewed Pull Request with recorded verification.
 6. **Enforcement Distinction**: Server-side protection is **`VERIFIED`**: active repository rulesets require Pull Requests for both protected branches and block deletion and force pushes. Required status checks remain deliberately deferred to O6.
 
 ---
@@ -190,8 +190,8 @@ The repository provides a standardized Pull Request template located at [`.githu
 
 ### PR Review Governance
 
-- **Project Review Expectations**: Pull Requests require one independent approving review before merging into `develop` or `master` as established by project policy (`POLICY`).
-- **GitHub Server-Side Review Enforcement**: **`VERIFIED`** by GitHub API: both protected branches require one approval from someone other than the latest pusher, dismiss stale approvals after new reviewable commits, and require conversation resolution.
+- **Solo-Maintainer Review Policy**: The Pull Request author must complete the template self-review and record proportionate verification before merging into `develop` or `master`. The active rulesets require **zero** approving reviews, so an independent approval is not a merge prerequisite. Independent review remains required whenever another repository control or the change risk requires it.
+- **GitHub Server-Side Review Enforcement**: **`VERIFIED`** by GitHub API: both protected branches require a Pull Request and conversation resolution, require zero approvals, and do not require approval from someone other than the latest pusher. Stale-review dismissal remains configured; with zero required approvals it is not a merge gate.
 - **CI Workflow Execution vs. Merge Gating**:
   - Automated CI workflows (`pest_tests.yml`, `playwright_tests.yml`, `translations_check.yml`) execute on Pull Requests targeting `develop` and `master` (**`VERIFIED`**).
   - The execution of these workflows does **NOT** prove that GitHub blocks merging when checks fail; required status check gating on GitHub is **`NOT VERIFIED`**.
@@ -211,7 +211,7 @@ The repository provides a standardized Pull Request template located at [`.githu
 | **Direct Push Block** | `develop`, `master` | Prohibited by project policy | **VERIFIED** (`pull_request` rules) |
 | **Force-Push Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`non_fast_forward` rules) |
 | **Branch Deletion Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`deletion` rules) |
-| **Required Approving Reviews** | `develop`, `master` | One independent approval required before merge | **VERIFIED** (one approval; latest-push approval required) |
+| **Required Approving Reviews** | `develop`, `master` | Self-review and recorded verification required; no independent approval gate | **VERIFIED** (zero required approvals; latest-push approval disabled) |
 | **Required Status Checks** | `develop`, `master` | CI checks run; ruleset gating deferred | **DEFERRED (Operational Stage O6)** |
 | **Conversation Resolution** | `develop`, `master` | Required before merge | **VERIFIED** |
 | **Merge Strategy Controls** | Repository-wide | Squash and merge commits enabled; rebase disabled | **VERIFIED** (source-specific choice remains review-governed) |
@@ -226,8 +226,8 @@ The following rulesets are the approved O5 enforcement target. They are delibera
 
 | Ruleset | Target | Required controls | Explicit exclusions / rationale |
 | :--- | :--- | :--- | :--- |
-| `protect-develop` | `refs/heads/develop` | Require a Pull Request; require one approving review; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | Do not require linear history: the reviewed `master`-to-`develop` upstream promotion must retain its merge commit. Required CI checks are deferred to O6. |
-| `protect-upstream-baseline` | `refs/heads/master` | Require a Pull Request; require one approving review; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | The permitted source is the reviewed `chore/upstream-sync-<date>` procedure. Required CI checks are deferred to O6. |
+| `protect-develop` | `refs/heads/develop` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | Do not require linear history: the authorized, self-reviewed `master`-to-`develop` upstream promotion must retain its merge commit. Required CI checks are deferred to O6. |
+| `protect-upstream-baseline` | `refs/heads/master` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | The permitted source is the authorized, self-reviewed `chore/upstream-sync-<date>` procedure. Required CI checks are deferred to O6. |
 
 Both rulesets must have no standing bypass actor. An exceptional change requires explicit human authorization, a recorded reason, and a deliberate temporary ruleset change; it must not be disguised as a normal direct push.
 
@@ -241,8 +241,8 @@ The approved configuration was applied and verified on 2026-09-17 by direct GitH
 
 | Ruleset | Identifier | Target | Enforcement | Verified controls |
 | :--- | :--- | :--- | :--- | :--- |
-| `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Pull Request, one independent approval, stale-approval dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
-| `protect-upstream-baseline` | `23566566` | `refs/heads/master` | `active` | Pull Request, one independent approval, stale-approval dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
+| `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
+| `protect-upstream-baseline` | `23566566` | `refs/heads/master` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
 
 The effective-rules endpoint confirms that each target receives `pull_request`, `deletion`, and `non_fast_forward` rules. Repository merge settings are also verified as Squash Merge enabled, Merge Commits enabled, and Rebase Merge disabled. Required CI status checks were intentionally not added and remain O6 work.
 
@@ -369,11 +369,11 @@ The audit identified the following genuine, evidence-based governance findings:
 - **Recommended Action**: Re-verify ruleset state after any repository-administration change.
 - **Owning Operational Stage**: O5 (`COMPLETE`).
 
-### GOV-002: Mandatory PR Review Enforcement
+### GOV-002: Solo-Maintainer PR Integrity Enforcement
 - **Classification**: **`VERIFIED`**
-- **Evidence**: Both active rulesets require one approving review, dismissal of stale approvals, approval by someone other than the latest pusher, and resolution of review threads.
-- **Impact**: An unreviewed or superseded approval cannot merge into either protected branch.
-- **Recommended Action**: Maintain at least one independent collaborator capable of reviewing protected-branch Pull Requests.
+- **Evidence**: Both active rulesets require a Pull Request and resolution of review threads, set required approving reviews to zero, disable latest-pusher approval, retain stale-review dismissal, and have no bypass actors.
+- **Impact**: A solo maintainer can merge a self-reviewed, verified Pull Request without a second account, while direct pushes, branch deletion, force pushes, and unresolved conversations remain blocked.
+- **Recommended Action**: Complete the template self-review and record verification for every Pull Request; obtain independent review when a higher-risk repository control requires it.
 - **Owning Operational Stage**: O5 (`COMPLETE`).
 
 ### GOV-003: GitHub Repository Merge Button Configuration
@@ -428,7 +428,7 @@ To preserve strict architectural boundaries across roadmap phases, the following
 | **Direct Push Restriction on develop & master** | Prohibited on `develop` & `master` | Active Pull Request rules block direct updates | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
 | **Pull Request Template** | Present | Present at `.github/PULL_REQUEST_TEMPLATE.md` | **VERIFIED** | File inspection `.github/PULL_REQUEST_TEMPLATE.md` | O5 |
 | **Pull Request Requirement for protected branches** | Mandatory for `develop` and `master` | Active rulesets require Pull Requests | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
-| **Pull Request Review Requirement** | One independent approval before merge | Active rulesets require one approval, latest-push approval, and conversation resolution | **VERIFIED** | GitHub rulesets `23566563`, `23566566` | O5 |
+| **Pull Request Review Requirement** | Self-review and recorded verification; no independent approval gate | Active rulesets require zero approvals, disable latest-push approval, and require conversation resolution | **VERIFIED** | GitHub rulesets `23566563`, `23566566` | O5 |
 | **Topic Branch Merge Strategy** | Squash Merge | Established by policy; Squash Merge enabled and Rebase Merge disabled | **POLICY** | `docs/development/git-workflow.md`; GitHub repository settings | O5 |
 | **Upstream Integration Merge Strategy** | Merge Commit (`--no-ff`) | Established by policy; observed in history | **POLICY** | `docs/development/git-workflow.md` Section 7 & 9, commits `15a76bf09`, `49e330b5e` | O5 / O7 |
 | **Branch Protection / Rulesets** | Configured on GitHub | Two active repository rulesets protect `develop` and `master` | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |

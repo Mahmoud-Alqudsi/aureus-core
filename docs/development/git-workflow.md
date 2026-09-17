@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-15
+last_verified: 2026-09-17
 scope: development-workflow
 confidence: high
 ---
@@ -14,7 +14,7 @@ This document defines the canonical Git operating model and development workflow
 
 ## 1. Repository Topology
 
-Aureus ERP operates across a dual-remote topology separating upstream open-source lineage from downstream private enterprise development.
+Aureus ERP operates across a dual-remote topology separating upstream open-source lineage from downstream public enterprise development.
 
 ```
 +-------------------------------------------------------------+
@@ -106,12 +106,15 @@ develop
 
 1. **Source**: Normal topic branches must always branch off the latest `develop`.
 2. **Target**: Normal topic branches must target `develop` as their pull request base.
-3. **Upstream Synchronization Exception**: An upstream synchronization starts from the latest `master` in a short-lived `chore/upstream-sync-<date>` branch. A history-preserving upstream recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. These are the only permitted Pull Request sources targeting `master`; after a reviewed merge, the resulting `master` update is promoted to `develop` through a reviewed Pull Request.
+3. **Upstream Synchronization Exception**: An upstream synchronization starts from the latest `master` in a short-lived `chore/upstream-sync-<date>` branch. A history-preserving upstream recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. These are the only permitted Pull Request sources targeting `master`; after an authorized, self-reviewed merge, the resulting `master` update is promoted to `develop` through an authorized, self-reviewed Pull Request.
 4. **Prohibition of Direct Pushes**:
    - Direct pushes to `develop` are **strictly prohibited by project policy**.
    - Direct pushes to `master` are **strictly prohibited by project policy**.
-   - All code, documentation, configuration, and upstream synchronization changes must enter protected branches through reviewed Pull Requests.
-5. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same reviewed Pull Request lifecycle. A priority label or expedited review may change response time, but it does not change the branch topology or bypass verification.
+   - All code, documentation, configuration, and upstream synchronization changes must enter protected branches through self-reviewed Pull Requests with recorded verification.
+5. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same self-reviewed Pull Request lifecycle. A priority label or expedited review may change response time, but it does not change the branch topology or bypass verification.
+
+> [!NOTE]
+> The active solo-maintainer rulesets require a Pull Request but zero approving reviews. Self-review and recorded verification are therefore mandatory for every Pull Request; independent review remains mandatory when another repository control or the change risk requires it.
 
 > [!NOTE]
 > Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Operational Stage O5. Upstream synchronization exceptions and operational runbooks are documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
@@ -257,12 +260,12 @@ develop  ───► Protected by Policy: Direct push prohibited.
 
 1. **`master` Protection**:
    - Direct pushes to `master` are prohibited.
-   - Updates occur only through a reviewed `chore/upstream-sync-<date>` Pull Request that preserves upstream lineage with a merge commit, or a reviewed `chore/upstream-sync-rollback-<date>` recovery Pull Request.
+   - Updates occur only through an authorized, self-reviewed `chore/upstream-sync-<date>` Pull Request that preserves upstream lineage with a merge commit, or an authorized, self-reviewed `chore/upstream-sync-rollback-<date>` recovery Pull Request.
 2. **`develop` Protection**:
    - Direct pushes to `develop` are prohibited.
    - All code, documentation, and configuration changes must arrive via Pull Request.
-   - Changes to `develop` require a reviewed Pull Request.
-   - The `master`-to-`develop` promotion after an upstream synchronization is also a reviewed Pull Request and uses a merge commit.
+   - Changes to `develop` require a self-reviewed Pull Request with recorded verification.
+   - The `master`-to-`develop` promotion after an upstream synchronization is also an authorized, self-reviewed Pull Request and uses a merge commit.
 
 > [!IMPORTANT]
 > This section outlines the normative project policy. GitHub-level enforcement mechanisms (such as branch protection rules, required reviews, and automated CI gates) belong to Operational Stage O5.
@@ -272,7 +275,7 @@ develop  ───► Protected by Policy: Direct push prohibited.
 1. Create `fix/<description>` from the latest `develop`.
 2. Keep the change narrowly scoped, including a regression test when the defect is testable.
 3. Open a Pull Request to `develop`, identifying urgency, affected components, verification performed, and any customer or security impact.
-4. Use the normal squash-merge policy after the required review. No emergency path permits direct pushes, rebases of shared branches, or a merge to `master`.
+4. Use the normal squash-merge policy after self-review and required verification. No emergency path permits direct pushes, rebases of shared branches, or a merge to `master`.
 
 ### Release and Version-Tag Policy
 

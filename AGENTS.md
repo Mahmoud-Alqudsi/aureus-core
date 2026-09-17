@@ -138,9 +138,9 @@ Repository skills in `.agents/skills/` supplement these rules for a narrow task 
 
 ### Branch Model
 
-All normal development targets `develop`. Direct pushes to `master` and `develop` are prohibited by project policy.
+All normal development targets `develop`. Direct pushes to `master` and `develop` are prohibited by project policy. In the active solo-maintainer configuration, a Pull Request remains mandatory but requires zero approving reviews; the author must self-review and record verification, while independent review remains mandatory whenever another repository control requires it.
 
-Urgent defects use `fix/*` from `develop` and still require review and verification; the project has no `hotfix/*` or `release/*` branches. Version tags are created only from verified `develop` commits with explicit human authorization because pushing a `v*` tag publishes a Docker image. See [`docs/development/git-workflow.md`](docs/development/git-workflow.md).
+Urgent defects use `fix/*` from `develop` and still require self-review and verification; the project has no `hotfix/*` or `release/*` branches. Version tags are created only from verified `develop` commits with explicit human authorization because pushing a `v*` tag publishes a Docker image. See [`docs/development/git-workflow.md`](docs/development/git-workflow.md).
 
 | Branch Pattern | Purpose |
 |:---|:---|

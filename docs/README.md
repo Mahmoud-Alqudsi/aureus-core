@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-04
+last_verified: 2026-09-17
 scope: documentation-index
 confidence: high
 ---
@@ -434,7 +434,7 @@ The active governance and remediation program uses **Operational Stages `O0`–`
 | **O2** | Operational terminology and status model | **Complete / Committed** | Historical phases and operational stages are explicitly separated. |
 | **O3** | AI knowledge architecture and operating protocol | **Complete / Committed** | Plugin, company-scoped, API, security, and upstream synchronization routes are available from the canonical navigation set. |
 | **O4** | Git operating model | **Complete / Committed** | `fix/*` is the urgent-fix path; releases are approved immutable tags on verified `develop` commits, with no `hotfix/*` or `release/*` branches. |
-| **O5** | GitHub governance | **Complete / Verified** | Active no-bypass rulesets protect `develop` and `master`; PR review, conversation resolution, deletion, and force-push controls are verified. CI status checks remain O6 work. |
+| **O5** | GitHub governance | **Complete / Verified — Solo-maintainer mode** | Active no-bypass rulesets protect `develop` and `master`; self-reviewed PRs, conversation resolution, deletion, and force-push controls are verified. Both rulesets require zero approvals and disable latest-pusher approval. CI status checks remain O6 work. |
 | **O6** | CI, testing, and quality gates | **Baseline audited / Remediation pending** | Workflow and quality findings are documented; implementation is separate work. |
 | **O7** | Upstream integration runbook | **Complete / Committed** | Protected-branch PR workflow, history-preserving recovery, conflict protocol, workflow review, and tag safety are documented; execution remains explicitly authorized work. |
 | **O8** | Change management and knowledge maintenance | **Complete / Committed** | Event-driven lifecycle, documentation-impact triggers, evidence discipline, ownership-by-role, quarterly review, and PR recording requirements are adopted. |

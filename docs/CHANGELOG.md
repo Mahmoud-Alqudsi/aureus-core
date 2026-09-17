@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-13
+last_verified: 2026-09-17
 scope: documentation-changelog
 confidence: high
 ---
@@ -29,6 +29,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 ---
 
 ## Operational Governance Maintenance
+
+### O5 Follow-up — Solo-Maintainer Ruleset Alignment
+
+- **Evidentiary Tier**: Direct GitHub API inspection.
+- **Status**: **Complete / Verified**.
+- **Recorded Controls**:
+  - Reconfigured the active `protect-develop` (`23566563`) and `protect-upstream-baseline` (`23566566`) rulesets for a single maintainer: Pull Requests remain mandatory, but both now require zero approving reviews and do not require approval from someone other than the latest pusher.
+  - Retained the protections that preserve controlled integration: no bypass actors, required conversation resolution, stale-review dismissal, and blocks on deletion and non-fast-forward updates.
+  - Aligned the Git operating model, GitHub policy, upstream runbook, AI entry point, and operational roadmap to require author self-review and recorded verification; independent review remains required where a higher-risk repository control mandates it.
+  - Corrected the repository classification to public where the GitHub-governance documentation described it as private.
 
 ### O8 — Change Management & Knowledge Maintenance
 
