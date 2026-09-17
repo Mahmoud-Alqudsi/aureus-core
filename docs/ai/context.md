@@ -10,7 +10,7 @@ confidence: high
 
 ## Purpose and source-of-truth rule
 
-Aureus ERP is a Laravel ERP application whose domain functionality is primarily organised as local packages in `plugins/webkul/`. Its user interfaces are Filament panels. This document is a navigation aid, not an authority over the repository.
+Aureus ERP is a Laravel ERP application whose domain functionality is primarily organised as local packages in `plugins/webkul/`. Its user interfaces are Filament panels. The canonical AI entry point is [`AGENTS.md`](../../AGENTS.md) at the repository root; this document is the second stop, providing system context and the source-of-truth verification framework.
 
 [VERIFIED]
 Evidence: `composer.json`; `bootstrap/providers.php`; `plugins/webkul/`
@@ -38,8 +38,8 @@ Use these labels precisely:
 | Composer merge plugin | `v2.1.0` | `composer.lock` → `wikimedia/composer-merge-plugin` |
 
 [VERIFIED]
-Evidence: `AGENTS.md`; `composer.lock` → `livewire/livewire`, `laravel/sanctum`
-Note: The repository's `AGENTS.md` claims Livewire is on v3. This is stale and incorrect; `composer.lock` confirms it is on `v4.3.3`. Direct inspection of `composer.lock` (lines 4135–4148) confirms `laravel/sanctum` is installed at `v4.3.3`.
+Evidence: `composer.lock` → `livewire/livewire`, `laravel/sanctum`
+Note: Always verify exact versions against `composer.lock`. Direct inspection of `composer.lock` (lines 4135–4148) confirms `laravel/sanctum` is installed at `v4.3.3`.
 
 ## Repository map
 

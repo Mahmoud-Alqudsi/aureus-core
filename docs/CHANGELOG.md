@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-13
+last_verified: 2026-09-17
 scope: documentation-changelog
 confidence: high
 ---
@@ -25,6 +25,65 @@ In accordance with the repository's documentation accuracy rules, historical eve
 1. **Git-Verified History**: Backed directly by immutable Git commit hashes, author timestamps, and repository diffs (`git log -- docs/`).
 2. **Documented Execution History**: Backed by documented phase execution reports, verification matrices, and structured project logs where exact commit hashes were synthesized or consolidated.
 3. **Reconstructed / Active History**: Actively in progress or reconstructed from conversational context; explicitly flagged to prevent false claims of Git verification.
+
+---
+
+## Operational Governance Maintenance
+
+### O4/O5/O7 Follow-up — Release-Branch Operating Model
+
+- **Evidentiary Tier**: Active branch policy change with direct Git and GitHub inspection.
+- **Status**: **Adopted / first release promotion pending**.
+- **Recorded Controls**:
+  - Reassigned `master` from the upstream synchronization baseline to the stable release branch; `develop` remains the default daily-integration branch.
+  - Moved normal upstream synchronization to `develop` through an authorized `chore/upstream-sync-<date>` Pull Request with a Merge Commit; a verified `develop`-to-`master` Pull Request now forms the release boundary.
+  - Required downstream version tags to point only to the verified `master` release commit. The existing no-direct-push, no-bypass, solo-maintainer review, deletion, and force-push protections remain in force.
+  - Recorded the transition boundary: current protected-branch history is preserved, and the model is operationally complete only after the first verified release promotion. No reset, force-push, upstream execution, tag creation, or PR merge is claimed by this documentation change.
+
+### O5 Follow-up — Solo-Maintainer Ruleset Alignment
+
+- **Evidentiary Tier**: Direct GitHub API inspection.
+- **Status**: **Complete / Verified**.
+- **Recorded Controls**:
+  - Reconfigured the active `protect-develop` (`23566563`) and the `master` ruleset (`23566566`, now named `protect-release-master`) for a single maintainer: Pull Requests remain mandatory, but both now require zero approving reviews and do not require approval from someone other than the latest pusher.
+  - Retained the protections that preserve controlled integration: no bypass actors, required conversation resolution, stale-review dismissal, and blocks on deletion and non-fast-forward updates.
+  - Aligned the Git operating model, GitHub policy, upstream runbook, AI entry point, and operational roadmap to require author self-review and recorded verification; independent review remains required where a higher-risk repository control mandates it.
+  - Corrected the repository classification to public where the GitHub-governance documentation described it as private.
+
+### O8 — Change Management & Knowledge Maintenance
+
+- **Evidentiary Tier**: Active branch implementation.
+- **Status**: **Complete / Committed**.
+- **Primary Focus**: Establishing an event-driven lifecycle for keeping the Living Documentation and AI guidance aligned with authoritative repository evidence.
+- **Recorded Controls**:
+  - Added [`docs/development/change-management.md`](development/change-management.md) defining responsibilities by change role, impact triggers, evidence standards, quarterly review, and PR recording requirements.
+  - Connected the policy to [`AGENTS.md`](../AGENTS.md), the AI reading-order matrix, the canonical documentation index, and the pull-request template.
+  - Preserved the boundary between documentation controls and implementation/platform enforcement: updating a policy does not itself execute upstream synchronization, alter CI, or modify GitHub rulesets.
+
+---
+
+### O9 — AI Skills & Developer Automation
+
+- **Evidentiary Tier**: Active branch implementation.
+- **Status**: **Complete / Committed**.
+- **Primary Focus**: Adding repository-scoped, narrowly triggered AI skills that route work to established canonical controls.
+- **Recorded Controls**:
+  - Added six instruction-only skills under `.agents/skills/` for plugin, API, schema, test/CI, documentation, and upstream synchronization work.
+  - Added [`docs/development/ai-skills.md`](development/ai-skills.md) to define discovery, skill boundaries, maintenance, and the threshold for future deterministic automation.
+  - Narrowed `.gitignore` so only the reviewed `.agents/skills/` subtree is versioned; other local `.agents` content remains ignored.
+  - Kept skills subordinate to `AGENTS.md` and the source-of-truth hierarchy; no skill adds credentials, scripts, remote mutation, or authority to bypass approvals.
+
+---
+
+### O10 — Knowledge Base & Operational Readiness Audit
+
+- **Evidentiary Tier**: Read-only branch audit.
+- **Status**: **Initial audit complete / final revalidation pending**.
+- **Primary Focus**: Testing whether realistic agent tasks reach the correct canonical controls and direct repository evidence without granting unapproved authority.
+- **Recorded Result**:
+  - Added [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) with seven scenario-based routing checks covering plugin, company-scoped schema, API, security, test/CI, documentation, and upstream work.
+  - All seven current routing scenarios passed static evidence inspection; the audit does not claim application execution or platform enforcement from that result.
+  - Final O10 revalidation remains dependent on an authorized upstream synchronization, review of incoming workflow changes, and the separately tracked O6 decisions.
 
 ---
 
@@ -172,7 +231,7 @@ Audit        Foundation      Plugins         Synthesis    Workflows    Rules    
   - Authored [`docs/application/overview.md`](application/overview.md) as a single consolidated document covering providers, middleware, navigation shell, internationalization/RTL, database foundation, API documentation infrastructure, frontend build pipeline, testing foundation, and project configuration.
   - Updated [`docs/README.md`](README.md) documentation map from 8 to 9 functional domains (70→72 files), adding Application Foundation Domain with renumbered domain sections.
   - **Semantic Regression Gate (Section 27)**: Searched entire documentation tree for semantic violations. Found and corrected 2 regressions in `docs/README.md`: (1) "Valuation models (Standard/AVCO/FIFO)" replaced with "Quantitative stock tracking, physical removal strategies (FIFO/LIFO)" to preserve Physical Removal ≠ Financial Valuation distinction; (2) "credit checks" replaced with "customer credit-limit analysis" to avoid implying enforced credit control.
-  - **Machine Path Gate (Section 30)**: Discovered and removed 31 machine-specific `file:///home/mahmoud/...` absolute paths from `docs/application/overview.md`. All paths converted to repository-relative format.
+  - **Machine Path Gate (Section 30)**: Discovered and removed 31 machine-specific absolute paths from `docs/application/overview.md`. All paths converted to repository-relative format.
   - **Broken Link Gate (Section 42)**: Verified all 72 relative documentation links in `docs/README.md` resolve to existing files — 0 broken links.
   - **Document Inventory Gate (Section 38/40)**: Actual canonical file count is **72** (excluding the Phase 13 execution artifact). Corrected README.md claim from 71 to 72.
   - **Closure Gate (Sections 44–60)**: Documentation Quality Gate passed across all 7 dimensions (accuracy, completeness, traceability, consistency, navigability, AI usability, maintenance). Final Coverage Matrix produced for 23 architectural surfaces. Git integrity verified. Final verdict issued: PHASE 13 — COMPLETE / LOCKED.

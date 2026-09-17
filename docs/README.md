@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-04
+last_verified: 2026-09-17
 scope: documentation-index
 confidence: high
 ---
@@ -52,11 +52,12 @@ When verifying behavior, resolving conflicting statements, or implementing featu
 ## Quick Start
 
 ### For AI Coding Agents
-1. **Start Here**: Review this index (`docs/README.md`).
-2. **Determine Reading Scope**: Consult [`docs/ai/reading-order.md`](ai/reading-order.md) to load only the task-specific documents required for your current objective.
-3. **Enforce Canonical Vocabulary**: Check [`docs/ai/terminology.md`](ai/terminology.md) before authoring code, models, or documentation to avoid known architectural pitfalls.
-4. **Assess Blast Radius**: Review [`docs/architecture/change-impact.md`](architecture/change-impact.md) before altering cross-cutting services, traits, or database tables.
-5. **Verify Against Matrix**: Corroborate critical claims against [`docs/verification-matrix.md`](verification-matrix.md).
+1. **Start Here**: Begin at [`AGENTS.md`](../AGENTS.md) — the canonical AI entry point with operating protocol, discovery workflow, and critical constraints.
+2. **Load Context**: Read [`docs/ai/context.md`](ai/context.md) for system architecture baseline.
+3. **Determine Reading Scope**: Consult [`docs/ai/reading-order.md`](ai/reading-order.md) to load only the task-specific documents required for your current objective.
+4. **Enforce Canonical Vocabulary**: Check [`docs/ai/terminology.md`](ai/terminology.md) before authoring code, models, or documentation to avoid known architectural pitfalls.
+5. **Assess Blast Radius**: Review [`docs/architecture/change-impact.md`](architecture/change-impact.md) before altering cross-cutting services, traits, or database tables.
+6. **Verify Against Matrix**: Corroborate critical claims against [`docs/verification-matrix.md`](verification-matrix.md).
 
 ### For Human Developers
 1. **System Overview**: Read [`docs/architecture/overview.md`](architecture/overview.md) to understand provider registration and package architecture.
@@ -72,13 +73,13 @@ Verified runtime environment and framework versions:
 
 | Component | Installed Version | Verification Evidence |
 | :--- | :--- | :--- |
-| **PHP** | `8.3.29` | Source baseline (`composer.json` platform constraint `^8.2`) |
+| **PHP** | `8.3.29` | Source baseline (`composer.json` platform constraint `^8.3`) |
 | **Laravel Framework** | `13.21.1` | `composer.lock` (`laravel/framework`) |
 | **Filament Admin Engine** | `5.7.6` | `composer.lock` (`filament/filament`) |
 | **Livewire** | `4.3.3` | `composer.lock` (`livewire/livewire`) — *Adhere to v4 specifications* |
 | **Testing Framework** | Pest `4.7.5` / PHPUnit `12` | `composer.lock` (`pestphp/pest`) |
 | **Permissions / RBAC** | Filament Shield `4.2.0` | `composer.lock` (`bezhansalleh/filament-shield`) |
-| **API Authentication** | Laravel Sanctum `4.0` | `composer.lock` (`laravel/sanctum`) |
+| **API Authentication** | Laravel Sanctum `4.3.3` | `composer.lock` (`laravel/sanctum`) |
 | **Query Filtering** | Spatie Query Builder | `composer.lock` (`spatie/laravel-query-builder`) |
 | **Package Autoloading** | `composer-merge-plugin` | Root `composer.json` (`wikimedia/composer-merge-plugin`) |
 
@@ -120,38 +121,20 @@ Always distinguish between:
 
 ## Recommended AI Navigation Path
 
-Autonomous AI agents must follow this reading order to build reliable context without context window exhaustion:
+Autonomous AI agents must use a task-scoped route that builds reliable context without context window exhaustion:
 
 ```
-docs/README.md (Entry Point)
+AGENTS.md (AI Entry Point — Operating Protocol & Constraints)
        ↓
 docs/ai/context.md (System Architecture & Baseline)
        ↓
 docs/ai/reading-order.md (Task-Specific Route Guide)
        ↓
-docs/ai/terminology.md (Canonical Glossary & Invariants)
-       ↓
-docs/ai/architecture-rules.md (Structural Rules)
-       ↓
-docs/ai/security-rules.md (Auth & Multi-Company Rules)
-       ↓
-docs/ai/database-rules.md (Schema & Persistence Rules)
-       ↓
-docs/ai/plugin-rules.md (Plugin Lifecycle & Dependency Rules)
-       ↓
-docs/ai/coding-rules.md (PHP 8.3 & Laravel Conventions)
-       ↓
-docs/ai/testing-rules.md (Pest v4 Coverage & Standards)
-       ↓
-docs/ai/forbidden-patterns.md (Prohibited Practices)
-       ↓
-docs/architecture/change-impact.md (Blast Radius Control)
-       ↓
-docs/verification-matrix.md (Evidence Ledger & Tracking)
+Task row → selected rules, system knowledge, source, tests, and provider/configuration
 ```
 
 > [!NOTE]
-> For the complete task-oriented reading guide and source inspection checklist, refer directly to [`docs/ai/reading-order.md`](ai/reading-order.md). Do not duplicate its matrix.
+> Read [`docs/ai/terminology.md`](ai/terminology.md) before naming, creating, or changing a model, trait, service, table, policy, or documentation term. For the complete task-oriented reading guide and source inspection checklist, refer directly to [`docs/ai/reading-order.md`](ai/reading-order.md). Do not duplicate its matrix.
 
 ---
 
@@ -177,7 +160,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **72 verified files** organized into 9 functional domains:
+The repository documentation consists of **79 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -188,6 +171,7 @@ docs/
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (4 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
+├── development/                              # Development workflow, Git operations, maintenance, AI skills & readiness (7 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -274,6 +258,19 @@ Mathematical calculation engines, validation constraints, and financial invarian
 | [`docs/business-rules/inventory.md`](business-rules/inventory.md) | Quantitative stock tracking, physical removal strategies (FIFO/LIFO), reservations, on-hand calculations |
 | [`docs/business-rules/purchasing.md`](business-rules/purchasing.md) | 3-way matching rules, vendor price lists, purchase approval thresholds |
 | [`docs/business-rules/sales.md`](business-rules/sales.md) | Pricing rules, promotional discounts, quotation expiry, customer credit-limit analysis |
+
+### Development & Workflow Domain (`docs/development/`)
+Repository topology, branch hierarchy, commit conventions, merge strategy, GitHub repository governance, and CI/testing baseline:
+
+| File Link | Primary Scope |
+| :--- | :--- |
+| [`docs/development/git-workflow.md`](development/git-workflow.md) | Git branching, commits, merge strategy, and high-level upstream relationship |
+| [`docs/development/github-governance.md`](development/github-governance.md) | GitHub governance, PR controls, branch protection reality, merge rules, and issue templates |
+| [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and governance findings |
+| [`docs/development/upstream-sync.md`](development/upstream-sync.md) | Operational runbook for upstream synchronization, 3-layer safety preflight, conflict resolution, and rollback |
+| [`docs/development/change-management.md`](development/change-management.md) | Change lifecycle, knowledge-maintenance triggers, evidence discipline, review cadence, and PR documentation record |
+| [`docs/development/ai-skills.md`](development/ai-skills.md) | Repository-scoped AI skill index, automation boundaries, and maintenance rules |
+| [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) | Scenario-based O10 readiness evidence, deferred controls, and final-revalidation procedure |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:
@@ -413,7 +410,9 @@ To maintain the integrity and stability of the Living Documentation and the repo
 
 ---
 
-## Documentation Status
+## Historical Documentation Status
+
+The phases in this section are the closed historical documentation program. They describe how the knowledge base was built; they do not assign work in the active governance roadmap below.
 
 | Phase | Description | Status |
 | :---: | :--- | :---: |
@@ -421,3 +420,23 @@ To maintain the integrity and stability of the Living Documentation and the repo
 | **Phase 11** | Change Impact Analysis & Verification Matrix | **Complete / Locked** |
 | **Phase 12** | Documentation Entry Point (`docs/README.md`) & Documentation Changelog (`docs/CHANGELOG.md`) | **Complete** |
 | **Phase 13** | Read-Only Final Documentation Audit | **Complete / Locked** |
+
+---
+
+## Operational Remediation Roadmap
+
+The active governance and remediation program uses **Operational Stages `O0`–`O10`**. It is intentionally separate from the historical documentation phases above. A stage status describes this branch's implementation state; it does not imply that a control is enforced on GitHub or merged into `develop`.
+
+| Stage | Scope | Branch status | Completion boundary |
+| :---: | :--- | :--- | :--- |
+| **O0** | Scope control and working-tree inventory | **Complete** | Read-only inventory completed; no source or configuration changes found. |
+| **O1** | Documentation baseline reconciliation | **Complete / Committed** | Platform facts, stale Livewire references, and internal links reconciled against repository evidence. |
+| **O2** | Operational terminology and status model | **Complete / Committed** | Historical phases and operational stages are explicitly separated. |
+| **O3** | AI knowledge architecture and operating protocol | **Complete / Committed** | Plugin, company-scoped, API, security, and upstream synchronization routes are available from the canonical navigation set. |
+| **O4** | Git operating model | **Complete / Committed — Release-branch transition pending** | `develop` is the integration branch; verified `develop`-to-`master` PRs create releases and tags originate from `master`. No `hotfix/*` or `release/*` branches are used. The first release promotion completes the transition. |
+| **O5** | GitHub governance | **Complete / Verified — Solo-maintainer mode** | Active no-bypass rulesets protect `develop` and release `master`; self-reviewed PRs, conversation resolution, deletion, and force-push controls are verified. Both rulesets require zero approvals and disable latest-pusher approval. CI status checks remain O6 work. |
+| **O6** | CI, testing, and quality gates | **Baseline audited / Remediation pending** | Workflow and quality findings are documented; implementation is separate work. |
+| **O7** | Upstream integration runbook | **Complete / Committed — Release-branch transition pending** | Upstream changes enter `develop` through a protected-branch PR; a separate verified release PR promotes `develop` to `master`. Conflict protocol, workflow review, recovery, and tag safety are documented; execution remains explicitly authorized work. |
+| **O8** | Change management and knowledge maintenance | **Complete / Committed** | Event-driven lifecycle, documentation-impact triggers, evidence discipline, ownership-by-role, quarterly review, and PR recording requirements are adopted. |
+| **O9** | AI skills and developer automation | **Complete / Committed** | Six repository-scoped, instruction-only skills route plugin, API, schema, testing/CI, documentation, and upstream work to canonical controls without creating parallel policy. |
+| **O10** | Final knowledge-base readiness audit | **Initial audit complete / final revalidation pending** | Seven scenario routes pass read-only evidence checks; the release-branch upstream route was rechecked. Final closure awaits upstream execution, first release promotion/review, and O6 outcomes. |

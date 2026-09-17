@@ -512,12 +512,6 @@ Evidence: `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php` (
    `plugins/webkul/analytics/` has no `*Plugin.php` class and no `src/Filament/` directory. It operates strictly as a headless backend data layer.
    [VERIFIED] Evidence: `plugins/webkul/analytics/src/AnalyticServiceProvider.php`
 
-4. **Livewire Version Documentation Contradiction**:
-   `AGENTS.md` states Livewire is on `v3`. Fresh inspection of `composer.lock` confirms Livewire is installed at `v4.3.3`. `AGENTS.md` is stale in this respect.
-   [VERIFIED] Evidence: `composer.lock` → `livewire/livewire` (`v4.3.3`)
-
----
-
 ## Evidence Index
 
 | Architectural Claim | Source File & Symbol | Verification Label |

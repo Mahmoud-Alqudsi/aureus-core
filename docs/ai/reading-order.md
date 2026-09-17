@@ -10,15 +10,16 @@ confidence: high
 
 ## Goal
 
-Read the smallest set that can establish the changed behaviour and its immediate integration points. Documentation narrows the search; the current source code decides the result. Start with two documents—this file and `docs/ai/context.md`—then choose the task row below. Do not load unrelated phase documentation merely because it exists.
+Read the smallest set that can establish the changed behaviour and its immediate integration points. Documentation narrows the search; the current source code decides the result. Begin at `AGENTS.md`, then read `docs/ai/context.md` and this file before choosing the task row below. Do not load unrelated historical-phase documentation merely because it exists.
 
 ## Baseline for every code change
 
-1. `docs/ai/context.md`
-2. This file
-3. The target source file, its nearest tests, and the owning provider/configuration file
+1. `AGENTS.md`
+2. `docs/ai/context.md`
+3. This file
+4. The target source file, its nearest tests, and the owning provider/configuration file
 
-Then search for direct references with `rg`. Add a document or source area only when the task or that search result makes it relevant.
+Then search for direct references with `rg`. Before naming, creating, or changing a model, trait, service, table, policy, or documentation term, read `docs/ai/terminology.md`. Add a document or source area only when the task or that search result makes it relevant. If a matching repository skill is available under `.agents/skills/`, load it after this baseline; it supplements but never replaces the canonical rules.
 
 ## Task-oriented reading sets
 
@@ -28,7 +29,11 @@ Then search for direct references with `rg`. Add a document or source area only 
 | Add, remove, install, or alter a plugin | `docs/architecture/plugin-registry.md` | Root `composer.json`, plugin `composer.json`, `bootstrap/providers.php`, `PackageServiceProvider`, `Package`, `InstallCommand`, and a similar existing plugin |
 | Change Filament UI or panel configuration | `docs/architecture/overview.md`; `docs/architecture/plugin-registry.md` | The relevant `*Plugin.php`, `AdminPanelProvider`, `CustomerPanelProvider`, and discovered Filament classes |
 | Change an application-level provider, middleware, route, or exception handler | `docs/architecture/overview.md` | `bootstrap/app.php`, `bootstrap/providers.php`, `app/`, and the applicable root/plugin route files |
+| Add or change an API endpoint | `docs/application/overview.md`; `docs/architecture/overview.md`; applicable security documentation from the security row | The applicable `routes/api.php`, controller or action, request validation, policy or middleware, nearest tests, and direct route references |
 | Change a Composer/autoload claim or dependency | `docs/architecture/plugin-registry.md` | `composer.json`, `composer.lock`, applicable plugin `composer.json`, and Composer-generated autoload configuration when needed |
+| Add or change documentation, AI guidance, a development runbook, or the PR template | `docs/development/change-management.md`; applicable domain documentation | The authoritative implementation, test, migration, configuration, workflow, or Git evidence supporting the claim; direct links and the documentation changelog when material |
+| Run or update the knowledge-base readiness audit | `docs/development/knowledge-base-readiness-audit.md`; `docs/development/change-management.md`; applicable scenario controls | The matching repository skill, direct source evidence, existing tests/configuration/workflows, and deferred-control status; use read-only inspection unless a separately approved task authorizes a mutation |
+| Audit or execute an approved upstream synchronization | `docs/development/git-workflow.md`; `docs/development/upstream-sync.md`; applicable CI governance | Git remotes, branch divergence, incoming commit range, changed files, migrations, dependency manifests, and affected tests |
 | Touch company, authentication, authorization, policy, raw-query, or ownership code | `docs/security/authorization.md`; `docs/security/multi-company.md`; `docs/security/ownership-scopes.md`; `docs/security/threat-model.md` | The target implementation, its tests, related traits/scopes/providers, and direct call sites. Consult the listed security documentation, then confirm against the implementation. |
 | Touch a database schema or persistence behaviour | `docs/database/overview.md`; `docs/database/company-isolation.md`; `docs/database/schema-conventions.md`; `docs/database/models-index.md`; `docs/database/relationships.md` | The model, migration, factory, tests, and every directly related plugin provider. Consult the listed database documentation, then confirm against the implementation. |
 

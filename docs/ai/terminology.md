@@ -70,11 +70,11 @@ When writing code, developing plugins, generating migrations, configuring securi
 
 - **Term / Class**: Livewire Framework
 - **What it actually is**: Livewire version 4.3.3, installed as a framework dependency via Composer.
-- **Common misconception**: Believing Livewire is on version 3 based on stale statements in repository documentation or configuration notes (such as `AGENTS.md`).
+- **Common misconception**: Believing Livewire is on version 3 based on historical or stale repository documentation or configuration notes.
 - **Evidence**:
   - `composer.lock` (package `livewire/livewire` installed version: `v4.3.3`)
   - `docs/ai/context.md:34, 42`
-  - `AGENTS.md:19` contains a stale string (`livewire/livewire (LIVEWIRE) - v3`) contradicted by `composer.lock`.
+  - [`AGENTS.md`](../../AGENTS.md) and this documentation now align with the installed v4 baseline.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST adhere to Livewire 4.3.3 APIs and conventions when authoring or debugging Livewire components.
   - Developers MUST NOT rely on deprecated Livewire v3 patterns when newer v4 specifications apply.
