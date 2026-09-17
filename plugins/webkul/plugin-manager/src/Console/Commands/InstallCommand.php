@@ -143,22 +143,6 @@ class InstallCommand extends Command
             $this->copyServiceProviderInApp();
         }
 
-        // if ($this->starRepo) {
-        //     if ($this->confirm('Would you like to star our repo on GitHub?')) {
-        //         $repoUrl = "https://github.com/{$this->starRepo}";
-
-        //         if (PHP_OS_FAMILY == 'Darwin') {
-        //             exec("open {$repoUrl}");
-        //         }
-        //         if (PHP_OS_FAMILY == 'Windows') {
-        //             exec("start {$repoUrl}");
-        //         }
-        //         if (PHP_OS_FAMILY == 'Linux') {
-        //             exec("xdg-open {$repoUrl}");
-        //         }
-        //     }
-        // }
-
         $package = $this->package->updateOrCreate();
 
         foreach ($this->package->dependencies as $dependencyName) {
@@ -481,20 +465,6 @@ class InstallCommand extends Command
 
     protected function buildTimeoutCommand(int $seconds, string $command): string
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            return $command;
-        }
-
-        if (PHP_OS_FAMILY === 'Darwin') {
-            $gtimeout = trim((string) shell_exec('which gtimeout 2>/dev/null'));
-
-            if ($gtimeout !== '') {
-                return "gtimeout {$seconds} {$command}";
-            }
-
-            return $command;
-        }
-
-        return "timeout {$seconds} {$command}";
+        return Package::buildTimeoutCommand($seconds, $command);
     }
 }
