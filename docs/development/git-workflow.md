@@ -37,22 +37,18 @@ Aureus ERP operates across a dual-remote topology separating upstream open-sourc
 | Remote | Repository URL | Role & Authority |
 | :--- | :--- | :--- |
 | `origin` | `git@github.com:Mahmoud-Alqudsi/aureus-core.git` | **Primary Development Repository**. All active development, feature branches, pull requests, and CI pipelines target `origin`. Daily engineering work is performed exclusively against this remote. |
-| `upstream` | `git@github.com:Mahmoud-Alqudsi/aureuserp.git` | **Upstream Lineage Tracking**. Public fork used to track updates, bug fixes, and releases from upstream Aureus/Webkul. Serves as the synchronization source for `master`. |
+| `upstream` | `git@github.com:Mahmoud-Alqudsi/aureuserp.git` | **Upstream Lineage Tracking**. Public fork used to track updates, bug fixes, and releases from upstream Aureus/Webkul. Serves as the synchronization source for `develop`. |
 
 ---
 
 ## 2. Branch Model & Hierarchy
 
-The branch model enforces strict hierarchical propagation from upstream baseline down to isolated topic branches:
+The branch model separates incoming upstream integration from stable downstream releases:
 
 ```
 upstream
    │
    │ synchronization
-   ▼
-master
-   │
-   │ integration
    ▼
 develop
    │
@@ -61,12 +57,16 @@ develop
    ├── refactor/*
    ├── docs/*
    └── chore/*
+   │
+   │ verified release Pull Request
+   ▼
+master
 ```
 
 ### Branch Roles
 
-- **`master` — Upstream Synchronization Baseline**:
-  `master` is **NOT** a production or deployment release branch in this repository. Its canonical role is the baseline tracking upstream synchronization and serving as the reference point for upstream-related integration and diff comparison.
+- **`master` — Stable Release Branch**:
+  `master` contains only verified releases of Aureus ERP. It is not the default branch and it is never updated directly; its normal source is a verified Pull Request from `develop`. Immutable downstream version tags are created from verified commits on this branch only.
 - **`develop` — Primary Integration Branch**:
   `develop` is the default integration branch for daily development. All features, fixes, refactorings, documentation updates, and chores integrate into `develop`.
 - **Topic Branches (`feature/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`)**:
@@ -77,8 +77,8 @@ develop
 The project intentionally has no dedicated `hotfix/*` or `release/*` branch classes:
 
 - Urgent defect work uses the normal `fix/*` lifecycle from `develop`; urgency does not authorize a direct push or bypass a Pull Request.
-- A release is a verified commit already integrated into `develop`, identified by an approved version tag. It is not a separately maintained release branch.
-- `master` remains exclusively the upstream synchronization baseline and must not be repurposed as a hotfix or release branch.
+- A release is promoted from a verified `develop` commit through a Pull Request to `master`, then identified by an approved immutable version tag. A separately maintained `release/*` branch is not needed.
+- `master` is the release branch; it must not be repurposed as an unreviewed development or raw upstream-integration branch.
 
 ---
 
@@ -106,12 +106,13 @@ develop
 
 1. **Source**: Normal topic branches must always branch off the latest `develop`.
 2. **Target**: Normal topic branches must target `develop` as their pull request base.
-3. **Upstream Synchronization Exception**: An upstream synchronization starts from the latest `master` in a short-lived `chore/upstream-sync-<date>` branch. A history-preserving upstream recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. These are the only permitted Pull Request sources targeting `master`; after an authorized, self-reviewed merge, the resulting `master` update is promoted to `develop` through an authorized, self-reviewed Pull Request.
-4. **Prohibition of Direct Pushes**:
+3. **Upstream Synchronization Exception**: An upstream synchronization starts from the latest `develop` in a short-lived `chore/upstream-sync-<date>` branch and targets `develop`. It preserves upstream history with a Merge Commit. A history-preserving upstream recovery uses `chore/upstream-sync-rollback-<date>` from the affected protected target.
+4. **Release Promotion Exception**: A verified release is promoted by a Pull Request with `develop` as its source and `master` as its target. No general topic branch may target `master`.
+5. **Prohibition of Direct Pushes**:
    - Direct pushes to `develop` are **strictly prohibited by project policy**.
    - Direct pushes to `master` are **strictly prohibited by project policy**.
    - All code, documentation, configuration, and upstream synchronization changes must enter protected branches through self-reviewed Pull Requests with recorded verification.
-5. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same self-reviewed Pull Request lifecycle. A priority label or expedited review may change response time, but it does not change the branch topology or bypass verification.
+6. **Urgent Fixes**: An urgent production or customer-impacting defect uses `fix/<description>` from the latest `develop` and targets `develop` through the same self-reviewed Pull Request lifecycle. If it must be released immediately, its verified `develop` commit is then promoted to `master` through the release Pull Request. A priority label or expedited review never authorizes a direct push or bypass.
 
 > [!NOTE]
 > The active solo-maintainer rulesets require a Pull Request but zero approving reviews. Self-review and recorded verification are therefore mandatory for every Pull Request; independent review remains mandatory when another repository control or the change risk requires it.
@@ -143,7 +144,7 @@ All topic branches must strictly adhere to the standardized prefix naming format
 
 `hotfix/*` and `release/*` are intentionally not allowed branch types. See [Protected-Branch Policy](#8-protected-branch-policy) for urgent-fix and release handling.
 
-`chore/upstream-sync-<date>` and `chore/upstream-sync-rollback-<date>` are narrowly scoped exceptions: they branch from the protected upstream baseline, target `master`, and exist only for reviewed upstream synchronization or its history-preserving recovery. They do not authorize general chores to target `master`.
+`chore/upstream-sync-<date>` is a narrowly scoped exception: it branches from and targets `develop`, and exists only for an authorized upstream synchronization. `chore/upstream-sync-rollback-<date>` branches from the affected protected target and exists only for history-preserving recovery. Neither convention authorizes a general chore to target `master`.
 
 ### Naming Constraints
 
@@ -236,11 +237,11 @@ The repository applies distinct merge strategies depending on whether changes or
 - **Objective**: Maintain a clean, linear history on `develop` where each pull request corresponds to exactly one atomic, descriptive commit.
 - **No Commit Thresholds**: Squash Merge is used regardless of commit count or branch size. Commit counts (such as "≤5 commits") do not alter this strategy.
 
-### Upstream Integration
+### Upstream Integration and Release Promotion
 
 - **Strategy**: **Merge Commits** (`--no-ff`)
-- **Applies to**: Synchronizing changes from `upstream/master` into `master`, and integrating `master` into `develop`.
-- **Objective**: Preserve upstream lineage and commit history.
+- **Applies to**: Synchronizing `upstream/master` into `develop`, and promoting verified `develop` releases into `master`.
+- **Objective**: Preserve upstream lineage and make every release boundary explicit in history.
 
 ### Shared Branch Protection
 
@@ -260,12 +261,13 @@ develop  ───► Protected by Policy: Direct push prohibited.
 
 1. **`master` Protection**:
    - Direct pushes to `master` are prohibited.
-   - Updates occur only through an authorized, self-reviewed `chore/upstream-sync-<date>` Pull Request that preserves upstream lineage with a merge commit, or an authorized, self-reviewed `chore/upstream-sync-rollback-<date>` recovery Pull Request.
+   - Normal updates occur only through an authorized, self-reviewed release Pull Request from `develop` using a Merge Commit.
+   - A history-preserving rollback or explicitly authorized emergency upstream security fix may target `master`; either must be promoted back to `develop` immediately after merge.
 2. **`develop` Protection**:
    - Direct pushes to `develop` are prohibited.
    - All code, documentation, and configuration changes must arrive via Pull Request.
    - Changes to `develop` require a self-reviewed Pull Request with recorded verification.
-   - The `master`-to-`develop` promotion after an upstream synchronization is also an authorized, self-reviewed Pull Request and uses a merge commit.
+   - An upstream synchronization enters through an authorized, self-reviewed `chore/upstream-sync-<date>` Pull Request and uses a Merge Commit.
 
 > [!IMPORTANT]
 > This section outlines the normative project policy. GitHub-level enforcement mechanisms (such as branch protection rules, required reviews, and automated CI gates) belong to Operational Stage O5.
@@ -280,9 +282,9 @@ develop  ───► Protected by Policy: Direct push prohibited.
 ### Release and Version-Tag Policy
 
 1. A release candidate must already be a verified commit reachable from `develop`; a release branch is not created.
-2. The release Pull Request must include the applicable project changelog update and record verification results before a tag is considered.
+2. The release Pull Request must have `develop` as its source and `master` as its target, include the applicable project changelog update, and record verification results before a tag is considered.
 3. Stable releases use immutable Semantic Version tags in the form `v<major>.<minor>.<patch>`. Pre-releases append a hyphenated label, for example `v1.6.0-rc.1`.
-4. Creating or pushing a `v*` tag to `origin` requires explicit human authorization. The `docker_publish.yml` workflow publishes a Docker image for every pushed `v*` tag; a stable tag on the default branch may also update the `latest` image tag.
+4. Creating or pushing a `v*` tag from the verified release commit on `master` requires explicit human authorization. The `docker_publish.yml` workflow publishes a Docker image for every pushed `v*` tag; a stable tag on the default branch may also update the `latest` image tag.
 5. Do not move, delete, or reuse published release tags. Correct a released defect with a new `fix/*` Pull Request and a new version tag.
 6. Upstream version tags are not release candidates for `origin` and must not be pushed automatically. The upstream synchronization safety procedure is defined in [`upstream-sync.md`](upstream-sync.md).
 
@@ -292,9 +294,13 @@ develop  ───► Protected by Policy: Direct push prohibited.
 
 The repository maintains an active relationship with the upstream open-source Aureus/Webkul codebase:
 
-1. Upstream updates from `upstream` are synchronized into `master`.
-2. Once validated on `master`, updates are merged into `develop`.
+1. Upstream updates from `upstream` are synchronized into `develop`.
+2. After validation, a selected verified `develop` state is promoted to `master` as a release.
 3. Topic branches incorporate upstream changes via `develop`.
+
+### Transition State
+
+This policy applies to all future integrations. The transition becomes operationally complete only when the first verified `develop`-to-`master` release Pull Request is merged and tagged. Existing `master` history is preserved: it must not be reset, force-pushed, or treated as a release merely because this policy changed. Any local or remote divergence must be audited and resolved through protected-branch Pull Requests before that first promotion.
 
 ### Scope Boundary Notice
 

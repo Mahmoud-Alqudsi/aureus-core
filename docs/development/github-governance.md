@@ -94,15 +94,15 @@ Aureus ERP operates a dual-remote topology separating upstream open-source devel
 
 1. **`upstream` (`Mahmoud-Alqudsi/aureuserp`)**:
    - Represents the public upstream fork tracking vendor updates.
-   - Synchronized periodically into `origin/master`.
+   - Synchronized periodically into `origin/develop` through the O7 runbook.
 2. **`origin` (`Mahmoud-Alqudsi/aureus-core`)**:
    - Represents the public development and integration repository.
    - Hosts all daily development, feature branches, pull requests, and automated testing pipelines.
 3. **`master` Branch Role**:
-   - **Upstream Synchronization Baseline**.
-   - Tracks clean upstream lineage and serves as the baseline comparison reference.
-   - `master` is **NOT** the default branch and is **NOT** an internal release branch.
-   - Direct pushes and topic branch merges into `master` are prohibited by project policy.
+   - **Stable Release Branch**.
+   - Receives verified release promotions from `develop` and is the sole source of downstream `v*` release tags.
+   - `master` is **NOT** the default branch.
+   - Direct pushes and general topic branch merges into `master` are prohibited by project policy.
 4. **`develop` Branch Role**:
    - **Primary Development / Integration Branch**.
    - Serves as the GitHub Default Branch and target base for all internal topic branch Pull Requests (`feature/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`).
@@ -121,7 +121,7 @@ A formal governance decision has been enacted establishing `develop` as the cano
 
 ```
 Canonical Default Branch: develop
-Upstream Baseline Branch: master
+Stable Release Branch: master
 ```
 
 ### Direct Evidence
@@ -137,7 +137,7 @@ The default branch configuration was directly audited and verified across both G
 ### Distinction Between Remote and Local States
 
 - **GitHub Default Branch**: The server-side default branch on `origin` is confirmed as `develop`. All new Pull Requests created on GitHub without an explicit base parameter automatically default to `develop`.
-- **Upstream Synchronization Baseline**: `master` remains strictly dedicated as the upstream vendor synchronization baseline.
+- **Stable Release Branch**: `master` receives only verified release promotions from `develop`; upstream integration occurs first on `develop`.
 - **Classification**: **`VERIFIED`**.
 
 ---
@@ -163,8 +163,9 @@ develop (GitHub Default & Primary Integration Branch)
 1. **Branch Source**: All normal topic branches must branch from the latest `develop`.
 2. **Branch Target**: All normal topic branches must target `develop` as their Pull Request base.
 3. **Branch Naming**: Must adhere to `<type>/<description>` using kebab-case and lowercase characters. Allowed types: `feature`, `fix`, `refactor`, `docs`, `chore`. Generic branch names (`temp`, `test`, `wip`, `patch`) are forbidden.
-4. **Upstream Synchronization Pull Request**: The sole exception to the normal branch target is `chore/upstream-sync-<date>`, created from the latest `master` and opened as a Pull Request to `master`; a history-preserving recovery uses `chore/upstream-sync-rollback-<date>` from its protected target. Their authorized, self-reviewed merges preserve lineage; the subsequent `master`-to-`develop` promotion is also an authorized, self-reviewed Pull Request.
-5. **Direct Push Prohibition**:
+4. **Upstream Synchronization Pull Request**: `chore/upstream-sync-<date>` is created from the latest `develop` and opened as a Pull Request to `develop` with a Merge Commit to preserve upstream lineage. A history-preserving recovery uses `chore/upstream-sync-rollback-<date>` from its protected target.
+5. **Release Pull Request**: The sole normal source permitted to target `master` is `develop`, through an authorized, self-reviewed release Pull Request using a Merge Commit. Emergency upstream security fixes and history-preserving recoveries are exceptional and must be promoted back to `develop` after merging.
+6. **Direct Push Prohibition**:
    - Direct pushes to `develop` are prohibited by project policy (`POLICY`).
    - Direct pushes to `master` are prohibited by project policy (`POLICY`).
    - All code, documentation, configuration, and upstream synchronization changes must arrive via a self-reviewed Pull Request with recorded verification.
@@ -177,7 +178,7 @@ develop (GitHub Default & Primary Integration Branch)
 ### PR Expectations and Workflow
 
 - **Mandatory PR Entry**: Every change entering `develop` or `master` must arrive via Pull Request.
-- **Target Branch**: Normal topic Pull Requests target `develop`. Only authorized `chore/upstream-sync-<date>` and `chore/upstream-sync-rollback-<date>` branches may target `master` for upstream synchronization or its history-preserving recovery; the resulting `master` commit is then promoted to `develop` through a separate Pull Request.
+- **Target Branch**: Normal topic and upstream-synchronization Pull Requests target `develop`. A verified release Pull Request targets `master` from `develop`. Only explicitly authorized emergency upstream security fixes or history-preserving recoveries may use another source for `master`.
 
 ### Pull Request Template
 
@@ -222,18 +223,18 @@ Inspection of `.github/` confirms that **no declarative ruleset files exist** in
 
 ### Approved Platform Configuration Contract
 
-The following rulesets are the approved O5 enforcement target. They are deliberately split so that the ordinary development flow and the upstream baseline can be audited independently.
+The following rulesets are the approved O5 enforcement target. They are deliberately split so that daily integration and stable releases can be audited independently.
 
 | Ruleset | Target | Required controls | Explicit exclusions / rationale |
 | :--- | :--- | :--- | :--- |
-| `protect-develop` | `refs/heads/develop` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | Do not require linear history: the authorized, self-reviewed `master`-to-`develop` upstream promotion must retain its merge commit. Required CI checks are deferred to O6. |
-| `protect-upstream-baseline` | `refs/heads/master` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | The permitted source is the authorized, self-reviewed `chore/upstream-sync-<date>` procedure. Required CI checks are deferred to O6. |
+| `protect-develop` | `refs/heads/develop` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | Normal topics use Squash Merge; authorized upstream synchronization uses a Merge Commit. Required CI checks are deferred to O6. |
+| `protect-release-master` | `refs/heads/master` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | The normal source is the verified `develop` release promotion using a Merge Commit. Required CI checks are deferred to O6. |
 
 Both rulesets must have no standing bypass actor. An exceptional change requires explicit human authorization, a recorded reason, and a deliberate temporary ruleset change; it must not be disguised as a normal direct push.
 
 ### Repository Merge Settings Contract
 
-Repository merge settings must enable **Squash Merge** and **Merge Commits**, and disable **Rebase Merge**. GitHub can constrain merge methods by target branch, but it cannot distinguish normal topic Pull Requests from `master`-to-`develop` upstream promotions because both target `develop`; reviewers therefore enforce Squash Merge for normal topics and Merge Commits for the documented upstream paths. Merge Queue remains disabled until O6 makes every required validation workflow compatible with the `merge_group` event.
+Repository merge settings must enable **Squash Merge** and **Merge Commits**, and disable **Rebase Merge**. GitHub cannot distinguish normal topic Pull Requests from upstream-synchronization Pull Requests when both target `develop`; the maintainer therefore enforces Squash Merge for normal topics and Merge Commits for upstream synchronization and release promotions. Merge Queue remains disabled until O6 makes every required validation workflow compatible with the `merge_group` event.
 
 ### Application and Verification Procedure
 
@@ -242,7 +243,7 @@ The approved configuration was applied and verified on 2026-09-17 by direct GitH
 | Ruleset | Identifier | Target | Enforcement | Verified controls |
 | :--- | :--- | :--- | :--- | :--- |
 | `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
-| `protect-upstream-baseline` | `23566566` | `refs/heads/master` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
+| `protect-release-master` | `23566566` | `refs/heads/master` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
 
 The effective-rules endpoint confirms that each target receives `pull_request`, `deletion`, and `non_fast_forward` rules. Repository merge settings are also verified as Squash Merge enabled, Merge Commits enabled, and Rebase Merge disabled. Required CI status checks were intentionally not added and remain O6 work.
 
@@ -255,8 +256,8 @@ The effective-rules endpoint confirms that each target receives `pull_request`, 
 | Operation / Path | Canonical Strategy | Policy Authority | Historical Practice | GitHub Setting Enforcement |
 | :--- | :--- | :--- | :--- | :--- |
 | **Topic Branches $\to$ `develop`** | **Squash Merge** | Project Policy (`docs/development/git-workflow.md` Section 7) | Observed in PR #8 commit `76aa5f9a6` | **NOT VERIFIED** |
-| **`upstream/master` $\to$ `master`** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 7 & 9) | Observed in commit `49e330b5e` | **NOT VERIFIED** |
-| **`master` $\to$ `develop`** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 7) | Observed in commit `15a76bf09` | **NOT VERIFIED** |
+| **`upstream/master` $\to$ `develop`** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 7 & 9) | Historical upstream merge in commit `49e330b5e` used the previous topology | **POLICY** |
+| **`develop` $\to$ `master` release** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 7 & 8) | First promotion pending | **POLICY** |
 
 ### Strategic Principles and Operational Boundaries
 
@@ -354,7 +355,7 @@ Every governance control and observation in this document is classified accordin
 ### Special Constraints
 
 1. **Autonomous AI Agents**: "Autonomous AI Agent" is **NOT** a native GitHub permission role. AI coding agents operate strictly through the identity, credentials, SSH keys, or tokens under which they are executed. AI operating rules belong to [`AGENTS.md`](../../AGENTS.md) and [`docs/ai/`](../ai/).
-2. **Urgent Fix & Release Branches**: The project intentionally has no `hotfix/*` or `release/*` branches. Urgent defects use the normal reviewed `fix/*` lifecycle from `develop`; releases are approved version tags on verified `develop` commits. See [`git-workflow.md`](git-workflow.md#8-protected-branch-policy).
+2. **Urgent Fix & Release Branches**: The project intentionally has no `hotfix/*` or `release/*` branches. Urgent defects use the normal reviewed `fix/*` lifecycle from `develop`; releases are promoted to `master` from verified `develop` commits and tagged there. See [`git-workflow.md`](git-workflow.md#8-protected-branch-policy).
 
 ---
 
@@ -378,8 +379,8 @@ The audit identified the following genuine, evidence-based governance findings:
 
 ### GOV-003: GitHub Repository Merge Button Configuration
 - **Classification**: **`VERIFIED`** (repository settings) / **`POLICY`** (source-specific method selection)
-- **Evidence**: GitHub API confirms Squash Merge and Merge Commits enabled, with Rebase Merge disabled. The distinction between a normal topic Pull Request and the `master`-to-`develop` upstream promotion remains a reviewer-enforced policy because both target `develop`.
-- **Impact**: Rebase Merge cannot be selected; reviewers must select Squash Merge for normal topics and Merge Commits for documented upstream paths.
+- **Evidence**: GitHub API confirms Squash Merge and Merge Commits enabled, with Rebase Merge disabled. The distinction between a normal topic Pull Request and upstream synchronization remains a maintainer-enforced policy because both target `develop`.
+- **Impact**: Rebase Merge cannot be selected; maintainers must select Squash Merge for normal topics and Merge Commits for upstream synchronization and release promotion.
 - **Recommended Action**: Re-verify merge settings after repository-administration changes.
 - **Owning Operational Stage**: O5 (`COMPLETE`).
 
@@ -424,7 +425,7 @@ To preserve strict architectural boundaries across roadmap phases, the following
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Default Branch** | `develop` | `develop` | **VERIFIED** | `git ls-remote --symref origin HEAD`, `git symbolic-ref refs/remotes/origin/HEAD` | O5 |
 | **Branch Role: develop** | Primary integration branch | Primary integration branch | **VERIFIED** | `git ls-remote --symref origin HEAD`, `docs/development/git-workflow.md` | O5 |
-| **Branch Role: master** | Upstream synchronization baseline | Upstream synchronization baseline | **POLICY** | `docs/development/git-workflow.md`, commit history | O5 |
+| **Branch Role: master** | Stable release branch | Stable release branch; first release promotion pending | **POLICY** | `docs/development/git-workflow.md`, transition record | O4 / O5 |
 | **Direct Push Restriction on develop & master** | Prohibited on `develop` & `master` | Active Pull Request rules block direct updates | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
 | **Pull Request Template** | Present | Present at `.github/PULL_REQUEST_TEMPLATE.md` | **VERIFIED** | File inspection `.github/PULL_REQUEST_TEMPLATE.md` | O5 |
 | **Pull Request Requirement for protected branches** | Mandatory for `develop` and `master` | Active rulesets require Pull Requests | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |

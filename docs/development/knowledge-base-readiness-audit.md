@@ -37,7 +37,7 @@ The audit records only the state observed on this branch on 2026-09-17. It must 
 | Fix a security-sensitive defect | `AGENTS.md` → security reading set → direct security source and tests | `Webkul\\Security\\Bouncer`, `OwnershipScope`, and `PermissionType` exist; company-isolation workflow tests exist in Support. | **PASS** — the reading order sends the agent to security controls and source evidence. No generic skill is required for every security defect. |
 | Change a test, helper, or CI workflow | `aureus-test-and-ci-change` → testing rules → CI governance → upstream runbook when incoming | Existing Pest, Playwright, and translation workflows declare triggers, permissions, concurrency, and jobs; shared test bootstrap and company-scoping tests exist. | **PASS** — the path distinguishes test work from GitHub enforcement and treats incoming automation as security-sensitive. |
 | Correct a material document or AI rule | `aureus-documentation-change` → change-management policy → direct domain evidence | `docs/development/change-management.md`, `docs/CHANGELOG.md`, `AGENTS.md`, and the PR template define evidence, impact, and record boundaries. | **PASS** — the path preserves the separation between knowledge history and software release history. |
-| Audit or execute an upstream synchronization | `aureus-upstream-sync` → Git/GitHub governance → upstream runbook | Both `origin` and `upstream` remotes exist; the runbook defines command classes, workflow review, stop conditions, PR promotion, and recovery. | **PASS** — the route preserves explicit authorization and prohibits direct pushes to `master` or `develop`. |
+| Audit or execute an upstream synchronization | `aureus-upstream-sync` → Git/GitHub governance → upstream runbook | Both `origin` and `upstream` remotes exist; the runbook defines command classes, workflow review, stop conditions, an upstream PR to `develop`, a separate release promotion to `master`, and recovery. | **PASS** — the route preserves explicit authorization and prohibits direct pushes to `master` or `develop`. |
 
 ## Confirmed Routing Controls
 
@@ -49,11 +49,15 @@ The audit records only the state observed on this branch on 2026-09-17. It must 
 - [`docs/development/change-management.md`](change-management.md) requires documentation-impact, evidence, review, and record decisions.
 - [`docs/development/upstream-sync.md`](upstream-sync.md) separates read-only audit from fetch, integration, remote mutation, and emergency recovery authorization.
 
+### 2026-09-17 Release-Branch Routing Recheck
+
+After the O4/O5/O7 release-branch policy change, the upstream scenario was rerun by documentation and GitHub ruleset inspection. The route now correctly sends normal upstream integration to `develop` and makes the verified `develop`-to-`master` Pull Request the separate release boundary. This is a routing recheck only; it does not claim that an upstream synchronization, a release promotion, or a tag has been executed.
+
 ## Deferred Final-Revalidation Gates
 
 The following are known execution dependencies, not failures of the routing audit:
 
-1. **Upstream execution** — the O7 runbook is complete, but no new upstream synchronization has been authorized or executed through the protected-branch PR path.
+1. **Upstream execution and first release promotion** — the O7 runbook is complete, but no new upstream synchronization or verified `develop`-to-`master` release promotion has been authorized or executed through the protected-branch PR path.
 2. **Incoming workflow review** — when upstream is synchronized, any incoming automation must be reviewed under the O7 workflow-security controls before acceptance.
 3. **O6 remediation** — CI and testing governance is baseline-audited, but its documented remediation and required-status-check decisions remain separate work. Current workflow files must not be represented as final server-side gates solely because they exist.
 4. **Post-change scenario rerun** — final O10 evidence requires rerunning the affected scenario after upstream/O6 outcomes and after any material change to `AGENTS.md`, a reading route, a runbook, or a repository skill.

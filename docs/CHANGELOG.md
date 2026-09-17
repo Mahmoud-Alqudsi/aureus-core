@@ -30,12 +30,22 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### O4/O5/O7 Follow-up — Release-Branch Operating Model
+
+- **Evidentiary Tier**: Active branch policy change with direct Git and GitHub inspection.
+- **Status**: **Adopted / first release promotion pending**.
+- **Recorded Controls**:
+  - Reassigned `master` from the upstream synchronization baseline to the stable release branch; `develop` remains the default daily-integration branch.
+  - Moved normal upstream synchronization to `develop` through an authorized `chore/upstream-sync-<date>` Pull Request with a Merge Commit; a verified `develop`-to-`master` Pull Request now forms the release boundary.
+  - Required downstream version tags to point only to the verified `master` release commit. The existing no-direct-push, no-bypass, solo-maintainer review, deletion, and force-push protections remain in force.
+  - Recorded the transition boundary: current protected-branch history is preserved, and the model is operationally complete only after the first verified release promotion. No reset, force-push, upstream execution, tag creation, or PR merge is claimed by this documentation change.
+
 ### O5 Follow-up — Solo-Maintainer Ruleset Alignment
 
 - **Evidentiary Tier**: Direct GitHub API inspection.
 - **Status**: **Complete / Verified**.
 - **Recorded Controls**:
-  - Reconfigured the active `protect-develop` (`23566563`) and `protect-upstream-baseline` (`23566566`) rulesets for a single maintainer: Pull Requests remain mandatory, but both now require zero approving reviews and do not require approval from someone other than the latest pusher.
+  - Reconfigured the active `protect-develop` (`23566563`) and the `master` ruleset (`23566566`, now named `protect-release-master`) for a single maintainer: Pull Requests remain mandatory, but both now require zero approving reviews and do not require approval from someone other than the latest pusher.
   - Retained the protections that preserve controlled integration: no bypass actors, required conversation resolution, stale-review dismissal, and blocks on deletion and non-fast-forward updates.
   - Aligned the Git operating model, GitHub policy, upstream runbook, AI entry point, and operational roadmap to require author self-review and recorded verification; independent review remains required where a higher-risk repository control mandates it.
   - Corrected the repository classification to public where the GitHub-governance documentation described it as private.

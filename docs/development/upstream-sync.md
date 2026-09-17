@@ -15,8 +15,8 @@ This document defines the canonical operational procedure for synchronizing upst
 > 1. This document defines **how an authorized human or supervised agent executes synchronization**.
 > 2. Documenting these commands **does not authorize their autonomous execution**.
 > 3. Upstream synchronization must **never** be executed as an implicit background task.
-> 4. The canonical upstream topology flows strictly through protected-branch Pull Requests:
->    $$\text{upstream/master} \xrightarrow[\text{--no-ff}]{\text{Merge}} \text{chore/upstream-sync-*} \xrightarrow[\text{Merge Commit}]{\text{PR}} \text{master} \xrightarrow[\text{Merge Commit}]{\text{PR}} \text{develop}$$
+> 4. The canonical upstream topology flows through `develop`; release promotion is a separate protected-branch Pull Request:
+>    $$\text{upstream/master} \xrightarrow[\text{--no-ff}]{\text{Merge}} \text{chore/upstream-sync-*} \xrightarrow[\text{Merge Commit}]{\text{PR}} \text{develop} \xrightarrow[\text{Merge Commit}]{\text{release PR}} \text{master}$$
 
 ---
 
@@ -99,17 +99,17 @@ git rev-parse origin/master
 git rev-parse origin/develop
 git rev-parse upstream/master
 
-# [A] Inspect divergence between origin/master and upstream/master
-git merge-base origin/master upstream/master
-git rev-list --left-right --count origin/master...upstream/master
+# [A] Inspect divergence between origin/develop and upstream/master
+git merge-base origin/develop upstream/master
+git rev-list --left-right --count origin/develop...upstream/master
 ```
 
-### Verified Repository Baseline (Audit Record)
+### Historical Repository Baseline (Pre-Transition Audit Record)
 - **`origin`**: `git@github.com:Mahmoud-Alqudsi/aureus-core.git` (Public development repo).
 - **`upstream`**: `git@github.com:Mahmoud-Alqudsi/aureuserp.git` (Public fork tracking Webkul).
-- **`origin/master` baseline**: Commit `49e330b5e` ("Merge remote-tracking branch 'upstream/master'").
+- **`origin/master` historical baseline**: Commit `49e330b5e` ("Merge remote-tracking branch 'upstream/master'").
 - **`upstream/master` baseline**: Commit `9ece7f023` (Webkul v1.6.0 + PR patches #1543–#1559).
-- **Baseline divergence**: `10 95` (10 downstream-only commits, 95 upstream commits ahead).
+- **Historical baseline divergence**: `10 95` (10 downstream-only commits, 95 upstream commits ahead).
 - **`backup/pre-upstream-sync` reference**: Pre-existing local branch pointing to `49e330b5e`.
 - **`origin/develop`**: Commit `76aa5f9a6` (incorporates `49e330b5e` via merge commit `15a76bf09`).
 
@@ -123,11 +123,11 @@ To prevent accidental data loss, create an immutable, uniquely identifiable chec
 # [A] 1. Check if proposed checkpoint name already exists
 git show-ref --verify refs/heads/checkpoint/pre-sync-$(date +%Y%m%d)
 
-# [C] 2. Create an immutable checkpoint branch from current origin/master
-git branch checkpoint/pre-sync-$(date +%Y%m%d)-$(git rev-parse --short origin/master) origin/master
+# [C] 2. Create an immutable checkpoint branch from current origin/develop
+git branch checkpoint/pre-sync-$(date +%Y%m%d)-$(git rev-parse --short origin/develop) origin/develop
 
 # [A] 3. Record the checkpoint commit hash in the execution log
-git rev-parse checkpoint/pre-sync-$(date +%Y%m%d)-$(git rev-parse --short origin/master)
+git rev-parse checkpoint/pre-sync-$(date +%Y%m%d)-$(git rev-parse --short origin/develop)
 ```
 
 > [!CAUTION]
@@ -145,28 +145,28 @@ git fetch upstream
 UPSTREAM_TARGET=$(git rev-parse upstream/master)
 echo "Target upstream/master commit: ${UPSTREAM_TARGET}"
 
-# [A] Review incoming commits and changed files
-git log --oneline --decorate --graph origin/master..upstream/master
-git diff --stat origin/master..upstream/master
+# [A] Review incoming commits and changed files against the integration branch
+git log --oneline --decorate --graph origin/develop..upstream/master
+git diff --stat origin/develop..upstream/master
 ```
 
 ---
 
 ## 6. Prepare the Upstream Integration Pull Request
 
-Upstream changes are merged on a short-lived synchronization branch, never directly on `master`. This preserves upstream history while allowing the active `master` ruleset to require review.
+Upstream changes are merged on a short-lived synchronization branch, never directly on `develop`. This preserves upstream history while allowing the active `develop` ruleset to require review before integration.
 
 ```bash
-# [C] 1. Create the approved synchronization branch from the protected baseline
-SYNC_BRANCH="chore/upstream-sync-$(date -u +%Y%m%d)-$(git rev-parse --short origin/master)"
-git switch --create "${SYNC_BRANCH}" origin/master
+# [C] 1. Create the approved synchronization branch from the protected integration branch
+SYNC_BRANCH="chore/upstream-sync-$(date -u +%Y%m%d)-$(git rev-parse --short origin/develop)"
+git switch --create "${SYNC_BRANCH}" origin/develop
 
 # [C] 2. Execute the explicit merge on the synchronization branch
 git merge upstream/master --no-ff -m "Merge updates from upstream/master (${UPSTREAM_TARGET:0:9})"
 ```
 
 > [!IMPORTANT]
-> Do not check out `master` and merge into it locally. GitHub ruleset `protect-upstream-baseline` requires the resulting change to enter `master` through an authorized, self-reviewed Pull Request.
+> Do not check out `develop` and merge into it locally. GitHub ruleset `protect-develop` requires the resulting change to enter `develop` through an authorized, self-reviewed Pull Request.
 
 ---
 
@@ -211,7 +211,7 @@ Treat every incoming `.github/workflows/` change as a security-sensitive downstr
 
 1. Inspect triggers, token permissions, secrets, artifact handling, and every remote write or deployment action.
 2. Do not accept a workflow merely because it originated upstream or because its file name resembles an existing workflow.
-3. A workflow using `workflow_run`, `contents: write`, `pull-requests: write`, Pages publication, or a force push requires explicit human review before it enters `master`.
+3. A workflow using `workflow_run`, `contents: write`, `pull-requests: write`, Pages publication, or a force push requires explicit human review before it enters `develop`.
 4. Record accepted CI changes for the post-sync O6 reconciliation; do not alter protected-branch status checks until their new workflow runs have succeeded.
 
 ---
@@ -236,15 +236,15 @@ git log -n 1 --format="%H %P" HEAD
 
 ---
 
-## 9. Review and Merge into `master`
+## 9. Review and Merge into `develop`
 
 ```bash
 # [D] 1. Push only the synchronization branch (requires human authorization)
 git push --set-upstream origin "${SYNC_BRANCH}"
 
-# [D] 2. Create a Pull Request to master (or create the equivalent PR in the GitHub UI)
+# [D] 2. Create a Pull Request to develop (or create the equivalent PR in the GitHub UI)
 gh pr create \
-  --base master \
+  --base develop \
   --head "${SYNC_BRANCH}" \
   --title "chore: synchronize upstream ${UPSTREAM_TARGET:0:9}" \
   --body "Upstream target: ${UPSTREAM_TARGET}\n\nValidation: <record completed validation>"
@@ -253,27 +253,30 @@ gh pr create \
 The responsible maintainer must confirm the conflict-resolution record, self-review the changes, record validation evidence, confirm tag safety, and review any incoming workflow changes. Merge this Pull Request with **Merge Commit**, not Squash or Rebase. After the required authorization and applicable CI checks at that time, confirm the result:
 
 ```bash
-# [B] Refresh the protected baseline after GitHub merges the Pull Request
-git fetch origin master
+# [B] Refresh the protected integration branch after GitHub merges the Pull Request
+git fetch origin develop
 
-# [A] The merged target must be reachable from origin/master
-git merge-base --is-ancestor "${UPSTREAM_TARGET}" origin/master
-git log -n 1 --format="%H %P" origin/master
+# [A] The merged target must be reachable from origin/develop
+git merge-base --is-ancestor "${UPSTREAM_TARGET}" origin/develop
+git log -n 1 --format="%H %P" origin/develop
 ```
 
 ---
 
-## 10. Promote `master` into `develop`
+## 10. Promote a Verified `develop` Release into `master`
 
-Following the canonical flow (`upstream` $\to$ `master` $\to$ `develop`), the reviewed `master` update is promoted through a second Pull Request. Do not merge or push directly into `develop`.
+Following the canonical release flow (`develop` $\to$ `master`), a verified integration state is promoted through a release Pull Request. Do not merge or push directly into `master`.
 
 ```bash
-# [D] 1. Create a promotion Pull Request with master as the source branch
+# [A] 1. Record the exact verified source before opening the release Pull Request
+RELEASE_SOURCE=$(git rev-parse origin/develop)
+
+# [D] 2. Create a release Pull Request with develop as the source branch
 gh pr create \
-  --base develop \
-  --head master \
-  --title "chore: promote upstream synchronization to develop" \
-  --body "Source master commit: $(git rev-parse origin/master)\n\nValidation: <record PR and local validation evidence>"
+  --base master \
+  --head develop \
+  --title "chore: release develop to master" \
+  --body "Source develop commit: ${RELEASE_SOURCE}\n\nValidation: <record release and local validation evidence>"
 ```
 
 The responsible maintainer must select **Merge Commit** after self-review, required authorization, and applicable CI checks complete. Then verify protected-branch parity:
@@ -282,9 +285,9 @@ The responsible maintainer must select **Merge Commit** after self-review, requi
 # [B] Refresh protected references
 git fetch origin master develop
 
-# [A] The merged master update must be reachable from develop
-git merge-base --is-ancestor origin/master origin/develop
-git rev-list --left-right --count develop...origin/develop # must return 0 0
+# [A] The exact verified release source must be reachable from master
+git merge-base --is-ancestor "${RELEASE_SOURCE}" origin/master
+git rev-list --left-right --count master...origin/master # must return 0 0
 ```
 
 ---
@@ -302,7 +305,7 @@ git log -n 1 --format="%H parents: %P" <merge-commit-hash>
 > [!IMPORTANT]
 > **Mainline Parent Verification Rule**:
 > «The mainline parent number must be verified against the actual merge commit's parent order before executing the revert. Do not blindly assume that parent "1" is correct.»
-> In standard merges, Parent 1 is the pre-merge target branch (`master`), while Parent 2 is the incoming branch (`upstream/master`). Verify this via `git log -n 1 --format="%P"`.
+> In standard merges, Parent 1 is the pre-merge target branch and Parent 2 is the incoming source branch. Verify the actual order via `git log -n 1 --format="%P"`; do not assume the source is always `upstream/master`.
 
 ```bash
 # [C] 2. Create a recovery branch from the protected target and revert there.
@@ -327,7 +330,7 @@ gh pr create \
   --body "Reverts: ${MERGE_COMMIT}\n\nReason: <record approved reason>"
 ```
 
-For a rollback targeting `master`, merge the authorized, self-reviewed recovery Pull Request with **Merge Commit**, then promote the resulting `master` change to `develop` through the authorized, self-reviewed procedure in Section 10. For a rollback targeting `develop` only, use the project-approved Merge Commit path for this upstream recovery. No rollback permits a direct push to `master` or `develop`.
+For a rollback targeting `master`, merge the authorized, self-reviewed recovery Pull Request with **Merge Commit**, then immediately promote the resulting `master` rollback to `develop` through an authorized recovery Pull Request so the release and integration histories do not diverge. For a rollback targeting `develop` only, use the project-approved Merge Commit path for this upstream recovery. No rollback permits a direct push to `master` or `develop`.
 
 > [!NOTE]
 > `git revert -m <parent>` accepts one mainline-parent selector. The commit message is supplied by Git's normal editor or with `--no-edit` when the generated message is sufficient; `-m` is not a message option.
@@ -384,7 +387,7 @@ The operator or agent must **immediately halt** the procedure and escalate to a 
 7. Incoming upstream changes modify database migrations in ways that violate company isolation.
 8. Destructive migrations (table drops, column drops) are detected in upstream commits.
 9. Composer dependency constraints conflict or fail strict validation.
-10. Automated tests or linting (`pint`) fail on `master` or `develop` post-merge.
+10. Automated tests or linting (`pint`) fail on `develop` after upstream integration or on `master` after release promotion.
 11. Tag collision occurs between upstream and downstream tags.
 12. Docker publishing triggers could be unintentionally activated.
 13. Required validation checks cannot be completed due to missing tooling.
@@ -395,10 +398,10 @@ The operator or agent must **immediately halt** the procedure and escalate to a 
 
 ## 14. Documentation & Impact Recording
 
-Following successful synchronization:
+Following successful synchronization or release promotion:
 1. Record the upstream sync commit range, date, and resolved target in [`docs/architecture/change-impact.md`](../architecture/change-impact.md).
 2. Update verification entries in [`docs/verification-matrix.md`](../verification-matrix.md).
-3. If user-facing or schema changes occurred, document release impact in root `CHANGELOG.md` (if maintained).
+3. If user-facing or schema changes are included in a release promotion, document release impact in root `CHANGELOG.md` before the downstream tag is created.
 
 ---
 
@@ -407,7 +410,7 @@ Following successful synchronization:
 | Area | Observed Reality | Classification | Evidence Source |
 |:---|:---|:---:|:---|
 | **Remote Topology** | `origin` (aureus-core) and `upstream` (aureuserp) | **VERIFIED** | `git remote -v` |
-| **Branch Role: `master`** | Upstream synchronization integration branch | **POLICY** | `git-workflow.md` Section 9, commit `49e330b5e` |
+| **Branch Role: `master`** | Stable release branch; first release promotion pending | **POLICY** | `git-workflow.md` Sections 2 and 8 |
 | **Branch Role: `develop`** | Active development trunk | **POLICY** | `git-workflow.md` Section 3, commit `15a76bf09` |
 | **Historical Merge Strategy** | Merge commit (`--no-ff`) used for upstream integration | **HISTORICAL PRACTICE** | Commit `49e330b5e`, `15a76bf09`, `de51752a5` |
 | **Preflight Divergence** | Authoritative check requires `0 0` count | **POLICY** | `git rev-list --left-right --count` |
