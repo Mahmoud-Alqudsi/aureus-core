@@ -55,6 +55,18 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
+### O10 — Knowledge Base & Operational Readiness Audit
+
+- **Evidentiary Tier**: Read-only branch audit.
+- **Status**: **Initial audit complete / final revalidation pending**.
+- **Primary Focus**: Testing whether realistic agent tasks reach the correct canonical controls and direct repository evidence without granting unapproved authority.
+- **Recorded Result**:
+  - Added [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) with seven scenario-based routing checks covering plugin, company-scoped schema, API, security, test/CI, documentation, and upstream work.
+  - All seven current routing scenarios passed static evidence inspection; the audit does not claim application execution or platform enforcement from that result.
+  - Final O10 revalidation remains dependent on an authorized upstream synchronization, review of incoming workflow changes, and the separately tracked O6 decisions.
+
+---
+
 ## 2. Phase-by-Phase Documentation Evolution
 
 ```

@@ -160,7 +160,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **78 verified files** organized into 10 functional domains:
+The repository documentation consists of **79 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -171,7 +171,7 @@ docs/
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (4 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
-├── development/                              # Development workflow, Git operations, maintenance & AI skills (6 files)
+├── development/                              # Development workflow, Git operations, maintenance, AI skills & readiness (7 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -270,6 +270,7 @@ Repository topology, branch hierarchy, commit conventions, merge strategy, GitHu
 | [`docs/development/upstream-sync.md`](development/upstream-sync.md) | Operational runbook for upstream synchronization, 3-layer safety preflight, conflict resolution, and rollback |
 | [`docs/development/change-management.md`](development/change-management.md) | Change lifecycle, knowledge-maintenance triggers, evidence discipline, review cadence, and PR documentation record |
 | [`docs/development/ai-skills.md`](development/ai-skills.md) | Repository-scoped AI skill index, automation boundaries, and maintenance rules |
+| [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) | Scenario-based O10 readiness evidence, deferred controls, and final-revalidation procedure |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:
@@ -438,4 +439,4 @@ The active governance and remediation program uses **Operational Stages `O0`–`
 | **O7** | Upstream integration runbook | **Complete / Committed** | Protected-branch PR workflow, history-preserving recovery, conflict protocol, workflow review, and tag safety are documented; execution remains explicitly authorized work. |
 | **O8** | Change management and knowledge maintenance | **Complete / Committed** | Event-driven lifecycle, documentation-impact triggers, evidence discipline, ownership-by-role, quarterly review, and PR recording requirements are adopted. |
 | **O9** | AI skills and developer automation | **Complete / Committed** | Six repository-scoped, instruction-only skills route plugin, API, schema, testing/CI, documentation, and upstream work to canonical controls without creating parallel policy. |
-| **O10** | Final knowledge-base readiness audit | **Not started** | Scenario-based agent audits and final integration review remain. |
+| **O10** | Final knowledge-base readiness audit | **Initial audit complete / final revalidation pending** | Seven scenario routes pass read-only evidence checks; final closure awaits upstream execution/review and O6 outcomes. |
