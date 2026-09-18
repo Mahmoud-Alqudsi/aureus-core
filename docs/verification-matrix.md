@@ -309,3 +309,13 @@ Per Phase 11 rules, living documentation files outside the two canonical target 
 
 The next planned phase is **Phase 12**, focused on top-level project documentation, README navigation, and CHANGELOG synchronization.
 - **Action Required in Phase 12**: Update `docs/README.md` and project root navigation to prominently link and cross-reference `docs/architecture/change-impact.md` and `docs/verification-matrix.md`.
+
+---
+
+## 9. Upstream Synchronization Verification Record
+
+| Record | Status | Evidence | Verified on | Outstanding verification |
+| :--- | :--- | :--- | :--- | :--- |
+| O7 synchronization of `upstream/master` target `d7d471894` into `develop` via PR #10 | VERIFIED | `dcd449b96` is a merge of `c2b4ddaa2` and `d7d471894`; `ddbd24ba4` merges the synchronization branch into `develop`; `d7d471894` is an ancestor of `origin/develop`; `git diff --check` passed; PR #10 GitHub Actions runs `35284954990` (Pest: MySQL/PostgreSQL), `35284955122` (Playwright: 12 shard jobs and 2 reports), and `35284955199` (translations) succeeded on `dcd449b96` | 2026-09-18 | Fresh-install CI verifies the migration path in both database engines. The local PHP/Composer runtime could not rerun the checks because of a WSL socket failure; Pint and a production-data migration rehearsal remain separate release-validation work. |
+
+The accepted synchronization range contains eight migrations and no Composer manifest changes. The incoming Playwright reporting workflows were intentionally excluded because they requested remote-write permissions; the final `develop` result retains the pre-sync versions of those workflow files.

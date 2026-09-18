@@ -30,6 +30,18 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### O7 — Upstream Synchronization Record (2026-09-18)
+
+- **Evidentiary Tier**: Git-Verified history plus direct GitHub Actions execution evidence.
+- **Status**: **Merged into `develop`; synchronization CI verified; release promotion pending**.
+- **Recorded Result**:
+  - Integrated `upstream/master` target `d7d471894` through synchronization merge `dcd449b96` and Pull Request #10 merge `ddbd24ba4`.
+  - Preserved downstream privacy behavior in the installer and excluded the incoming Playwright reporting workflows because they introduced `gh-pages` force-push and pull-request comment writes.
+  - GitHub Actions for PR #10 completed successfully on the synchronization commit: Pest against MySQL and PostgreSQL, Playwright's twelve database/shard jobs and two report jobs, and the translation check. The Pest bootstrap covers a fresh schema/install path, exercising the accepted migrations in both database engines.
+  - Recorded the accepted range, migration scope, CI evidence, and remaining release boundaries in [`architecture/change-impact.md`](architecture/change-impact.md) and [`verification-matrix.md`](verification-matrix.md).
+  - Added R8 post-merge cleanup to the upstream runbook. It requires a read-only candidate audit and explicit approval before removing any merged branch, remote ref, or linked worktree; no cleanup deletion is recorded here.
+  - No release promotion or tag creation is claimed by this record. A production-data migration rehearsal and a local rerun remain outside this evidence record.
+
 ### O4/O5/O7 Follow-up — Release-Branch Operating Model
 
 - **Evidentiary Tier**: Active branch policy change with direct Git and GitHub inspection.
@@ -39,6 +51,12 @@ In accordance with the repository's documentation accuracy rules, historical eve
   - Moved normal upstream synchronization to `develop` through an authorized `chore/upstream-sync-<date>` Pull Request with a Merge Commit; a verified `develop`-to-`master` Pull Request now forms the release boundary.
   - Required downstream version tags to point only to the verified `master` release commit. The existing no-direct-push, no-bypass, solo-maintainer review, deletion, and force-push protections remain in force.
   - Recorded the transition boundary: current protected-branch history is preserved, and the model is operationally complete only after the first verified release promotion. No reset, force-push, upstream execution, tag creation, or PR merge is claimed by this documentation change.
+
+### R6 Follow-up — Entry-Point Updates Confirmed
+
+- **Evidentiary Tier**: Git-Verified history.
+- **Status**: **Complete / Merged into `develop`**.
+- The entry-point updates tracked as R6 were previously deferred for follow-up, but commit `63f30ce19` from `refactor/ai-knowledge-architecture` entered `develop` through Pull Request #9 (`c2b4ddaa2`). Its documented scope includes `AGENTS.md`, the documentation index and changelog, and the Git/GitHub/upstream/O10 operating records.
 
 ### O5 Follow-up — Solo-Maintainer Ruleset Alignment
 
