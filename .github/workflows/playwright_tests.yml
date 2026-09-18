@@ -254,3 +254,19 @@ jobs:
           path: tests/e2e-pw/playwright-report
           retention-days: 1
 
+  playwright_e2e_gate:
+    name: Playwright E2E Gate
+    if: ${{ always() }}
+    needs:
+      - aureus_playwright_test
+      - merge_playwright_reports
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Require successful test shards and reports
+        env:
+          SHARD_RESULT: ${{ needs.aureus_playwright_test.result }}
+          REPORT_RESULT: ${{ needs.merge_playwright_reports.result }}
+        run: |
+          test "${SHARD_RESULT}" = "success"
+          test "${REPORT_RESULT}" = "success"
