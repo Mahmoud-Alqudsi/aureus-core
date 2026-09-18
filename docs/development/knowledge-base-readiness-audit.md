@@ -1,7 +1,7 @@
 ---
 status: audit
 source_of_truth: repository-files-and-read-only-inspection
-last_verified: 2026-09-17
+last_verified: 2026-09-19
 scope: operational-stage-o10-initial-readiness
 confidence: high
 ---
@@ -25,7 +25,7 @@ Each scenario was evaluated read-only against four conditions:
 3. A direct implementation, test, configuration, or Git source exists for the scenario's next investigation step.
 4. The path preserves approval and operational boundaries rather than implying permission to change schema, workflows, GitHub, upstream, or protected branches.
 
-The audit records only the state observed on this branch on 2026-09-17. It must be repeated after a material change to the relevant guidance or after the deferred upstream/O6 work is completed.
+The audit records the initial routing state observed on 2026-09-17 and the subsequent O7/O6 execution evidence recorded below. It must be repeated after a material change to the relevant guidance or before final readiness is claimed.
 
 ## Scenario Results
 
@@ -55,7 +55,11 @@ After the O4/O5/O7 release-branch policy change, the upstream scenario was rerun
 
 ### 2026-09-18 Upstream Execution and CI Evidence
 
-The O7 route was subsequently exercised: PR #10 merged `dcd449b96` into `develop` as `ddbd24ba4`. The accepted upstream target is reachable from `develop`; the incoming write-capable Playwright-reporting workflow was excluded; and the PR's Pest (MySQL/PostgreSQL), Playwright, and translation workflows completed successfully. This satisfies the upstream-execution dependency for the readiness audit; it does not substitute for a release promotion, O6 remediation, or the final all-scenarios revalidation.
+The O7 route was subsequently exercised: PR #10 merged `dcd449b96` into `develop` as `ddbd24ba4`. The accepted upstream target is reachable from `develop`; the incoming write-capable Playwright-reporting workflow was excluded; and the PR's Pest (MySQL/PostgreSQL), Playwright, and translation workflows completed successfully. This satisfies the upstream-execution dependency for the readiness audit; it does not substitute for a release promotion or the final all-scenarios revalidation.
+
+### 2026-09-19 O6 Enforcement Evidence
+
+The O6 remediation was exercised and enforced after the upstream record. PR #12 added the stable `Playwright E2E Gate`; its test shards, report merges, gate, Pest (MySQL/PostgreSQL), and translation check all succeeded before merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07` entered `develop`. Direct GitHub API inspection then confirmed that active rulesets `23566563` (`develop`) and `23566566` (`master`) strictly require those two Pest contexts, translation consistency, and `Playwright E2E Gate`, with no bypass actors. This satisfies the O6 enforcement dependency; it does not substitute for final O10 scenario revalidation or a release promotion.
 
 ## Deferred Final-Revalidation Gates
 
@@ -63,8 +67,7 @@ The following are known execution dependencies, not failures of the routing audi
 
 1. **First release promotion** — the O7 synchronization has been executed and CI-verified, but no verified `develop`-to-`master` release promotion has been authorized or executed through the protected-branch PR path.
 2. **Post-merge cleanup and record review** — the incoming workflow review is recorded, and the new R8 cleanup stage requires an explicit, read-only candidate audit before any merged branch or worktree is removed.
-3. **O6 remediation** — CI and testing governance is baseline-audited, but its documented remediation and required-status-check decisions remain separate work. Current workflow files must not be represented as final server-side gates solely because they exist.
-4. **Post-change scenario rerun** — final O10 evidence requires rerunning the affected scenario after upstream/O6 outcomes and after any material change to `AGENTS.md`, a reading route, a runbook, or a repository skill.
+3. **Post-change scenario rerun** — final O10 evidence requires rerunning all scenarios after this O6 documentation record and after any material change to `AGENTS.md`, a reading route, a runbook, or a repository skill.
 
 ## Final Revalidation Procedure
 

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-17
+last_verified: 2026-09-19
 scope: repository-governance
 confidence: high
 ---
@@ -169,7 +169,7 @@ develop (GitHub Default & Primary Integration Branch)
    - Direct pushes to `develop` are prohibited by project policy (`POLICY`).
    - Direct pushes to `master` are prohibited by project policy (`POLICY`).
    - All code, documentation, configuration, and upstream synchronization changes must arrive via a self-reviewed Pull Request with recorded verification.
-6. **Enforcement Distinction**: Server-side protection is **`VERIFIED`**: active repository rulesets require Pull Requests for both protected branches and block deletion and force pushes. Required status checks remain deliberately deferred to O6.
+6. **Enforcement Distinction**: Server-side protection is **`VERIFIED`**: active repository rulesets require Pull Requests for both protected branches, block deletion and force pushes, and strictly require the four selected O6 status checks.
 
 ---
 
@@ -195,8 +195,8 @@ The repository provides a standardized Pull Request template located at [`.githu
 - **GitHub Server-Side Review Enforcement**: **`VERIFIED`** by GitHub API: both protected branches require a Pull Request and conversation resolution, require zero approvals, and do not require approval from someone other than the latest pusher. Stale-review dismissal remains configured; with zero required approvals it is not a merge gate.
 - **CI Workflow Execution vs. Merge Gating**:
   - Automated CI workflows (`pest_tests.yml`, `playwright_tests.yml`, `translations_check.yml`) execute on Pull Requests targeting `develop` and `master` (**`VERIFIED`**).
-  - The execution of these workflows does **NOT** prove that GitHub blocks merging when checks fail; required status check gating on GitHub is **`NOT VERIFIED`**.
-  - Formal CI gating, test strategy, and required status check rulesets belong strictly to **Operational Stage O6 (CI / Testing)**.
+  - Active rulesets `23566563` and `23566566` now strictly require the two Pest contexts, `Check translation files consistency`, and `Playwright E2E Gate` (**`VERIFIED`** by GitHub API on 2026-09-19). PR #12 exercised all four successfully before its merge into `develop`.
+  - The selected required checks are O6 enforcement; workflow coverage expansion and further quality gates remain separate decisions.
 - **Template and Operational Reality**:
   - The existence of [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md) is **`VERIFIED`**.
   - Historical Pull Request usage is documented in Git history (e.g., PR #8 squash merge commit `76aa5f9a6`), but historical PR usage does not prove active GitHub server-side PR enforcement.
@@ -213,7 +213,7 @@ The repository provides a standardized Pull Request template located at [`.githu
 | **Force-Push Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`non_fast_forward` rules) |
 | **Branch Deletion Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`deletion` rules) |
 | **Required Approving Reviews** | `develop`, `master` | Self-review and recorded verification required; no independent approval gate | **VERIFIED** (zero required approvals; latest-push approval disabled) |
-| **Required Status Checks** | `develop`, `master` | CI checks run; ruleset gating deferred | **DEFERRED (Operational Stage O6)** |
+| **Required Status Checks** | `develop`, `master` | Strictly require Pest (MySQL/PostgreSQL), translation consistency, and `Playwright E2E Gate` | **VERIFIED / IMPLEMENTED** |
 | **Conversation Resolution** | `develop`, `master` | Required before merge | **VERIFIED** |
 | **Merge Strategy Controls** | Repository-wide | Squash and merge commits enabled; rebase disabled | **VERIFIED** (source-specific choice remains review-governed) |
 
@@ -227,8 +227,8 @@ The following rulesets are the approved O5 enforcement target. They are delibera
 
 | Ruleset | Target | Required controls | Explicit exclusions / rationale |
 | :--- | :--- | :--- | :--- |
-| `protect-develop` | `refs/heads/develop` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | Normal topics use Squash Merge; authorized upstream synchronization uses a Merge Commit. Required CI checks are deferred to O6. |
-| `protect-release-master` | `refs/heads/master` | Require a Pull Request; require zero approving reviews; dismiss stale approvals after new commits; require conversation resolution; block force pushes and deletions. | The normal source is the verified `develop` release promotion using a Merge Commit. Required CI checks are deferred to O6. |
+| `protect-develop` | `refs/heads/develop` | Require a Pull Request; zero approving reviews; stale-review dismissal; conversation resolution; deletion and force-push blocks; four strict O6 status checks. | Normal topics use Squash Merge; authorized upstream synchronization uses a Merge Commit. |
+| `protect-release-master` | `refs/heads/master` | Require a Pull Request; zero approving reviews; stale-review dismissal; conversation resolution; deletion and force-push blocks; four strict O6 status checks. | The normal source is the verified `develop` release promotion using a Merge Commit. |
 
 Both rulesets must have no standing bypass actor. An exceptional change requires explicit human authorization, a recorded reason, and a deliberate temporary ruleset change; it must not be disguised as a normal direct push.
 
@@ -238,14 +238,14 @@ Repository merge settings must enable **Squash Merge** and **Merge Commits**, an
 
 ### Application and Verification Procedure
 
-The approved configuration was applied and verified on 2026-09-17 by direct GitHub API inspection:
+The base branch protections were applied and verified on 2026-09-17. Required status checks were added and verified by direct GitHub API inspection on 2026-09-19:
 
 | Ruleset | Identifier | Target | Enforcement | Verified controls |
 | :--- | :--- | :--- | :--- | :--- |
-| `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
-| `protect-release-master` | `23566566` | `refs/heads/master` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion block, force-push block, no bypass actors |
+| `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion/force-push blocks, no bypass actors, four strict O6 status checks |
+| `protect-release-master` | `23566566` | `refs/heads/master` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion/force-push blocks, no bypass actors, four strict O6 status checks |
 
-The effective-rules endpoint confirms that each target receives `pull_request`, `deletion`, and `non_fast_forward` rules. Repository merge settings are also verified as Squash Merge enabled, Merge Commits enabled, and Rebase Merge disabled. Required CI status checks were intentionally not added and remain O6 work.
+The effective rules confirm that each target receives `pull_request`, `deletion`, `non_fast_forward`, and `required_status_checks` rules. The latter strictly require `PHP 8.3 | MySQL test on ubuntu-latest`, `PHP 8.3 | PostgreSQL test on ubuntu-latest`, `Check translation files consistency`, and `Playwright E2E Gate` from GitHub Actions integration `15368`. Repository merge settings remain Squash Merge enabled, Merge Commits enabled, and Rebase Merge disabled.
 
 ---
 
@@ -333,8 +333,8 @@ Inspection of [`.github/workflows/`](../../.github/workflows/) confirms 4 active
 
 - **Concurrency Controls**: `pest_tests.yml`, `playwright_tests.yml`, and `translations_check.yml` configure `${{ github.workflow }}-${{ github.ref }}` concurrency groups with `cancel-in-progress: true` to conserve CI runner resources.
 - **Least-Privilege Permissions**: All 4 workflows explicitly declare `contents: read`. This least-privilege permission is verified for these specific workflow files; it does not constitute an audit of the overall repository token settings.
-- **Required Status Checks**: While workflows trigger on Pull Requests targeting `develop` and `master`, whether they are enforced as mandatory blocking status checks in GitHub rulesets is **`NOT VERIFIED`**.
-- **Operational Stage Boundary Notice**: Formal CI gating, status check ruleset requirements, test matrix reliability, and test runner strategy belong strictly to **Operational Stage O6 (CI / Testing)**.
+- **Required Status Checks**: Both rulesets strictly require the two Pest contexts, translation consistency, and `Playwright E2E Gate` (**`VERIFIED`**, GitHub API inspection 2026-09-19).
+- **Operational Stage Boundary Notice**: Selected O6 CI gating is implemented; test-matrix reliability and any additional quality gates remain separate work.
 
 ---
 
@@ -399,11 +399,11 @@ The audit identified the following genuine, evidence-based governance findings:
 - **Owning Operational Stage**: O5 (`RECOMMENDED`).
 
 ### GOV-006: Automated CI Status Checks Gating
-- **Classification**: **`DEFERRED`**
-- **Evidence**: `.github/workflows/pest_tests.yml`, `playwright_tests.yml`, and `translations_check.yml` run on PRs, but ruleset gating is unverified.
-- **Impact**: PRs could be merged even if automated test suites fail.
-- **Recommended Action**: Formally codify required status checks during Operational Stage O6 CI governance.
-- **Owning Operational Stage**: O6 (CI / Testing).
+- **Classification**: **`VERIFIED`** / **`IMPLEMENTED`**
+- **Evidence**: Active GitHub rulesets `23566563` and `23566566` require the two Pest contexts, translation consistency, and `Playwright E2E Gate`; PR #12 executed all four successfully before merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07`.
+- **Impact**: The selected checks are now required for Pull Requests into both protected branches.
+- **Residual Boundary**: This does not make all workflow jobs or future quality gates required.
+- **Owning Operational Stage**: O5 / O6 (**complete for the selected gate set**).
 
 ---
 
@@ -413,7 +413,7 @@ To preserve strict architectural boundaries across roadmap phases, the following
 
 | Deferred Control Area | Owning Operational Stage | Scope and Governance Responsibilities |
 | :--- | :--- | :--- |
-| **CI Gating & Required Status Checks** | **O6 — CI / Testing** | Codifying required status checks in GitHub rulesets; establishing test matrix reliability; configuring failure notifications and coverage thresholds. |
+| **Additional CI Maturity Controls** | **O6 follow-up** | Evaluating workflow coverage, diagnostics, failure notifications, and coverage thresholds; the selected required checks are already codified. |
 | **Upstream Synchronization Procedures** | **O7 — Upstream Integration** | Defining operational sync commands; vendor conflict resolution protocols; verification procedures for vendor alignment; tag synchronization. |
 | **Living Knowledge Synchronization** | **O8 — Change Management & Knowledge Maintenance** | Reconciling upstream schema and feature modifications against the living documentation suite (`docs/`); updating architecture specs and ERDs. |
 
@@ -436,7 +436,7 @@ To preserve strict architectural boundaries across roadmap phases, the following
 | **CODEOWNERS** | Configured if needed | Absent across repository | **NOT CONFIGURED** | Inspected `.github/CODEOWNERS`, `CODEOWNERS`, `docs/CODEOWNERS` | O5 |
 | **Issue Templates** | Form-based templates | `bug.yml`, `bug_report.md`, `feature_request.yml` present | **VERIFIED** | Inspected `.github/ISSUE_TEMPLATE/` directory | O5 |
 | **GitHub Actions Workflows** | Active on PRs | 4 workflows active; permissions `contents: read` | **VERIFIED** | Inspected `.github/workflows/` directory | O5 |
-| **Required Status Checks Gating** | Enforced gating | Workflows execute; gating deferred | **DEFERRED** | Inspected `.github/workflows/` directory | O6 |
+| **Required Status Checks Gating** | Enforced gating | Both active rulesets strictly require Pest (MySQL/PostgreSQL), translation consistency, and `Playwright E2E Gate` | **VERIFIED / IMPLEMENTED** | GitHub rulesets `23566563`, `23566566`; GitHub API inspection 2026-09-19; PR #12 | O5 / O6 |
 | **Upstream Sync Procedure** | Documented procedure | Dual-remote topology active; execution deferred | **DEFERRED** | O4 docs, git remotes | O7 |
 
 ---
