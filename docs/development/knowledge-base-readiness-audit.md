@@ -53,12 +53,16 @@ The audit records only the state observed on this branch on 2026-09-17. It must 
 
 After the O4/O5/O7 release-branch policy change, the upstream scenario was rerun by documentation and GitHub ruleset inspection. The route now correctly sends normal upstream integration to `develop` and makes the verified `develop`-to-`master` Pull Request the separate release boundary. This is a routing recheck only; it does not claim that an upstream synchronization, a release promotion, or a tag has been executed.
 
+### 2026-09-18 Upstream Execution and CI Evidence
+
+The O7 route was subsequently exercised: PR #10 merged `dcd449b96` into `develop` as `ddbd24ba4`. The accepted upstream target is reachable from `develop`; the incoming write-capable Playwright-reporting workflow was excluded; and the PR's Pest (MySQL/PostgreSQL), Playwright, and translation workflows completed successfully. This satisfies the upstream-execution dependency for the readiness audit; it does not substitute for a release promotion, O6 remediation, or the final all-scenarios revalidation.
+
 ## Deferred Final-Revalidation Gates
 
 The following are known execution dependencies, not failures of the routing audit:
 
-1. **Upstream execution and first release promotion** — the O7 runbook is complete, but no new upstream synchronization or verified `develop`-to-`master` release promotion has been authorized or executed through the protected-branch PR path.
-2. **Incoming workflow review** — when upstream is synchronized, any incoming automation must be reviewed under the O7 workflow-security controls before acceptance.
+1. **First release promotion** — the O7 synchronization has been executed and CI-verified, but no verified `develop`-to-`master` release promotion has been authorized or executed through the protected-branch PR path.
+2. **Post-merge cleanup and record review** — the incoming workflow review is recorded, and the new R8 cleanup stage requires an explicit, read-only candidate audit before any merged branch or worktree is removed.
 3. **O6 remediation** — CI and testing governance is baseline-audited, but its documented remediation and required-status-check decisions remain separate work. Current workflow files must not be represented as final server-side gates solely because they exist.
 4. **Post-change scenario rerun** — final O10 evidence requires rerunning the affected scenario after upstream/O6 outcomes and after any material change to `AGENTS.md`, a reading route, a runbook, or a repository skill.
 
