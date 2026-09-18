@@ -908,3 +908,22 @@ Every rule, catalog entry, and architectural constraint in this document is back
   - `docs/architecture/events-catalog.md`
   - `docs/database/company-isolation.md`
   - `docs/database/schema-conventions.md`
+
+---
+
+## 21. Upstream Synchronization Record — 2026-09-18
+
+**Status:** [VERIFIED]
+
+**Accepted range and topology:** `upstream/master` target `d7d471894d91f153633242ce802c464e0414d9bc` was merged into the synchronization commit `dcd449b965dfcdab6cf6f8db54fedb7ef8f05f6a`, then entered `develop` through merge commit `ddbd24ba416d64f8eef81dd8be439ad7105489b2` (PR #10). Both commits preserve merge parents, and the upstream target is reachable from `origin/develop`.
+
+**Observed impact:** The accepted range changes 382 files, including eight plugin migrations and cross-plugin product price-list, sales, purchasing, accounting, support, and installer behavior. No `composer.json` or `composer.lock` change is present in the accepted range. The service providers register all eight migrations. PR #10 CI successfully exercised fresh schema/install behavior through Pest on MySQL and PostgreSQL; the synchronization was reviewed for a development environment without operational data.
+
+**Explicit downstream decisions:**
+
+- The incoming `.github/workflows/playwright_report.yml` and its companion changes to `.github/workflows/playwright_tests.yml` were excluded. The rejected workflow requested `contents: write` and `pull-requests: write`, force-pushed failure reports to `gh-pages`, and created or updated pull-request comments.
+- The resulting installer code retains the downstream privacy behavior: it does not prompt to open GitHub for starring a repository in `InstallCommand` or `InstallERP`.
+
+**Verification record:** Git parent topology, upstream reachability, protected-branch integration, and `git diff --check` were verified. GitHub Actions on synchronization commit `dcd449b96` completed successfully: Pest against MySQL and PostgreSQL, all twelve Playwright database/shard jobs and both report jobs, and the translation check. The local PHP/Composer runtime could not be used for an independent rerun because of a WSL socket failure. Pint and an explicit PHP syntax-only pass were not separate CI jobs. A rehearsal against operational production data is not established by fresh-install CI and remains outside this repository-only verification.
+
+**Evidence:** `git show dcd449b96`; `git show ddbd24ba4`; `git merge-base --is-ancestor d7d471894 origin/develop`; `git diff c2b4ddaa2..origin/develop`; `plugins/webkul/{accounts,inventories,manufacturing,products,purchases,sales}/src/*ServiceProvider.php`; `.github/workflows/{pest_tests,playwright_tests,translations_check}.yml`; GitHub Actions runs `35284954990`, `35284955122`, and `35284955199`; `.github/workflows/playwright_report.yml` at `upstream/master`; `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`; `plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php`.

@@ -405,7 +405,38 @@ Following successful synchronization or release promotion:
 
 ---
 
-## 15. Evidence Matrix
+## 15. R8 — Post-Merge Cleanup
+
+This stage prevents completed synchronization branches and their temporary worktrees from accumulating, while preserving recovery evidence. It applies only after the protected-branch Pull Request is merged and its verification record is complete. It does **not** authorize deletion by itself.
+
+### Candidate Audit — Read-Only Required
+
+For every proposed cleanup target, establish all of the following before asking for deletion authorization:
+
+1. The Pull Request is merged, its merge commit is reachable from its protected target, and the remote branch is not the protected target itself.
+2. A local branch is fully merged according to `git branch --merged <target>`; do not rely only on a branch name or a closed Pull Request.
+3. Any associated worktree is not the active worktree and has an empty `git -C <path> status --porcelain` result.
+4. The target is not a `master`, `develop`, `upstream/*`, `origin/*`, `checkpoint/*`, backup, release, recovery, or currently active topic branch.
+5. The candidate list and exact paths/refs have been shown to the human maintainer.
+
+### Authorized Cleanup Sequence
+
+Only after explicit human approval of the audited candidate list:
+
+1. Remove a clean, non-current linked worktree with `git worktree remove <exact-path>`; never use `--force`.
+2. Delete its fully merged local topic branch with `git branch -d <exact-branch>`.
+3. Delete the matching remote topic branch with `git push origin --delete <exact-branch>` only when it is confirmed merged and no longer needed for collaboration.
+4. Run `git worktree prune`, then re-check `git worktree list --porcelain`, `git branch -vv`, and `git status --short`.
+
+Keep pre-sync checkpoints and recovery references until a separately authorized retention decision. Do not use `rm -rf`, `git branch -D`, `git worktree remove --force`, `git push --force`, or wildcard deletion commands in this stage. If a candidate has uncommitted changes, unexpected upstream divergence, or an unclear owner, stop and leave it intact.
+
+### Current Post-Synchronization Candidates
+
+As of the 2026-09-18 synchronization, the merged PR #10 branch `chore/upstream-sync-20260918-c2b4ddaa2` and its temporary linked worktree are candidates only after the audit above. The merged PR #9 branch `refactor/ai-knowledge-architecture` is also a branch-cleanup candidate; it contains the R6 entry-point updates now reachable from `develop`. Checkpoint branches and all other worktrees remain explicitly excluded unless separately audited.
+
+---
+
+## 16. Evidence Matrix
 
 | Area | Observed Reality | Classification | Evidence Source |
 |:---|:---|:---:|:---|
