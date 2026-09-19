@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-15
+last_verified: 2026-09-19
 scope: ci-testing-governance
 confidence: high
 ---
@@ -446,7 +446,7 @@ The translation verification pipeline is implemented in [`plugins/webkul/plugin-
   - Any missing file, directory, or key sets `$this->hasError = true`.
   - Command returns `self::FAILURE` (code 1).
 - **Workflow Failure Behavior**: A translation inconsistency causes the `translations_check` job to fail with exit code 1.
-- **Merge Blocking**: Whether this failed check is enforced as a required status check by GitHub remains **NOT VERIFIED**.
+- **Merge Blocking**: `Check translation files consistency` is strictly required by the active `develop` and `master` rulesets (**`VERIFIED`**, GitHub API inspection on 2026-09-19).
 
 ---
 
@@ -620,19 +620,19 @@ GitHub Blocks PR Merge When Check Fails
 2. **GitHub Merge Enforcement**: Governed strictly by GitHub server-side Branch Protection Rules or Repository Rulesets targeting `develop`.
 3. **Current Repository Reality**:
    - Workflows execute on Pull Requests targeting `develop` and `master` (**`VERIFIED`**).
-   - Server-side required status check gating on GitHub is **`NOT VERIFIED`** due to environment API constraints.
-   - Merging unvalidated code remains prohibited by project policy (**`POLICY`**), but platform enforcement remains unconfirmed.
+   - Active GitHub rulesets `protect-develop` (`23566563`) and `protect-release-master` (`23566566`) require the four contexts listed below, use strict required-status-check policy, and have no bypass actors (**`VERIFIED`**, GitHub API inspection on 2026-09-19).
+   - Pull Request #12 validated the aggregate Playwright gate and entered `develop` as merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07` after all required checks succeeded (**`VERIFIED`**).
 
 ### Evaluated Status Check Contexts
 
-The current workflow configuration produces multiple distinct CI check contexts (17 discrete checks when evaluated across all matrix dimensions and shards). Their execution on Pull Requests is verified; whether GitHub branch protection or rulesets require these checks for merge remains **`NOT VERIFIED`** unless independently confirmed:
+The current workflow configuration produces 18 distinct CI check contexts when evaluated across all matrix dimensions and shards. GitHub rulesets require the two Pest contexts, the translation context, and the stable Playwright aggregate context; the remaining contexts execute as diagnostic detail and are not individually required:
 
 ```
 Pest Tests Workflow (2 checks):
   - PHP 8.3 | MySQL test on ubuntu-latest
   - PHP 8.3 | PostgreSQL test on ubuntu-latest
 
-Playwright Tests Workflow (14 checks):
+Playwright Tests Workflow (15 checks):
   - MySQL | Shard 1 of 6
   - MySQL | Shard 2 of 6
   - MySQL | Shard 3 of 6
@@ -647,6 +647,7 @@ Playwright Tests Workflow (14 checks):
   - PostgreSQL | Shard 6 of 6
   - report (mysql)
   - report (pgsql)
+  - Playwright E2E Gate
 
 Translations Check Workflow (1 check):
   - Check translation files consistency
@@ -656,7 +657,7 @@ Translations Check Workflow (1 check):
 
 - Direct enforcement of individual shard check names (e.g., `MySQL | Shard 1 of 6`) creates ruleset brittleness.
 - If the shard total is adjusted (e.g., from 6 to 8 shards), GitHub rulesets configured with old names would block PRs.
-- **Architectural Solution**: Introducing a synthetic aggregate gate job (e.g., `playwright-gate` and `ci-gate`) depending on all matrix nodes exposes a single, invariant status check name to GitHub rulesets.
+- **Implemented Solution**: `playwright_e2e_gate` exposes the stable `Playwright E2E Gate` context. It runs after the matrix test and report jobs and fails unless both aggregate `needs` results are `success` (`.github/workflows/playwright_tests.yml`, lines 257–272). GitHub rulesets require this context rather than individual shards (**`VERIFIED`**).
 
 ---
 
@@ -666,10 +667,10 @@ Based on workflow reliability, execution cost, and regression impact, candidate 
 
 | Status Check Name | Workflow Origin | Classification | Governance Rationale |
 | :--- | :--- | :--- | :--- |
-| `PHP 8.3 \| MySQL test on ubuntu-latest` | `pest_tests.yml` | **RECOMMENDED** | Core backend business logic verification against default database engine. |
-| `PHP 8.3 \| PostgreSQL test on ubuntu-latest`| `pest_tests.yml` | **RECOMMENDED** | Core backend business logic verification against supported enterprise database engine. |
-| `Check translation files consistency` | `translations_check.yml` | **RECOMMENDED** | Fast, zero-database parity check preventing multilingual dictionary corruption. |
-| `Playwright E2E Gate` (Synthetic Job) | `playwright_tests.yml` | **RECOMMENDED** | Comprehensive browser regression check; requires synthetic summary job to prevent shard name brittleness. |
+| `PHP 8.3 \| MySQL test on ubuntu-latest` | `pest_tests.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; core backend verification against the default database engine. |
+| `PHP 8.3 \| PostgreSQL test on ubuntu-latest`| `pest_tests.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; backend verification against the supported enterprise database engine. |
+| `Check translation files consistency` | `translations_check.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; fast parity check preventing multilingual dictionary corruption. |
+| `Playwright E2E Gate` (Aggregate Job) | `playwright_tests.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; succeeds only after the aggregate test-shard and report results both succeed. |
 | Individual Shard Checks (`Shard 1..6`) | `playwright_tests.yml` | **NOT RECOMMENDED** | Highly brittle in branch protection rulesets upon shard scaling. |
 | `Laravel Pint Code Style` | New Workflow | **CANDIDATE** | Fast style linter to enforce `pint.json` formatting before merge. |
 | `docker_publish.yml` Jobs | `docker_publish.yml` | **NOT REQUIRED** | Release deployment workflow; does not execute on PRs. |
@@ -726,12 +727,12 @@ Every governance control and observation in this document is classified accordin
 
 The audit identified the following evidence-based CI governance findings:
 
-### CI-001: Server-Side Required Status Check Enforcement Unverified
-- **Classification**: **`DEFERRED`** / **`NOT VERIFIED`**
-- **Evidence**: `.github/workflows/pest_tests.yml`, `playwright_tests.yml`, and `translations_check.yml` execute on PRs, but GitHub server-side ruleset gating cannot be verified via API.
-- **Impact**: Pull requests could be merged while automated test suites are failing if server-side rulesets do not enforce them.
-- **Recommendation**: Formally configure GitHub Repository Rulesets requiring designated status checks before merge once API credentials or administrative access are available.
-- **Owning Operational Stage**: O5 / O6.
+### CI-001: Server-Side Required Status Check Enforcement
+- **Classification**: **`VERIFIED`** / **`IMPLEMENTED`**
+- **Evidence**: GitHub API inspection on 2026-09-19 confirms that active rulesets `23566563` (`develop`) and `23566566` (`master`) strictly require the two Pest contexts, the translation context, and `Playwright E2E Gate`, each bound to GitHub Actions integration `15368`. PR #12 ran all four successfully before its merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07`.
+- **Impact**: The selected CI contexts are now GitHub merge requirements on both protected branches.
+- **Residual Boundary**: This records configured required-check enforcement. It does not claim that every possible workflow, code-style check, coverage threshold, or future workflow context is required.
+- **Owning Operational Stage**: O5 / O6 (**complete for the selected gate set**).
 
 ### CI-002: `merge_group` Trigger Asymmetry Across Core Workflows
 - **Classification**: **`RECOMMENDED`** (Conditional on Merge Queue adoption)
@@ -775,12 +776,12 @@ The audit identified the following evidence-based CI governance findings:
 - **Recommendation**: Align the production Dockerfile with the CI-validated version (PHP 8.3), or add PHP 8.4 to the CI test matrix.
 - **Owning Operational Stage**: O6 (`PENDING DECISION`).
 
-### CI-008: Lack of Synthetic Aggregate Status Check Gate Jobs
-- **Classification**: **`RECOMMENDED`**
-- **Evidence**: Workflows expose 17 discrete status check names (including 12 individual Playwright shards), creating ruleset fragility upon matrix adjustment.
-- **Impact**: Modifying shard counts breaks GitHub branch protection rules.
-- **Recommendation**: Implement aggregate summary gate jobs (e.g., `pest-gate`, `playwright-gate`) that depend on matrix nodes via `needs:` and expose a stable check name.
-- **Owning Operational Stage**: O6 (`RECOMMENDED`).
+### CI-008: Stable Playwright Aggregate Status Check
+- **Classification**: **`VERIFIED`** / **`IMPLEMENTED`**
+- **Evidence**: `playwright_e2e_gate` in `.github/workflows/playwright_tests.yml` depends on the aggregate Playwright test and report jobs and exposes `Playwright E2E Gate`. PR #12 executed it successfully, and both rulesets require that context.
+- **Impact**: Changes to the shard count do not require changing a ruleset context, provided the aggregate job name remains stable.
+- **Residual Boundary**: Pest remains represented by its two stable matrix contexts; no broader synthetic `ci-gate` is configured.
+- **Owning Operational Stage**: O6 (**complete for Playwright aggregate gating**).
 
 ### CI-009: Floating Action Version References vs. Immutable SHA Pinning
 - **Classification**: **`RECOMMENDED`**
@@ -815,7 +816,7 @@ To maintain strict boundaries across roadmap phases, the following testing and C
 | **Pest Test Suite Fixes / Refactoring** | **Domain Testing Maintenance** | Correcting flaky tests, expanding assertions, or refactoring plugin tests. |
 | **Untested Plugin Test Creation** | **Domain Testing Maintenance** | Writing new feature tests for the 17 untested plugins in `plugins/webkul/`. |
 | **Coverage Driver & Thresholds** | **Quality Engineering** | Configuring PCOV, Codecov, and minimum coverage thresholds. |
-| **GitHub Server-Side Ruleset Enforcement** | **O5 / Platform Admin** | Codifying required status checks in GitHub rulesets upon API authorization. |
+| **Expansion of Required Checks** | **O5 / O6 follow-up** | Evaluating additional stable contexts such as Pint only after a workflow exists and succeeds; the current four required contexts are already enforced. |
 | **Upstream CI Alignment** | **O7 — Upstream Integration** | Aligning CI test workflows with upstream Webkul updates and tracking changes. |
 
 ---
@@ -843,7 +844,7 @@ To maintain strict boundaries across roadmap phases, the following testing and C
 | **Referenced Actions Pinning**| Immutable SHA pinning | Floating major version tags (`@v4`, `@v2`, etc.) | **RECOMMENDED** | `uses:` lines across workflows | O6 |
 | **Concurrency Controls** | Cancel obsolete runs | `${{ github.workflow }}-${{ github.ref }}` with `cancel-in-progress: true` | **VERIFIED** | Concurrency blocks in test workflows | O6 |
 | **Pest Failure Diagnostics** | Logs and artifacts saved | Zero artifacts uploaded on Pest failure | **RECOMMENDED** | `pest_tests.yml` step audit | O6 |
-| **GitHub Status Check Gating**| Server-side enforcement | Workflows execute; ruleset gating unverified via API | **NOT VERIFIED** | Repository audit; O5 baseline | O5 / O6 |
+| **GitHub Status Check Gating**| Server-side enforcement | Both active rulesets strictly require two Pest contexts, translation consistency, and `Playwright E2E Gate` | **VERIFIED / IMPLEMENTED** | GitHub rulesets `23566563`, `23566566`; GitHub API inspection 2026-09-19; PR #12 | O5 / O6 |
 | **Docker Workflow Role** | CI test gate | Release deployment automation only (tags `v*`) | **VERIFIED** | `docker_publish.yml` triggers | O6 |
 
 ---

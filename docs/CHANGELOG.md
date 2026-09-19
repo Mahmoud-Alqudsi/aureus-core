@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-17
+last_verified: 2026-09-19
 scope: documentation-changelog
 confidence: high
 ---
@@ -29,6 +29,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 ---
 
 ## Operational Governance Maintenance
+
+### O6 — CI Required-Check Enforcement (2026-09-19)
+
+- **Evidentiary Tier**: Direct GitHub API inspection plus GitHub Actions execution evidence.
+- **Status**: **Implemented and verified on `develop` and `master`**.
+- **Recorded Result**:
+  - PR #12 added the stable `Playwright E2E Gate` and entered `develop` as merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07` after Pest (MySQL/PostgreSQL), translation consistency, all Playwright shards, both report jobs, and the new gate succeeded.
+  - Active no-bypass rulesets `protect-develop` (`23566563`) and `protect-release-master` (`23566566`) strictly require `PHP 8.3 | MySQL test on ubuntu-latest`, `PHP 8.3 | PostgreSQL test on ubuntu-latest`, `Check translation files consistency`, and `Playwright E2E Gate` from GitHub Actions integration `15368`.
+  - The aggregate gate tests the aggregate shard and report outcomes, avoiding brittle ruleset entries tied to a particular shard count. Individual shard and report contexts remain visible as diagnostics but are not individually required.
+  - This record does not claim that every workflow job, code-style check, coverage threshold, or future CI improvement is enforced; those remain separate follow-up decisions.
 
 ### O7 — Upstream Synchronization Record (2026-09-18)
 
