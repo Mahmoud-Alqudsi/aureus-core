@@ -31,7 +31,10 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
    - Automates PDF generation (`DomPDF`) and email dispatch (`SaleOrderQuotation`, `SaleOrderCancelQuotation`) with customer chatter communication logging.
    - Provides administrative order locking (`OrderLocked` / `OrderUnlocked`) to prevent modifications on confirmed sales orders (`enable_lock_confirm_sales`).
 
-2. **Pricing, Discounts, Margins & Calculations (`OrderCalculator`)**:
+2. **Pricing, Discounts, Margins & Calculations (`OrderCalculator` & `PriceListResolver`)**:
+   - Automatically defaults customer price list (`partner.price_list_id`) onto new quotations and sales orders.
+   - Dynamically re-evaluates and recalculates line-item unit prices when switching price lists using `PriceListResolver`.
+   - Multi-currency integration: orders and line items bind directly to the price list currency, propagating across calculations, summaries, and print templates.
    - Calculates line-item subtotal, tax amounts, and grand totals across multi-currency orders using `Webkul\Account\Facades\Tax::computeAll()`.
    - Computes purchase cost margins (`margin` and `margin_percent`) and line-item discounts (`discount`).
    - Livewire real-time order calculation summary (`QuotationSummary`) reacting to form updates.
@@ -71,7 +74,7 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
     - Configures view namespace `sales` (`SaleServiceProvider::$viewNamespace = 'sales'`).
     - Registers REST API routes (`hasRoutes(['api'])`).
     - Registers translation namespace (`hasTranslations()`).
-    - Registers 25 database migrations (`hasMigrations([...])`).
+    - Registers 26 database migrations (`hasMigrations([...])`, including `2026_09_15_000200_add_price_list_id_to_sales_orders_table`).
     - Runs migrations automatically (`runsMigrations()`).
     - Registers 4 settings migrations (`hasSettings([...])`): `sales_product_settings`, `sales_price_settings`, `sales_invoice_settings`, and `sales_quotation_and_order_settings`.
     - Runs settings migrations automatically (`runsSettings()`).
@@ -446,6 +449,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
    - **`OrderToUpsellResource`**: Scoped list of orders with upselling potential (`invoice_status = up_selling`). Pages: `ListOrderToUpsells`.
 3. **`Products` Cluster (`Webkul\Sale\Filament\Clusters\Products`)**:
    - **`ProductResource`**: Full product master catalogue. Sub-navigation pages: `ListProducts`, `CreateProduct`, `ViewProduct`, `EditProduct`, `ManageVariants`, `ManageAttributes`, `ManageQuantities`, `ManageMoves`, `ManageBillsOfMaterials`, `ManageVendors`.
+   - **`PriceListResource`** (`Webkul\Sale\Filament\Clusters\Products\Resources\PriceListResource`): Extends `BasePriceListResource`. Registered conditionally under the Products cluster when `app(ProductSettings::class)->enable_price_lists` is enabled. Sub-navigation pages: `ListPriceLists`, `CreatePriceList`, `ViewPriceList`, `EditPriceList`.
 4. **`Configuration` Cluster (`Webkul\Sale\Filament\Clusters\Configuration`)**:
    - **`TeamResource`**: Sales teams and targets. Pages: `ListTeams`, `CreateTeam`, `ViewTeam`, `EditTeam`.
    - **`QuotationTemplateResource`**: Reusable quotation templates. Pages: `ListQuotationTemplates`, `CreateQuotationTemplate`, `ViewQuotationTemplate`, `EditQuotationTemplate`.
@@ -611,9 +615,10 @@ Covers app strings, models (`order`, `team`), enums (`order-state`, `invoice-sta
 
 ## Tests
 [VERIFIED]
-**Test Coverage Status: Fully Tested**. The `sales` plugin contains a comprehensive test suite of **16 feature test files and 1 shared helper** under `plugins/webkul/sales/tests`:
+**Test Coverage Status: Fully Tested**. The `sales` plugin contains a comprehensive test suite of **19 feature test files and 1 shared helper** under `plugins/webkul/sales/tests`:
 
 ### 1. Workflow & Integration Tests (`tests/Feature/Workflows/`)
+- `OrderPriceListTest.php`: Tests customer price list defaulting, quotation price list inheritance, dynamic line item recalculation upon price list changes, multi-currency conversion, and fallback pricing.
 - `SaleOrderTest.php`: Tests financial computations, exclusive/inclusive tax calculation, discount deductions, subtotal calculations, and gross profit margin evaluation.
 - `OrderInvoicingTest.php`: Tests standard invoice generation, ordered quantity vs delivered quantity invoicing policies, partial billing, and invoice status transitions.
 - `OneStepSaleOrderTest.php`: Tests end-to-end sales order confirmation with direct one-step warehouse delivery and inventory stock move completion.
@@ -626,15 +631,19 @@ Covers app strings, models (`order`, `team`), enums (`order-state`, `invoice-sta
 - `QuotationResourceTest.php`: Tests quotation creation, editing, state transition actions, email dispatch, invoice modal triggers, and delivery tabs.
 - `OrderResourceTest.php`: Tests sales order views, locking actions, invoice generation, and tabbed sub-navigation.
 - `ResourceGlobalSearchSmokeTest.php`: Verifies global search functionality across customer names, references, and order numbers.
+- `PriceListResourceTest.php`: Tests sales price list Filament CRUD, items repeater, and navigation gating via `enable_price_lists`.
 
-### 3. REST API Feature Tests (`tests/Feature/API/V1/`)
+### 3. Document Feature Tests (`tests/Feature/Documents/`)
+- `QuotationDocumentTest.php`: Tests quotation PDF rendering, currency formatting, item tables, customer information, and dark mode stylesheet styling.
+
+### 4. REST API Feature Tests (`tests/Feature/API/V1/`)
 - `OrderTest.php`: Tests CRUD API endpoints, pagination, and state action endpoints (`confirm`, `cancel`, `set-as-quotation`, `toggle-lock`).
 - `OrderLineTest.php`: Tests order line retrieval endpoints.
 - `OrderInvoiceTest.php`: Tests order invoice linking endpoints.
 - `OrderDeliveryTest.php`: Tests order delivery operation retrieval endpoints.
 - `TagTest.php`: Tests tag management endpoints.
 
-### 4. Test Helper (`tests/Helpers/SaleHelper.php`)
+### 5. Test Helper (`tests/Helpers/SaleHelper.php`)
 - Provides reusable test factories, admin auth setup, line item builders, order calculators, and invoice generators.
 
 ---
