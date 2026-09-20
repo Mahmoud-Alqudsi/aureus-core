@@ -32,7 +32,7 @@ The ERD serves as an authoritative architectural map and source of truth for eng
 The Operations database domain encompasses the unified supply chain, manufacturing, inventory movement, sales distribution, procurement management, human resources, project collaboration, equipment maintenance, and content portal architecture across 15 plugins:
 
 #### Core Supply Chain & Manufacturing Execution (6 Plugins)
-1. **`products` (`Webkul\Product`)**: Master product catalog, self-referencing configurable product variants (`products_products`), hierarchical categories (`products_categories`), attributes and options (`products_attributes`, `products_attribute_options`, `products_product_attributes`, `products_product_attribute_values`, `products_product_combinations`), packaging specifications (`products_packagings`), pricing lists and rules (`products_price_rules`, `products_price_rule_items`, `products_product_price_lists`), supplier vendor pricelists (`products_product_suppliers`), and product categorization tags (`products_tags`, `products_product_tag`).
+1. **`products` (`Webkul\Product`)**: Master product catalog, self-referencing configurable product variants (`products_products`), hierarchical categories (`products_categories`), attributes and options (`products_attributes`, `products_attribute_options`, `products_product_attributes`, `products_product_attribute_values`, `products_product_combinations`), packaging specifications (`products_packagings`), pricing lists and rules (`products_product_price_lists`, `products_price_rule_items`), supplier vendor pricelists (`products_product_suppliers`), and product categorization tags (`products_tags`, `products_product_tag`).
 2. **`inventories` (`Webkul\Inventory`)**: Multi-warehouse storage hierarchy (`inventories_warehouses`, `inventories_locations`, `inventories_storage_categories`), physical stock quant ledger at rest (`inventories_product_quantities`, `inventories_product_quantity_relocations`), stock movement engine (`inventories_operations`, `inventories_moves`, `inventories_move_lines`, `inventories_move_destinations`), operation types (`inventories_operation_types`), replenishment routes and rules (`inventories_routes`, `inventories_rules`, `inventories_category_routes`, `inventories_product_routes`, `inventories_route_warehouses`), putaway automation (`inventories_putaway_rules`), reordering points (`inventories_order_points`), lot and serial number tracking (`inventories_lots`), package containers and levels (`inventories_packages`, `inventories_package_types`, `inventories_package_levels`, `inventories_package_destinations`), waste management (`inventories_scraps`, `inventories_scrap_tags`), and demand orchestration (`inventories_procurement_groups`).
 3. **`manufacturing` (`Webkul\Manufacturing`)**: Production engineering and Bill of Materials master data (`manufacturing_bills_of_materials`, `manufacturing_bill_of_material_lines`, `manufacturing_bill_of_material_byproducts`), work center topology and capacity scheduling (`manufacturing_work_centers`, `manufacturing_work_center_capacities`, `manufacturing_work_center_productivity_logs`, `manufacturing_work_center_productivity_losses`), manufacturing operations routing (`manufacturing_operations`), manufacturing order execution (`manufacturing_orders`), work order shop-floor tracking (`manufacturing_work_orders`), disassembly orders (`manufacturing_unbuild_orders`), and direct physical FK integration into `inventories_moves`, `inventories_move_lines`, and `inventories_warehouses`.
 4. **`sales` (`Webkul\Sale`)**: Customer quotations and sales order management (`sales_orders`), line item fulfillment and pricing (`sales_order_lines`), quotation templates and configured options (`sales_order_templates`, `sales_order_template_products`, `sales_order_options`), sales teams (`sales_teams`, `sales_team_members`), advance payment invoice wizards (`sales_advance_payment_invoices`, `sales_advance_payment_invoice_order_sales`), and order-to-invoice junction links (`sales_order_invoices`, `sales_order_line_invoices`, `sales_order_line_taxes`, `sales_order_tags`).
@@ -56,7 +56,7 @@ Operations entities maintain verified physical foreign keys and Eloquent relatio
 - **`companies` (`Webkul\Support\Models\Company`) [CORE]**: Multi-tenant isolation boundary for warehouses, locations, operations, stock moves, manufacturing orders, sales orders, purchase orders, product pricelists, employee profiles, departments, job positions, time-off plans, projects, tasks, maintenance teams, and equipments.
 - **`users` (`Webkul\Security\Models\User`) [CORE]**: Salespersons, buyers, operators, warehouse assignees, project task assignees, maintenance technicians, recruiters, interviewers, blog authors, leave managers, and audit `creator_id` tracking.
 - **`partners_partners` (`Webkul\Partner\Models\Partner`) [CORE]**: Customers on sales orders and projects, suppliers/vendors on purchase orders, product supplier pricelists, and maintenance equipment, employee private contact cards, candidate profiles, and customer portal user authentications.
-- **`currencies` (`Webkul\Support\Models\Currency`) [CORE]**: Pricing currency on sales orders, purchase orders, price rules, and product supplier pricelists.
+- **`currencies` (`Webkul\Support\Models\Currency`) [CORE]**: Pricing currency on sales orders, purchase orders, price lists, and product supplier pricelists.
 - **`unit_of_measures` (`Webkul\Support\Models\UOM`) [CORE]**: Foundational measurement units on products (`uom_id`, `uom_po_id`), stock moves, BOM lines, manufacturing orders, sales lines, and purchase lines.
 - **`calendars` & `calendar_leaves` (`Webkul\Support\Models\Calendar`, `CalendarLeave`) [CORE]**: Working hours and capacity scheduling on `manufacturing_work_centers`, planned time slots on `manufacturing_work_orders`, employee working hours on `employees_employees.calendar_id`, and leave schedules on `time_off_leaves.calendar_id`.
 - **`countries` & `states` (`Webkul\Support\Models\Country`, `State`) [CORE]**: Geographical residency, birth country, and state references on `employees_employees` and employment contracts on `employees_employment_types`.
@@ -93,7 +93,7 @@ Operations entities maintain verified physical foreign keys, junction tables, an
 
 - **Single Database Multi-Company Architecture**:
   Shared-table multi-tenant data architecture is strictly enforced across operational records. Tenant isolation is achieved via `company_id` foreign keys and `CompanyScope` (registered via `Webkul\Support\Traits\BelongsToCompany`).
-  - Master data with optional company assignment (e.g. `products_products.company_id`, `products_price_rules.company_id`, `inventories_locations.company_id`, `employees_employees.company_id`, `projects_projects.company_id`, `maintenance_equipments.company_id`) allows records to be globally shared across all companies when `company_id = null` or restricted to a single tenant when populated.
+  - Master data with optional company assignment (e.g. `products_products.company_id`, `products_product_price_lists.company_id`, `inventories_locations.company_id`, `employees_employees.company_id`, `projects_projects.company_id`, `maintenance_equipments.company_id`) allows records to be globally shared across all companies when `company_id = null` or restricted to a single tenant when populated.
   - Transactional operational documents (`inventories_operations`, `inventories_moves`, `manufacturing_orders`, `sales_orders`, `purchases_orders`, `maintenance_requests`, `time_off_leaves`) enforce strict required `company_id` constraints with `restrictOnDelete()`.
 - **Self-Referencing Product Variant Hierarchy**:
   Aureus ERP does not use separate tables for Product Templates versus Product Variants. Both template products and their physical variants are stored in `products_products`. Configurable parent products have `is_configurable = 1` and `parent_id = null`, while physical variants have `parent_id = <parent_product_id>` and link to variant attribute combinations via `products_product_combinations`.
@@ -116,13 +116,13 @@ Operations entities maintain verified physical foreign keys, junction tables, an
   - `restrictOnDelete()`: Enforced on master references and transactional companies (`sales_orders.company_id`, `purchases_orders.company_id`, `manufacturing_orders.company_id`, `inventories_warehouses.company_id`, `inventories_moves.company_id`, `maintenance_requests.equipment_id`).
   - `nullOnDelete()`: Enforced on optional master links and lookup properties (`products_products.category_id`, `products_products.company_id`, `inventories_locations.storage_category_id`, `sales_orders.user_id`, `employees_employees.department_id`, `projects_projects.partner_id`, `maintenance_equipments.technician_user_id`).
 - **Soft Deletes**:
-  Soft deletes (`deleted_at` timestamp) are implemented on primary master and configuration records: `products_products`, `products_attributes`, `products_price_rules`, `inventories_warehouses`, `inventories_locations`, `manufacturing_bills_of_materials`, `manufacturing_work_centers`, `sales_orders`, `purchases_requisitions`, `employees_employees`, `employees_departments`, `projects_projects`, `projects_tasks`, `maintenance_equipments`, `maintenance_requests`.
+  Soft deletes (`deleted_at` timestamp) are implemented on primary master and configuration records: `products_products`, `products_attributes`, `inventories_warehouses`, `inventories_locations`, `manufacturing_bills_of_materials`, `manufacturing_work_centers`, `sales_orders`, `purchases_requisitions`, `employees_employees`, `employees_departments`, `projects_projects`, `projects_tasks`, `maintenance_equipments`, `maintenance_requests`.
 
 ---
 
 ## Operations Entity Inventory
 
-The following table catalogs the 88 verified database tables and models constituting the complete Operations architecture across all 15 plugins:
+The following table catalogs the 87 verified database tables and models constituting the complete Operations architecture across all 15 plugins:
 
 | Entity | Plugin | Table | Model | Domain Area | Company Scoped | Primary Role | Status |
 |---|---|---|---|---|---|---|---|
@@ -134,9 +134,8 @@ The following table catalogs the 88 verified database tables and models constitu
 | **ProductAttributeValue** | `products` | `products_product_attribute_values` | `Webkul\Product\Models\ProductAttributeValue` | Products | Via Product | Selected attribute option and price surcharge | [VERIFIED] |
 | **ProductCombination** | `products` | `products_product_combinations` | `Webkul\Product\Models\ProductCombination` | Products | Via Variant | Junction mapping variant to attribute values | [VERIFIED] |
 | **Packaging** | `products` | `products_packagings` | `Webkul\Product\Models\Packaging` | Products | Optional (`BelongsToCompany`) | Package quantity specifications for products | [VERIFIED] |
-| **PriceRule** | `products` | `products_price_rules` | `Webkul\Product\Models\PriceRule` | Products | Optional (`BelongsToCompany`) | Dynamic pricing rule header | [VERIFIED] |
-| **PriceRuleItem** | `products` | `products_price_rule_items` | `Webkul\Product\Models\PriceRuleItem` | Products | Optional (`BelongsToCompany`) | Price computation line (min qty, discount, markup) | [VERIFIED] |
 | **PriceList** | `products` | `products_product_price_lists` | `Webkul\Product\Models\PriceList` | Products | Optional (`BelongsToCompany`) | Customer/Currency price list configuration | [VERIFIED] |
+| **PriceRuleItem** | `products` | `products_price_rule_items` | `Webkul\Product\Models\PriceRuleItem` | Products | Optional (`BelongsToCompany`) | Price computation line (min qty, discount, markup) | [VERIFIED] |
 | **ProductSupplier** | `products` | `products_product_suppliers` | `Webkul\Product\Models\ProductSupplier` | Products | Optional (`BelongsToCompany`) | Supplier vendor pricing, lead time, min qty | [VERIFIED] |
 | **ProductTag** | `products` | `products_tags` | `Webkul\Product\Models\Tag` | Products | No (Global Master) | Classification tags for products | [VERIFIED] |
 | **Warehouse** | `inventories` | `inventories_warehouses` | `Webkul\Inventory\Models\Warehouse` | Inventory | Yes (`BelongsToCompany`) | Physical fulfillment warehouse and route config | [VERIFIED] |
@@ -328,8 +327,10 @@ erDiagram
     
     PRODUCTS_PRODUCTS ||--o{ PRODUCTS_PACKAGINGS : "packaged into"
     PRODUCTS_PRODUCTS ||--o{ PRODUCTS_PRODUCT_SUPPLIERS : "supplied by"
-    PRODUCTS_PRICE_RULES ||--o{ PRODUCTS_PRICE_RULE_ITEMS : "contains"
+    PRODUCTS_PRODUCT_PRICE_LISTS ||--o{ PRODUCTS_PRICE_RULE_ITEMS : "contains"
     PRODUCTS_PRODUCTS ||--o{ PRODUCTS_PRICE_RULE_ITEMS : "rule for"
+    PARTNERS_PARTNERS ||--o{ PRODUCTS_PRODUCT_PRICE_LISTS : "assigned price list"
+    SALES_ORDERS ||--o{ PRODUCTS_PRODUCT_PRICE_LISTS : "price list"
 ```
 
 ---
