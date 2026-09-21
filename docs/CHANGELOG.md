@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-19
+last_verified: 2026-09-21
 scope: documentation-changelog
 confidence: high
 ---
@@ -29,6 +29,26 @@ In accordance with the repository's documentation accuracy rules, historical eve
 ---
 
 ## Operational Governance Maintenance
+
+### Upstream Domain Knowledge-Base Alignment (2026-09-21)
+
+- **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.
+- **Status**: **Implemented across documentation and verified against source code**.
+- **Recorded Scope**:
+  - Aligned physical schema conventions, ERD diagrams, and models with upstream PR #10 / `d7d471894` consolidation of `products_price_rules` into `products_product_price_lists` and `products_price_rule_items`.
+  - Created canonical business rules document [`docs/business-rules/pricing.md`](business-rules/pricing.md) covering multi-tier price lists, rule application scopes, quantity breaks, date validity, and calculation types (`FIXED`, `PERCENTAGE`, `FORMULA`).
+  - Documented `PriceListResolver` service and `ResolvedPrice` DTO in products documentation and quotation/sales orders integration.
+  - Documented cross-plugin upstream enhancements:
+    - Accounts: `Move::resolveBankPartnerId()`, `PaymentRegister` company currency accessors and safe bank resolution, `AccountingSetupService`, and `CompanyObserver` currency guard.
+    - Purchases: Multi-currency price conversion in `OrderForm`, `OrderSummary`, `PurchaseAgreementForm`, and `VendorPriceInfolist` (`OrderCurrencyConversionTest.php`).
+    - Support: Currency resolution hierarchy (`DefaultCurrencyResolutionTest.php`), `UOM::computePrice()`, global helpers (`default_currency_code`, `default_currency_id`, `money`, `hide_deleted_unless_selected`), and `CurrencyResource` deletion error handling.
+    - Plugin Manager: Cross-platform utilities in `Package` (`phpBinaryPath`, `buildTimeoutCommand`, `openInBrowser`) and `InstallERP` localization options.
+    - Inventories: Warehouse receipt move line deletion confirmation modal, `hide_deleted_unless_selected()` on product selectors, and soft-deleted product stock filtering in reporting.
+    - Partners: Preset table views (`individuals`, `companies`, `employees`, `customers`, `vendors`) on `ListPartners` (`PartnerTypeViewsTest.php`), and `price_list_id` relationship.
+    - Blogs: `ListsBlogPosts` concern trait with tag-based search and query URL parameters.
+    - Employees: `EmployeeFactory` enum constraints (`EmployeeFactoryTest.php`) and employee partner provisioning without `parent_id`.
+    - Security: Safe fillable attribute filtering via `Arr::only()` on user partner creation and update.
+  - Cleaned all obsolete standalone `PriceRule` references and resolved finding `CORR-012` in [`docs/verification-matrix.md`](verification-matrix.md).
 
 ### O6 — CI Required-Check Enforcement (2026-09-19)
 

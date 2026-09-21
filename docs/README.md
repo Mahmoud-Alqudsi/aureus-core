@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-17
+last_verified: 2026-09-21
 scope: documentation-index
 confidence: high
 ---
@@ -257,6 +257,7 @@ Mathematical calculation engines, validation constraints, and financial invarian
 | [`docs/business-rules/accounting.md`](business-rules/accounting.md) | Double-entry balancing ($Debit = Credit$), foreign exchange, tax engines |
 | [`docs/business-rules/inventory.md`](business-rules/inventory.md) | Quantitative stock tracking, physical removal strategies (FIFO/LIFO), reservations, on-hand calculations |
 | [`docs/business-rules/purchasing.md`](business-rules/purchasing.md) | 3-way matching rules, vendor price lists, purchase approval thresholds |
+| [`docs/business-rules/pricing.md`](business-rules/pricing.md) | Multi-tier price lists, rule item calculation types (fixed, percentage, formula), cascade priority, and PriceListResolver |
 | [`docs/business-rules/sales.md`](business-rules/sales.md) | Pricing rules, promotional discounts, quotation expiry, customer credit-limit analysis |
 
 ### Development & Workflow Domain (`docs/development/`)
@@ -439,4 +440,4 @@ The active governance and remediation program uses **Operational Stages `O0`–`
 | **O7** | Upstream integration runbook | **Complete / Executed — Release-branch transition pending** | Upstream target `d7d471894` entered `develop` through PR #10; Pest (MySQL/PostgreSQL), Playwright, and translation CI succeeded. A separate verified release PR still promotes `develop` to `master`. |
 | **O8** | Change management and knowledge maintenance | **Complete / Committed** | Event-driven lifecycle, documentation-impact triggers, evidence discipline, ownership-by-role, quarterly review, and PR recording requirements are adopted. |
 | **O9** | AI skills and developer automation | **Complete / Committed** | Six repository-scoped, instruction-only skills route plugin, API, schema, testing/CI, documentation, and upstream work to canonical controls without creating parallel policy. |
-| **O10** | Final knowledge-base readiness audit | **Initial audit complete / final revalidation pending** | Seven scenario routes pass read-only evidence checks; upstream execution, workflow review, and O6 enforcement are now recorded. Final closure awaits post-merge cleanup review, first release promotion/review, and final scenario revalidation. |
+| **O10** | Final knowledge-base readiness audit | **Initial audit complete / final revalidation pending** | Seven scenario routes pass read-only evidence checks; upstream execution, workflow review, O6 enforcement, and post-upstream domain knowledge-base alignment (pricing engine, cross-plugin updates, CORR-012 resolution) are now recorded. Final closure awaits post-merge cleanup review, first release promotion/review, and final scenario revalidation. |

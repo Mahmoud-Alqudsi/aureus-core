@@ -61,6 +61,16 @@ The O7 route was subsequently exercised: PR #10 merged `dcd449b96` into `develop
 
 The O6 remediation was exercised and enforced after the upstream record. PR #12 added the stable `Playwright E2E Gate`; its test shards, report merges, gate, Pest (MySQL/PostgreSQL), and translation check all succeeded before merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07` entered `develop`. Direct GitHub API inspection then confirmed that active rulesets `23566563` (`develop`) and `23566566` (`master`) strictly require those two Pest contexts, translation consistency, and `Playwright E2E Gate`, with no bypass actors. This satisfies the O6 enforcement dependency; it does not substitute for final O10 scenario revalidation or a release promotion.
 
+### 2026-09-21 Upstream Domain Alignment Evidence
+
+Following the upstream synchronization (PR #10 / `d7d471894`), comprehensive domain knowledge-base alignment was executed across documentation domains on dedicated branch `docs/sync-domain-knowledge-base`:
+1. **Database & Schema Alignment**: Aligned physical table schemas and ERDs with the upstream consolidation of `products_price_rules` into `products_product_price_lists` and `products_price_rule_items`, updated total table count to 87, documented MySQL/MariaDB `'strict' => false` configuration, and removed deleted `PriceRule` model while updating `PriceList` and `PriceRuleItem`.
+2. **Pricing Engine & Sales Integration**: Fully documented the multi-tier pricing engine, `PriceListResolver` service, `ResolvedPrice` DTO, quotation price list defaulting, dynamic line unit price recalculation, REST API endpoints (`/admin/api/v1/products/price-lists`), and new tests (`PriceListResolverTest.php`, `OrderPriceListTest.php`, `PriceRuleItemScopeTest.php`). Created canonical [`docs/business-rules/pricing.md`](../business-rules/pricing.md).
+3. **Cross-Plugin Domain Updates**: Documented `Move::resolveBankPartnerId()`, `PaymentRegister` company currency accessors and bank account null-safety, `AccountingSetupService`, `CompanyObserver` currency guard, multi-currency conversion in purchases (`OrderCurrencyConversionTest.php`), core currency resolution (`DefaultCurrencyResolutionTest.php`), `Package` cross-platform utilities, warehouse receipt deletion confirmation, soft-delete filtering in inventory reporting, partner preset views (`PartnerTypeViewsTest.php`), blog tag filtering (`ListsBlogPosts`), employee partner provisioning fixes (`EmployeeFactoryTest.php`), and safe attribute filtering on user partner creation.
+4. **Stale Reference Cleanup & Matrix Resolution**: Eliminated all obsolete standalone `PriceRule` model references and marked finding `CORR-012` as `RESOLVED` in [`docs/verification-matrix.md`](../verification-matrix.md).
+
+This satisfies the post-upstream documentation alignment dependency; O10 readiness maintains its `PROVISIONAL PASS` pending the final all-scenarios revalidation and release promotion.
+
 ## Deferred Final-Revalidation Gates
 
 The following are known execution dependencies, not failures of the routing audit:
