@@ -441,8 +441,8 @@ As of the 2026-09-18 synchronization, the merged PR #10 branch `chore/upstream-s
 | Area | Observed Reality | Classification | Evidence Source |
 |:---|:---|:---:|:---|
 | **Remote Topology** | `origin` (aureus-core) and `upstream` (aureuserp) | **VERIFIED** | `git remote -v` |
-| **Branch Role: `master`** | Stable release branch; first release promotion pending | **POLICY** | `git-workflow.md` Sections 2 and 8 |
-| **Branch Role: `develop`** | Active development trunk | **POLICY** | `git-workflow.md` Section 3, commit `15a76bf09` |
+| **Branch Role: `master`** | Stable release branch; first release promotion pending | **POLICY** | `git-workflow.md` Sections 2 and 9 |
+| **Branch Role: `develop`** | Active development trunk | **POLICY** | `git-workflow.md` Section 4, commit `15a76bf09` |
 | **Historical Merge Strategy** | Merge commit (`--no-ff`) used for upstream integration | **HISTORICAL PRACTICE** | Commit `49e330b5e`, `15a76bf09`, `de51752a5` |
 | **Preflight Divergence** | Authoritative check requires `0 0` count | **POLICY** | `git rev-list --left-right --count` |
 | **Backup Branch** | `backup/pre-upstream-sync` exists at `49e330b5e` | **VERIFIED** | `git show-ref --verify` |

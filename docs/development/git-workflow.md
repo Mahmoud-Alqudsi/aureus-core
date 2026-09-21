@@ -82,7 +82,89 @@ The project intentionally has no dedicated `hotfix/*` or `release/*` branch clas
 
 ---
 
-## 3. Branch Source and Target Rules
+## 3. Work Item, Branch & Pull Request Lifecycle
+
+Aureus uses GitHub Issues as the tracked work-item layer when a change requires planning, discussion, traceability, or explicit follow-up. An Issue is not a substitute for a branch, commit, or Pull Request; each serves a different purpose.
+
+### Canonical Relationship
+
+```text
+Issue (why / what)
+   │
+   ▼
+Topic Branch (where the work is isolated)
+   │
+   ▼
+Commits (what changed)
+   │
+   ▼
+Pull Request (request to review and integrate)
+   │
+   ▼
+Review + CI + verification
+   │
+   ▼
+Merge
+   │
+   ▼
+Issue closed when the tracked work is complete
+```
+
+### When an Issue Is Required
+
+For the project workflow, create or reuse an Issue before implementation when the work is any of the following:
+
+- a new feature or externally visible behavior change;
+- a bug or regression requiring investigation or a regression test;
+- a security, authorization, company-isolation, or data-integrity change;
+- a schema, dependency, plugin-lifecycle, or cross-plugin change;
+- an upstream synchronization, recovery, or other multi-step repository operation;
+- a material documentation or governance change that needs planning, discussion, or traceability;
+- a task large enough to require multiple commits, contributors, or follow-up work.
+
+A separate Issue is not required for a trivial, self-contained correction such as a spelling/formatting fix or an obvious one-line documentation correction, unless traceability is otherwise required by the maintainer or change risk.
+
+### Issue Responsibilities
+
+An Issue should describe the problem, requested outcome, relevant context, and acceptance criteria where useful. It is the place to track scope and discussion; implementation details belong in the branch and Pull Request.
+
+### Branch and PR Linkage
+
+- Create the topic branch from the latest `develop` after the work item is understood and scoped.
+- Use a branch name that reflects the change type and scope, following Section 5.
+- Link the Pull Request to the Issue using GitHub closing keywords such as `Closes #123`, `Fixes #123`, or `Resolves #123` when the PR completes that Issue.
+- If one PR only partially addresses an Issue, reference the Issue without a closing keyword and leave the Issue open until the remaining work is complete.
+- A PR may address multiple Issues when the changes are intentionally part of one coherent review; link each relevant Issue explicitly.
+
+### Lifecycle Summary
+
+```text
+Request
+  ↓
+Issue (when tracked work is required)
+  ↓
+Understand / Discover / Assess / Plan
+  ↓
+Create topic branch
+  ↓
+Implement + test + commit
+  ↓
+Open Pull Request
+  ↓
+Self-review + CI + verification
+  ↓
+Review / changes if needed
+  ↓
+Merge into protected target
+  ↓
+Close completed Issue / record follow-up work
+```
+
+This lifecycle complements the implementation procedure in `AGENTS.md`; it does not replace the repository's source-of-truth or authorization rules.
+
+---
+
+## 4. Branch Source and Target Rules
 
 All normal development work follows a strict branch-and-PR lifecycle centered on `develop`:
 
@@ -122,7 +204,7 @@ develop
 
 ---
 
-## 4. Branch Naming Convention
+## 5. Branch Naming Convention
 
 All topic branches must strictly adhere to the standardized prefix naming format.
 
@@ -142,7 +224,7 @@ All topic branches must strictly adhere to the standardized prefix naming format
 | `docs` | Documentation additions, corrections, or updates | `docs/api-documentation` |
 | `chore` | Maintenance tasks, dependency updates, tooling adjustments | `chore/update-dependencies` |
 
-`hotfix/*` and `release/*` are intentionally not allowed branch types. See [Protected-Branch Policy](#8-protected-branch-policy) for urgent-fix and release handling.
+`hotfix/*` and `release/*` are intentionally not allowed branch types. See [Protected-Branch Policy](#9-protected-branch-policy) for urgent-fix and release handling.
 
 `chore/upstream-sync-<date>` is a narrowly scoped exception: it branches from and targets `develop`, and exists only for an authorized upstream synchronization. `chore/upstream-sync-rollback-<date>` branches from the affected protected target and exists only for history-preserving recovery. Neither convention authorizes a general chore to target `master`.
 
@@ -157,7 +239,7 @@ All topic branches must strictly adhere to the standardized prefix naming format
 
 ---
 
-## 5. Branch Lifetime Guidance
+## 6. Branch Lifetime Guidance
 
 Branch lifetimes should remain minimal to facilitate continuous integration, minimize merge conflicts, and keep review scopes manageable.
 
@@ -174,7 +256,7 @@ Branch lifetimes should remain minimal to facilitate continuous integration, min
 
 ---
 
-## 6. Commit Convention
+## 7. Commit Convention
 
 Aureus ERP follows the [Conventional Commits](https://www.conventionalcommits.org/) standard across all contributions.
 
@@ -226,7 +308,7 @@ BREAKING CHANGE: The `CompanyContext` service constructor now requires a tenant 
 
 ---
 
-## 7. Merge Strategy
+## 8. Merge Strategy
 
 The repository applies distinct merge strategies depending on whether changes originate from normal internal development or upstream synchronization.
 
@@ -250,7 +332,7 @@ The repository applies distinct merge strategies depending on whether changes or
 
 ---
 
-## 8. Protected-Branch Policy
+## 9. Protected-Branch Policy
 
 The repository operating model defines baseline protections for core integration branches:
 
@@ -290,7 +372,7 @@ develop  ───► Protected by Policy: Direct push prohibited.
 
 ---
 
-## 9. Upstream Relationship & Synchronization Boundary
+## 10. Upstream Relationship & Synchronization Boundary
 
 The repository maintains an active relationship with the upstream open-source Aureus/Webkul codebase:
 

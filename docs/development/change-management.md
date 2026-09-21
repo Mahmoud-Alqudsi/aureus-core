@@ -50,16 +50,18 @@ The author may also be the reviewer only where the active GitHub governance poli
 Every non-trivial change follows this lifecycle. The implementation workflow in `AGENTS.md` remains the controlling procedure for AI agents.
 
 ```text
-Discover → assess impact → plan → approve → implement → verify → review → record
+Request → Issue (when required) → discover → assess impact → plan → approve
+→ implement → verify → Pull Request → review/CI → merge → record/close
 ```
 
-1. **Discover** — identify the affected implementation, tests, configuration, workflows, and documentation. Use repository-relative paths and inspect direct references with `rg`.
-2. **Assess impact** — classify the change against the source-of-truth hierarchy and [`change-impact.md`](../architecture/change-impact.md). Identify whether security, tenancy, schema, dependency, CI, upstream, or release controls apply.
-3. **Plan and approve** — state files, intent, evidence, verification, and any authority needed before making a non-trivial change. Obtain the approval required by `AGENTS.md`.
-4. **Implement** — keep edits within the approved scope. Do not turn a documentation update into an unreviewed code or platform change.
-5. **Verify** — run the proportionate checks: affected tests for behavior changes, documentation link and diff checks for documentation changes, and the required domain checks for higher-risk changes.
-6. **Review** — use the protected-branch PR process. Reviewers validate evidence and must not accept claims merely because they appear in existing documentation.
-7. **Record** — update [`docs/CHANGELOG.md`](../CHANGELOG.md) for a material addition, correction, policy change, or verification result. Use the project-root [`CHANGELOG.md`](../../CHANGELOG.md) only for software release history.
+1. **Track the work** — create or reuse a GitHub Issue when the change falls under the tracked-work criteria in [`git-workflow.md`](git-workflow.md#3-work-item-branch--pull-request-lifecycle). Trivial corrections may proceed without a separate Issue.
+2. **Discover** — identify the affected implementation, tests, configuration, workflows, and documentation. Use repository-relative paths and inspect direct references with `rg`.
+3. **Assess impact** — classify the change against the source-of-truth hierarchy and [`change-impact.md`](../architecture/change-impact.md). Identify whether security, tenancy, schema, dependency, CI, upstream, or release controls apply.
+4. **Plan and approve** — state files, intent, evidence, verification, and any authority needed before making a non-trivial change. Obtain the approval required by `AGENTS.md`.
+5. **Implement** — create the appropriate topic branch and keep edits within the approved scope. Do not turn a documentation update into an unreviewed code or platform change.
+6. **Verify** — run the proportionate checks: affected tests for behavior changes, documentation link and diff checks for documentation changes, and the required domain checks for higher-risk changes.
+7. **Pull Request and review** — open the PR against the correct protected target, link the Issue when one exists, complete the required self-review/verification, and satisfy CI and conversation-resolution controls. Reviewers validate evidence and must not accept claims merely because they appear in existing documentation.
+8. **Merge and record** — merge only through the protected-branch process. Close the Issue when the tracked work is complete; update [`docs/CHANGELOG.md`](../CHANGELOG.md) for a material addition, correction, policy change, or verification result. Use the project-root [`CHANGELOG.md`](../../CHANGELOG.md) only for software release history.
 
 ## Documentation Impact Triggers
 
@@ -105,6 +107,8 @@ Every PR must use [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUES
 4. any remaining `[UNKNOWN]`, deferred item, or follow-up owner.
 
 This is a review record, not an automated enforcement mechanism. Required status checks remain governed by O5/O6 and are not implied by a checked template box.
+
+The PR template records traceability and verification; it does not replace the Issue. An Issue describes the tracked work, while the PR records the implementation proposed for integration.
 
 ## Maintenance Boundaries
 
