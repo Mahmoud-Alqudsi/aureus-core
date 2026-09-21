@@ -1,7 +1,7 @@
 ---
 status: audit
 source_of_truth: repository-files-and-read-only-inspection
-last_verified: 2026-09-19
+last_verified: 2026-09-22
 scope: operational-stage-o10-initial-readiness
 confidence: high
 ---
@@ -69,7 +69,13 @@ Following the upstream synchronization (PR #10 / `d7d471894`), comprehensive dom
 3. **Cross-Plugin Domain Updates**: Documented `Move::resolveBankPartnerId()`, `PaymentRegister` company currency accessors and bank account null-safety, `AccountingSetupService`, `CompanyObserver` currency guard, multi-currency conversion in purchases (`OrderCurrencyConversionTest.php`), core currency resolution (`DefaultCurrencyResolutionTest.php`), `Package` cross-platform utilities, warehouse receipt deletion confirmation, soft-delete filtering in inventory reporting, partner preset views (`PartnerTypeViewsTest.php`), blog tag filtering (`ListsBlogPosts`), employee partner provisioning fixes (`EmployeeFactoryTest.php`), and safe attribute filtering on user partner creation.
 4. **Stale Reference Cleanup & Matrix Resolution**: Eliminated all obsolete standalone `PriceRule` model references and marked finding `CORR-012` as `RESOLVED` in [`docs/verification-matrix.md`](../verification-matrix.md).
 
-This satisfies the post-upstream documentation alignment dependency; O10 readiness maintains its `PROVISIONAL PASS` pending the final all-scenarios revalidation and release promotion.
+### 2026-09-22 Post-Review Metrics & Governance Reconciliation Evidence
+
+Following the comprehensive knowledge-base review report:
+1. **Metrics & Inventory Alignment**: Reconciled historical discrepancies in test file counts (199 files / 187 test classes across 11 plugins), observer classes (8 across 4 plugins, capturing `accounts/CompanyObserver`), service classes (54 across domain plugins, capturing `products/PriceListResolver`), verified documentation files (80 files), and business-rules domain (5 files). Updated [`docs/README.md`](../README.md), [`docs/ai/testing-rules.md`](../ai/testing-rules.md), [`docs/architecture/events-catalog.md`](../architecture/events-catalog.md), and [`docs/verification-matrix.md`](../verification-matrix.md) (claims `COUNT-008`, `COUNT-009`, `COUNT-011`).
+2. **Issue-to-PR Governance & Traceability**: Reconciled the development workflow and GitHub governance documentation across [`docs/development/git-workflow.md`](git-workflow.md), [`docs/development/github-governance.md`](github-governance.md), and [`docs/development/change-management.md`](change-management.md), codifying criteria for GitHub Issues, closing keywords, and issue-to-PR linkage.
+
+This satisfies the post-review reconciliation dependency; O10 readiness maintains its `PROVISIONAL PASS` pending the final all-scenarios revalidation and release promotion.
 
 ## Deferred Final-Revalidation Gates
 

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-21
+last_verified: 2026-09-22
 scope: documentation-changelog
 confidence: high
 ---
@@ -29,6 +29,18 @@ In accordance with the repository's documentation accuracy rules, historical eve
 ---
 
 ## Operational Governance Maintenance
+
+### Post-Upstream Metrics & Governance Reconciliation (2026-09-22)
+
+- **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.
+- **Status**: **Implemented and verified across living documentation**.
+- **Recorded Scope**:
+  - Reconciled numerical metrics and inventory claims resulting from comprehensive knowledge-base review report:
+    - Document count: Updated total verified living documentation files to 80 and business-rules domain to 5 files in [`docs/README.md`](README.md) (reflecting [`docs/business-rules/pricing.md`](business-rules/pricing.md)).
+    - Test baseline: Updated plugin test file counts in [`docs/README.md`](README.md), [`docs/ai/testing-rules.md`](ai/testing-rules.md), and claim `COUNT-011` in [`docs/verification-matrix.md`](verification-matrix.md) from 174 to 199 files (187 `*Test.php` test classes + 12 shared helpers/fixtures across 11 tested plugins).
+    - Observers: Updated claim `COUNT-008` in [`docs/verification-matrix.md`](verification-matrix.md) and [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) from 7 across 3 plugins to 8 across 4 plugins, documenting `Webkul\Account\Observers\CompanyObserver` currency guard in `accounts`.
+    - Services: Updated claim `COUNT-009` in [`docs/verification-matrix.md`](verification-matrix.md) and [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) from 53 to 54 services, cataloging `PriceListResolver` in `products`.
+  - Documented GitHub Issue, Topic Branch, and Pull Request lifecycle in [`docs/development/git-workflow.md`](development/git-workflow.md), [`docs/development/github-governance.md`](development/github-governance.md), and [`docs/development/change-management.md`](development/change-management.md), establishing issue creation criteria, closing keywords, and PR traceability.
 
 ### Upstream Domain Knowledge-Base Alignment (2026-09-21)
 
