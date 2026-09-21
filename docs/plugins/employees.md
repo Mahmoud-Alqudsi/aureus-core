@@ -315,7 +315,7 @@ The `employees` module declares 20 Eloquent model classes:
 
 | Model Class | Physical Database Table | Traits | Company Scoped | Key Relationships |
 | :--- | :--- | :--- | :--- | :--- |
-| `Employee` | `employees_employees` | `BelongsToCompany`, `HasChatter`, `HasCustomFields`, `HasFactory`, `HasLogActivity`, `SoftDeletes` | Yes (`company_id`) | `belongsTo(User, 'user_id')`, `belongsTo(Department, 'department_id')`, `belongsTo(EmployeeJobPosition, 'job_id')`, `belongsTo(Partner, 'partner_id')`, `belongsTo(Calendar, 'calendar_id')`, `belongsTo(WorkLocation, 'work_location_id')`, `belongsTo(Employee, 'parent_id')`, `belongsTo(Employee, 'coach_id')`, `belongsTo(User, 'leave_manager_id')`, `belongsTo(User, 'attendance_manager_id')`, `belongsTo(DepartureReason, 'departure_reason_id')`, `belongsTo(EmploymentType, 'employee_type')`, `belongsToMany(EmployeeCategory)`, `hasMany(EmployeeSkill)`, `hasMany(EmployeeResume)` |
+| `Employee` | `employees_employees` | `BelongsToCompany`, `HasChatter`, `HasCustomFields`, `HasFactory`, `HasLogActivity`, `SoftDeletes` | Yes (`company_id`) | `belongsTo(User, 'user_id')`, `belongsTo(Department, 'department_id')`, `belongsTo(EmployeeJobPosition, 'job_id')`, `belongsTo(Partner, 'partner_id')`, `belongsTo(Calendar, 'calendar_id')`, `belongsTo(WorkLocation, 'work_location_id')`, `belongsTo(Employee, 'parent_id')`, `belongsTo(Employee, 'coach_id')`, `belongsTo(User, 'leave_manager_id')`, `belongsTo(User, 'attendance_manager_id')`, `belongsTo(DepartureReason, 'departure_reason_id')`, `belongsTo(EmploymentType, 'employee_type')`, `belongsToMany(EmployeeCategory)`, `hasMany(EmployeeSkill)`, `hasMany(EmployeeResume)`. Lifecycle: provisions shadow partner (`sub_type = 'employee'`) omitting `parent_id`. |
 | `Department` | `employees_departments` | `BelongsToCompany`, `HasChatter`, `HasCustomFields`, `HasFactory`, `HasLogActivity`, `SoftDeletes` | Yes (`company_id`) | `belongsTo(User, 'creator_id')`, `belongsTo(Department, 'parent_id')`, `belongsTo(Department, 'master_department_id')`, `belongsTo(Employee, 'manager_id')`, `belongsTo(Company, 'company_id')`, `hasMany(EmployeeJobPosition)`, `hasMany(Employee)` |
 | `EmployeeJobPosition` | `employees_job_positions` | `BelongsToCompany`, `HasCustomFields`, `HasFactory`, `SoftDeletes`, `SortableTrait` | Yes (`company_id`) | `belongsTo(Department, 'department_id')`, `belongsTo(EmploymentType, 'employment_type_id')`, `belongsTo(Company, 'company_id')`, `belongsTo(User, 'creator_id')`, `hasMany(Employee, 'job_id')` |
 | `WorkLocation` | `employees_work_locations` | `BelongsToCompany`, `HasCustomFields`, `HasFactory`, `SoftDeletes` | Yes (`company_id`) | `belongsTo(Company, 'company_id')`, `belongsTo(User, 'creator_id')` |
@@ -754,7 +754,7 @@ Structure per locale includes:
 
 ## Tests
 [VERIFIED]
-The plugin includes **4 Pest feature test files** and **1 test helper** located in `plugins/webkul/employees/tests/`:
+The plugin includes **5 Pest feature test files** and **1 test helper** located in `plugins/webkul/employees/tests/`:
 
 1. **`tests/Feature/Filament/ManageResumeTest.php`**:
    - Tests rendering the Manage Resume page for an employee (`ManageResume::class`).
@@ -778,6 +778,11 @@ The plugin includes **4 Pest feature test files** and **1 test helper** located 
 4. **`tests/Feature/Models/EmployeeResumeTest.php`**:
    - Tests building resume lines from factories.
    - Tests relationship association between resumes, employees, and resume line types.
+
+5. **`tests/Feature/Models/EmployeeFactoryTest.php`**:
+   - Tests employee generation via factory (`Employee::factory()`).
+   - Asserts valid enum constraints on factory generation for `Gender`, `DistanceUnit`, and `MaritalStatus`.
+   - Tests relationship resolution for `employmentType`.
 
 5. **`tests/Helpers/EmployeeHelper.php`**:
    - Provides test utility methods `EmployeeHelper::employee()` and `EmployeeHelper::resume()`.

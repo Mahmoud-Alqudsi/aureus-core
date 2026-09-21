@@ -502,7 +502,7 @@ The `partners` module implements 7 Filament resources under `Webkul\Partner\Fila
     - Record Actions: `ActivityTableAction` (Chatter activity schedule), `ViewAction`, `EditAction`, `RestoreAction`, `DeleteAction`, and `ForceDeleteAction` (with SQL exception catching).
     - Bulk Actions: `RestoreBulkAction`, `DeleteBulkAction`, `ForceDeleteBulkAction`.
 - **Pages**:
-  - `ListPartners` (`Pages/ListPartners.php`): Uses `HasTableViews` to provide preset tab filters: `'individuals'`, `'companies'`, and `'archived'`.
+  - `ListPartners` (`Pages/ListPartners.php`): Uses `HasTableViews` to provide preset tab filters: `'individuals'`, `'companies'`, `'employees'`, `'customers'` (`customer_rank > 0`), and `'vendors'` (`supplier_rank > 0`).
   - `CreatePartner` (`Pages/CreatePartner.php`): Standard record creation.
   - `EditPartner` (`Pages/EditPartner.php`): Uses `HasRecordNavigationTabs` and injects `ChatterAction` with attached activity plans in header actions.
   - `ViewPartner` (`Pages/ViewPartner.php`): Uses `HasRecordNavigationTabs` and injects `ChatterAction` in header actions.
@@ -695,7 +695,10 @@ Dictionary structures:
 [VERIFIED]
 The `partners` plugin contains an active test suite located under `plugins/webkul/partners/tests/`:
 
-1. **API V1 Feature Tests**:
+1. **Filament Feature Tests**:
+   - `PartnerTypeViewsTest.php` (`plugins/webkul/partners/tests/Feature/Filament/PartnerTypeViewsTest.php`): Verifies preset table views (individuals, companies, employees, customers, vendors) on `ListPartners` and partner type ranking filters.
+
+2. **API V1 Feature Tests**:
    - `PartnerTest.php` (`plugins/webkul/partners/tests/Feature/API/V1/PartnerTest.php`): Verifies unauthenticated 401, unauthorized 403, listing, creation, validation, show, update, soft delete, restore, and permanent deletion.
    - `AddressTest.php` (`plugins/webkul/partners/tests/Feature/API/V1/AddressTest.php`): Verifies nested partner address CRUD lifecycle and soft deletes.
    - `BankAccountTest.php` (`plugins/webkul/partners/tests/Feature/API/V1/BankAccountTest.php`): Verifies nested partner bank account CRUD lifecycle and soft deletes.
@@ -703,10 +706,10 @@ The `partners` plugin contains an active test suite located under `plugins/webku
    - `TagTest.php` (`plugins/webkul/partners/tests/Feature/API/V1/TagTest.php`): Verifies tag CRUD lifecycle and soft deletes.
    - `TitleTest.php` (`plugins/webkul/partners/tests/Feature/API/V1/TitleTest.php`): Verifies title CRUD lifecycle.
 
-2. **Filament Integration Smoke Tests**:
+3. **Filament Integration Smoke Tests**:
    - `ResourceGlobalSearchSmokeTest.php` (`plugins/webkul/partners/tests/Feature/Filament/ResourceGlobalSearchSmokeTest.php`): Verifies global search titles and result details across empty and populated relationship states.
 
-3. **Workflow & Multi-Tenant Invariants Tests**:
+4. **Workflow & Multi-Tenant Invariants Tests**:
    - `CompanyIsolationTest.php` (`plugins/webkul/partners/tests/Feature/Workflows/CompanyIsolationTest.php`): Verifies cross-company data visibility invariants, ensuring company-bound partners are isolated while unassigned partners remain globally shared across tenants.
    - `CompanyScopingInvariantsTest.php` (`plugins/webkul/partners/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`): Asserts that `Partner` is explicitly registered as shared master data and is not automatically stamped with an active company context.
 

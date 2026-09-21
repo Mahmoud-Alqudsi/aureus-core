@@ -307,7 +307,7 @@ The plugin defines 6 Eloquent models and 1 global query scope:
   - `defaultCompany()`: `BelongsTo` -> `Webkul\Support\Models\Company` (`default_company_id`)
 - **Lifecycle Events**:
   - `creating`: Automatically defaults `creator_id` to `Auth::id()` if null.
-  - `saved`: Automatically synchronizes shadow `Partner` record (`handlePartnerCreation` or `handlePartnerUpdation`) setting `sub_type = 'partner'`, linking `user_id`, and syncing name/email.
+  - `saved`: Automatically synchronizes shadow `Partner` record (`handlePartnerCreation` or `handlePartnerUpdation`) setting `sub_type = 'partner'`, linking `user_id`, and syncing fillable attributes safely filtered via `Arr::only($user->toArray(), app(Partner::class)->getFillable())` to prevent attribute mismatch errors.
 - **Panel Access**: `canAccessPanel(Panel $panel): bool => $this->is_active;`
 - **Ownership**: `ownershipSources()` returns `[OwnerSource::column('creator_id'), OwnerSource::column('id')]`. `ownershipScopeIsGlobal()` returns `false`.
 

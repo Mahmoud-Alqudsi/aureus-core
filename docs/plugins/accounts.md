@@ -334,6 +334,7 @@ The `accounts` module defines 45 model classes (`plugins/webkul/accounts/src/Mod
    - Traits: `BelongsToCompany`, `ChecksCompanyConsistency`, `HasChatter`, `HasCustomFields`, `HasFactory`, `HasLogActivity`, `HasOwnershipScope`.
    - Casts: `move_type` (`MoveType`), `state` (`MoveState`), `payment_state` (`PaymentState`), `invoice_date` (`date`), `invoice_date_due` (`date`), `date` (`date`), `amount_untaxed` (`decimal:4`), `amount_tax` (`decimal:4`), `amount_total` (`decimal:4`), `amount_residual` (`decimal:4`).
    - Relationships: `belongsTo(Journal::class)`, `belongsTo(Company::class)`, `belongsTo(Currency::class)`, `belongsTo(Partner::class, 'partner_id')`, `belongsTo(Partner::class, 'commercial_partner_id')`, `belongsTo(BankAccount::class, 'partner_bank_id')`, `belongsTo(PaymentTerm::class)`, `belongsTo(FiscalPosition::class)`, `belongsTo(Incoterm::class)`, `belongsTo(Move::class, 'reversed_entry_id')`, `hasMany(MoveLine::class, 'move_id')`, `belongsToMany(Payment::class, 'accounts_accounts_move_payment', 'invoice_id', 'payment_id')`.
+   - Key Methods: `resolveBankPartnerId($moveType, ?int $companyId, ?int $partnerId): ?int` (resolves company partner for inbound moves or vendor partner for outbound bills).
 
 2. **`MoveLine` (`Webkul\Account\Models\MoveLine`)**:
    - Table: `accounts_account_move_lines`.
@@ -425,6 +426,8 @@ The `accounts` module defines 45 model classes (`plugins/webkul/accounts/src/Mod
 
 20. **`PaymentRegister` & `AccountPaymentRegisterMoveLine` (`Webkul\Account\Models\PaymentRegister`, `AccountPaymentRegisterMoveLine`)**:
     - Wizard models storing in-memory/transient payment registration parameters and batch line allocations.
+    - Currency Accessors: `getCompanyCurrencyAttribute(): ?Currency`, `getCompanyCurrencyIdAttribute(): ?int` accessing underlying company currency.
+    - Bank Account Resolution: `getBatchAvailablePartnerBanks($batch, $journal)` resolves bank accounts safely, providing the journal's bank account for inbound receipts (or empty collection if unassigned), and filtering partner bank accounts by the target company for outbound payments.
 
 21. **`MoveReversal` (`Webkul\Account\Models\MoveReversal`)**:
     - Table: `accounts_accounts_move_reversals`.
@@ -672,7 +675,7 @@ The `accounts` module defines 12 domain service classes in `plugins/webkul/accou
     - Generates standardized base line and tax line array structures for the tax calculation engine.
 
 14. **`AccountingSetupService` (`Webkul\Account\Services\AccountingSetupService`)**:
-    - Clones template company Chart of Accounts, Tax Groups, Taxes, Journals, and Settings when configuring a new tenant company (`setUp(Company $company)`).
+    - Clones template company Chart of Accounts, Tax Groups, Taxes, Journals, and Settings when configuring a new tenant company (`setUp(Company $company)`). Re-maps foreign keys across cloned structures transactionally and preserves company currency integrity.
 
 ---
 
@@ -701,8 +704,11 @@ The `accounts` module defines 7 event classes under `plugins/webkul/accounts/src
 ---
 
 ## Observers
-[NOT APPLICABLE]
-The `accounts` module does not define or register any Eloquent Observer classes (`plugins/webkul/accounts/src/AccountServiceProvider.php`).
+[VERIFIED]
+1. **`CompanyObserver` (`Webkul\Account\Observers\CompanyObserver`)**:
+   - Registered via `Company::observe(CompanyObserver::class)` in `AccountServiceProvider::packageBooted()`.
+   - Invariant: Guard against company currency alteration once general ledger records exist.
+   - Mechanism: Intercepts `updating` events on `Company`. If `currency_id` is dirty, checks whether any `MoveLine` records exist for the company or any of its descendant branch entities (`companyTreeIds()`). If accounting entries exist, raises a `ValidationException` on `data.currency_id` to preserve financial transaction integrity.
 
 ---
 
@@ -796,14 +802,14 @@ Located in `plugins/webkul/accounts/resources/lang/en/`:
 
 ## Tests
 [VERIFIED]
-The `accounts` plugin has a comprehensive suite of **41 test files** (18 API feature tests, 6 Filament feature tests, 17 Workflow feature tests) plus 1 test helper located in `plugins/webkul/accounts/tests/`:
+The `accounts` plugin has a comprehensive suite of **43 test files** (18 API feature tests, 6 Filament feature tests, 19 Workflow feature tests) plus 1 test helper located in `plugins/webkul/accounts/tests/`:
 
 - **API Feature Tests (`tests/Feature/API/V1/`)**:
   - `AccountTest.php`, `BillTest.php`, `CashRoundingTest.php`, `CategoryTest.php`, `CreditNoteTest.php`, `CustomerTest.php`, `FiscalPositionTest.php`, `IncotermTest.php`, `InvoiceTest.php`, `JournalTest.php`, `PaymentDueTermTest.php`, `PaymentTermTest.php`, `ProductTest.php`, `ProductVariantTest.php`, `RefundTest.php`, `TaxGroupTest.php`, `TaxTest.php`, `VendorTest.php`.
 - **Filament Feature Tests (`tests/Feature/Filament/`)**:
   - `BillResourceTest.php`, `CreditNoteResourceTest.php`, `InvoiceResourceTest.php`, `RefundResourceTest.php`, `ResourceGlobalSearchSmokeTest.php`, `TaxFormTest.php`.
 - **Workflow & Business Logic Tests (`tests/Feature/Workflows/`)**:
-  - `CashRoundingTest.php`, `CompanyDependentAccountsTest.php`, `CompanyIsolationTest.php`, `CompanyScopingInvariantsTest.php`, `CreditNoteTest.php`, `CurrencyTest.php`, `DocumentCompanyResolutionTest.php`, `FiscalPositionTest.php`, `InvoiceTest.php`, `JournalEntryTest.php`, `MoveLifecycleTest.php`, `PaymentTermTest.php`, `RefundTest.php`, `TaxBatchingTest.php`, `TaxFormulaEvaluatorTest.php`, `TaxGroupTest.php`, `VendorBillTest.php`.
+  - `CashRoundingTest.php`, `CompanyCurrencyGuardTest.php`, `CompanyDependentAccountsTest.php`, `CompanyIsolationTest.php`, `CompanyScopingInvariantsTest.php`, `CreditNoteTest.php`, `CurrencyTest.php`, `DocumentCompanyResolutionTest.php`, `FiscalPositionTest.php`, `InvoiceTest.php`, `JournalEntryTest.php`, `MoveLifecycleTest.php`, `PaymentRegisterBankAccountTest.php`, `PaymentTermTest.php`, `RefundTest.php`, `TaxBatchingTest.php`, `TaxFormulaEvaluatorTest.php`, `TaxGroupTest.php`, `VendorBillTest.php`.
 - **Test Helpers (`tests/Helpers/`)**:
   - `AccountHelper.php`: Reusable dataset builders for chart of accounts, journals, taxes, invoices, payments, and multi-currency exchange rates.
 

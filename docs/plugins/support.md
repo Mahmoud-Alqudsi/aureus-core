@@ -492,7 +492,7 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
 | `Bank` | `banks` | Global Master | Yes | `state`, `country`, `creator` (`User`) |
 | `Country` | `countries` | Global Reference | No | `currency`, `states` (hasMany) |
 | `State` | `states` | Global Reference | No | `country` |
-| `Currency` | `currencies` | Global Reference | No | `rates` (hasMany `CurrencyRate`), `companies` (hasMany) |
+| `Currency` | `currencies` | Global Reference | No | `rates` (hasMany `CurrencyRate`), `companies` (hasMany). Methods: `getCodeAttribute()`, `findByCode(?string $code)`, `resolveDefault(?Country $country)` |
 | `CurrencyRate` | `currency_rates` | Explicit `company_id` | No | `currency`, `company`, `creator` (`User`) |
 | `Sequence` | `sequences` | `BelongsToCompany` (manual assignment) | No | `company`, `scope` (`MorphTo` `scope_type`/`scope_id`) |
 | `Calendar` | `calendars` | `BelongsToCompany` (manual assignment) | Yes | `company`, `creator`, `attendances` (hasMany), `leaves` (hasMany), `resource` (`MorphTo`) |
@@ -503,7 +503,7 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
 | `ActivityType` | `activity_types` | Global Setup | Yes | `activityPlan`, `defaultNextActivityType` (self), `suggestedActivityTypes` (belongsToMany self), `creator` |
 | `ActivityTypeSuggestion` | `activity_type_suggestions` | Junction Pivot | No | `activity_type_id`, `suggested_activity_type_id` |
 | `UOMCategory` | `unit_of_measure_categories` | Global Master | No | `unitOfMeasures` (hasMany `UOM`), `creator` |
-| `UOM` | `unit_of_measures` | Global Master | Yes | `category` (`UOMCategory`), `creator` |
+| `UOM` | `unit_of_measures` | Global Master | Yes | `category` (`UOMCategory`), `creator`. Methods: `computePrice($price, $toUnit)`, `computeQuantity($qty, $toUnit)` |
 | `UtmStage` | `utm_stages` | Global Master | No | `creator` |
 | `UTMMedium` | `utm_mediums` | Global Master | No | `creator` |
 | `UTMSource` | `utm_sources` | Global Master | No | `creator` |
@@ -632,6 +632,13 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
 
 ## Services
 [VERIFIED]
+
+### Global Helper Functions (`src/helpers.php`)
+The `support` plugin provides foundational utility functions loaded globally at boot time:
+1. **`default_currency_code(): string`**: Resolves the system default ISO currency code via cached closure, evaluating `CurrencySettings::$default_currency_id`, falling back to `config('app.currency')`, and defaulting to `'USD'`.
+2. **`default_currency_id(): ?int`**: Resolves the database ID of the default currency from settings or via `Currency::findByCode(default_currency_code())`.
+3. **`hide_deleted_unless_selected(?string $state): Closure`**: Returns an Eloquent query constraint closure (`whereNull('deleted_at')->orWhere('id', $state)`) used across Filament forms (inventories, purchases, sales, manufacturing, accounts) to filter soft-deleted records out of selection dropdowns while preserving already-selected legacy values.
+4. **`money(...)`**: Localized currency formatter supporting standard Latin and Arabic numerals, locale handling, and division factors.
 
 ### 1. `SequenceService` (`plugins/webkul/support/src/Services/SequenceService.php`)
 The centralized document numbering service.
@@ -768,7 +775,7 @@ Prefix: `admin/api/v1/support`, Middleware: `['auth:sanctum']`, Route Name Prefi
 ## Tests
 [VERIFIED]
 **Test Coverage Status: HAS TESTS.**
-The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/support/tests/` comprising 12 feature test files and 5 test helper classes:
+The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/support/tests/` comprising 13 feature test files and 5 test helper classes:
 
 ### Feature Tests:
 1. `plugins/webkul/support/tests/Feature/API/V1/BankTest.php`: CRUD, soft delete, restore, force delete, Spatie query builder filtering/sorting on banks API.
@@ -783,6 +790,7 @@ The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/
 10. `plugins/webkul/support/tests/Feature/Locale/SetLocaleMiddlewareTest.php`: Verifies application locale resolution.
 11. `plugins/webkul/support/tests/Feature/Workflows/CompanyIsolationTest.php`: Verifies multi-company tenant isolation invariants (record hiding across companies, active company switching, allowed company scoping).
 12. `plugins/webkul/support/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`: Verifies automated company assignment and shared model declarations (`ActivityPlan`, `Calendar`, `Sequence`, `UtmCampaign`).
+13. `plugins/webkul/support/tests/Feature/Workflows/DefaultCurrencyResolutionTest.php`: Verifies default currency resolution hierarchy (country currency -> app.currency config fallback -> first active currency), ISO code lookup via `findByCode()`, and company currency assignment activation.
 
 ### Test Helpers:
 - `CompanyHelper.php`: User authentication with company contexts and session state setup.

@@ -261,6 +261,15 @@ plugins/webkul/plugin-manager/
 
 ## Services
 [VERIFIED]
+
+### Cross-Platform CLI & System Utilities (`Webkul\PluginManager\Package`)
+The static `Package` manifest and runtime class provides system execution utilities:
+- **`Package::phpBinaryPath(): string`**: Dynamically detects the current PHP CLI executable using Symfony's `PhpExecutableFinder`, ensuring sub-processes use the correct binary.
+- **`Package::buildTimeoutCommand(int $seconds, string $command): string`**: Builds OS-appropriate command strings with process timeouts (supports Linux `timeout`, macOS `gtimeout`, and Windows direct execution).
+- **`Package::openInBrowser(string $url): void`**: Cross-platform browser opener executing `xdg-open` on Linux, `open` on Darwin, and `start` on Windows.
+
+### Console Commands
+- **`InstallERP` (`erp:install`)**: Interactive and unattended ERP system installer. Accepts `--admin-name`, `--admin-email`, `--admin-password`, `--country`, and `--currency`. Prompts for country/currency localization, runs migrations and seeders, validates against `.env` currency mismatches (`warnOnEnvCurrencyMismatch`), and dispatches event `aureus.installed` upon completion.
 1. **`Webkul\PluginManager\PermissionManager`** (`plugins/webkul/plugin-manager/src/PermissionManager.php:12`):
    - Configures the global Filament Shield permission key generator via `FilamentShield::buildPermissionKeyUsing()`.
    - Extracts the plugin namespace token from the entity class, converting it to snake_case (e.g. `Webkul\Account\Filament\Resources\AccountResource` -> `account`).
