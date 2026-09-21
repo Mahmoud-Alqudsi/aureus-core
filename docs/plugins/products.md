@@ -151,7 +151,6 @@ plugins/webkul/products/
 │   │   ├── CategoryFactory.php
 │   │   ├── PackagingFactory.php
 │   │   ├── PriceListFactory.php
-│   │   ├── PriceRuleFactory.php
 │   │   ├── PriceRuleItemFactory.php
 │   │   ├── ProductAttributeFactory.php
 │   │   ├── ProductCombinationFactory.php
@@ -341,7 +340,6 @@ plugins/webkul/products/
 │   │   ├── Category.php
 │   │   ├── Packaging.php
 │   │   ├── PriceList.php
-│   │   ├── PriceRule.php
 │   │   ├── PriceRuleItem.php
 │   │   ├── Product.php
 │   │   ├── ProductAttribute.php
@@ -619,7 +617,7 @@ No custom Laravel Event Listeners are defined in `plugins/webkul/products`.
      - `creating` / `updating`: Runs `validateNoRecursion($category)` to detect and prevent circular category trees. Automatically builds `parent_path` (`/1/2/`) and computed `full_name` (`Parent / Child`). Sets `creator_id`.
    - `ProductSupplier::boot()`:
      - `creating`: Stamps `creator_id` and sets `company_id` matching the Product's company or active session company.
-   - `Packaging::boot()`, `PriceRule::boot()`, `PriceRuleItem::boot()`, `PriceList::boot()`, `Tag::boot()`:
+   - `Packaging::boot()`, `PriceRuleItem::boot()`, `PriceList::boot()`, `Tag::boot()`:
      - `creating`: Stamps `creator_id ??= Auth::id()`.
 
 ## Policies
@@ -749,7 +747,7 @@ The `products` module declares **no runtime dependencies** (`hasDependencies` is
 1. **`support` [CORE]**:
    - Consumes `UOM` (`Webkul\Support\Models\UOM`) on `products_products.uom_id` and `uom_po_id` and `products_product_suppliers.uom_id`.
    - Consumes `Company` (`Webkul\Support\Models\Company`) for optional multi-tenant isolation.
-   - Consumes `Currency` (`Webkul\Support\Models\Currency`) on `PriceRule`, `PriceList`, and `ProductSupplier`.
+   - Consumes `Currency` (`Webkul\Support\Models\Currency`) on `PriceList`, `PriceRuleItem`, and `ProductSupplier`.
 2. **`security` [CORE]**:
    - Binds `User` (`Webkul\Security\Models\User`) to `creator_id` audit columns across all 13 models.
    - Uses `Webkul\Product\Policies\*` for Filament Shield permission gates.
@@ -854,7 +852,7 @@ Modifications to `products` have high architectural impact across the entire Aur
 [VERIFIED]
 - Service Provider & Lifecycle: `plugins/webkul/products/src/ProductServiceProvider.php`
 - Plugin Class & Panel Registration: `plugins/webkul/products/src/ProductPlugin.php`
-- Core Models & Variant Logic: `plugins/webkul/products/src/Models/Product.php`, `Category.php`, `Attribute.php`, `AttributeOption.php`, `ProductAttribute.php`, `ProductAttributeValue.php`, `ProductCombination.php`, `ProductSupplier.php`, `Packaging.php`, `PriceRule.php`, `PriceRuleItem.php`, `PriceList.php`, `Tag.php`
+- Core Models & Variant Logic: `plugins/webkul/products/src/Models/Product.php`, `Category.php`, `Attribute.php`, `AttributeOption.php`, `ProductAttribute.php`, `ProductAttributeValue.php`, `ProductCombination.php`, `ProductSupplier.php`, `Packaging.php`, `PriceRuleItem.php`, `PriceList.php`, `Tag.php`
 - Observers & In-Use Guards: `plugins/webkul/products/src/Observers/ProductAttributeObserver.php`, `UOMObserver.php`, `src/Support/ProductUsageRegistry.php`, `src/Support/VariantUsage.php`
 - Filament UI & Variant Action: `plugins/webkul/products/src/Filament/Resources/ProductResource/Actions/GenerateVariantsAction.php`, `Pages/ManageAttributes.php`, `Pages/ManageVariants.php`, `Schemas/ProductForm.php`, `Support/ProductSchemaRegistry.php`
 - API Routing & Controllers: `plugins/webkul/products/routes/api.php`, `src/Http/Controllers/API/V1/ProductController.php`, `ProductVariantController.php`

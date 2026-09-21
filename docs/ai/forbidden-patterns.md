@@ -197,12 +197,13 @@ Every pattern documented here has occurred in this repository or in historical a
 - **What it looks like**: Assuming that because an API route, an Eloquent model relation, a form toggle, or a database column is declared and visible on the surface, the full end-to-end operational capability is functioning.
 - **Why it is tempting**: The API endpoint responds with HTTP 200, the dropdown shows data, or the relation returns models, conveying the impression of complete feature maturity.
 - **Specific Aureus ERP instance(s)**:
-  - **Price Rules** in `products`: `PriceRule` model, schema, and API routes exist, but the sales pricing engine does not evaluate or apply price rules to sales order lines at checkout.
+  - **Price Rules** in `products` (Historical Warning): Historically, `PriceRule` model and schema existed without evaluation in sales checkout. This gap was permanently resolved by the upstream synchronization PR #10, which consolidated pricing into `PriceList` and `PriceRuleItem` and introduced the unified `PriceListResolver` service wired into `QuotationForm` and `OrderController`.
   - **Dynamic Relations** in `partners`: Relations dynamically injected via `resolveRelationUsing()` onto `Partner` exist on the model, but are not automatically exposed in API resources or UI tables without explicit wiring.
   - **Journal Item Reconciliation**: UI toggle to reconcile invoice payments exists, but multi-currency exchange gain/loss journal adjustments were not automatically generated until dedicated services were wired up.
 - **Evidence**:
-  - `plugins/webkul/products/src/Models/PriceRule.php`
+  - `plugins/webkul/products/src/Services/PriceListResolver.php`
   - `plugins/webkul/partners/src/Models/Partner.php`
+  - `docs/business-rules/pricing.md`
   - `docs/business-rules/sales.md`
 - **Rule that prevents it**:
   - Surface presence (an API route, Eloquent relation, UI toggle, or database column) MUST NOT be equated with complete operational capability.
