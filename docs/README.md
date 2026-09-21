@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-21
+last_verified: 2026-09-22
 scope: documentation-index
 confidence: high
 ---
@@ -160,7 +160,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **79 verified files** organized into 10 functional domains:
+The repository documentation consists of **80 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -169,7 +169,7 @@ docs/
 ├── ai/                                       # AI developer guidance & canonical rules (10 files)
 ├── application/                              # Application foundation layer (1 file)
 ├── architecture/                             # Core system architecture & change impact (6 files)
-├── business-rules/                           # Domain calculation & operational rules (4 files)
+├── business-rules/                           # Domain calculation & operational rules (5 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
 ├── development/                              # Development workflow, Git operations, maintenance, AI skills & readiness (7 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
@@ -300,26 +300,26 @@ Aureus ERP contains **28 domain plugins** located under `plugins/webkul/`. Plugi
 | `chatter` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/chatter.md`](plugins/chatter.md) |
 | `fields` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/fields.md`](plugins/fields.md) |
 | `full-calendar` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/full-calendar.md`](plugins/full-calendar.md) |
-| `partners` | **Core** | None | **Tested** (9 test files) | [`docs/plugins/partners.md`](plugins/partners.md) |
+| `partners` | **Core** | None | **Tested** (10 test files) | [`docs/plugins/partners.md`](plugins/partners.md) |
 | `security` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/security.md`](plugins/security.md) |
-| `support` | **Core** | None | **Tested** (17 test files) | [`docs/plugins/support.md`](plugins/support.md) |
+| `support` | **Core** | None | **Tested** (18 test files) | [`docs/plugins/support.md`](plugins/support.md) |
 | `table-views` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/table-views.md`](plugins/table-views.md) |
 | `accounting` | **Optional** | `accounts` | **Tested** (9 test files) | [`docs/plugins/accounting.md`](plugins/accounting.md) |
-| `accounts` | **Optional** | `products` | **Tested** (42 test files) | [`docs/plugins/accounts.md`](plugins/accounts.md) |
+| `accounts` | **Optional** | `products` | **Tested** (44 test files) | [`docs/plugins/accounts.md`](plugins/accounts.md) |
 | `barcode` | **Optional** | `inventories` | Untested (`tests/` absent) | [`docs/plugins/barcode.md`](plugins/barcode.md) |
 | `blogs` | **Optional** | `website` | Untested (`tests/` absent) | [`docs/plugins/blogs.md`](plugins/blogs.md) |
 | `contacts` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/contacts.md`](plugins/contacts.md) |
-| `employees` | **Optional** | None | **Tested** (5 test files) | [`docs/plugins/employees.md`](plugins/employees.md) |
+| `employees` | **Optional** | None | **Tested** (6 test files) | [`docs/plugins/employees.md`](plugins/employees.md) |
 | `inventories` | **Optional** | `products` | **Tested** (41 test files) | [`docs/plugins/inventories.md`](plugins/inventories.md) |
 | `invoices` | **Optional** | `accounts` | Untested (`tests/` absent) | [`docs/plugins/invoices.md`](plugins/invoices.md) |
 | `maintenance` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/maintenance.md`](plugins/maintenance.md) |
 | `manufacturing` | **Optional** | `products`, `inventories` | **Tested** (8 test files) | [`docs/plugins/manufacturing.md`](plugins/manufacturing.md) |
 | `payments` | **Optional** | `accounts` | Untested (`tests/` absent) | [`docs/plugins/payments.md`](plugins/payments.md) |
-| `products` | **Optional** | None | **Tested** (16 test files) | [`docs/plugins/products.md`](plugins/products.md) |
+| `products` | **Optional** | None | **Tested** (19 test files) | [`docs/plugins/products.md`](plugins/products.md) |
 | `projects` | **Optional** | None | **Tested** (8 test files) | [`docs/plugins/projects.md`](plugins/projects.md) |
-| `purchases` | **Optional** | `invoices` | **Tested** (15 test files) | [`docs/plugins/purchases.md`](plugins/purchases.md) |
+| `purchases` | **Optional** | `invoices` | **Tested** (16 test files) | [`docs/plugins/purchases.md`](plugins/purchases.md) |
 | `recruitments` | **Optional** | `employees` | Untested (`tests/` absent) | [`docs/plugins/recruitments.md`](plugins/recruitments.md) |
-| `sales` | **Optional** | `invoices`, `payments` | **Tested** (17 test files) | [`docs/plugins/sales.md`](plugins/sales.md) |
+| `sales` | **Optional** | `invoices`, `payments` | **Tested** (20 test files) | [`docs/plugins/sales.md`](plugins/sales.md) |
 | `time-off` | **Optional** | `employees` | Untested (`tests/` absent) | [`docs/plugins/time-off.md`](plugins/time-off.md) |
 | `timesheets` | **Optional** | `projects` | Untested (`tests/` absent) | [`docs/plugins/timesheets.md`](plugins/timesheets.md) |
 | `website` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/website.md`](plugins/website.md) |
