@@ -1,8 +1,8 @@
 ---
-status: audit
+status: verified
 source_of_truth: repository-files-and-read-only-inspection
 last_verified: 2026-09-22
-scope: operational-stage-o10-initial-readiness
+scope: operational-stage-o10-readiness-closure
 confidence: high
 ---
 
@@ -10,11 +10,11 @@ confidence: high
 
 ## Purpose and Status
 
-This is the initial Operational Stage O10 readiness audit for the current branch. It tests whether an agent can route realistic requests to the authoritative rules, implementation evidence, tests, and operating boundaries without inventing behavior or authority.
+This is the Operational Stage O10 readiness audit and closure record for the current branch. It verifies that an agent can route realistic requests to authoritative rules, implementation evidence, tests, and operating boundaries without inventing behavior or authority, and confirms post-merge workspace hygiene.
 
-**Result: `PROVISIONAL PASS — FINAL REVALIDATION REQUIRED`.**
+**Result: `PASS — READINESS VERIFIED & STAGE O10 CLOSED`.**
 
-The audit verifies discoverability and decision routing; it does not execute application behavior, mutate GitHub, run an upstream integration, or prove that every future change complies with the documented controls.
+The audit verifies discoverability, decision routing, and post-merge branch cleanup; it does not execute application behavior, mutate GitHub, run an upstream integration, or prove that every future change complies with the documented controls.
 
 ## Audit Method
 
@@ -25,7 +25,7 @@ Each scenario was evaluated read-only against four conditions:
 3. A direct implementation, test, configuration, or Git source exists for the scenario's next investigation step.
 4. The path preserves approval and operational boundaries rather than implying permission to change schema, workflows, GitHub, upstream, or protected branches.
 
-The audit records the initial routing state observed on 2026-09-17 and the subsequent O7/O6 execution evidence recorded below. It must be repeated after a material change to the relevant guidance or before final readiness is claimed.
+The audit records the initial routing state observed on 2026-09-17, subsequent O7/O6 execution evidence, domain knowledge-base alignment, metrics reconciliation, and the final post-merge cleanup and revalidation recorded below.
 
 ## Scenario Results
 
@@ -55,11 +55,11 @@ After the O4/O5/O7 release-branch policy change, the upstream scenario was rerun
 
 ### 2026-09-18 Upstream Execution and CI Evidence
 
-The O7 route was subsequently exercised: PR #10 merged `dcd449b96` into `develop` as `ddbd24ba4`. The accepted upstream target is reachable from `develop`; the incoming write-capable Playwright-reporting workflow was excluded; and the PR's Pest (MySQL/PostgreSQL), Playwright, and translation workflows completed successfully. This satisfies the upstream-execution dependency for the readiness audit; it does not substitute for a release promotion or the final all-scenarios revalidation.
+The O7 route was subsequently exercised: PR #10 merged `dcd449b96` into `develop` as `ddbd24ba4`. The accepted upstream target is reachable from `develop`; the incoming write-capable Playwright-reporting workflow was excluded; and the PR's Pest (MySQL/PostgreSQL), Playwright, and translation workflows completed successfully. This satisfies the upstream-execution and CI validation dependency for the readiness audit.
 
 ### 2026-09-19 O6 Enforcement Evidence
 
-The O6 remediation was exercised and enforced after the upstream record. PR #12 added the stable `Playwright E2E Gate`; its test shards, report merges, gate, Pest (MySQL/PostgreSQL), and translation check all succeeded before merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07` entered `develop`. Direct GitHub API inspection then confirmed that active rulesets `23566563` (`develop`) and `23566566` (`master`) strictly require those two Pest contexts, translation consistency, and `Playwright E2E Gate`, with no bypass actors. This satisfies the O6 enforcement dependency; it does not substitute for final O10 scenario revalidation or a release promotion.
+The O6 remediation was exercised and enforced after the upstream record. PR #12 added the stable `Playwright E2E Gate`; its test shards, report merges, gate, Pest (MySQL/PostgreSQL), and translation check all succeeded before merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07` entered `develop`. Direct GitHub API inspection then confirmed that active rulesets `23566563` (`develop`) and `23566566` (`master`) strictly require those two Pest contexts, translation consistency, and `Playwright E2E Gate`, with no bypass actors. This satisfies the O6 enforcement dependency for the readiness audit.
 
 ### 2026-09-21 Upstream Domain Alignment Evidence
 
@@ -75,28 +75,32 @@ Following the comprehensive knowledge-base review report:
 1. **Metrics & Inventory Alignment**: Reconciled historical discrepancies in test file counts (199 files / 187 test classes across 11 plugins), observer classes (8 across 4 plugins, capturing `accounts/CompanyObserver`), service classes (54 across domain plugins, capturing `products/PriceListResolver`), verified documentation files (80 files), and business-rules domain (5 files). Updated [`docs/README.md`](../README.md), [`docs/ai/testing-rules.md`](../ai/testing-rules.md), [`docs/architecture/events-catalog.md`](../architecture/events-catalog.md), and [`docs/verification-matrix.md`](../verification-matrix.md) (claims `COUNT-008`, `COUNT-009`, `COUNT-011`).
 2. **Issue-to-PR Governance & Traceability**: Reconciled the development workflow and GitHub governance documentation across [`docs/development/git-workflow.md`](git-workflow.md), [`docs/development/github-governance.md`](github-governance.md), and [`docs/development/change-management.md`](change-management.md), codifying criteria for GitHub Issues, closing keywords, and issue-to-PR linkage.
 
-This satisfies the post-review reconciliation dependency; O10 readiness maintains its `PROVISIONAL PASS` pending the final all-scenarios revalidation and release promotion.
+### 2026-09-22 Post-Merge Branch Cleanup & O10 Scope Realignment Evidence
 
-## Deferred Final-Revalidation Gates
+Following maintainer authorization:
+1. **O10 Scope Realignment**: Decoupled the deferred first release promotion (`develop`-to-`master`) from Stage O10 readiness criteria, focusing Stage O10 strictly on post-merge branch and worktree cleanup and closing the initial living documentation phase.
+2. **Worktree Pruning**: Executed `git worktree prune -v`, successfully pruning the stale linked worktree reference `worktrees/aureuserp-upstream-sync-20260918-c2b4ddaa2`.
+3. **Merged Local Branch Cleanup**: Audited local branches merged into `develop` (`git branch --merged develop`) and safely deleted seven fully merged local branches with `git branch -d`:
+   - `chore/upstream-sync-20260918-c2b4ddaa2` (PR #10)
+   - `chore/enforce-ci-status-checks` (PR #12)
+   - `chore/update-dependencies`
+   - `docs/record-upstream-sync`
+   - `docs/record-o6-enforcement`
+   - `refactor/ai-knowledge-architecture` (PR #9)
+   - `feature/privacy-and-localization`
+4. **Boundary Preservation**: Confirmed that protected branches (`master`, `develop`), checkpoints (`checkpoint/*`), active topic branch (`docs/sync-domain-knowledge-base`), and active feature branches/worktrees remain intact.
 
-The following are known execution dependencies, not failures of the routing audit:
+## Final Revalidation and Stage O10 Closure
 
-1. **First release promotion** — the O7 synchronization has been executed and CI-verified, but no verified `develop`-to-`master` release promotion has been authorized or executed through the protected-branch PR path.
-2. **Post-merge cleanup and record review** — the incoming workflow review is recorded, and the new R8 cleanup stage requires an explicit, read-only candidate audit before any merged branch or worktree is removed.
-3. **Post-change scenario rerun** — final O10 evidence requires rerunning all scenarios after this O6 documentation record and after any material change to `AGENTS.md`, a reading route, a runbook, or a repository skill.
+With the execution of post-merge branch and worktree cleanup and the re-verification of all seven routing scenarios against the active repository, Operational Stage O10 is complete and closed:
 
-## Final Revalidation Procedure
+1. **Routing and Skills**: All referenced paths exist, and repository skills under [`.agents/skills/`](../../.agents/skills/) link back to canonical controls without embedding competing policies.
+2. **Upstream and CI Enforcement**: Upstream integration (PR #10) and O6 strict status check enforcement (PR #12) are verified on `develop`.
+3. **Knowledge Base Alignment**: Pricing engine, physical schema, and metrics reconciliations are documented and verified.
+4. **Workspace Hygiene**: All local branches merged into `develop` have been pruned and deleted safely, leaving a clean workspace.
 
-Before marking O10 final, perform a read-only rerun of all scenarios above and add any changed scenario needed by the completed work. Confirm:
-
-1. all referenced paths still exist and skill descriptions still match their intended scope;
-2. direct source evidence still supports the routing claims;
-3. upstream changes and their workflow review are recorded when a synchronization occurred;
-4. O6 decisions and GitHub enforcement status are recorded accurately;
-5. the branch is clean and the documentation index, changelog, and operational roadmap reflect the verified state.
-
-Record the final result in [`docs/CHANGELOG.md`](../CHANGELOG.md) and update the O10 row in [`docs/README.md`](../README.md). Do not call final readiness complete merely because the static routing audit passed.
+Record the final result in [`docs/CHANGELOG.md`](../CHANGELOG.md) and update the O10 row in [`docs/README.md`](../README.md).
 
 ## Scope Boundary
 
-This audit makes no application-code, test-suite, workflow, GitHub, remote, branch, or deployment change. It is evidence that agents can find and interpret the current controls, not permission to execute a controlled operation.
+This audit makes no application-code, test-suite, workflow, GitHub, remote, branch, or deployment change beyond the authorized local branch/worktree hygiene. It is evidence that agents can find and interpret current controls, not permission to execute an unauthorized controlled operation.

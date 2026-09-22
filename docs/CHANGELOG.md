@@ -30,6 +30,18 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### O10 Scope Realignment, Post-Merge Cleanup & Stage Closure (2026-09-22)
+
+- **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.
+- **Status**: **Stage O10 Complete / Closed**.
+- **Recorded Scope**:
+  - Realigned Operational Stage O10 scope by decoupling the deferred `develop`-to-`master` release promotion from initial knowledge-base readiness criteria, focusing O10 strictly on post-merge workspace hygiene and living documentation closure.
+  - Executed post-merge branch and worktree cleanup pursuant to Section 15 (R8):
+    - Pruned stale linked worktree in `/tmp/aureuserp-upstream-sync-20260918-c2b4ddaa2` using `git worktree prune -v`.
+    - Safely deleted seven local branches fully merged into `develop` using `git branch -d`: `chore/upstream-sync-20260918-c2b4ddaa2`, `chore/enforce-ci-status-checks`, `chore/update-dependencies`, `docs/record-upstream-sync`, `docs/record-o6-enforcement`, `refactor/ai-knowledge-architecture`, and `feature/privacy-and-localization`.
+    - Preserved protected branches (`master`, `develop`), checkpoints (`checkpoint/*`), active topic branch (`docs/sync-domain-knowledge-base`), and active feature branches/worktrees.
+  - Completed final scenario revalidation and closed Operational Stage O10 in [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) and [`docs/README.md`](README.md).
+
 ### Post-Upstream Metrics & Governance Reconciliation (2026-09-22)
 
 - **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.
