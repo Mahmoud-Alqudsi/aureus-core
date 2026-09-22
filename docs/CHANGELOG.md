@@ -30,6 +30,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### AI Template Governance, Upstream Sync Decoupling & CI Fast-Track (2026-09-23)
+
+- **Evidentiary Tier**: Git-Verified history on branch `chore/governance-sync-and-ci-fast-track`.
+- **Status**: **Implemented across repository guidance and CI workflows**.
+- **Recorded Scope**:
+  - **AI Template Governance**: Enforced mandatory recognition and complete usage of [`.github/PULL_REQUEST_TEMPLATE.md`](../.github/PULL_REQUEST_TEMPLATE.md) and [`.github/ISSUE_TEMPLATE/`](../.github/ISSUE_TEMPLATE/) (`bug.yml`, `feature_request.yml`) by AI agents in [`AGENTS.md`](../AGENTS.md), [`docs/development/change-management.md`](development/change-management.md), and repository skills.
+  - **Upstream Synchronization Decoupling**: Completely removed release promotion to `master` from [`docs/development/upstream-sync.md`](development/upstream-sync.md) and [`.agents/skills/aureus-upstream-sync/SKILL.md`](../.agents/skills/aureus-upstream-sync/SKILL.md). Decoupled upstream sync to terminate strictly at `develop`, reserving `master` promotion to independent release lifecycle governance in [`docs/development/git-workflow.md`](development/git-workflow.md).
+  - **Atomic Knowledge Base Updates on Sync Branches**: Mandated that all living documentation updates (`docs/architecture/change-impact.md`, `docs/verification-matrix.md`, domain docs, and changelogs) must be committed atomically directly onto the synchronization branch (`chore/upstream-sync-*`) prior to opening the integration Pull Request.
+  - **CI Fast-Track for Documentation (`CI-010`)**: Implemented change path filtering across [`.github/workflows/pest_tests.yml`](../.github/workflows/pest_tests.yml), [`.github/workflows/translations_check.yml`](../.github/workflows/translations_check.yml), and [`.github/workflows/playwright_tests.yml`](../.github/workflows/playwright_tests.yml). Documentation-only PRs (`docs/**`, `*.md`, `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md`) detect change scope and return immediate passing results across all required status checks (`Pest`, `Playwright E2E Gate`, `Translations check`), bypassing heavy matrix execution while preserving 100% branch protection rules. Updated `CI-010` in [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) to `VERIFIED / IMPLEMENTED`.
+
 ### O10 Scope Realignment, Post-Merge Cleanup & Stage Closure (2026-09-22)
 
 - **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.

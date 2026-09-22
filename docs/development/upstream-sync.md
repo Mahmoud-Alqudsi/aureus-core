@@ -15,8 +15,9 @@ This document defines the canonical operational procedure for synchronizing upst
 > 1. This document defines **how an authorized human or supervised agent executes synchronization**.
 > 2. Documenting these commands **does not authorize their autonomous execution**.
 > 3. Upstream synchronization must **never** be executed as an implicit background task.
-> 4. The canonical upstream topology flows through `develop`; release promotion is a separate protected-branch Pull Request:
->    $$\text{upstream/master} \xrightarrow[\text{--no-ff}]{\text{Merge}} \text{chore/upstream-sync-*} \xrightarrow[\text{Merge Commit}]{\text{PR}} \text{develop} \xrightarrow[\text{Merge Commit}]{\text{release PR}} \text{master}$$
+> 4. The canonical upstream topology integrates strictly and exclusively into `develop`:
+>    $$\text{upstream/master} \xrightarrow[\text{--no-ff}]{\text{Merge}} \text{chore/upstream-sync-*} \xrightarrow[\text{Merge Commit}]{\text{PR}} \text{develop}$$
+>    Upstream synchronization terminates upon integration into `develop`. Release promotion from `develop` to `master` is decoupled and governed independently by the release workflow in [`git-workflow.md`](git-workflow.md).
 
 ---
 
@@ -216,9 +217,31 @@ Treat every incoming `.github/workflows/` change as a security-sensitive downstr
 
 ---
 
-## 8. Validate the Synchronization Branch
+## 8. Reconcile Living Documentation & Knowledge Base on Synchronization Branch
 
-After the successful merge and before opening a Pull Request, run local validation suites on `${SYNC_BRANCH}`:
+To prevent documentation drift and ensure that repository guidance evolves atomically with merged code, **all knowledge base updates must be committed directly onto `${SYNC_BRANCH}` before opening the Pull Request**:
+
+1. **Change Impact Recording**: Update [`docs/architecture/change-impact.md`](../architecture/change-impact.md) with:
+   - Target upstream commit hash (`UPSTREAM_TARGET`) and sync date.
+   - Incoming commit range (`origin/develop..upstream/master`).
+   - Architectural and domain blast radius (affected plugins, migrations, dependency changes).
+2. **Verification Matrix**: Update [`docs/verification-matrix.md`](../verification-matrix.md) to record the planned verification scope for incoming changes.
+3. **Domain Knowledge Alignment**:
+   - Reconcile relevant documentation under `docs/` (`docs/database/`, `docs/plugins/`, `docs/workflows/`, `docs/security/`) reflecting upstream schema or feature updates.
+   - If incoming updates are extensive, document verified core changes immediately and classify unresolved details as `[PARTIALLY VERIFIED]` or `[UNKNOWN]` with explicit follow-up issues per [`docs/development/change-management.md`](change-management.md).
+4. **Documentation Changelog**: Record the knowledge base reconciliation entry in [`docs/CHANGELOG.md`](../CHANGELOG.md).
+5. **Commit Documentation to the Synchronization Branch**:
+   ```bash
+   # [C] Commit reconciled knowledge base updates directly onto the sync branch
+   git add docs/
+   git commit -m "docs(upstream): reconcile living documentation and knowledge base"
+   ```
+
+---
+
+## 9. Validate the Synchronization Branch
+
+After the successful merge and documentation commit, run the local validation suites on `${SYNC_BRANCH}`:
 
 ```bash
 # [A] 1. Validate Composer manifests
@@ -230,27 +253,57 @@ vendor/bin/pint --test
 # [A] 3. Run unit & feature tests (if environment is configured)
 php artisan test --compact
 
-# [A] 4. Verify merge commit parent topology
+# [A] 4. Validate documentation links and formatting
+git diff --check
+
+# [A] 5. Verify merge commit parent topology
 git log -n 1 --format="%H %P" HEAD
 ```
 
 ---
 
-## 9. Review and Merge into `develop`
+## 10. Review and Merge into `develop`
 
 ```bash
 # [D] 1. Push only the synchronization branch (requires human authorization)
 git push --set-upstream origin "${SYNC_BRANCH}"
 
-# [D] 2. Create a Pull Request to develop (or create the equivalent PR in the GitHub UI)
+# [D] 2. Create an authorized Pull Request to develop using the repository PR template
 gh pr create \
   --base develop \
   --head "${SYNC_BRANCH}" \
   --title "chore: synchronize upstream ${UPSTREAM_TARGET:0:9}" \
-  --body "Upstream target: ${UPSTREAM_TARGET}\n\nValidation: <record completed validation>"
+  --body "$(cat <<EOF
+## 📝 Description
+Synchronize upstream updates from upstream/master (${UPSTREAM_TARGET:0:9}) into develop.
+
+## 🔗 Related Issue
+Upstream Synchronization Integration
+
+## 🔧 Type of Change
+- [x] ♻️ Refactor / code cleanup
+- [x] 📚 Documentation update
+
+## ✅ Checklist
+- [x] My code follows the project's coding standards and conventions
+- [x] I have performed a self-review of my own code
+- [x] I have updated the documentation where needed
+- [x] I identified the documentation impact, updated the affected documents, or explained why it is not applicable
+- [x] I verified material documentation claims against their authoritative repository evidence
+- [x] All new and existing tests pass locally
+
+## 🧪 How Has This Been Tested?
+- Composer validate --strict
+- Pint code styling
+- Local feature tests & CI automated gate
+
+## 📚 Documentation Impact
+Reconciled docs/architecture/change-impact.md, docs/verification-matrix.md, and docs/CHANGELOG.md directly on the synchronization branch.
+EOF
+)"
 ```
 
-The responsible maintainer must confirm the conflict-resolution record, self-review the changes, record validation evidence, confirm tag safety, and review any incoming workflow changes. Merge this Pull Request with **Merge Commit**, not Squash or Rebase. After the required authorization and applicable CI checks at that time, confirm the result:
+The responsible maintainer must confirm the conflict-resolution record, self-review the changes, verify the documentation updates, confirm tag safety, and review any incoming workflow changes. Merge this Pull Request with **Merge Commit**, not Squash or Rebase. After the required authorization and applicable CI checks at that time, confirm the result:
 
 ```bash
 # [B] Refresh the protected integration branch after GitHub merges the Pull Request
@@ -261,41 +314,15 @@ git merge-base --is-ancestor "${UPSTREAM_TARGET}" origin/develop
 git log -n 1 --format="%H %P" origin/develop
 ```
 
----
-
-## 10. Promote a Verified `develop` Release into `master`
-
-Following the canonical release flow (`develop` $\to$ `master`), a verified integration state is promoted through a release Pull Request. Do not merge or push directly into `master`.
-
-```bash
-# [A] 1. Record the exact verified source before opening the release Pull Request
-RELEASE_SOURCE=$(git rev-parse origin/develop)
-
-# [D] 2. Create a release Pull Request with develop as the source branch
-gh pr create \
-  --base master \
-  --head develop \
-  --title "chore: release develop to master" \
-  --body "Source develop commit: ${RELEASE_SOURCE}\n\nValidation: <record release and local validation evidence>"
-```
-
-The responsible maintainer must select **Merge Commit** after self-review, required authorization, and applicable CI checks complete. Then verify protected-branch parity:
-
-```bash
-# [B] Refresh protected references
-git fetch origin master develop
-
-# [A] The exact verified release source must be reachable from master
-git merge-base --is-ancestor "${RELEASE_SOURCE}" origin/master
-git rev-list --left-right --count master...origin/master # must return 0 0
-```
+> [!NOTE]
+> **Completion Boundary**: Upstream synchronization terminates upon integration into `develop`. Release promotion from `develop` to `master` is a distinct software release activity governed independently by [`git-workflow.md`](git-workflow.md#9-release-promotion-procedure).
 
 ---
 
 ## 11. Rollback & Emergency Recovery
 
 ### Normal Rollback (History-Preserving — Preferred)
-If an integrated merge on `master` or `develop` proves defective after pushing, revert the merge commit to preserve linear history without rewriting shared branches:
+If an integrated upstream merge on `develop` proves defective after pushing, revert the merge commit to preserve linear history without rewriting shared branches:
 
 ```bash
 # [A] 1. Verify parent ordering of the merge commit
@@ -308,9 +335,8 @@ git log -n 1 --format="%H parents: %P" <merge-commit-hash>
 > In standard merges, Parent 1 is the pre-merge target branch and Parent 2 is the incoming source branch. Verify the actual order via `git log -n 1 --format="%P"`; do not assume the source is always `upstream/master`.
 
 ```bash
-# [C] 2. Create a recovery branch from the protected target and revert there.
-# Set TARGET_BRANCH to master or develop, then set both verified values below.
-TARGET_BRANCH=master
+# [C] 2. Create a recovery branch from the protected integration branch and revert there.
+TARGET_BRANCH=develop
 MAINLINE_PARENT=
 MERGE_COMMIT=
 test -n "${MAINLINE_PARENT}" && test -n "${MERGE_COMMIT}" || {
@@ -321,7 +347,7 @@ RECOVERY_BRANCH="chore/upstream-sync-rollback-$(date -u +%Y%m%d)-$(git rev-parse
 git switch --create "${RECOVERY_BRANCH}" "origin/${TARGET_BRANCH}"
 git revert -m "${MAINLINE_PARENT}" "${MERGE_COMMIT}"
 
-# [D] 3. Push the recovery branch, then open an authorized, self-reviewed Pull Request to the target.
+# [D] 3. Push the recovery branch, then open an authorized, self-reviewed Pull Request to develop.
 git push --set-upstream origin "${RECOVERY_BRANCH}"
 gh pr create \
   --base "${TARGET_BRANCH}" \
@@ -330,7 +356,7 @@ gh pr create \
   --body "Reverts: ${MERGE_COMMIT}\n\nReason: <record approved reason>"
 ```
 
-For a rollback targeting `master`, merge the authorized, self-reviewed recovery Pull Request with **Merge Commit**, then immediately promote the resulting `master` rollback to `develop` through an authorized recovery Pull Request so the release and integration histories do not diverge. For a rollback targeting `develop` only, use the project-approved Merge Commit path for this upstream recovery. No rollback permits a direct push to `master` or `develop`.
+For an upstream rollback targeting `develop`, merge the authorized, self-reviewed recovery Pull Request with **Merge Commit**. Direct pushes to `develop` remain strictly prohibited.
 
 > [!NOTE]
 > `git revert -m <parent>` accepts one mainline-parent selector. The commit message is supplied by Git's normal editor or with `--no-edit` when the generated message is sufficient; `-m` is not a message option.
@@ -387,7 +413,7 @@ The operator or agent must **immediately halt** the procedure and escalate to a 
 7. Incoming upstream changes modify database migrations in ways that violate company isolation.
 8. Destructive migrations (table drops, column drops) are detected in upstream commits.
 9. Composer dependency constraints conflict or fail strict validation.
-10. Automated tests or linting (`pint`) fail on `develop` after upstream integration or on `master` after release promotion.
+10. Automated tests or linting (`pint`) fail on `develop` after upstream integration.
 11. Tag collision occurs between upstream and downstream tags.
 12. Docker publishing triggers could be unintentionally activated.
 13. Required validation checks cannot be completed due to missing tooling.
@@ -398,10 +424,9 @@ The operator or agent must **immediately halt** the procedure and escalate to a 
 
 ## 14. Documentation & Impact Recording
 
-Following successful synchronization or release promotion:
-1. Record the upstream sync commit range, date, and resolved target in [`docs/architecture/change-impact.md`](../architecture/change-impact.md).
-2. Update verification entries in [`docs/verification-matrix.md`](../verification-matrix.md).
-3. If user-facing or schema changes are included in a release promotion, document release impact in root `CHANGELOG.md` before the downstream tag is created.
+Following successful integration into `develop`:
+1. Confirm final recorded entries in [`docs/architecture/change-impact.md`](../architecture/change-impact.md) and [`docs/verification-matrix.md`](../verification-matrix.md).
+2. Note that knowledge base updates were reconciled and committed atomically on the synchronization branch prior to the PR merge per Section 8.
 
 ---
 
@@ -441,7 +466,7 @@ As of the 2026-09-18 synchronization, the merged PR #10 branch `chore/upstream-s
 | Area | Observed Reality | Classification | Evidence Source |
 |:---|:---|:---:|:---|
 | **Remote Topology** | `origin` (aureus-core) and `upstream` (aureuserp) | **VERIFIED** | `git remote -v` |
-| **Branch Role: `master`** | Stable release branch; first release promotion pending | **POLICY** | `git-workflow.md` Sections 2 and 9 |
+| **Branch Role: `master`** | Stable release branch; decoupled from upstream synchronization (governed by `git-workflow.md`) | **POLICY** | `git-workflow.md` Sections 2 and 9 |
 | **Branch Role: `develop`** | Active development trunk | **POLICY** | `git-workflow.md` Section 4, commit `15a76bf09` |
 | **Historical Merge Strategy** | Merge commit (`--no-ff`) used for upstream integration | **HISTORICAL PRACTICE** | Commit `49e330b5e`, `15a76bf09`, `de51752a5` |
 | **Preflight Divergence** | Authoritative check requires `0 0` count | **POLICY** | `git rev-list --left-right --count` |
