@@ -372,11 +372,11 @@ When a stock move is processed via `InventoryManager::completeTransfer()`:
 All UI components register under the `admin` panel within `NavigationGroup::Inventory`.
 
 ### 1. Operations Cluster (`Filament/Clusters/Operations`)
-- **`ReceiptResource`**: Manages incoming shipments from suppliers or customer return receipts (`Receipt` model).
+- **`ReceiptResource`**: Manages incoming shipments from suppliers or customer return receipts (`Receipt` model). Requires user confirmation before deleting product lines in the moves repeater (`requiresConfirmation()`).
 - **`DeliveryResource`**: Manages outgoing customer shipments and vendor returns (`Delivery` model).
 - **`InternalResource`**: Manages internal bin-to-bin or warehouse-to-warehouse stock relocations (`InternalTransfer` model).
 - **`DropshipResource`**: Manages vendor-to-customer dropship logistics without touching internal stock (`Dropship` model).
-- **`OperationResource`**: Base polymorphic transfer resource handling picking slips, package packing, barcode scanning, and multi-step transfer execution.
+- **`OperationResource`**: Base polymorphic transfer resource handling picking slips, package packing, barcode scanning, and multi-step transfer execution. Move line delete actions enforce user confirmation to prevent unintended row removals. Product pickers across operation forms employ `hide_deleted_unless_selected()` to exclude soft-deleted items.
 - **`QuantityResource`**: Physical inventory counting interface supporting cyclic count scheduling, theoretical vs counted stock reconciliation, and automatic difference move creation.
 - **`ReplenishmentResource`**: Automated and manual stock reordering rule interface (`OrderPoint` model) with lead times, min/max thresholds, and route triggers.
 - **`ScrapResource`**: Damaged goods write-off resource with chatter audit trail and direct virtual scrap location transfers.
@@ -402,7 +402,7 @@ All UI components register under the `admin` panel within `NavigationGroup::Inve
 
 ### 4. Reporting Cluster (`Filament/Clusters/Reporting`)
 - **`MoveResource`**: Complete historical stock move ledger with source/destination locations, lot tracking, quantities, and timestamps.
-- **`QuantityResource`**: Location-level on-hand inventory stock balances at rest.
+- **`QuantityResource`**: Location-level on-hand inventory stock balances at rest. Reporting queries filter out soft-deleted products (`whereHas('product', fn ($q) => $q->whereNull('deleted_at'))`) to prevent ghost stock records.
 
 ### 5. Settings Cluster (`Filament/Clusters/Settings` & `Filament/Clusters/PluginSettings`)
 - **`ManageOperations`**: Package support, warning popups, reception reports, annual inventory schedule.

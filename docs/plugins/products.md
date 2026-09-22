@@ -46,8 +46,9 @@ The `products` module serves as the foundational product master data, catalog ma
 5. **Packaging Specifications (`Packaging`)**:
    - Manages multi-quantity packaging configurations per product (`products_packagings`) with barcodes, quantities, and optional company scoping.
 
-6. **Declarative Multi-Tier Pricing Data Structure (`PriceRule`, `PriceRuleItem`, `PriceList`)**:
-   - Defines database tables (`products_price_rules`, `products_price_rule_items`, `products_product_price_lists`) and models for multi-tier pricing rules (fixed, percentage, formula). Note that these models are currently declarative data structures with empty UI stubs (`PriceListResource`) and are not evaluated by the active sales quotation pricing engine.
+6. **Multi-Tier Pricing Engine (`PriceList`, `PriceRuleItem`, `PriceListResolver`)**:
+   - Manages customer-specific, currency-specific, and volume-tiered price lists (`products_product_price_lists`) containing granular computation rules (`products_price_rule_items`).
+   - Driven by `PriceListResolver` (`Webkul\Product\Services\PriceListResolver`), which evaluates pricing cascades (specific variant → template → category hierarchy → global) against quantity breaks, date windows, and computation strategies (fixed price, percentage discount, or advanced formula with markup, surcharge, rounding, and margins). Integrated into Sales quotations and customer defaulting.
 
 7. **Supplier Vendor Catalog & Pricelists (`ProductSupplier`)**:
    - Tracks vendor procurement pricing (`products_product_suppliers`), vendor part codes, vendor product names, delivery lead times (`delay`), quantity breaks (`min_qty`), discounts, and currency conversion.
@@ -56,7 +57,7 @@ The `products` module serves as the foundational product master data, catalog ma
    - Implements `ProductSchemaRegistry` extending `AbstractSchemaRegistry` to allow downstream modules (`accounts`, `inventories`, `sales`, `purchases`, `manufacturing`) to inject custom tabs, fields, infolist sections, table columns, filter presets, and eager loads without modifying core product files.
 
 9. **Comprehensive REST API Suite**:
-   - Exposes full REST API v1 endpoints under `admin/api/v1/products` for products, variants, categories, tags, attributes, attribute options, and packagings with soft-delete lifecycle management, Spatie QueryBuilder filtering/sorting/includes, and Scribe OpenAPI documentation.
+   - Exposes full REST API v1 endpoints under `admin/api/v1/products` for products, variants, categories, tags, attributes, attribute options, packagings, and price lists with soft-delete lifecycle management, Spatie QueryBuilder filtering/sorting/includes, and Scribe OpenAPI documentation.
 
 ## Service Provider
 [VERIFIED]
@@ -69,7 +70,7 @@ The `products` module serves as the foundational product master data, catalog ma
     - Registers view namespace (`hasViews()`).
     - Registers translation namespace (`hasTranslations()`).
     - Registers API routes (`hasRoutes(['api'])`).
-    - Registers 16 database migrations (`hasMigrations([...])`) and executes them (`runsMigrations()`):
+    - Registers 18 database migrations (`hasMigrations([...])`) and executes them (`runsMigrations()`):
       1. `2025_01_05_063925_create_products_categories_table`
       2. `2025_01_05_100751_create_products_products_table`
       3. `2025_01_05_100830_create_products_tags_table`
@@ -86,8 +87,12 @@ The `products` module serves as the foundational product master data, catalog ma
       14. `2025_02_21_053249 _create_products_product_combinations_table`
       15. `2025_07_28_080116_alter_products_products_table`
       16. `2026_04_15_044431_add_columns_in_products_product_suppliers_table`
+      17. `2026_09_15_000000_consolidate_products_price_rules_into_price_lists_table`
+      18. `2026_09_15_000100_add_price_list_id_to_partners_partners_table`
     - Registers database seeder: `Webkul\Product\Database\Seeders\DatabaseSeeder` (`hasSeeder(...)`).
-    - Registers settings migration: `2025_01_17_094022_create_products_product_settings` (`hasSettings(...)`, `runsSettings()`).
+    - Registers settings migrations:
+      1. `2025_01_17_094022_create_products_product_settings`
+      2. `2026_09_15_000300_add_enable_price_lists_to_products_product_settings` (`hasSettings(...)`, `runsSettings()`).
     - Configures install command: runs migrations and seeders (`hasInstallCommand(...)`).
     - Configures uninstall command: purges chatter audit logs for `[Category::class, Product::class]` via `ChatterCleanupService::purgeForModels(...)` (`hasUninstallCommand(...)`).
   - `packageRegistered()`:
@@ -146,7 +151,6 @@ plugins/webkul/products/
 │   │   ├── CategoryFactory.php
 │   │   ├── PackagingFactory.php
 │   │   ├── PriceListFactory.php
-│   │   ├── PriceRuleFactory.php
 │   │   ├── PriceRuleItemFactory.php
 │   │   ├── ProductAttributeFactory.php
 │   │   ├── ProductCombinationFactory.php
@@ -336,7 +340,6 @@ plugins/webkul/products/
 │   │   ├── Category.php
 │   │   ├── Packaging.php
 │   │   ├── PriceList.php
-│   │   ├── PriceRule.php
 │   │   ├── PriceRuleItem.php
 │   │   ├── Product.php
 │   │   ├── ProductAttribute.php
@@ -458,34 +461,29 @@ The plugin owns 13 Eloquent models mapping to 13 database tables:
    - Company Scoping: Optional multi-tenant (`autoAssignsCompany(): bool => false`).
    - Relationships: `product()` (`belongsTo(Product::class)->withTrashed()`), `company()` (`belongsTo(Company::class)`), `creator()` (`belongsTo(User::class)`).
 
-9. **`PriceRule` (`Webkul\Product\Models\PriceRule`)**:
-   - Table: `products_price_rules`
-   - Traits: `BelongsToCompany`, `HasFactory`, `SoftDeletes`, `SortableTrait`.
+9. **`PriceList` (`Webkul\Product\Models\PriceList`)**:
+   - Table: `products_product_price_lists`
+   - Traits: `BelongsToCompany`, `HasCustomFields`, `HasFactory`, `SortableTrait`.
    - Relationships: `currency()` (`belongsTo(Currency::class)`), `company()` (`belongsTo(Company::class)`), `creator()` (`belongsTo(User::class)`), `items()` (`hasMany(PriceRuleItem::class)`).
 
 10. **`PriceRuleItem` (`Webkul\Product\Models\PriceRuleItem`)**:
     - Table: `products_price_rule_items`
     - Traits: `BelongsToCompany`, `HasFactory`.
-    - Relationships: `priceRule()` (`belongsTo(PriceRule::class)`), `basePriceRule()` (`belongsTo(PriceRule::class)`), `product()` (`belongsTo(Product::class)`), `category()` (`belongsTo(Category::class)`), `currency()` (`belongsTo(Currency::class)`), `company()` (`belongsTo(Company::class)`), `creator()` (`belongsTo(User::class)`).
+    - Relationships: `priceList()` (`belongsTo(PriceList::class, 'price_list_id')`), `basePriceList()` (`belongsTo(PriceList::class, 'base_price_list_id')`), `product()` (`belongsTo(Product::class)`), `category()` (`belongsTo(Category::class)`), `currency()` (`belongsTo(Currency::class)`), `company()` (`belongsTo(Company::class)`), `creator()` (`belongsTo(User::class)`).
 
-11. **`PriceList` (`Webkul\Product\Models\PriceList`)**:
-    - Table: `products_product_price_lists`
-    - Traits: `BelongsToCompany`, `HasCustomFields`, `HasFactory`, `SortableTrait`.
-    - Relationships: `currency()` (`belongsTo(Currency::class)`), `company()` (`belongsTo(Company::class)`), `creator()` (`belongsTo(User::class)`).
-
-12. **`ProductSupplier` (`Webkul\Product\Models\ProductSupplier`)**:
+11. **`ProductSupplier` (`Webkul\Product\Models\ProductSupplier`)**:
     - Table: `products_product_suppliers`
     - Traits: `BelongsToCompany`, `HasFactory`, `SortableTrait`.
     - Relationships: `product()` (`belongsTo(Product::class)`), `partner()` (`belongsTo(Partner::class)`), `currency()` (`belongsTo(Currency::class)`), `uom()` (`belongsTo(UOM::class, 'uom_id')`), `company()` (`belongsTo(Company::class)`), `creator()` (`belongsTo(User::class)`).
 
-13. **`Tag` (`Webkul\Product\Models\Tag`)**:
+12. **`Tag` (`Webkul\Product\Models\Tag`)**:
     - Table: `products_tags`
     - Traits: `HasFactory`, `SoftDeletes`.
     - Relationships: `creator()` (`belongsTo(User::class)`).
 
 ## Database
 [VERIFIED]
-The plugin defines 14 physical database tables (13 owned entity tables + 1 junction table `products_product_tag`):
+The plugin defines 13 physical database tables (12 owned entity tables + 1 junction table `products_product_tag`):
 
 | Physical Table | Model Mapping | Primary Key | Foreign Keys / Indexes | Company Scoping | Deletion Behavior |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -498,10 +496,9 @@ The plugin defines 14 physical database tables (13 owned entity tables + 1 junct
 | `products_product_attributes` | `ProductAttribute` | `id` | `product_id` -> `products_products`, `attribute_id` -> `products_attributes`, `creator_id` -> `users` | Via Product | `cascadeOnDelete()` on product and attribute |
 | `products_product_attribute_values` | `ProductAttributeValue` | `id` | `product_id` -> `products_products`, `attribute_id` -> `products_attributes`, `product_attribute_id` -> `products_product_attributes`, `attribute_option_id` -> `products_attribute_options` | Via Product | `cascadeOnDelete()` on product, attribute, and option |
 | `products_packagings` | `Packaging` | `id` | `product_id` -> `products_products`, `company_id` -> `companies`, `creator_id` -> `users` | Optional (`BelongsToCompany`, nullable) | `cascadeOnDelete()` on product, `nullOnDelete()` on company/creator |
-| `products_price_rules` | `PriceRule` | `id` | `currency_id` -> `currencies`, `company_id` -> `companies`, `creator_id` -> `users` | Optional (`BelongsToCompany`, nullable) | `restrictOnDelete()` on currency, `nullOnDelete()` on company/creator |
-| `products_price_rule_items` | `PriceRuleItem` | `id` | `price_rule_id` -> `products_price_rules`, `base_price_rule_id` -> `products_price_rules`, `currency_id` -> `currencies`, `product_id` -> `products_products`, `category_id` -> `products_categories`, `company_id` -> `companies`, `creator_id` -> `users` | Optional (`BelongsToCompany`, nullable) | `cascadeOnDelete()` on price_rule_id, `nullOnDelete()` on base_price_rule/product/category/company/creator |
-| `products_product_suppliers` | `ProductSupplier` | `id` | `product_id` -> `products_products`, `partner_id` -> `partners_partners`, `currency_id` -> `currencies`, `company_id` -> `companies`, `creator_id` -> `users`, `uom_id` -> `unit_of_measures` | Optional (`BelongsToCompany`, nullable) | `cascadeOnDelete()` on product/partner, `restrictOnDelete()` on currency, `nullOnDelete()` on company/creator/uom |
 | `products_product_price_lists` | `PriceList` | `id` | `currency_id` -> `currencies`, `company_id` -> `companies`, `creator_id` -> `users` | Optional (`BelongsToCompany`, nullable) | `restrictOnDelete()` on currency, `nullOnDelete()` on company/creator |
+| `products_price_rule_items` | `PriceRuleItem` | `id` | `price_list_id` -> `products_product_price_lists`, `base_price_list_id` -> `products_product_price_lists`, `currency_id` -> `currencies`, `product_id` -> `products_products`, `category_id` -> `products_categories`, `company_id` -> `companies`, `creator_id` -> `users` | Optional (`BelongsToCompany`, nullable) | `cascadeOnDelete()` on price_list_id, `nullOnDelete()` on base_price_list/product/category/company/creator |
+| `products_product_suppliers` | `ProductSupplier` | `id` | `product_id` -> `products_products`, `partner_id` -> `partners_partners`, `currency_id` -> `currencies`, `company_id` -> `companies`, `creator_id` -> `users`, `uom_id` -> `unit_of_measures` | Optional (`BelongsToCompany`, nullable) | `cascadeOnDelete()` on product/partner, `restrictOnDelete()` on currency, `nullOnDelete()` on company/creator/uom |
 | `products_product_combinations` | `ProductCombination` | `id` | `product_id` -> `products_products`, `product_attribute_value_id` -> `products_product_attribute_values` | Via Product | `cascadeOnDelete()` on product and attribute value |
 
 ## Filament resources/pages/widgets/clusters
@@ -542,10 +539,10 @@ The plugin defines 14 physical database tables (13 owned entity tables + 1 junct
      - Table: `PackagingsTable`.
      - Infolist: `PackagingInfolist`.
   5. `PriceListResource` (`plugins/webkul/products/src/Filament/Resources/PriceListResource.php`):
-     - Navigation: `protected static bool $shouldRegisterNavigation = false;`.
+     - Navigation: `protected static bool $shouldRegisterNavigation = false;` (rendered via downstream clusters).
      - Sub-Pages: `ListPriceLists`, `CreatePriceList`, `EditPriceList`, `ViewPriceList`.
-     - Form: `PriceListForm`.
-     - Table: `PriceListsTable`.
+     - Form: `PriceListForm` (`plugins/webkul/products/src/Filament/Resources/PriceListResource/Schemas/PriceListForm.php`): Multi-tier pricing configuration with general settings (name, currency with `default_currency_id()` fallback, optional company scoping) and an items repeater managing dynamic rule rows with inline/modal configuration for `PriceRuleApplyTo` (variant, product, category, global), `PriceRuleBase` (list price, standard cost, base price list), `PriceRuleType` (fixed amount, percentage discount, advanced formula with markups, surcharges, rounding, and min/max margins), quantity breaks, and date validity windows.
+     - Table: `PriceListsTable`: Displays name, currency, company, and active status.
 - **Clusters & Widgets**: No standalone clusters or widgets are defined directly inside `products`; downstream domain modules extend and cluster these resources.
 
 ## Panels
@@ -555,6 +552,19 @@ The plugin defines 14 physical database tables (13 owned entity tables + 1 junct
 
 ## Services
 [VERIFIED]
+- **`PriceListResolver` (`Webkul\Product\Services\PriceListResolver`)**:
+  - Core pricing resolution engine evaluating multi-tier rules and calculating context-specific product prices for quotes, orders, and checkout.
+  - Data Transfer Object: `Webkul\Product\Support\ResolvedPrice` (encapsulates resolved `price`, matched `rule`, and `basePrice`).
+  - Methods:
+    - `resolve(?PriceList $priceList, Product $product, float $quantity = 1.0, ?UOM $uom = null, ?Currency $currency = null, ?DateTimeInterface $date = null, ?Company $company = null): ResolvedPrice`: Evaluates full rule cascade and returns `ResolvedPrice`.
+    - `getProductPrice(?PriceList $priceList, Product $product, float $quantity = 1.0, ?UOM $uom = null, ?Currency $currency = null, ?DateTimeInterface $date = null, ?Company $company = null): float`: Shorthand returning numeric price.
+    - `getProductPriceRule(?PriceList $priceList, Product $product, float $quantity = 1.0, ?UOM $uom = null, ?DateTimeInterface $date = null): ?PriceRuleItem`: Returns the specific matched rule item.
+  - Evaluation Hierarchy:
+    1. Product Variant rule (`product_id = variant.id`)
+    2. Configurable Product template rule (`product_id = parent.id`)
+    3. Category hierarchy rule (`category_id IN (ancestors)`)
+    4. Global rule (`apply_to = 'all'`)
+    Within each level, rules are matched against normalized UOM quantity (`min_quantity <= qty`, descending) and valid date window (`starts_at <= date <= ends_at`), falling back to base price list calculation (with max recursion depth of 5 and cycle detection) or standard list price.
 - **`ProductUsageRegistry` (`Webkul\Product\Support\ProductUsageRegistry`)**:
   - Central dynamic registry for recording downstream Eloquent models referencing `product_id`.
   - Methods:
@@ -607,7 +617,7 @@ No custom Laravel Event Listeners are defined in `plugins/webkul/products`.
      - `creating` / `updating`: Runs `validateNoRecursion($category)` to detect and prevent circular category trees. Automatically builds `parent_path` (`/1/2/`) and computed `full_name` (`Parent / Child`). Sets `creator_id`.
    - `ProductSupplier::boot()`:
      - `creating`: Stamps `creator_id` and sets `company_id` matching the Product's company or active session company.
-   - `Packaging::boot()`, `PriceRule::boot()`, `PriceRuleItem::boot()`, `PriceList::boot()`, `Tag::boot()`:
+   - `Packaging::boot()`, `PriceRuleItem::boot()`, `PriceList::boot()`, `Tag::boot()`:
      - `creating`: Stamps `creator_id ??= Auth::id()`.
 
 ## Policies
@@ -674,6 +684,11 @@ The plugin registers REST API v1 endpoints under route group prefix `admin/api/v
 | `GET` | `/admin/api/v1/products/packagings/{packaging}` | `show` | `PackagingController` | Show packaging |
 | `PUT`/`PATCH` | `/admin/api/v1/products/packagings/{packaging}` | `update` | `PackagingController` | Update packaging |
 | `DELETE` | `/admin/api/v1/products/packagings/{packaging}` | `destroy` | `PackagingController` | Delete packaging |
+| `GET` | `/admin/api/v1/products/price-lists` | `index` | `PriceListController` | List price lists |
+| `POST` | `/admin/api/v1/products/price-lists` | `store` | `PriceListController` | Create price list |
+| `GET` | `/admin/api/v1/products/price-lists/{price_list}` | `show` | `PriceListController` | Show price list details |
+| `PUT`/`PATCH` | `/admin/api/v1/products/price-lists/{price_list}` | `update` | `PriceListController` | Update price list |
+| `DELETE` | `/admin/api/v1/products/price-lists/{price_list}` | `destroy` | `PriceListController` | Delete price list |
 
 ## Settings
 [VERIFIED]
@@ -683,7 +698,10 @@ The plugin registers REST API v1 endpoints under route group prefix `admin/api/v
   - `enable_variants` (`bool`, default: `true`)
   - `enable_uom` (`bool`, default: `false`)
   - `enable_packagings` (`bool`, default: `false`)
-- **Migration**: `plugins/webkul/products/database/settings/2025_01_17_094022_create_products_product_settings.php`.
+  - `enable_price_lists` (`bool`, default: `false`)
+- **Migrations**:
+  - `plugins/webkul/products/database/settings/2025_01_17_094022_create_products_product_settings.php`
+  - `plugins/webkul/products/database/settings/2026_09_15_000300_add_enable_price_lists_to_products_product_settings.php`.
 
 ## Translations
 [VERIFIED]
@@ -708,6 +726,7 @@ The `products` plugin contains an extensive, dedicated Pest automated test suite
   - `ProductTest.php`: Product catalog CRUD, search, and soft-delete endpoints.
   - `ProductVariantTest.php`: Variant listing, generation trigger (`store`), variant update, and soft-delete lifecycle.
   - `TagTest.php`: Color-coded tag endpoint tests.
+  - `PriceListTest.php`: Price list API endpoint CRUD and authorization assertions.
 - **Filament UI Tests (`tests/Feature/Filament/`)**:
   - `GenerateVariantsActionTest.php`: Verifies `products.generate.variants` action execution, error reporting to logs, and Livewire notifications.
   - `ManageAttributesGuardTest.php`: Verifies UI safeguards preventing attribute deletion or conversion when products are in use.
@@ -728,7 +747,7 @@ The `products` module declares **no runtime dependencies** (`hasDependencies` is
 1. **`support` [CORE]**:
    - Consumes `UOM` (`Webkul\Support\Models\UOM`) on `products_products.uom_id` and `uom_po_id` and `products_product_suppliers.uom_id`.
    - Consumes `Company` (`Webkul\Support\Models\Company`) for optional multi-tenant isolation.
-   - Consumes `Currency` (`Webkul\Support\Models\Currency`) on `PriceRule`, `PriceList`, and `ProductSupplier`.
+   - Consumes `Currency` (`Webkul\Support\Models\Currency`) on `PriceList`, `PriceRuleItem`, and `ProductSupplier`.
 2. **`security` [CORE]**:
    - Binds `User` (`Webkul\Security\Models\User`) to `creator_id` audit columns across all 13 models.
    - Uses `Webkul\Product\Policies\*` for Filament Shield permission gates.
@@ -768,7 +787,7 @@ flowchart TD
         Cat[Category: Hierarchical Tree] --> Prod
         Pack[Packaging: Units/Boxes] --> Prod
         Supp[ProductSupplier: Vendor Pricelist] --> Prod
-        PriceR[PriceRule & Items] --> Prod
+        PriceR[PriceList & RuleItems] --> Prod
     end
 
     subgraph Downstream Usage & Safety Guards
@@ -833,7 +852,7 @@ Modifications to `products` have high architectural impact across the entire Aur
 [VERIFIED]
 - Service Provider & Lifecycle: `plugins/webkul/products/src/ProductServiceProvider.php`
 - Plugin Class & Panel Registration: `plugins/webkul/products/src/ProductPlugin.php`
-- Core Models & Variant Logic: `plugins/webkul/products/src/Models/Product.php`, `Category.php`, `Attribute.php`, `AttributeOption.php`, `ProductAttribute.php`, `ProductAttributeValue.php`, `ProductCombination.php`, `ProductSupplier.php`, `Packaging.php`, `PriceRule.php`, `PriceRuleItem.php`, `PriceList.php`, `Tag.php`
+- Core Models & Variant Logic: `plugins/webkul/products/src/Models/Product.php`, `Category.php`, `Attribute.php`, `AttributeOption.php`, `ProductAttribute.php`, `ProductAttributeValue.php`, `ProductCombination.php`, `ProductSupplier.php`, `Packaging.php`, `PriceRuleItem.php`, `PriceList.php`, `Tag.php`
 - Observers & In-Use Guards: `plugins/webkul/products/src/Observers/ProductAttributeObserver.php`, `UOMObserver.php`, `src/Support/ProductUsageRegistry.php`, `src/Support/VariantUsage.php`
 - Filament UI & Variant Action: `plugins/webkul/products/src/Filament/Resources/ProductResource/Actions/GenerateVariantsAction.php`, `Pages/ManageAttributes.php`, `Pages/ManageVariants.php`, `Schemas/ProductForm.php`, `Support/ProductSchemaRegistry.php`
 - API Routing & Controllers: `plugins/webkul/products/routes/api.php`, `src/Http/Controllers/API/V1/ProductController.php`, `ProductVariantController.php`

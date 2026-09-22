@@ -57,7 +57,7 @@ The purpose of this document is to define the GitHub governance layer that opera
 - **Merge Governance**: Reconciliation of Squash Merging for topic branches and Merge Commits for upstream integration.
 - **Workflow & Status Check Governance**: Audit of active GitHub Actions workflows and identification of status check gating boundaries.
 - **CODEOWNERS**: Audit and classification of repository code ownership mechanisms.
-- **Issue Governance**: Audit of active issue templates and forms in `.github/ISSUE_TEMPLATE/`.
+- **Issue Governance**: GitHub Issue templates/forms, issue-to-PR traceability, and the boundary between tracked work and implementation. The workflow itself is canonical in [`docs/development/git-workflow.md`](git-workflow.md).
 - **Governance Findings & Evidence Matrix**: Comprehensive audit ledger mapping controls to verified repository evidence.
 
 ### Out-of-Scope (Operational Stage Boundaries)
@@ -189,6 +189,13 @@ The repository provides a standardized Pull Request template located at [`.githu
 - **Self-Review Checklist**: Code standards, comments, documentation, test coverage, local test execution.
 - **Testing Details & Screenshots**: Empirical proof of correctness.
 
+### Issue Traceability
+
+- GitHub Issues are the tracked work-item layer when the Aureus workflow requires an Issue; the lifecycle and requirement criteria are defined in [`docs/development/git-workflow.md`](git-workflow.md#3-work-item-branch--pull-request-lifecycle).
+- The Pull Request should reference the relevant Issue explicitly. When the PR completes the tracked work, use a closing keyword such as `Closes #123`, `Fixes #123`, or `Resolves #123`.
+- A reference without a closing keyword is appropriate when the PR addresses only part of an Issue.
+- The existence of an Issue does not authorize implementation, merging, or GitHub configuration changes. Branch, PR, CI, and authorization rules remain independently applicable.
+
 ### PR Review Governance
 
 - **Solo-Maintainer Review Policy**: The Pull Request author must complete the template self-review and record proportionate verification before merging into `develop` or `master`. The active rulesets require **zero** approving reviews, so an independent approval is not a merge prerequisite. Independent review remains required whenever another repository control or the change risk requires it.
@@ -255,9 +262,9 @@ The effective rules confirm that each target receives `pull_request`, `deletion`
 
 | Operation / Path | Canonical Strategy | Policy Authority | Historical Practice | GitHub Setting Enforcement |
 | :--- | :--- | :--- | :--- | :--- |
-| **Topic Branches $\to$ `develop`** | **Squash Merge** | Project Policy (`docs/development/git-workflow.md` Section 7) | Observed in PR #8 commit `76aa5f9a6` | **NOT VERIFIED** |
-| **`upstream/master` $\to$ `develop`** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 7 & 9) | Historical upstream merge in commit `49e330b5e` used the previous topology | **POLICY** |
-| **`develop` $\to$ `master` release** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 7 & 8) | First promotion pending | **POLICY** |
+| **Topic Branches $\to$ `develop`** | **Squash Merge** | Project Policy (`docs/development/git-workflow.md` Section 8) | Observed in PR #8 commit `76aa5f9a6` | **NOT VERIFIED** |
+| **`upstream/master` $\to$ `develop`** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 8 & 10) | Historical upstream merge in commit `49e330b5e` used the previous topology | **POLICY** |
+| **`develop` $\to$ `master` release** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 8 & 9) | First promotion pending | **POLICY** |
 
 ### Strategic Principles and Operational Boundaries
 
@@ -355,7 +362,7 @@ Every governance control and observation in this document is classified accordin
 ### Special Constraints
 
 1. **Autonomous AI Agents**: "Autonomous AI Agent" is **NOT** a native GitHub permission role. AI coding agents operate strictly through the identity, credentials, SSH keys, or tokens under which they are executed. AI operating rules belong to [`AGENTS.md`](../../AGENTS.md) and [`docs/ai/`](../ai/).
-2. **Urgent Fix & Release Branches**: The project intentionally has no `hotfix/*` or `release/*` branches. Urgent defects use the normal reviewed `fix/*` lifecycle from `develop`; releases are promoted to `master` from verified `develop` commits and tagged there. See [`git-workflow.md`](git-workflow.md#8-protected-branch-policy).
+2. **Urgent Fix & Release Branches**: The project intentionally has no `hotfix/*` or `release/*` branches. Urgent defects use the normal reviewed `fix/*` lifecycle from `develop`; releases are promoted to `master` from verified `develop` commits and tagged there. See [`git-workflow.md`](git-workflow.md#9-protected-branch-policy).
 
 ---
 
@@ -431,7 +438,7 @@ To preserve strict architectural boundaries across roadmap phases, the following
 | **Pull Request Requirement for protected branches** | Mandatory for `develop` and `master` | Active rulesets require Pull Requests | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
 | **Pull Request Review Requirement** | Self-review and recorded verification; no independent approval gate | Active rulesets require zero approvals, disable latest-push approval, and require conversation resolution | **VERIFIED** | GitHub rulesets `23566563`, `23566566` | O5 |
 | **Topic Branch Merge Strategy** | Squash Merge | Established by policy; Squash Merge enabled and Rebase Merge disabled | **POLICY** | `docs/development/git-workflow.md`; GitHub repository settings | O5 |
-| **Upstream Integration Merge Strategy** | Merge Commit (`--no-ff`) | Established by policy; observed in history | **POLICY** | `docs/development/git-workflow.md` Section 7 & 9, commits `15a76bf09`, `49e330b5e` | O5 / O7 |
+| **Upstream Integration Merge Strategy** | Merge Commit (`--no-ff`) | Established by policy; observed in history | **POLICY** | `docs/development/git-workflow.md` Section 8 & 10, commits `15a76bf09`, `49e330b5e` | O5 / O7 |
 | **Branch Protection / Rulesets** | Configured on GitHub | Two active repository rulesets protect `develop` and `master` | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
 | **CODEOWNERS** | Configured if needed | Absent across repository | **NOT CONFIGURED** | Inspected `.github/CODEOWNERS`, `CODEOWNERS`, `docs/CODEOWNERS` | O5 |
 | **Issue Templates** | Form-based templates | `bug.yml`, `bug_report.md`, `feature_request.yml` present | **VERIFIED** | Inspected `.github/ISSUE_TEMPLATE/` directory | O5 |

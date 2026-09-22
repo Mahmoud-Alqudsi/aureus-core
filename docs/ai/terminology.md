@@ -479,3 +479,27 @@ When writing code, developing plugins, generating migrations, configuring securi
   - Future documentation and code MUST distinguish between a capability being declared and that capability actually being enforced on the relevant execution path.
   - Security-critical constraints, financial balances, and company boundaries MUST be enforced at the service or model level, NOT solely in UI schemas or form requests.
   - AI agents and developers MUST NOT treat UI or policy declarations as proof of complete backend authorization or validation coverage.
+
+---
+
+### 26. PriceList & PriceRuleItem vs Legacy PriceRule
+
+- **Term / Class**: `Webkul\Product\Models\PriceList` & `Webkul\Product\Models\PriceRuleItem` vs Legacy `PriceRule`
+- **What it actually is**: The consolidated two-tier pricing engine architecture in `products`:
+  - `Webkul\Product\Models\PriceList` (`products_product_price_lists`): Defines pricing book headers with currency, company scope, date validity, and active status.
+  - `Webkul\Product\Models\PriceRuleItem` (`products_price_rule_items`): Defines granular pricing rules (fixed price, discount percentage, formula markup/margin) with polymorphic scope (`applied_on`: all products, category, specific product, or variant SKU) and minimum quantity thresholds.
+  The legacy standalone `PriceRule` model (`Webkul\Product\Models\PriceRule`) and table (`products_price_rules`) have been completely removed and consolidated into `PriceRuleItem` referencing `price_list_id`.
+- **Common misconception**: Referencing or querying a non-existent `PriceRule` model or `products_price_rules` table, or assuming price rules operate independently of price lists.
+- **Evidence**:
+  - `plugins/webkul/products/database/migrations/2025_02_18_112837_create_products_product_price_lists_table.php`
+  - `plugins/webkul/products/database/migrations/2025_01_05_113402_create_products_price_rule_items_table.php`
+  - `plugins/webkul/products/database/migrations/2026_09_15_000000_consolidate_products_price_rules_into_price_lists_table.php`
+  - `plugins/webkul/products/src/Models/PriceList.php`
+  - `plugins/webkul/products/src/Models/PriceRuleItem.php`
+  - `plugins/webkul/products/src/Services/PriceListResolver.php`
+  - `docs/business-rules/pricing.md`
+- **Prescriptive Rule**:
+  - Developers and AI agents MUST NOT reference, import, or query `Webkul\Product\Models\PriceRule` or `products_price_rules`.
+  - All pricing rules MUST be defined and queried through `PriceRuleItem` associated with a parent `PriceList`.
+  - Dynamic price resolution MUST delegate to `Webkul\Product\Services\PriceListResolver` (or `PriceList::computePrice()`).
+

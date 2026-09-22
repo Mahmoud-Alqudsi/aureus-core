@@ -61,12 +61,13 @@ When a product is added to a quotation line in the administrative UI, the defaul
    $$\text{uomFactor} = \text{lineUOM}->\text{computeQuantity}(1, \text{product}->\text{uom}, \text{precisionRounding} = \text{false})$$
    $$\text{price\_unit} = \text{round}(\text{resolvedPrice} \times \text{uomFactor}, 2)$$
 
-#### Multi-Tier Price Rules (`PriceRule` / `PriceRuleItem`) — Architectural Finding
-- **Declaration vs Enforcement**:
-  - The database tables `products_price_rules` and `products_price_rule_items` exist.
-  - The models `PriceRule` and `PriceRuleItem` define rich configuration fields (`type`: `PERCENTAGE`, `FORMULA`, `FIXED`; `base`: `LIST_PRICE`, `STANDARD_PRICE`, `PRICE_RULES`; `min_quantity`, `price_discount`, `price_surcharge`, `price_markup`, `price_min_margin`, `starts_at`, `ends_at`).
-  - **Non-Integration Finding**: There is **no pricing evaluation engine** in `sales` that queries or applies `PriceRule` or `PriceRuleItem`. Neither `QuotationForm`, `OrderCalculator`, nor `OrderController` evaluates price rules or price lists. `PriceListResource` in the UI contains empty component stubs (`//`).
-  - **Client Direct Input**: In both UI and REST API (`POST /api/v1/sales/orders`), `price_unit` is a direct numerical input field provided by the user or client application.
+#### Multi-Tier Price Lists (`PriceList` / `PriceRuleItem`) & Resolver Service
+- **Dynamic Resolution Engine**:
+  - Multi-tier customer pricing is managed through `PriceList` (`products_product_price_lists`) and line rule items `PriceRuleItem` (`products_price_rule_items`).
+  - When enabled via `ProductSettings::$enable_price_lists`, customer price lists are selected or defaulted onto quotations (`sales_orders.price_list_id`).
+  - Dynamic line unit pricing is evaluated at quote authoring and order storage via `PriceListResolver::resolve()`.
+  - The resolver prioritizes candidate rules across specificity scopes (`PriceRuleApplyTo`: variant -> product -> category -> global), applying formula adjustments, quantity break tiers, date window validation, and currency conversions.
+  - See canonical multi-tier pricing specification in [`docs/business-rules/pricing.md`](pricing.md).
 
 #### Line-Level Discount & Net Amounts (`OrderCalculator::applyLineTotals`)
 1. **Discount Type**:
@@ -297,7 +298,7 @@ If order is not in `OrderState::SALE`: $\implies \text{InvoiceStatus::NO}$. Othe
 | **Customer Credit Limit Check** | [DECLARED] (`Partner::$credit_limit`) | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] (String column) | **Non-Existent (0%)** |
 | **Customer Receivables Balance Check** | [NOT IMPLEMENTED] | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | **Non-Existent (0%)** |
 | **Quotation Expiration Blocking** | [DECLARED] (`validity_date`) | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | **Descriptive Only** |
-| **Multi-Tier Price Rules Engine** | [DECLARED] (`PriceRuleItem`) | [NOT ENFORCED] (Empty stubs) | [NOT ENFORCED] | [NOT ENFORCED] | [NOT ENFORCED] | [DECLARED] (Tables exist) | **Unenforced / Stubs** |
+| **Multi-Tier Price Lists Engine** | [ENFORCED] (`PriceList`, `PriceRuleItem`) | [ENFORCED] (`PriceListForm`, `QuotationForm`) | [ENFORCED] (`PriceListResolver`) | [ENFORCED] (`OrderPriceListTest`, `PriceListResolverTest`) | [ENFORCED] (`/api/v1/products/price-lists`) | [ENFORCED] (`products_product_price_lists`) | **Operational via `PriceListResolver`** |
 | **Advance Payment Line Deduction** | [DECLARED] (`deduct_down_payments`) | [NOT ENFORCED] (Option hidden) | [NOT ENFORCED] | [NOT IMPLEMENTED] | [NOT IMPLEMENTED] | [DECLARED] (Column exists) | **Unenforced / Code Stub** |
 | **Non-Negative Price and Quantities** | [VERIFIED] | [VERIFIED] (`minValue(0)`) | [VERIFIED] (`min:0`) | [VERIFIED] | [VERIFIED] | [NOT ENFORCED] | [VERIFIED] |
 | **Discount Range (0% to 100%)** | [VERIFIED] | [VERIFIED] (`minValue(0)`, `maxValue(100)`) | [VERIFIED] (`between:0,100`) | [VERIFIED] | [VERIFIED] | [NOT ENFORCED] | [VERIFIED] |
@@ -339,7 +340,7 @@ If order is not in `OrderState::SALE`: $\implies \text{InvoiceStatus::NO}$. Othe
 │ - Supplier Info  │    │   creates Moves  │    │   (OUT_INVOICE)  │
 │ - Storable Flag  │    │ - OperationDone  │    │ - MoveConfirmed  │
 │ - Base UOM & Cost│    │   updates        │    │   updates        │
-│ - (PriceRule     │    │   qty_delivered  │    │   qty_invoiced   │
+│ - PriceList/Rule │    │   qty_delivered  │    │   qty_invoiced   │
 │    Unused)       │    │ - Returns reduce │    │ - MoveReversed   │
 │                  │    │   qty_delivered  │    │   reduces        │
 │                  │    │                  │    │   qty_invoiced   │
@@ -384,8 +385,8 @@ If order is not in `OrderState::SALE`: $\implies \text{InvoiceStatus::NO}$. Othe
    - Customers can place orders of any monetary amount regardless of creditworthiness, overdue balances, or values defined in `Partner::$credit_limit`.
 2. **Unenforced Quotation Expiration**:
    - `validity_date` is purely informational. Expired quotations can be confirmed at any time without warnings or managerial approvals.
-3. **Unused Multi-Tier Price Rule Engine**:
-   - The database and models for `PriceRule` and `PriceRuleItem` exist, but no pricing evaluator connects them to quotations or sales orders.
+3. **Multi-Tier Price List Resolution**:
+   - Resolved via `PriceListResolver::resolve()` integrated into `QuotationForm` and `OrderController` with recursion depth guards (`MAX_BASE_DEPTH = 5`).
 4. **Advance Payment Down Payment Incomplete**:
    - Down payment creation is restricted in the UI to delivered quantities only. Programmatic down payment creation produces no accounting lines, and final invoice down payment deductions are not implemented.
 5. **Static Margin Cost Basis**:
@@ -397,7 +398,7 @@ If order is not in `OrderState::SALE`: $\implies \text{InvoiceStatus::NO}$. Othe
 
 ### [UNKNOWN]
 1. **Down Payment Accounting Roadmap**: It is [UNKNOWN] when multi-step down payment accounting lines (clearing account crediting and deduction from subsequent invoices) will be implemented to support `AdvancedPayment::PERCENTAGE` and `FIXED`.
-2. **Price Rule Integration Plan**: It is [UNKNOWN] whether `PriceRule` and `PriceRuleItem` are intended for a future promotion engine or were abandoned in favor of direct line pricing.
+2. **Price Rule Integration Plan**: [RESOLVED] Multi-tier customer pricing is fully operational using `PriceList` and `PriceRuleItem` with `PriceListResolver`.
 
 ### [INFERRED]
 1. **Supplier Pricelist in QuotationForm**: The presence of supplier pricelist lookups (`$product->sellers`) in `QuotationForm::calculateUnitPrice` is inferred to be an intentional feature allowing customer-specific purchase contract pricing or dropship quote proposals.
@@ -418,7 +419,7 @@ If order is not in `OrderState::SALE`: $\implies \text{InvoiceStatus::NO}$. Othe
 | **Delivery Done Listener** | `plugins/webkul/sales/src/Listeners/ComputeSaleOrderListener.php` | `ComputeSaleOrderListener::handle()` |
 | **Invoice Move Listener** | `plugins/webkul/sales/src/Listeners/ComputeSaleOrderFromMoveListener.php` | `ComputeSaleOrderFromMoveListener::handle()` |
 | **Partner Model in Accounts** | `plugins/webkul/accounts/src/Models/Partner.php` | `Partner::$credit_limit`, `Partner::$debit_limit`, `Partner::$sale_warn` |
-| **Price Rule Models** | `plugins/webkul/products/src/Models/PriceRule.php`<br>`plugins/webkul/products/src/Models/PriceRuleItem.php` | `PriceRule`, `PriceRuleItem`, `PriceRuleType`, `PriceRuleBase` |
+| **Price List Models & Resolver** | `plugins/webkul/products/src/Models/PriceList.php`<br>`plugins/webkul/products/src/Models/PriceRuleItem.php`<br>`plugins/webkul/products/src/Services/PriceListResolver.php` | `PriceList`, `PriceRuleItem`, `PriceListResolver`, `ResolvedPrice`, `PriceRuleType`, `PriceRuleBase` |
 
 ---
 

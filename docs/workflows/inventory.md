@@ -24,6 +24,11 @@ The inventory domain operates across several collaborating modules:
 ## 2. Entry Points
 
 ### Primary UI Entry Points (Filament Admin Panel - `Operations` Cluster)
+> [!NOTE]
+> **Safety & Soft-Delete Invariants**:
+> - Deleting product rows inside warehouse transfer repeaters (receipts, deliveries, internal transfers, dropships) requires explicit user modal confirmation (`requiresConfirmation()`).
+> - Product selection dropdowns across inventory forms apply `hide_deleted_unless_selected()` to prevent selecting soft-deleted products while preserving historical records.
+> - Inventory stock reporting (`Reporting > Quantities`) explicitly scopes queries to active products (`whereHas('product', fn ($q) => $q->whereNull('deleted_at'))`).
 - **Incoming Receipts**: `ReceiptResource` (`plugins/webkul/inventories/src/Filament/Clusters/Operations/Resources/ReceiptResource.php`)
   - Route: `/admin/inventories/operations/receipts`
   - Sub-navigation: `ViewReceipt`, `EditReceipt`, `ManageMoves`

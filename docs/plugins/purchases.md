@@ -554,6 +554,8 @@ The `purchases` plugin maintains 5 primary physical domain models and 14 domain 
   - `QuotationReceiptResource` / `PurchaseOrderReceiptResource`: Parent resource registration with `QuotationResource` and `PurchaseOrderResource` mapping to `operations`.
   - `QuotationBillResource` / `PurchaseOrderBillResource`: Parent resource registration mapping to `bills`.
 - **`OrderResource`**: Abstract base resource providing shared `OrderForm`, `OrdersTable`, and `OrderInfolist` schemas.
+  - Multi-Currency & Pricing Conversion: `OrderForm` features dynamic currency selection (`currency_id`), passes `currency` context to the `OrderSummary` view, and converts vendor pricing or product cost to the target order currency via `calculateUnitPrice` and `convertPrice` using `CurrencyRate` and UOM factors.
+  - Agreement Currency Propagation: `PurchaseAgreementForm` defaults `currency_id` to current company currency and propagates currency to child orders.
 
 #### 2. `Configurations` Cluster (`Webkul\Purchase\Filament\Admin\Clusters\Configurations`)
 - `CurrencyResource`: Currencies master (`Webkul\Support\Models\Currency`).
@@ -561,7 +563,7 @@ The `purchases` plugin maintains 5 primary physical domain models and 14 domain 
 - `ProductAttributeResource`: Product variant attributes (`Webkul\Product\Models\Attribute`).
 - `ProductCategoryResource`: Product categories (`Webkul\Product\Models\Category`).
 - `UOMCategoryResource`: Units of measure categories (`Webkul\Support\Models\UOMCategory`).
-- `VendorPriceResource`: Vendor pricelist rules and supplier terms (`Webkul\Product\Models\ProductSupplier`).
+- `VendorPriceResource`: Vendor pricelist rules and supplier terms (`Webkul\Product\Models\ProductSupplier`), supporting multi-currency pricing, minimum quantities, and validity dates with currency filter and infolist display (`VendorPriceInfolist`).
 
 #### 3. `Products` Cluster (`Webkul\Purchase\Filament\Admin\Clusters\Products`)
 - `ProductResource`: Product catalog management with purchasing tabs and supplier rules (`Webkul\Invoice\Models\Product`).
@@ -578,7 +580,7 @@ The `purchases` plugin maintains 5 primary physical domain models and 14 domain 
 - **Livewire Components**:
   - `RespondQuotation`: Handles vendor online acceptance/decline via signed token routes.
   - `ListProducts`: Renders product line table in customer portal view.
-  - `OrderSummary`: Dynamically computes untaxed amount, tax distributions, and grand total.
+  - `OrderSummary`: Dynamically computes untaxed amount, tax distributions, and grand total, rendering amounts with currency-specific symbols and formatting.
 
 ---
 
@@ -729,7 +731,7 @@ Translation files reside under `resources/lang/` for 5 supported locales: `en`, 
 
 ## Tests
 [VERIFIED]
-The `purchases` plugin contains comprehensive automated test coverage with **14 test files and 1 test helper** structured under `plugins/webkul/purchases/tests/`:
+The `purchases` plugin contains comprehensive automated test coverage with **15 test files and 1 test helper** structured under `plugins/webkul/purchases/tests/`:
 
 1. **API Feature Tests (`tests/Feature/API/V1/`)** (7 files):
    - `PurchaseAgreementLineTest.php`: Tests agreement line listing, retrieval, and company isolation.
@@ -744,9 +746,10 @@ The `purchases` plugin contains comprehensive automated test coverage with **14 
    - `PurchaseOrderResourceTest.php`: Tests admin panel purchase order table, creation, and view actions.
    - `ResourceGlobalSearchSmokeTest.php`: Tests global search across purchase orders and requisitions.
 
-3. **Workflow & Integration Tests (`tests/Feature/Workflows/`)** (5 files):
+3. **Workflow & Integration Tests (`tests/Feature/Workflows/`)** (6 files):
    - `PurchaseOrderTest.php`: 570 lines testing line pricing, tax inclusiveness/exclusiveness, currency conversion, approval limits, warehouse receipt generation, and partial receipt logic.
    - `OrderBillingTest.php`: Tests complete order billing cycle, status transitions (`TO_INVOICED` → `INVOICED`), bill cancellations, resets to draft, refund reversals, and return adjustments.
+   - `OrderCurrencyConversionTest.php`: Tests purchase order line price calculation, vendor price multi-currency conversion, cost fallbacks, and UOM factor adjustments.
    - `TwoStepPurchaseOrderTest.php`: Tests two-step warehouse receiving routes (Input → Stock).
    - `CompanyIsolationTest.php`: Tests multi-company isolation boundaries.
    - `CompanyScopingInvariantsTest.php`: Asserts foreign key company consistency across fiscal positions, payment terms, and operation types.

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-02
+last_verified: 2026-09-22
 scope: global
 confidence: high
 ---
@@ -127,12 +127,13 @@ Evidence: `plugins/webkul/sales/src/SaleServiceProvider.php` (lines 105–112); 
 
 ---
 
-### C. Eloquent Model Observers Catalog (7 Classes)
+### C. Eloquent Model Observers Catalog (8 Classes)
 
 Model Observers intercept standard Eloquent model lifecycle hooks (`created`, `updated`, `deleted`) to maintain referential data structures.
 
 | Plugin | Observer Class | Observed Target Model | Lifecycle Hooks Handled | Observed Architectural Purpose |
 | :--- | :--- | :--- | :--- | :--- |
+| `accounts` | `CompanyObserver` | `Webkul\Support\Models\Company` | `updating` | Blocks changing company currency if active accounting moves or lines already exist. |
 | `inventories` | `CompanyObserver` | `Webkul\Support\Models\Company` | `created` | Automatically initializes default warehouse, physical stock locations, and partner locations when a new Company is created. |
 | `inventories` | `UOMObserver` | `Webkul\Support\Models\UOM` | `updated` | Synchronizes inventory unit of measure conversion ratios across warehouse stock levels. |
 | `inventories` | `ProductObserver` | `Webkul\Product\Models\Product` | `created`, `updated` | Initializes inventory tracking, stock lot assignments, and quantity placeholder records for new products. |
@@ -142,7 +143,7 @@ Model Observers intercept standard Eloquent model lifecycle hooks (`created`, `u
 | `products` | `UOMObserver` | `Webkul\Support\Models\UOM` | `deleted` | Validates that base units of measure cannot be deleted while assigned to active catalog products. |
 
 [VERIFIED]
-Evidence: `plugins/webkul/inventories/src/InventoryServiceProvider.php` (lines 195–206); `plugins/webkul/manufacturing/src/ManufacturingServiceProvider.php` (lines 311–320); `plugins/webkul/products/src/ProductServiceProvider.php` (lines 71–75)
+Evidence: `plugins/webkul/accounts/src/AccountServiceProvider.php` (line 120); `plugins/webkul/inventories/src/InventoryServiceProvider.php` (lines 195–206); `plugins/webkul/manufacturing/src/ManufacturingServiceProvider.php` (lines 311–320); `plugins/webkul/products/src/ProductServiceProvider.php` (lines 71–75)
 
 ---
 
@@ -403,9 +404,9 @@ At the time of verification, comparing the fresh repository analysis with pre-Ph
 | :--- | :---: | :---: | :--- |
 | **Events** | 28 | **28** | **[VERIFIED] Exact Match**. All 28 event classes verified across `accounts`, `inventories`, `manufacturing`, `purchases`, `sales`. |
 | **Listeners** | 6 | **6** | **[VERIFIED] Exact Match**. All 6 listener classes verified across `sales`, `purchases`, `plugin-manager`. |
-| **Observers** | 6 | **7** | **[VERIFIED] Corrected (+1)**. Historical audit reported 6 observers. Fresh source analysis identified **7 observer classes** (`inventories`: 3, `manufacturing`: 2, `products`: 2). The historical audit missed `ProductAttributeObserver` in `products`. |
+| **Observers** | 6 | **8** | **[VERIFIED] Corrected (+2)**. Historical audit reported 6 observers. Current source analysis identifies **8 observer classes** across 4 plugins (`inventories`: 3, `manufacturing`: 2, `products`: 2, `accounts`: 1). Added `ProductAttributeObserver` in `products` and `CompanyObserver` in `accounts`. |
 | **Notifications**| 1 | **1** | **[VERIFIED] Exact Match**. `ChatterDatabaseNotification` is the single notification class. |
-| **Services** | 52 | **53** | **[VERIFIED] Corrected (+1)**. Fresh scan identified 53 concrete service classes. |
+| **Services** | 52 | **54** | **[VERIFIED] Corrected (+2)**. Fresh scan identified 54 concrete service classes across domain plugins, including `PriceListResolver` in `products`. |
 
 [VERIFIED]
 Evidence: Source-code scan and AST reflection over all `plugins/webkul/*/src/`
@@ -419,7 +420,7 @@ Evidence: Source-code scan and AST reflection over all `plugins/webkul/*/src/`
 | Event Catalog & Dispatches | `plugins/webkul/{accounts,inventories,manufacturing,purchases,sales}/src/Events/*.php` | [VERIFIED] |
 | Sales Reactive Listeners | `plugins/webkul/sales/src/Listeners/{ComputeSaleOrderListener,ComputeSaleOrderFromMoveListener,SendSMSNotificationListener}.php` | [VERIFIED] |
 | Purchases Reactive Listeners | `plugins/webkul/purchases/src/Listeners/{ComputePurchaseOrderListener,ComputePurchaseOrderFromMoveListener}.php` | [VERIFIED] |
-| Model Observers | `plugins/webkul/inventories/src/Observers/{CompanyObserver,ProductObserver,UOMObserver}.php`<br>`plugins/webkul/manufacturing/src/Observers/{WarehouseObserver,MoveObserver}.php`<br>`plugins/webkul/products/src/Observers/{ProductAttributeObserver,UOMObserver}.php` | [VERIFIED] |
+| Model Observers | `plugins/webkul/accounts/src/Observers/CompanyObserver.php`<br>`plugins/webkul/inventories/src/Observers/{CompanyObserver,ProductObserver,UOMObserver}.php`<br>`plugins/webkul/manufacturing/src/Observers/{WarehouseObserver,MoveObserver}.php`<br>`plugins/webkul/products/src/Observers/{ProductAttributeObserver,UOMObserver}.php` | [VERIFIED] |
 | SequenceService Implementation | `plugins/webkul/support/src/Services/SequenceService.php` | [VERIFIED] |
 | Chatter Notification System | `plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php` | [VERIFIED] |
 | Multi-Company Context Engine | `plugins/webkul/support/src/Services/CompanyContext.php` | [VERIFIED] |

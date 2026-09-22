@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-04
+last_verified: 2026-09-22
 scope: verification
 confidence: high
 ---
@@ -104,10 +104,10 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 | **COUNT-005** | Foreign-key delete rule distribution: ~60% nullOnDelete, ~22% cascadeOnDelete, ~18% restrictOnDelete | VERIFIED | HIGH | Statistical aggregation: 607 nullOnDelete, 226 cascadeOnDelete, 181 restrictOnDelete | database/migrations/ | Blueprint | all | database | 2026-09-04 | Phase 11 Auditor | Semantic lifecycle governs new keys; frequency cannot justify choices |
 | **COUNT-006** | Total domain event classes in repository is exactly 28 across 5 plugins | VERIFIED | HIGH | AST enumeration of classes in `plugins/webkul/*/src/Events/` | plugins/webkul/sales/src/Events/ | Event | 5 plugins | reactive | 2026-09-04 | Phase 11 Auditor | accounts (7), inventories (6), manufacturing (5), purchases (5), sales (5) |
 | **COUNT-007** | Total event listener classes in repository is exactly 6 across 3 plugins | VERIFIED | HIGH | AST enumeration of classes in `plugins/webkul/*/src/Listeners/` | plugins/webkul/sales/src/Listeners/ | Listener | 3 plugins | reactive | 2026-09-04 | Phase 11 Auditor | sales (3), purchases (2), plugin-manager (1) |
-| **COUNT-008** | Total model observer classes in repository is exactly 7 across 3 plugins | VERIFIED | HIGH | Discovery of `ProductAttributeObserver` in products alongside 6 known observers | plugins/webkul/products/src/Observers/ProductAttributeObserver.php | Observer | 3 plugins | reactive | 2026-09-04 | Phase 11 Auditor | Corrects historical audit undercount of 6 observers |
-| **COUNT-009** | Total domain service classes in repository is exactly 53 across domain plugins | VERIFIED | HIGH | Enumeration of service classes under `plugins/webkul/*/src/Services/` | plugins/webkul/support/src/Services/ | Service | all | services | 2026-09-04 | Phase 11 Auditor | Corrects historical audit undercount of 52 services |
+| **COUNT-008** | Total model observer classes in repository is exactly 8 across 4 plugins | VERIFIED | HIGH | Discovery of accounts CompanyObserver alongside 7 known observers | plugins/webkul/accounts/src/Observers/CompanyObserver.php | Observer | 4 plugins | reactive | 2026-09-22 | Phase 11 Auditor | Corrects pre-upstream count of 7 observers across 3 plugins |
+| **COUNT-009** | Total domain service classes in repository is exactly 54 across domain plugins | VERIFIED | HIGH | Enumeration of service classes under `plugins/webkul/*/src/Services/` including PriceListResolver | plugins/webkul/products/src/Services/PriceListResolver.php | Service | all | services | 2026-09-22 | Phase 11 Auditor | Includes PriceListResolver added during upstream sync |
 | **COUNT-010** | Total dynamic relation injection sites (`resolveRelationUsing`) is exactly 22 across 4 providers | VERIFIED | HIGH | AST grep across service providers: Account (14), Inventory (5), MRP (2), Purchase (1) | plugins/webkul/accounts/src/AccountServiceProvider.php | resolveRelationUsing | 4 plugins | dynamic-schema | 2026-09-04 | Phase 11 Auditor | Injects relationships on Partner, Product, and Category at boot |
-| **COUNT-011** | Automated test baseline: 11 tested plugins (174 tests) vs 17 untested plugins (0 tests) | VERIFIED | HIGH | Directory inspection of `plugins/webkul/*/tests/`; test execution via Pest | plugins/webkul/accounts/tests/ | Pest | all | testing | 2026-09-04 | Phase 11 Auditor | Documented in `docs/ai/testing-rules.md`; historical baseline fact |
+| **COUNT-011** | Automated test baseline: 11 tested plugins (199 files: 187 test classes + 12 helpers) vs 17 untested plugins (0 tests) | VERIFIED | HIGH | Directory inspection of `plugins/webkul/*/tests/`; test execution via Pest | plugins/webkul/accounts/tests/ | Pest | all | testing | 2026-09-22 | Phase 11 Auditor | Documented in `docs/ai/testing-rules.md`; post-upstream baseline |
 | **COUNT-012** | Presentation layer scale: 204 Filament Resources, 474 Pages, 46 Clusters, 24 Widgets | VERIFIED | HIGH | Codebase scan of classes extending Filament base components | plugins/webkul/*/src/Filament/ | Filament | all | presentation | 2026-09-04 | Phase 11 Auditor | 398 Resource Pages, 76 Custom/Cluster/Settings Pages |
 | **COUNT-013** | Raw SQL query usage: approximately 143 files execute direct DB statements or query builder | VERIFIED | HIGH | Grep analysis for `DB::table`, `DB::select`, `DB::raw`, and `DB::statement` | plugins/webkul/ | DB | all | database | 2026-09-04 | Phase 11 Auditor | Every raw site requires complete query surface tenancy audit |
 | **SEC-001** | Multi-company isolation enforced via `CompanyScope` and `CompaniesScope` query scopes | VERIFIED | HIGH | `CompanyScope::apply()` appends `WHERE (company_id IN (...) OR company_id IS NULL)` | plugins/webkul/support/src/Models/Scopes/CompanyScope.php | CompanyScope | support | tenancy | 2026-09-04 | Phase 11 Auditor | Opt-in via `BelongsToCompany` and `BelongsToCompanies` traits |
@@ -153,7 +153,7 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 | **CORR-009** | Phase 9 quotation template usage vs direct sales order confirmation workflow boundary | PROPOSED | MEDIUM | Quotation templates exist in UI but order confirmation workflow bypasses them | docs/business-rules/sales.md | Order | sales | workflows | 2026-09-04 | Phase 11 Auditor | Quotation template application is optional, not enforced in backend service |
 | **CORR-010** | Phase 9 purchasing approval threshold enforcement at workflow level vs UI action | PROPOSED | HIGH | Approval limit declared in settings but backend confirmation service lacks check | docs/business-rules/purchasing.md | Order | purchases | business-rules | 2026-09-04 | Phase 11 Auditor | Cardinal distinction: UI toggle does not enforce backend limit |
 | **CORR-011** | Phase 9 inventory stock valuation (FIFO/AVCO) runtime calculation vs accounting posting | PROPOSED | HIGH | Valuation layers exist in inventory schema; automated financial journal posting is partial | docs/business-rules/inventory.md | Valuation | inventories, accounts | accounting | 2026-09-04 | Phase 11 Auditor | Financial valuation postings require explicit automated valuation configuration |
-| **CORR-012** | Phase 9 product price rules declared in schema but not evaluated in sales order checkout | PROPOSED | HIGH | `PriceRule` model, schema, and API routes exist; checkout engine does not apply them | plugins/webkul/products/src/Models/PriceRule.php | PriceRule | products, sales | business-rules | 2026-09-04 | Phase 11 Auditor | Cardinal distinction: Surface presence ≠ operational capability |
+| **CORR-012** | Phase 9 product price rules declared in schema but not evaluated in sales order checkout | RESOLVED | HIGH | Consolidated into `PriceList` and `PriceRuleItem`; evaluated dynamically in sales quotations via `PriceListResolver` | plugins/webkul/products/src/Services/PriceListResolver.php | PriceListResolver | products, sales | business-rules | 2026-09-21 | Upstream Sync PR #10 | Resolved via upstream pricing consolidation and resolution service |
 
 ---
 
@@ -254,15 +254,15 @@ In accordance with Phase 11 execution criteria, at least ten direct spot-checks 
 │    │            │                  │ contacts, full-calendar, invoices, timesheets.  │          │
 ├────┼────────────┼──────────────────┼─────────────────────────────────────────────────┼──────────┤
 │ 7  │ COUNT-008  │ Observers        │ AST parse across plugins/webkul/*/src/Observers │ PASSED   │
-│    │            │                  │ Confirmed exactly 7 observers, including        │          │
-│    │            │                  │ ProductAttributeObserver in products plugin.    │          │
+│    │            │                  │ Confirmed exactly 8 observers across 4 plugins, │          │
+│    │            │                  │ including CompanyObserver in accounts plugin.   │          │
 ├────┼────────────┼──────────────────┼─────────────────────────────────────────────────┼──────────┤
 │ 8  │ COUNT-010  │ Dynamic Schema   │ Grep for resolveRelationUsing across providers   │ PASSED   │
 │    │            │                  │ Confirmed exactly 22 usage sites across Account │          │
 │    │            │                  │ (14), Inventory (5), MRP (2), Purchase (1).     │          │
 ├────┼────────────┼──────────────────┼─────────────────────────────────────────────────┼──────────┤
 │ 9  │ COUNT-011  │ Testing Baseline │ plugins/webkul/*/tests/ directory existence     │ PASSED   │
-│    │            │                  │ Confirmed 11 plugins have tests/ (174 tests);    │          │
+│    │            │                  │ Confirmed 11 plugins have tests/ (199 files);   │          │
 │    │            │                  │ 17 plugins have zero automated tests.           │          │
 ├────┼────────────┼──────────────────┼─────────────────────────────────────────────────┼──────────┤
 │ 10 │ SEC-004    │ Auth Guards      │ app/Providers/Filament/*PanelProvider.php       │ PASSED   │

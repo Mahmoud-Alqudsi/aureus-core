@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-19
+last_verified: 2026-09-22
 scope: documentation-changelog
 confidence: high
 ---
@@ -29,6 +29,50 @@ In accordance with the repository's documentation accuracy rules, historical eve
 ---
 
 ## Operational Governance Maintenance
+
+### O10 Scope Realignment, Post-Merge Cleanup & Stage Closure (2026-09-22)
+
+- **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.
+- **Status**: **Stage O10 Complete / Closed**.
+- **Recorded Scope**:
+  - Realigned Operational Stage O10 scope by decoupling the deferred `develop`-to-`master` release promotion from initial knowledge-base readiness criteria, focusing O10 strictly on post-merge workspace hygiene and living documentation closure.
+  - Executed post-merge branch and worktree cleanup pursuant to Section 15 (R8):
+    - Pruned stale linked worktree in `/tmp/aureuserp-upstream-sync-20260918-c2b4ddaa2` using `git worktree prune -v`.
+    - Safely deleted seven local branches fully merged into `develop` using `git branch -d`: `chore/upstream-sync-20260918-c2b4ddaa2`, `chore/enforce-ci-status-checks`, `chore/update-dependencies`, `docs/record-upstream-sync`, `docs/record-o6-enforcement`, `refactor/ai-knowledge-architecture`, and `feature/privacy-and-localization`.
+    - Preserved protected branches (`master`, `develop`), checkpoints (`checkpoint/*`), active topic branch (`docs/sync-domain-knowledge-base`), and active feature branches/worktrees.
+  - Completed final scenario revalidation and closed Operational Stage O10 in [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) and [`docs/README.md`](README.md).
+
+### Post-Upstream Metrics & Governance Reconciliation (2026-09-22)
+
+- **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.
+- **Status**: **Implemented and verified across living documentation**.
+- **Recorded Scope**:
+  - Reconciled numerical metrics and inventory claims resulting from comprehensive knowledge-base review report:
+    - Document count: Updated total verified living documentation files to 80 and business-rules domain to 5 files in [`docs/README.md`](README.md) (reflecting [`docs/business-rules/pricing.md`](business-rules/pricing.md)).
+    - Test baseline: Updated plugin test file counts in [`docs/README.md`](README.md), [`docs/ai/testing-rules.md`](ai/testing-rules.md), and claim `COUNT-011` in [`docs/verification-matrix.md`](verification-matrix.md) from 174 to 199 files (187 `*Test.php` test classes + 12 shared helpers/fixtures across 11 tested plugins).
+    - Observers: Updated claim `COUNT-008` in [`docs/verification-matrix.md`](verification-matrix.md) and [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) from 7 across 3 plugins to 8 across 4 plugins, documenting `Webkul\Account\Observers\CompanyObserver` currency guard in `accounts`.
+    - Services: Updated claim `COUNT-009` in [`docs/verification-matrix.md`](verification-matrix.md) and [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) from 53 to 54 services, cataloging `PriceListResolver` in `products`.
+  - Documented GitHub Issue, Topic Branch, and Pull Request lifecycle in [`docs/development/git-workflow.md`](development/git-workflow.md), [`docs/development/github-governance.md`](development/github-governance.md), and [`docs/development/change-management.md`](development/change-management.md), establishing issue creation criteria, closing keywords, and PR traceability.
+
+### Upstream Domain Knowledge-Base Alignment (2026-09-21)
+
+- **Evidentiary Tier**: Git-Verified history (`git log -- docs/`) on branch `docs/sync-domain-knowledge-base`.
+- **Status**: **Implemented across documentation and verified against source code**.
+- **Recorded Scope**:
+  - Aligned physical schema conventions, ERD diagrams, and models with upstream PR #10 / `d7d471894` consolidation of `products_price_rules` into `products_product_price_lists` and `products_price_rule_items`.
+  - Created canonical business rules document [`docs/business-rules/pricing.md`](business-rules/pricing.md) covering multi-tier price lists, rule application scopes, quantity breaks, date validity, and calculation types (`FIXED`, `PERCENTAGE`, `FORMULA`).
+  - Documented `PriceListResolver` service and `ResolvedPrice` DTO in products documentation and quotation/sales orders integration.
+  - Documented cross-plugin upstream enhancements:
+    - Accounts: `Move::resolveBankPartnerId()`, `PaymentRegister` company currency accessors and safe bank resolution, `AccountingSetupService`, and `CompanyObserver` currency guard.
+    - Purchases: Multi-currency price conversion in `OrderForm`, `OrderSummary`, `PurchaseAgreementForm`, and `VendorPriceInfolist` (`OrderCurrencyConversionTest.php`).
+    - Support: Currency resolution hierarchy (`DefaultCurrencyResolutionTest.php`), `UOM::computePrice()`, global helpers (`default_currency_code`, `default_currency_id`, `money`, `hide_deleted_unless_selected`), and `CurrencyResource` deletion error handling.
+    - Plugin Manager: Cross-platform utilities in `Package` (`phpBinaryPath`, `buildTimeoutCommand`, `openInBrowser`) and `InstallERP` localization options.
+    - Inventories: Warehouse receipt move line deletion confirmation modal, `hide_deleted_unless_selected()` on product selectors, and soft-deleted product stock filtering in reporting.
+    - Partners: Preset table views (`individuals`, `companies`, `employees`, `customers`, `vendors`) on `ListPartners` (`PartnerTypeViewsTest.php`), and `price_list_id` relationship.
+    - Blogs: `ListsBlogPosts` concern trait with tag-based search and query URL parameters.
+    - Employees: `EmployeeFactory` enum constraints (`EmployeeFactoryTest.php`) and employee partner provisioning without `parent_id`.
+    - Security: Safe fillable attribute filtering via `Arr::only()` on user partner creation and update.
+  - Cleaned all obsolete standalone `PriceRule` references and resolved finding `CORR-012` in [`docs/verification-matrix.md`](verification-matrix.md).
 
 ### O6 — CI Required-Check Enforcement (2026-09-19)
 

@@ -463,15 +463,18 @@ The `blogs` module does not contain any database seeder classes.
 - **Pages**:
   - `ListCategories` (`/blog`):
     - View: `blogs::filament.customer.resources.category.pages.list-records`.
+    - Concerns: Implements `ListsBlogPosts` (`Webkul\Blog\Filament\Customer\Concerns\ListsBlogPosts`) providing URL-bound `tags` and `search` query properties (`#[Url]`).
+    - Tag Filtering: Supports multiple tag toggling (`getActiveTags()`, `isTagActive()`, `getTagFilterUrl()`) and renders tag filter badges.
     - Renders horizontal category tab bar ("All" + individual category links).
     - Fetches published posts (`is_published = true`) with eager-loaded `category`, `creator`, and `tags`.
     - Supports multi-locale search queries against `title->{locale}` and `content->{locale}` for current and fallback locales.
     - Paginates 9 posts per page ordered by `published_at DESC`.
   - `ViewCategory` (`/blog/{record}`):
     - View: `blogs::filament.customer.resources.category.pages.view-record`.
+    - Concerns: Implements `ListsBlogPosts` concern trait for tag-based filtering (`tags`) and keyword search (`search`).
     - Resolves category by slug.
     - Injects category OpenGraph and Twitter card metadata.
-    - Filters posts by `category_id = $record->id` and `is_published = true` with search and pagination (9 per page).
+    - Filters posts by `category_id = $record->id` and `is_published = true` with active tag scopes, search, and pagination (9 per page).
   - `posts.by-category` Route (`/blog/{category}/{record}`): Points to `Webkul\Blog\Filament\Customer\Resources\PostResource\Pages\ViewPost`.
 
 ##### `PostResource` (`Webkul\Blog\Filament\Customer\Resources\PostResource`)

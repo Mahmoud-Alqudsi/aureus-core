@@ -1085,7 +1085,7 @@ Relationships:
   - paymentTermLines(): hasMany(MoveLine::class, fk: move_id)
   - roundingLines(): hasMany(MoveLine::class, fk: move_id)
   - matchedPayments(): belongsToMany(Payment::class, fk: accounts_accounts_move_payment, other: invoice_id)
-Notes: Standard domain model.
+Notes: Standard domain model. Includes resolveBankPartnerId($moveType, ?int $companyId, ?int $partnerId) static helper for inbound move partner resolution.
 ```
 
 #### MoveLine Model
@@ -1444,7 +1444,7 @@ Relationships:
   - writeoffAccount(): belongsTo(Account::class, fk: writeoff_account_id)
   - creator(): belongsTo(User::class)
   - lines(): belongsToMany(MoveLine::class, fk: accounts_account_payment_register_move_lines, other: payment_register_id)
-Notes: Standard domain model.
+Notes: Standard domain model. Includes getCompanyCurrencyAttribute() and getCompanyCurrencyIdAttribute() accessors for company-level currency resolution.
 ```
 
 #### PaymentTerm Model
@@ -5312,41 +5312,14 @@ Important Columns / Fillable:
   - creator_id
   - name
   - is_active
-Casts: {}
-Relationships:
-  - currency(): belongsTo(Currency::class)
-  - company(): belongsTo(Company::class)
-  - creator(): belongsTo(User::class)
-Notes: Standard domain model.
-```
-
-#### PriceRule Model
-
-```yaml
-Model: Webkul\Product\Models\PriceRule
-Namespace: Webkul\Product\Models
-File: plugins/webkul/products/src/Models/PriceRule.php
-Table: products_price_rules
-Migration: plugins/webkul/products/database/migrations/2025_01_05_113357_create_products_price_rules_table.php
-Primary Key: id (int, auto-increment: True)
-Traits:
-  - BelongsToCompany
-  - HasFactory
-  - SoftDeletes
-  - SortableTrait
-Important Columns / Fillable:
-  - name
-  - sort
-  - currency_id
-  - company_id
-  - creator_id
-Casts: {}
+Casts:
+  - is_active: 'boolean'
 Relationships:
   - currency(): belongsTo(Currency::class)
   - company(): belongsTo(Company::class)
   - creator(): belongsTo(User::class)
   - items(): hasMany(PriceRuleItem::class)
-Notes: Standard domain model.
+Notes: Standard domain model representing customer or currency pricing rule lists.
 ```
 
 #### PriceRuleItem Model
@@ -5357,11 +5330,14 @@ Namespace: Webkul\Product\Models
 File: plugins/webkul/products/src/Models/PriceRuleItem.php
 Table: products_price_rule_items
 Migration: plugins/webkul/products/database/migrations/2025_01_05_113402_create_products_price_rule_items_table.php
+Consolidated by: plugins/webkul/products/database/migrations/2026_09_15_000000_consolidate_products_price_rules_into_price_lists_table.php
 Primary Key: id (int, auto-increment: True)
 Traits:
   - BelongsToCompany
   - HasFactory
 Important Columns / Fillable:
+  - price_list_id
+  - base_price_list_id
   - apply_to
   - display_apply_to
   - base
@@ -5373,8 +5349,15 @@ Important Columns / Fillable:
   - price_surcharge
   - price_markup
   - price_min_margin
+  - price_max_margin
   - percent_price
-  - ... (9 additional columns in fillable)
+  - starts_at
+  - ends_at
+  - currency_id
+  - product_id
+  - category_id
+  - company_id
+  - creator_id
 Casts:
   - starts_at: 'datetime'
   - ends_at: 'datetime'
@@ -5382,14 +5365,14 @@ Casts:
   - base: PriceRuleBase::class
   - type: PriceRuleType::class
 Relationships:
-  - priceRule(): belongsTo(PriceRule::class)
-  - basePriceRule(): belongsTo(PriceRule::class)
+  - priceList(): belongsTo(PriceList::class, fk: price_list_id)
+  - basePriceList(): belongsTo(PriceList::class, fk: base_price_list_id)
   - product(): belongsTo(Product::class)
   - category(): belongsTo(Category::class)
   - currency(): belongsTo(Currency::class)
   - company(): belongsTo(Company::class)
   - creator(): belongsTo(User::class)
-Notes: Standard domain model.
+Notes: Standard domain model representing price computation items linked directly to a parent PriceList.
 ```
 
 #### Product Model
@@ -7800,7 +7783,7 @@ Casts:
 Relationships:
   - rates(): hasMany(CurrencyRate::class)
   - companies(): hasMany(Company::class)
-Notes: Standard domain model.
+Notes: Standard domain model. Includes getCodeAttribute() (ISO code alias), findByCode(?string $code), and resolveDefault(?Country $country) static currency resolution methods.
 ```
 
 #### CurrencyRate Model
@@ -7984,7 +7967,7 @@ Casts:
 Relationships:
   - category(): belongsTo(UOMCategory::class)
   - creator(): belongsTo(User::class)
-Notes: Standard domain model.
+Notes: Standard domain model. Includes computeQuantity() and computePrice($price, $toUnit) for unit conversion and pricing calculations.
 ```
 
 #### UOMCategory Model
@@ -8711,7 +8694,6 @@ The following table provides a verified mapping between all discovered Eloquent 
 | `products` | `Category` | `products_categories` | `id` | Domain Model |
 | `products` | `Packaging` | `products_packagings` | `id` | Domain Model, BelongsToCompany |
 | `products` | `PriceList` | `products_product_price_lists` | `id` | Domain Model, BelongsToCompany |
-| `products` | `PriceRule` | `products_price_rules` | `id` | Domain Model, SoftDeletes, BelongsToCompany |
 | `products` | `PriceRuleItem` | `products_price_rule_items` | `id` | Domain Model, BelongsToCompany |
 | `products` | `Product` | `products_products` | `id` | Domain Model, SoftDeletes, BelongsToCompany |
 | `products` | `ProductAttribute` | `products_product_attributes` | `id` | Domain Model |
@@ -9070,7 +9052,6 @@ These models have `use BelongsToCompany;`, maintain a `company_id` foreign key c
 - `products`: `Packaging` (`Webkul\Product\Models\Packaging`) -> Table: `products_packagings`
 - `products`: `PriceList` (`Webkul\Product\Models\PriceList`) -> Table: `products_product_price_lists`
 - `products`: `PriceRuleItem` (`Webkul\Product\Models\PriceRuleItem`) -> Table: `products_price_rule_items`
-- `products`: `PriceRule` (`Webkul\Product\Models\PriceRule`) -> Table: `products_price_rules`
 - `products`: `ProductSupplier` (`Webkul\Product\Models\ProductSupplier`) -> Table: `products_product_suppliers`
 - `products`: `Product` (`Webkul\Product\Models\Product`) -> Table: `products_products`
 - `projects`: `ProjectStage` (`Webkul\Project\Models\ProjectStage`) -> Table: `projects_project_stages`

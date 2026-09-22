@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-03
+last_verified: 2026-09-22
 scope: global
 confidence: high
 ---
@@ -47,20 +47,20 @@ A fresh audit of automated test files (`*Test.php`) across `plugins/webkul/*/tes
 
 ### Complete Classification List
 
-#### 1. Tested Plugins (11 Total)
+#### 1. Tested Plugins (11 Total — 199 files: 187 `*Test.php` test classes + 12 shared helpers/fixtures)
 - **Core Tested (2)**:
-  - `partners` (9 test files)
-  - `support` (17 test files)
+  - `partners` (10 test files)
+  - `support` (18 test files [13 `*Test.php` + 5 shared helpers])
 - **Optional Tested (9)**:
-  - `accounting` (9 test files)
-  - `accounts` (42 test files)
-  - `employees` (5 test files)
-  - `inventories` (41 test files)
-  - `manufacturing` (8 test files)
-  - `products` (16 test files)
+  - `accounting` (9 test files [8 `*Test.php` + 1 helper])
+  - `accounts` (44 test files [43 `*Test.php` + 1 helper])
+  - `employees` (6 test files [5 `*Test.php` + 1 helper])
+  - `inventories` (41 test files [40 `*Test.php` + 1 helper])
+  - `manufacturing` (8 test files [7 `*Test.php` + 1 helper])
+  - `products` (19 test files)
   - `projects` (8 test files)
-  - `purchases` (15 test files)
-  - `sales` (17 test files)
+  - `purchases` (16 test files [15 `*Test.php` + 1 helper])
+  - `sales` (20 test files [19 `*Test.php` + 1 helper])
 
 #### 2. Untested Plugins (17 Total with Zero Automated Tests)
 - **Core Untested (7)**:
