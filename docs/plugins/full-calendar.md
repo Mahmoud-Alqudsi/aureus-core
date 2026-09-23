@@ -77,8 +77,8 @@ The `full-calendar` plugin is an abstract UI and Livewire component engine that 
   - Autoload-dev PSR-4: `Webkul\FullCalendar\Tests\` -> `tests/`
   - Extra Laravel Providers: `Webkul\FullCalendar\FullCalendarServiceProvider`
 - **External Dependencies Consumed via Root Composer** (`composer.lock`):
-  - `filament/filament` (`v5.7.6`): Filament widgets, actions, forms, and asset registration.
-  - `livewire/livewire` (`v4.3.3`): Reactive component state management and method invocation.
+  - `filament/filament` (`v5.8.1`): Filament widgets, actions, forms, and asset registration.
+  - `livewire/livewire` (`v4.4.5`): Reactive component state management and method invocation.
   - `nesbot/carbon` (`v3`): Date and timezone calculation.
 - **Frontend Dependencies (`package.json`)**:
   - `@fullcalendar/core` (`^6.1.9`), `@fullcalendar/daygrid` (`^6.1.9`), `@fullcalendar/timegrid` (`^6.1.9`), `@fullcalendar/interaction` (`^6.1.9`), `@fullcalendar/list` (`^6.1.9`), `@fullcalendar/multimonth` (`^6.1.9`), `@fullcalendar/moment` (`^6.1.9`), `@fullcalendar/moment-timezone` (`^6.1.9`), `@fullcalendar/resource` (`^6.1.9`), `@fullcalendar/resource-timegrid` (`^6.1.9`), `@fullcalendar/resource-timeline` (`^6.1.9`), `@fullcalendar/scrollgrid` (`^6.1.9`), `@fullcalendar/timeline` (`^6.1.9`), `@fullcalendar/adaptive` (`^6.1.9`), `@fullcalendar/rrule` (`^6.1.9`).

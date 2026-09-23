@@ -60,6 +60,11 @@ $$\text{raw\_base} = \text{quantity} \times \text{discounted\_unit\_price}$$
 If rounding method is `'round_per_line'`:
 $$\text{raw\_base} = \text{float\_round}(\text{raw\_base}, \text{precisionRounding})$$
 
+##### Step 1.1: Document Total Discount Calculation
+At the document header level (`Move::getTotalDiscountAttribute()`), the total monetary discount is computed across all product-display line items:
+$$\text{total\_discount} = \sum_{\text{lines}} \left(\text{price\_unit} \times \text{quantity} \times \frac{\text{discount}}{100}\right)$$
+rounded to the document currency's decimal precision.
+
 ##### Step 2: Flattening & Ordering
 Group taxes (`AmountType::GROUP`) are flattened into their constituent child taxes (`childrenTaxes`). The resulting collection of taxes is sorted by:
 1. `sort` (ascending)

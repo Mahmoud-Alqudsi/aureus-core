@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/projects
 confidence: high
 ---
@@ -384,7 +384,7 @@ plugins/webkul/projects/
    - **Pages**:
      - `ListTasks`: Full task tabular view with `StatsOverviewWidget` header and preset views: `open_tasks` (default), `my_tasks`, `unassigned_tasks`, `private_tasks` (`whereNull('project_id')`), `followed_tasks` (Chatter followers), `closed_tasks`, `starred_tasks`, `archived_tasks`.
      - `CreateTask`: Ticket creation schema with live project-to-customer auto-fill and stage default resolution.
-     - `EditTask`: Ticket editor.
+     - `EditTask`: Ticket editor. Form schemas (`TaskForm`, `TaskStageForm`) apply `hide_deleted_unless_selected($state)` to preserve historical soft-deleted associations.
      - `ViewTask`: Infolist displaying time metrics, assignees, description, chatter trail.
      - `ManageTimesheets`: Time tracking management page rendering logged hours against allocated budget, subtask hours rollup, and remaining time.
      - `ManageSubTasks`: Parent-child subtask ticket management page.

@@ -123,7 +123,7 @@ The `support` module is the primary architectural bedrock and shared foundation 
   - `spatie/laravel-package-tools` (`v1.93.0`): Extends `BasePackage` and `BasePackageServiceProvider`.
   - `spatie/laravel-settings` (`v3.4.4`): Powers `BrandSettings` and `CompanyAwareSettingsRepository`.
   - `spatie/laravel-query-builder` (`v6.3.3`): Powers filtering, sorting, and relationship inclusion in API V1 controllers.
-  - `filament/filament` (`v5.7.6`): Filament resources, pages, clusters, widgets, forms, tables, infolists, and assets.
+  - `filament/filament` (`v5.8.1`): Filament resources, pages, clusters, widgets, forms, tables, infolists, and assets.
   - `bezhansalleh/filament-shield` (`4.2.0`): Policy authorization and permissions integration.
   - `bezhansalleh/filament-language-switch` (`v4.0.0`): Multilingual locale switching.
   - `barryvdh/laravel-dompdf` (`v3.1.1`): Powers `PDFHandler` HTML-to-PDF rendering.
@@ -637,8 +637,10 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
 The `support` plugin provides foundational utility functions loaded globally at boot time:
 1. **`default_currency_code(): string`**: Resolves the system default ISO currency code via cached closure, evaluating `CurrencySettings::$default_currency_id`, falling back to `config('app.currency')`, and defaulting to `'USD'`.
 2. **`default_currency_id(): ?int`**: Resolves the database ID of the default currency from settings or via `Currency::findByCode(default_currency_code())`.
-3. **`hide_deleted_unless_selected(?string $state): Closure`**: Returns an Eloquent query constraint closure (`whereNull('deleted_at')->orWhere('id', $state)`) used across Filament forms (inventories, purchases, sales, manufacturing, accounts) to filter soft-deleted records out of selection dropdowns while preserving already-selected legacy values.
+3. **`hide_deleted_unless_selected($state = null): Closure`**: Returns an Eloquent query constraint closure that safely verifies if the target model uses `SoftDeletes`, scopes out soft-deleted records via `$model->getQualifiedDeletedAtColumn()`, and preserves existing selections in scalar or array states ($selected) via `orWhereIn($model->getQualifiedKeyName(), $selected)` across single-select and multi-select Filament fields (inventories, purchases, sales, manufacturing, accounts).
 4. **`money(...)`**: Localized currency formatter supporting standard Latin and Arabic numerals, locale handling, and division factors.
+5. **`allowed_companies(): Collection`**: Resolves the collection of allowed `Company` models accessible to the current user via `app(CompanyContext::class)->allowedCompanies()`.
+6. **`allowed_company_ids(): array`**: Resolves the array of allowed company IDs via `app(CompanyContext::class)->allowedIds()`. Used for multi-tenant authorization guards and cross-company form querying.
 
 ### 1. `SequenceService` (`plugins/webkul/support/src/Services/SequenceService.php`)
 The centralized document numbering service.

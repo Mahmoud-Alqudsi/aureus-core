@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/manufacturing
 confidence: high
 ---
@@ -558,6 +558,9 @@ Configurations Cluster:
     ├── EditWorkCenter
     └── ManageOperations
 ```
+
+> [!NOTE]
+> Form schemas across manufacturing resources (`WorkCenterForm`, `ManufacturingOrderForm`, `WorkOrderForm`, `BillOfMaterialForm`) apply `hide_deleted_unless_selected($state)` to maintain backward-compatibility with soft-deleted components and resources while filtering them from new selections.
 
 ### Custom MO Lifecycle Actions (`plugins/webkul/manufacturing/src/Filament/Clusters/Operations/Actions/`)
 

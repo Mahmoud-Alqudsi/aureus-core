@@ -3401,6 +3401,8 @@ Relationships:
   - user(): belongsTo(User::class)
   - company(): belongsTo(Company::class)
   - creator(): belongsTo(User::class)
+  - uom(): hasOneThrough(UOM::class, through: Product::class)
+  - productCategory(): hasOneThrough(Category::class, through: Product::class)
 Notes: Standard domain model.
 ```
 

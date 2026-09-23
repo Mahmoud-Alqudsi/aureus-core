@@ -99,8 +99,8 @@ The `chatter` module provides the unified cross-cutting collaboration, audit log
   - Autoload-dev PSR-4: `Webkul\Chatter\Tests\` -> `tests/`
   - Extra Laravel Providers: `Webkul\Chatter\ChatterServiceProvider`
 - **External Dependencies Consumed via Root Composer** (`composer.lock`):
-  - `filament/filament` (`v5.7.6`): Filament panel actions, widgets, infolist components, rich editor mentions, notifications.
-  - `livewire/livewire` (`v4.3.3`): `ChatterPanel` interactive component, file upload traits, action bindings.
+  - `filament/filament` (`v5.8.1`): Filament panel actions, widgets, infolist components, rich editor mentions, notifications.
+  - `livewire/livewire` (`v4.4.5`): `ChatterPanel` interactive component, file upload traits, action bindings.
   - `spatie/laravel-package-tools` (`v1.93.0`): Extends `BasePackage` and `BasePackageServiceProvider`.
   - `illuminate/support`, `illuminate/database`, `illuminate/mail`, `illuminate/notifications`: Laravel framework baseline.
 

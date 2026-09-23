@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-30
+last_verified: 2026-09-23
 scope: plugins/webkul/partners
 confidence: high
 ---
@@ -522,7 +522,7 @@ The `partners` module implements 7 Filament resources under `Webkul\Partner\Fila
 - **Model**: `Webkul\Partner\Models\BankAccount`
 - **Navigation**: Hidden (`$shouldRegisterNavigation = false`)
 - **Query Scoping**: `getEloquentQuery()` restricts to records `whereHas('partner')`.
-- **Form** (`BankAccountForm.php`): `account_number`, `can_send_money` toggle, `bank_id` (with inline bank creation and soft-delete label detection), and `partner_id`.
+- **Form** (`BankAccountForm.php`): `account_number`, `can_send_money` toggle, `bank_id` (with inline bank creation and `hide_deleted_unless_selected($state)` soft-delete query scoping), and `partner_id`.
 - **Table** (`BankAccountsTable.php`): Columns for `account_number`, `bank.name`, `partner.name`, `can_send_money` boolean icon, timestamps. Filters for `can_send_money` (ternary), `bank_id`, `partner_id`, and `creator_id`.
 - **Pages**: `ManageBankAccounts` (`Pages/ManageBankAccounts.php`) with `'all'` and `'archived'` tabs.
 

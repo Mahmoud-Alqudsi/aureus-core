@@ -42,6 +42,13 @@ This document analyzes the security architecture and outlines factual, source-co
 - **Mitigation:** `ChecksCrossCompanyTransfer` invokes `CrossCompanyTransferGuard::assert()` for dirty source/destination locations on inventory `Operation` and `Scrap` models.
 - **Classification:** [PARTIALLY VERIFIED] - The guard rejects differing non-null company IDs; it does not reject a pair when either resolved location has a null company ID.
 
+### 6. Stored Cross-Site Scripting (XSS)
+- **Threat:** Malicious JavaScript injected via user-submitted formatted text or notes displayed in infolists, tables, or public documents.
+- **Mitigation:**
+  - `PaymentTerm`: Input sanitized across multiple layers: `PaymentTermRequest::prepareForValidation()` strips unsafe HTML via `str()->sanitizeHtml()`, `PaymentTerm::setNoteAttribute()` mutator enforces sanitization upon persistence, and `PaymentTermInfolist` sanitizes rendered output.
+  - `Chatter`: Escapes HTML entities in change summaries.
+- **Classification:** [VERIFIED MITIGATION] - Source code verifies multi-layer HTML sanitization on rich-text and note fields.
+
 ## Test Coverage
 [VERIFIED]
 Structural company-scoping invariant tests exist in nine plugins: `accounts`, `inventories`, `manufacturing`, `partners`, `products`, `projects`, `purchases`, `sales`, and `support`. These tests verify trait/column expectations through `CompanyScopeHelper`; they do not by themselves prove every runtime query is isolated.

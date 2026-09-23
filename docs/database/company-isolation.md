@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-25
+last_verified: 2026-09-23
 scope: database
 confidence: high
 ---
@@ -48,9 +48,9 @@ The verified `BelongsToCompanies` adopter is `Webkul\Account\Models\Account`. It
 
 Evidence: `plugins/webkul/accounts/src/Models/Account.php`; `plugins/webkul/accounts/src/AccountServiceProvider.php`; `plugins/webkul/accounts/database/migrations/2025_01_30_054955_create_accounts_account_companies_table.php`
 
-`BelongsToCompanies` supplies no pivot name or schema itself; it adds `CompaniesScope` and expects a relation named `companies` unless the model overrides `companyScopeRelation()`.
+`BelongsToCompanies` supplies no pivot name or schema itself; it adds `CompaniesScope` and expects a relation named `companies` unless the model overrides `companyScopeRelation()`. When querying cross-tenant records for an explicitly specified allowed company in form schemas (such as `AccountProductSchema::accountOptions`), queries verify `$companyId` against `allowed_company_ids()` before calling `withoutGlobalScope(CompaniesScope::class)`.
 
-Evidence: `plugins/webkul/support/src/Traits/BelongsToCompanies.php`
+Evidence: `plugins/webkul/support/src/Traits/BelongsToCompanies.php`; `plugins/webkul/accounts/src/Filament/Resources/ProductResource/Schemas/AccountProductSchema.php`
 
 ## Other company-oriented structures
 

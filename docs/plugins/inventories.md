@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/inventories
 confidence: high
 ---
@@ -256,7 +256,7 @@ Inspected from `plugins/webkul/inventories/src/Models/` and `docs/database/erds/
 |---|---|---|---|
 | `Warehouse` | `inventories_warehouses` | `BelongsToCompany`, `HasCustomFields`, `HasFactory`, `SoftDeletes`, `SortableTrait` | Physical fulfillment warehouse, route configuration, and 1/2/3 step logistics rules |
 | `Location` | `inventories_locations` | `BelongsToCompany`, `HasCustomFields`, `HasFactory`, `SoftDeletes` | Hierarchical warehouse storage bins, zones, and virtual counterpart locations |
-| `ProductQuantity` | `inventories_product_quantities` | `BelongsToCompany`, `HasFactory` | Stock quant ledger at rest (on-hand, reserved, counted difference) |
+| `ProductQuantity` | `inventories_product_quantities` | `BelongsToCompany`, `HasFactory` | Stock quant ledger at rest (on-hand, reserved, counted difference); exposes `uom()` and `productCategory()` `HasOneThrough` relations traversing `Product` |
 | `ProductQuantityRelocation` | `inventories_product_quantity_relocations` | `BelongsToCompany`, `HasFactory` | Audit ledger tracking quant physical bin-to-bin movements |
 | `OperationType` | `inventories_operation_types` | `BelongsToCompany`, `HasCustomFields`, `HasFactory`, `SoftDeletes`, `SortableTrait` | Transfer type classification (Receipt, Delivery, Internal, Dropship, Manufacturing) |
 | `Operation` | `inventories_operations` | `BelongsToCompany`, `ChecksCompanyConsistency`, `ChecksCrossCompanyTransfer`, `HasChatter`, `HasCustomFields`, `HasFactory`, `HasLogActivity`, `HasOwnershipScope` | Picking slip / transfer header document orchestrating stock movements |
@@ -402,7 +402,7 @@ All UI components register under the `admin` panel within `NavigationGroup::Inve
 
 ### 4. Reporting Cluster (`Filament/Clusters/Reporting`)
 - **`MoveResource`**: Complete historical stock move ledger with source/destination locations, lot tracking, quantities, and timestamps.
-- **`QuantityResource`**: Location-level on-hand inventory stock balances at rest. Reporting queries filter out soft-deleted products (`whereHas('product', fn ($q) => $q->whereNull('deleted_at'))`) to prevent ghost stock records.
+- **`QuantityResource`**: Location-level on-hand inventory stock balances at rest. Reporting queries filter out soft-deleted products (`whereHas('product', fn ($q) => $q->whereNull('deleted_at'))`) to prevent ghost stock records. `QuantitiesTable` filters by product category using the `productCategory` `HasOneThrough` relationship constraint. Relationship queries across inventory forms (`OperationForm`, `OperationTypeForm`, `PutawayRuleForm`, `RouteForm`, `RuleForm`, `ScrapForm`, `LotForm`) apply `hide_deleted_unless_selected($state)`.
 
 ### 5. Settings Cluster (`Filament/Clusters/Settings` & `Filament/Clusters/PluginSettings`)
 - **`ManageOperations`**: Package support, warning popups, reception reports, annual inventory schedule.

@@ -138,6 +138,18 @@ Filament architecture across Aureus ERP is governed by the comprehensive analysi
 - Overview dashboard widgets, chart widgets, and calendar widgets MUST extend Filament widget base classes (`ChartWidget`, `StatsOverviewWidget`, `TableWidget`) or `Webkul\FullCalendar\Widgets\FullCalendarWidget`.
 - Top-level dashboard widgets MUST be placed in `src/Filament/Widgets/` and discovered via `->discoverWidgets()`.
 
+### 6. Relationship Form Fields & Soft-Delete Preservation Pattern
+- Form fields with Eloquent relationships (`Select::make(...)->relationship(...)`) MUST preserve soft-deleted records when they are already selected on existing records, while hiding soft-deleted options for new selections.
+- Use the canonical global helper `hide_deleted_unless_selected($state)` with `withTrashed()`:
+  ```php
+  ->relationship(
+      'relationshipName',
+      'titleColumn',
+      modifyQueryUsing: fn (Builder $query, $state) => $query->withTrashed()->where(hide_deleted_unless_selected($state)),
+  )
+  ```
+- This helper automatically inspects if the related model implements `SoftDeletes`, scopes out soft-deleted records via `$model->getQualifiedDeletedAtColumn()`, and retains existing scalar or array selections via `orWhereIn`.
+
 ---
 
 ## 5. Code-Level Consumption vs. Runtime Dependencies

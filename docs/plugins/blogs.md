@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/blogs
 confidence: high
 ---
@@ -415,7 +415,7 @@ The `blogs` module does not contain any database seeder classes.
       - `draft`: Sets `is_published = false` (visible when `$record->is_published`).
       - `DeleteAction`: Soft-deletes the article.
 - **Schemas & Tables**:
-  - `PostForm`: 3-column layout. General section (title with auto-slug generation on create, disabled dehydrated slug, subtitle, rich editor content, banner file upload), SEO section (meta title, meta keywords, meta description), dynamic custom fields section, and Settings sidebar (category select with trash awareness and required validation, tags multi-select with inline `createOptionForm` for name and hex color picker).
+  - `PostForm`: 3-column layout. General section (title with auto-slug generation on create, disabled dehydrated slug, subtitle, rich editor content, banner file upload), SEO section (meta title, meta keywords, meta description), dynamic custom fields section, and Settings sidebar (category select applying `hide_deleted_unless_selected($state)` with trash awareness and required validation, tags multi-select with inline `createOptionForm` for name and hex color picker).
   - `PostInfolist`: 3-column layout. General section (title, markdown content, banner image), SEO section (meta entries), Record Information sidebar (author, created by, published at, created at, updated at), and Settings sidebar (publication icon status, category badge, tag badges).
   - `PostsTable`: Reorderable columns (`title`, `slug`, `author.name`, `category.name`, `creator.name`, `is_published`, `updated_at`, `created_at`). Table grouping options by category, author, and creation date. Filters for `is_published`, `author_id`, `creator_id`, `category_id`, and `tags`. Record actions (View, Edit, Restore, Delete, ForceDelete) and bulk actions (RestoreBulkAction, DeleteBulkAction, ForceDeleteBulkAction).
 

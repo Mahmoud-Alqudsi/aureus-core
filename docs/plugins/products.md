@@ -540,7 +540,7 @@ The plugin defines 13 physical database tables (12 owned entity tables + 1 junct
      - Infolist: `PackagingInfolist`.
   5. `PriceListResource` (`plugins/webkul/products/src/Filament/Resources/PriceListResource.php`):
      - Navigation: `protected static bool $shouldRegisterNavigation = false;` (rendered via downstream clusters).
-     - Sub-Pages: `ListPriceLists`, `CreatePriceList`, `EditPriceList`, `ViewPriceList`.
+     - Sub-Pages: `ListPriceLists`, `CreatePriceList` (uses `HasRepeaterColumnManager`), `EditPriceList` (uses `HasRecordNavigationTabs`, `HasRepeaterColumnManager`), `ViewPriceList` (uses `HasRecordNavigationTabs`).
      - Form: `PriceListForm` (`plugins/webkul/products/src/Filament/Resources/PriceListResource/Schemas/PriceListForm.php`): Multi-tier pricing configuration with general settings (name, currency with `default_currency_id()` fallback, optional company scoping) and an items repeater managing dynamic rule rows with inline/modal configuration for `PriceRuleApplyTo` (variant, product, category, global), `PriceRuleBase` (list price, standard cost, base price list), `PriceRuleType` (fixed amount, percentage discount, advanced formula with markups, surcharges, rounding, and min/max margins), quantity breaks, and date validity windows.
      - Table: `PriceListsTable`: Displays name, currency, company, and active status.
 - **Clusters & Widgets**: No standalone clusters or widgets are defined directly inside `products`; downstream domain modules extend and cluster these resources.
