@@ -71,8 +71,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for Code Changes
+        id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=1 || true
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only HEAD~1 HEAD || true)
+            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^docs/|^\.github/ISSUE_TEMPLATE/|^\.github/PULL_REQUEST_TEMPLATE\.md$|\.md$' || true)
+            if [ -n "${CHANGED_FILES}" ] && [ -z "${NON_DOC_FILES}" ]; then
+              echo "docs_only=true" >> "$GITHUB_OUTPUT"
+              echo "Documentation-only pull request detected. Skipping heavy Playwright browser tests."
+            else
+              echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Cache Composer
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/cache@v4
         with:
           path: ~/.composer/cache
@@ -80,12 +100,14 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Cache Composer Vendor
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
 
       - name: Setup PHP
+        if: steps.filter.outputs.docs_only != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
@@ -94,6 +116,7 @@ jobs:
           tools: composer:v2
 
       - name: Set Up Node.js
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -101,6 +124,7 @@ jobs:
           cache-dependency-path: tests/e2e-pw/package-lock.json
 
       - name: Cache Playwright Browsers
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
@@ -108,22 +132,26 @@ jobs:
           restore-keys: ${{ runner.os }}-playwright-
 
       - name: Cache Node Modules
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/cache@v4
         with:
           path: tests/e2e-pw/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
 
       - name: Install Node.js Dependencies
+        if: steps.filter.outputs.docs_only != 'true'
         run: npm ci
         working-directory: tests/e2e-pw
 
       - name: Install Playwright Browsers
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           sudo apt-get update --allow-releaseinfo-change
           npx playwright install --with-deps chromium
         working-directory: tests/e2e-pw
 
       - name: Setting Environment
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           cp .env.example .env
           sed -i "s|^\(DB_CONNECTION=\s*\).*$|\1${{ matrix.db }}|" .env
@@ -138,12 +166,15 @@ jobs:
           cat .env
 
       - name: Install Composer
+        if: steps.filter.outputs.docs_only != 'true'
         run: composer install --no-scripts --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Generate APP_KEY (fast, non-Laravel)
+        if: steps.filter.outputs.docs_only != 'true'
         run: php artisan key:generate
 
       - name: Wait for Database to be ready
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           DB_PORT=${{ matrix.db-port }}
           echo "Waiting for ${{ matrix.db-label }} service on 127.0.0.1:${DB_PORT}..."
@@ -170,6 +201,7 @@ jobs:
           done
 
       - name: Running Aureus Installer
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           php artisan erp:install \
             --force \
@@ -178,12 +210,14 @@ jobs:
             --admin-password="admin123"
 
       - name: Start Laravel server
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           php artisan serve --host=0.0.0.0 --port=8000 > server.log 2>&1 &
           echo "Waiting for server to start..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done'
 
       - name: Run All Playwright Tests
+        if: steps.filter.outputs.docs_only != 'true'
         env:
           BASE_URL: "http://127.0.0.1:8000"
         run: |
@@ -192,7 +226,7 @@ jobs:
 
       - name: Upload Blob Report
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: steps.filter.outputs.docs_only != 'true' && !cancelled()
         with:
           name: blob-report-${{ matrix.db }}-${{ matrix.shard_index }}
           path: tests/e2e-pw/blob-report
@@ -200,13 +234,18 @@ jobs:
 
       - name: Upload Failure Artifacts
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: steps.filter.outputs.docs_only != 'true' && failure()
         with:
           name: playwright-failures-${{ matrix.db }}-${{ matrix.shard_index }}-${{ github.run_id }}-${{ github.run_number }}
           path: |
             tests/e2e-pw/test-results
             storage/logs/laravel.log
           retention-days: 1
+
+      - name: Report Documentation-Only Pass
+        if: steps.filter.outputs.docs_only == 'true'
+        run: |
+          echo "Playwright shard skipped successfully - documentation-only pull request."
 
   merge_playwright_reports:
     if: ${{ always() && !cancelled() }}
@@ -224,8 +263,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for Code Changes
+        id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=1 || true
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only HEAD~1 HEAD || true)
+            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^docs/|^\.github/ISSUE_TEMPLATE/|^\.github/PULL_REQUEST_TEMPLATE\.md$|\.md$' || true)
+            if [ -n "${CHANGED_FILES}" ] && [ -z "${NON_DOC_FILES}" ]; then
+              echo "docs_only=true" >> "$GITHUB_OUTPUT"
+              echo "Documentation-only pull request detected. Skipping report merge."
+            else
+              echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set Up Node.js
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "22.13.1"
@@ -233,10 +292,12 @@ jobs:
           cache-dependency-path: tests/e2e-pw/package-lock.json
 
       - name: Install Node.js Dependencies
+        if: steps.filter.outputs.docs_only != 'true'
         run: npm ci
         working-directory: tests/e2e-pw
 
       - name: Download Blob Reports
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/download-artifact@v4
         with:
           path: tests/e2e-pw/all-blob-reports
@@ -244,15 +305,22 @@ jobs:
           merge-multiple: true
 
       - name: Merge Playwright Reports
+        if: steps.filter.outputs.docs_only != 'true'
         run: npx playwright merge-reports --reporter html ./all-blob-reports
         working-directory: tests/e2e-pw
 
       - name: Upload HTML Report
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.db }}-${{ github.run_id }}-${{ github.run_number }}
           path: tests/e2e-pw/playwright-report
           retention-days: 1
+
+      - name: Report Documentation-Only Pass
+        if: steps.filter.outputs.docs_only == 'true'
+        run: |
+          echo "Report merge skipped - documentation-only pull request."
 
   playwright_e2e_gate:
     name: Playwright E2E Gate

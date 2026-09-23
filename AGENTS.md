@@ -169,3 +169,17 @@ Scope: plugin name, `app`, `config`, `ci`, or omit for cross-cutting changes.
 ```
 develop → create branch → commits → PR → review → merge → develop
 ```
+
+### Pull Request & Issue Governance
+
+1. **Pull Request Template**: When drafting, opening, or updating a Pull Request, agents must read and strictly populate all sections of [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md):
+   - Description and Problem/Solution context
+   - Related Issue reference (`Closes #...` or reason for unlinked PR)
+   - Type of change classification
+   - Pre-merge Checklist (coding standards, self-review, test coverage)
+   - Testing steps and local verification evidence
+   - Explicit **Documentation Impact** declaration (listing updated documents, or providing justification when no maintained document is affected)
+
+2. **Issue Templates**: When drafting, proposing, or opening GitHub Issues, agents must adhere to the structured forms in [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/):
+   - Defect reports: use the structure in [`bug.yml`](.github/ISSUE_TEMPLATE/bug.yml) (environment, preconditions, reproduction steps, expected vs actual behavior).
+   - Proposals & feature requests: use the structure in [`feature_request.yml`](.github/ISSUE_TEMPLATE/feature_request.yml) (problem statement, proposed solution, alternatives considered, additional context).

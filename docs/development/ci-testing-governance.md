@@ -150,9 +150,9 @@ Inspection of [`.github/workflows/`](../../.github/workflows/) confirms the foll
 2. **Missing `workflow_dispatch` on Core Test Workflows**:
    - Neither `pest_tests.yml` nor `translations_check.yml` can be manually triggered via the GitHub Actions UI or API.
    - Engineers cannot re-run backend tests on demand without pushing a commit or triggering a full PR synchronization event.
-3. **Absence of Path Filtering**:
-   - None of the PR workflows configure `paths` or `paths-ignore`.
-   - Documentation-only pull requests (e.g., changes exclusively within `docs/` or `*.md`) trigger the full test matrix: 2 Pest test jobs, 12 Playwright shards, 2 report merge jobs, and 1 translation check job (totaling 17 jobs per commit).
+3. **Path Filtering on PR Workflows (Implemented via CI-010)**:
+   - Configured path-filtering detection steps across all three PR test workflows (`pest_tests.yml`, `translations_check.yml`, `playwright_tests.yml`).
+   - Documentation-only pull requests (changes exclusively within `docs/`, `*.md`, `.github/ISSUE_TEMPLATE/`, or `.github/PULL_REQUEST_TEMPLATE.md`) bypass heavy test executions while immediately reporting successful completion to satisfy required status check gates.
 
 ---
 
@@ -791,11 +791,10 @@ The audit identified the following evidence-based CI governance findings:
 - **Owning Operational Stage**: O6 (`RECOMMENDED`).
 
 ### CI-010: Absence of Path Filtering on Heavy Validation Workflows
-- **Classification**: **`RECOMMENDED`**
-- **Evidence**: No workflow configures `paths` or `paths-ignore`.
-- **Impact**: Documentation-only changes trigger 17 resource-intensive CI jobs including full browser sharding.
-- **Recommendation**: Add path filtering to bypass Playwright and database testing on documentation-only pull requests.
-- **Owning Operational Stage**: O6 (`RECOMMENDED`).
+- **Classification**: **`VERIFIED / IMPLEMENTED`**
+- **Evidence**: Added change path filtering in `.github/workflows/pest_tests.yml`, `.github/workflows/translations_check.yml`, and `.github/workflows/playwright_tests.yml`.
+- **Impact**: Documentation-only pull requests detect change paths and immediately exit with successful passes across all required status checks (`Pest`, `Playwright E2E Gate`, `Translations check`), bypassing heavy matrix execution while preserving full branch protection rules.
+- **Owning Operational Stage**: O6 (`VERIFIED / IMPLEMENTED`).
 
 ### CI-011: Concentration of PHP Feature Test Coverage Across Domain Plugins
 - **Classification**: **`HISTORICAL PRACTICE`** / **`RECOMMENDED`**

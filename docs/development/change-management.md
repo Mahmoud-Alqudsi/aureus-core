@@ -54,7 +54,7 @@ Request → Issue (when required) → discover → assess impact → plan → ap
 → implement → verify → Pull Request → review/CI → merge → record/close
 ```
 
-1. **Track the work** — create or reuse a GitHub Issue when the change falls under the tracked-work criteria in [`git-workflow.md`](git-workflow.md#3-work-item-branch--pull-request-lifecycle). Trivial corrections may proceed without a separate Issue.
+1. **Track the work** — create or reuse a GitHub Issue when the change falls under the tracked-work criteria in [`git-workflow.md`](git-workflow.md#3-work-item-branch--pull-request-lifecycle), strictly using the structured templates in [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/). Trivial corrections may proceed without a separate Issue.
 2. **Discover** — identify the affected implementation, tests, configuration, workflows, and documentation. Use repository-relative paths and inspect direct references with `rg`.
 3. **Assess impact** — classify the change against the source-of-truth hierarchy and [`change-impact.md`](../architecture/change-impact.md). Identify whether security, tenancy, schema, dependency, CI, upstream, or release controls apply.
 4. **Plan and approve** — state files, intent, evidence, verification, and any authority needed before making a non-trivial change. Obtain the approval required by `AGENTS.md`.

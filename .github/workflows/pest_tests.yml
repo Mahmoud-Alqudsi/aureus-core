@@ -60,8 +60,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for Code Changes
+        id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=1 || true
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only HEAD~1 HEAD || true)
+            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^docs/|^\.github/ISSUE_TEMPLATE/|^\.github/PULL_REQUEST_TEMPLATE\.md$|\.md$' || true)
+            if [ -n "${CHANGED_FILES}" ] && [ -z "${NON_DOC_FILES}" ]; then
+              echo "docs_only=true" >> "$GITHUB_OUTPUT"
+              echo "Documentation-only pull request detected. Skipping heavy Pest test suites."
+            else
+              echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Setup PHP
+        if: steps.filter.outputs.docs_only != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
@@ -70,9 +90,11 @@ jobs:
           tools: composer:v2
 
       - name: Running Composer Install
+        if: steps.filter.outputs.docs_only != 'true'
         run: composer install
 
       - name: Setting Environment
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
@@ -86,9 +108,11 @@ jobs:
           cat .env
 
       - name: Generating Application Key
+        if: steps.filter.outputs.docs_only != 'true'
         run: php artisan key:generate
 
       - name: Running AureusERP Installer
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           php artisan erp:install \
             --force \
@@ -97,4 +121,10 @@ jobs:
             --admin-password="admin123"
 
       - name: Running Pest Test
+        if: steps.filter.outputs.docs_only != 'true'
         run: vendor/bin/pest --colors=always
+
+      - name: Report Documentation-Only Pass
+        if: steps.filter.outputs.docs_only == 'true'
+        run: |
+          echo "Pest test skipped successfully - pull request contains only documentation or Markdown changes."

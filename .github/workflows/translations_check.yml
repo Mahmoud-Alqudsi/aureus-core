@@ -22,8 +22,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for Code and Translation Changes
+        id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=1 || true
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only HEAD~1 HEAD || true)
+            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^docs/|^\.github/ISSUE_TEMPLATE/|^\.github/PULL_REQUEST_TEMPLATE\.md$|\.md$' || true)
+            if [ -n "${CHANGED_FILES}" ] && [ -z "${NON_DOC_FILES}" ]; then
+              echo "docs_only=true" >> "$GITHUB_OUTPUT"
+              echo "Documentation-only pull request detected. Skipping heavy translation check."
+            else
+              echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Setup PHP
+        if: steps.filter.outputs.docs_only != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -31,6 +51,7 @@ jobs:
           tools: composer:v2
 
       - name: Cache Composer dependencies
+        if: steps.filter.outputs.docs_only != 'true'
         uses: actions/cache@v4
         with:
           path: vendor
@@ -38,12 +59,20 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
+        if: steps.filter.outputs.docs_only != 'true'
         run: composer install --no-interaction --prefer-dist
 
       - name: Setting Environment
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           cp .env.example .env
           php artisan key:generate
 
       - name: Run translations consistency check
+        if: steps.filter.outputs.docs_only != 'true'
         run: php artisan translations:check --details
+
+      - name: Report Documentation-Only Pass
+        if: steps.filter.outputs.docs_only == 'true'
+        run: |
+          echo "Translations consistency check passed - documentation-only pull request."
