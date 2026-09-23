@@ -79,7 +79,7 @@ it('offers view and edit navigation on an existing record', function () {
 
     $page = Livewire::test(EditPriceList::class, ['record' => $priceList->getRouteKey()])->assertOk();
 
-    expect($page->instance()->getSubNavigation())->toHaveCount(2);
+    expect(PriceListResource::getRecordSubNavigation($page->instance()))->toHaveCount(2);
 });
 
 it('creates a price list with a fixed price rule', function () {
