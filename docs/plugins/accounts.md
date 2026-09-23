@@ -334,7 +334,7 @@ The `accounts` module defines 45 model classes (`plugins/webkul/accounts/src/Mod
    - Traits: `BelongsToCompany`, `ChecksCompanyConsistency`, `HasChatter`, `HasCustomFields`, `HasFactory`, `HasLogActivity`, `HasOwnershipScope`.
    - Casts: `move_type` (`MoveType`), `state` (`MoveState`), `payment_state` (`PaymentState`), `invoice_date` (`date`), `invoice_date_due` (`date`), `date` (`date`), `amount_untaxed` (`decimal:4`), `amount_tax` (`decimal:4`), `amount_total` (`decimal:4`), `amount_residual` (`decimal:4`).
    - Relationships: `belongsTo(Journal::class)`, `belongsTo(Company::class)`, `belongsTo(Currency::class)`, `belongsTo(Partner::class, 'partner_id')`, `belongsTo(Partner::class, 'commercial_partner_id')`, `belongsTo(BankAccount::class, 'partner_bank_id')`, `belongsTo(PaymentTerm::class)`, `belongsTo(FiscalPosition::class)`, `belongsTo(Incoterm::class)`, `belongsTo(Move::class, 'reversed_entry_id')`, `hasMany(MoveLine::class, 'move_id')`, `belongsToMany(Payment::class, 'accounts_accounts_move_payment', 'invoice_id', 'payment_id')`.
-   - Key Methods: `resolveBankPartnerId($moveType, ?int $companyId, ?int $partnerId): ?int` (resolves company partner for inbound moves or vendor partner for outbound bills).
+   - Key Methods: `resolveBankPartnerId($moveType, ?int $companyId, ?int $partnerId): ?int` (resolves company partner for inbound moves or vendor partner for outbound bills); `total_discount`: float accessor dynamically computing total currency discount across product lines (`price_unit * quantity * discount / 100`) rounded to currency decimal precision.
 
 2. **`MoveLine` (`Webkul\Account\Models\MoveLine`)**:
    - Table: `accounts_account_move_lines`.
@@ -401,7 +401,7 @@ The `accounts` module defines 45 model classes (`plugins/webkul/accounts/src/Mod
 
 14. **`PaymentTerm` & `PaymentDueTerm` (`Webkul\Account\Models\PaymentTerm`, `PaymentDueTerm`)**:
     - Tables: `accounts_payment_terms`, `accounts_payment_due_terms`.
-    - Due date schedules and multi-installment calculations (fixed days, end of month, percentage splits, early pay discounts).
+    - Due date schedules and multi-installment calculations (fixed days, end of month, percentage splits, early pay discounts). Terms note field input is sanitized against stored XSS vulnerabilities.
 
 15. **`BankStatement` & `BankStatementLine` (`Webkul\Account\Models\BankStatement`, `BankStatementLine`)**:
     - Tables: `accounts_bank_statements`, `accounts_bank_statement_lines`.
@@ -514,23 +514,25 @@ The `accounts` module defines 20 Filament resources under `plugins/webkul/accoun
   - `ViewInvoice` (`view` => `/{record}`)
   - `EditInvoice` (`edit` => `/{record}/edit`)
   - `ManagePayments` (`payments` => `/{record}/payments`)
-- **Components**: `InvoiceForm`, `InvoicesTable`, `InvoiceInfolist`, `InvoiceSummary` (Livewire summary), `InvoiceExporter`.
+- **Components**: `InvoiceForm`, `InvoicesTable`, `InvoiceInfolist`, `InvoiceSummary` (Livewire summary), `InvoiceExporter`. Actions include `ConfirmAction` (using `$this->cancel(shouldRollBackDatabaseTransaction: true)` for transactional rollback on failure), `PayAction`, and `PreviewAction` (rendering responsive localized document preview with per-item discount percentages and tax breakdowns).
 
 ### 2. `BillResource` (`BillResource.php`)
 - **Model**: `Webkul\Account\Models\Bill` (`MoveType::IN_INVOICE`)
 - **Navigation Icon**: `heroicon-o-rectangle-stack`
 - **Pages**: `ListBills`, `CreateBill`, `ViewBill`, `EditBill`, `ManagePayments`.
-- **Components**: `BillForm`, `BillsTable`, `BillInfolist`, `InvoiceSummary`, `BillExporter`.
+- **Components**: `BillForm`, `BillsTable`, `BillInfolist`, `InvoiceSummary`, `BillExporter`. Actions include `ConfirmAction`, `PayAction`, and `PreviewAction`.
 
 ### 3. `CreditNoteResource` (`CreditNoteResource.php`)
 - **Model**: `Webkul\Account\Models\CreditNote` (`MoveType::OUT_REFUND`)
 - **Navigation Icon**: `heroicon-o-credit-card`
 - **Pages**: `ListCreditNotes`, `CreateCreditNote`, `ViewCreditNote`, `EditCreditNote`, `ManagePayments`.
+- **Components**: `CreditNoteForm`, `CreditNotesTable`, `CreditNoteInfolist`, `InvoiceSummary`. Actions include `ConfirmAction`, `PayAction`, and `PreviewAction`.
 
 ### 4. `RefundResource` (`RefundResource.php`)
 - **Model**: `Webkul\Account\Models\Refund` (`MoveType::IN_REFUND`)
 - **Navigation Icon**: `heroicon-o-credit-card`
 - **Pages**: `ListRefunds`, `CreateRefund`, `ViewRefund`, `EditRefund`, `ManagePayments`.
+- **Components**: `RefundForm`, `RefundsTable`, `RefundInfolist`, `InvoiceSummary`. Actions include `ConfirmAction`, `PayAction`, and `PreviewAction`.
 
 ### 5. `AccountResource` (`AccountResource.php`)
 - **Model**: `Webkul\Account\Models\Account`
@@ -570,6 +572,7 @@ The `accounts` module defines 20 Filament resources under `plugins/webkul/accoun
 - **Model**: `Webkul\Account\Models\PaymentTerm`
 - **Navigation Icon**: `heroicon-o-currency-dollar`
 - **Pages**: `ListPaymentTerms`, `CreatePaymentTerm`, `ViewPaymentTerm`, `EditPaymentTerm`, `ManagePaymentDueTerm`.
+- **Components**: `PaymentTermForm`, `PaymentTermsTable`, `PaymentTermInfolist` (renders sanitized note via `str()->sanitizeHtml()`). Input is sanitized against stored XSS at API request (`PaymentTermRequest`) and model mutator (`setNoteAttribute`) layers.
 
 ### 12. `PartnerResource` (`PartnerResource.php`)
 - **Model**: `Webkul\Account\Models\Partner`
@@ -589,6 +592,7 @@ The `accounts` module defines 20 Filament resources under `plugins/webkul/accoun
 ### 15. `ProductResource` (`ProductResource.php`)
 - **Model**: `Webkul\Account\Models\Product`
 - **Pages**: `ListProducts`, `CreateProduct`, `EditProduct`, `ViewProduct`.
+- **Accounting Schema Fragments (`AccountProductSchema`)**: Contributes income/expense default accounts and tax selection to products. In `accountOptions($companyId)`, cross-company account selection is supported safely: if the requested `$companyId` is authenticated within `allowed_company_ids()`, `CompaniesScope` is temporarily bypassed via `withoutGlobalScope(CompaniesScope::class)` to display accounts of that specific company.
 
 ### 16. `ProductCategoryResource` (`ProductCategoryResource.php`)
 - **Model**: `Webkul\Account\Models\Category`

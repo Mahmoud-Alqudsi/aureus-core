@@ -69,8 +69,8 @@ The `fields` plugin provides a metadata-driven runtime attribute customization e
   - Extra Laravel Providers: `Webkul\Field\FieldServiceProvider`
 - **External Dependencies Consumed via Root Composer** (`composer.lock`):
   - `spatie/eloquent-sortable` (`v4.5.0`): Implements `Sortable` and `SortableTrait` on `Field` model.
-  - `filament/filament` (`v5.7.6`): Filament resources, forms, tables, infolists, and assets.
-  - `illuminate/support` (`v13.21.1`): Laravel schema builder, collections, and model events.
+  - `filament/filament` (`v5.8.1`): Filament resources, forms, tables, infolists, and assets.
+  - `illuminate/support` (`v13.31.0`): Laravel schema builder, collections, and model events.
 
 ## Runtime plugin dependencies
 [VERIFIED]

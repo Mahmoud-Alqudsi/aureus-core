@@ -13,7 +13,7 @@ confidence: high
 Aureus ERP is a Laravel 13 application that explicitly registers 28 local `plugins/webkul` service providers alongside the application and two Filament panel providers. Domain functionality is primarily implemented in those local plugin packages rather than in `app/`.
 
 [VERIFIED]
-Evidence: `composer.lock` → `laravel/framework` (`v13.21.1`); `bootstrap/providers.php`; `plugins/webkul/`
+Evidence: `composer.lock` → `laravel/framework` (`v13.31.0`); `bootstrap/providers.php`; `plugins/webkul/`
 
 `bootstrap/app.php` configures the root web/API/console routes, web middleware additions, proxy trust, and exception renderers. `bootstrap/providers.php` is a concrete provider list: it registers `AppServiceProvider`, `AdminPanelProvider`, `CustomerPanelProvider`, all 28 plugin providers, and places `PluginManagerServiceProvider` last.
 

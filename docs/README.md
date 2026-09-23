@@ -74,9 +74,9 @@ Verified runtime environment and framework versions:
 | Component | Installed Version | Verification Evidence |
 | :--- | :--- | :--- |
 | **PHP** | `8.3.29` | Source baseline (`composer.json` platform constraint `^8.3`) |
-| **Laravel Framework** | `13.21.1` | `composer.lock` (`laravel/framework`) |
-| **Filament Admin Engine** | `5.7.6` | `composer.lock` (`filament/filament`) |
-| **Livewire** | `4.3.3` | `composer.lock` (`livewire/livewire`) — *Adhere to v4 specifications* |
+| **Laravel Framework** | `13.31.0` | `composer.lock` (`laravel/framework`) |
+| **Filament Admin Engine** | `5.8.1` | `composer.lock` (`filament/filament`) |
+| **Livewire** | `4.4.5` | `composer.lock` (`livewire/livewire`) — *Adhere to v4 specifications* |
 | **Testing Framework** | Pest `4.7.5` / PHPUnit `12` | `composer.lock` (`pestphp/pest`) |
 | **Permissions / RBAC** | Filament Shield `4.2.0` | `composer.lock` (`bezhansalleh/filament-shield`) |
 | **API Authentication** | Laravel Sanctum `4.3.3` | `composer.lock` (`laravel/sanctum`) |

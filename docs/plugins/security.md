@@ -103,7 +103,7 @@ The `security` module is the primary identity, authentication, authorization, an
   - `bezhansalleh/filament-shield` (`4.2.0`): Admin UI permissions manager, role utilities (`Utils`), and shield resources (`RolesRoleResource`).
   - `laravel/sanctum` (`v4.3.3`): API token issuance, verification, and revocation (`HasApiTokens`).
   - `spatie/laravel-settings` (`v3.4.4`): Settings class models and migrations (`UserSettings`, `CurrencySettings`).
-  - `filament/filament` (`v5.7.6`): Filament resources, pages, clusters, tables, forms, infolists, and MFA app authentication (`AppAuthentication`).
+  - `filament/filament` (`v5.8.1`): Filament resources, pages, clusters, tables, forms, infolists, and MFA app authentication (`AppAuthentication`).
   - `knuckleswtf/scribe` (`v4.44.0`): API documentation annotations on `AuthController`.
 
 ## Runtime plugin dependencies

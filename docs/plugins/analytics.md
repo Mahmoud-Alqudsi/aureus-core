@@ -56,8 +56,8 @@ The `analytics` plugin defines **zero Filament plugin classes** (no `AnalyticPlu
   - Autoload-dev PSR-4: `Webkul\Analytic\Tests\` -> `tests/`
   - Extra Laravel Providers: `Webkul\Analytic\AnalyticServiceProvider`
 - **External & Framework Dependencies Consumed via Root Composer** (`composer.lock`):
-  - `illuminate/database` (`v13.21.1`): Eloquent ORM, schema builder, migration definitions.
-  - `illuminate/support` (`v13.21.1`): Laravel collections, JSON resources, and helper utilities.
+  - `illuminate/database` (`v13.31.0`): Eloquent ORM, schema builder, migration definitions.
+  - `illuminate/support` (`v13.31.0`): Laravel collections, JSON resources, and helper utilities.
 - **Local Plugin Package Dependencies**:
   - `Webkul\Support`: Consumes `BelongsToCompany` trait, `Company` model, `CompanyResource`, and `HasCompanyDefault` factory concern.
   - `Webkul\Partner`: Consumes `Partner` model and `PartnerResource`.

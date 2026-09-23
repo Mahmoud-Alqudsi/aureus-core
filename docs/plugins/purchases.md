@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/purchases
 confidence: high
 ---
@@ -553,7 +553,7 @@ The `purchases` plugin maintains 5 primary physical domain models and 14 domain 
 - **Sub-Resource Tabs**:
   - `QuotationReceiptResource` / `PurchaseOrderReceiptResource`: Parent resource registration with `QuotationResource` and `PurchaseOrderResource` mapping to `operations`.
   - `QuotationBillResource` / `PurchaseOrderBillResource`: Parent resource registration mapping to `bills`.
-- **`OrderResource`**: Abstract base resource providing shared `OrderForm`, `OrdersTable`, and `OrderInfolist` schemas.
+- **`OrderResource`**: Abstract base resource providing shared `OrderForm`, `OrdersTable`, and `OrderInfolist` schemas. Relationship queries in `OrderForm` and `PurchaseAgreementForm` apply `hide_deleted_unless_selected($state)` to ensure historical records remain visible when selected while excluding deleted records from new selections.
   - Multi-Currency & Pricing Conversion: `OrderForm` features dynamic currency selection (`currency_id`), passes `currency` context to the `OrderSummary` view, and converts vendor pricing or product cost to the target order currency via `calculateUnitPrice` and `convertPrice` using `CurrencyRate` and UOM factors.
   - Agreement Currency Propagation: `PurchaseAgreementForm` defaults `currency_id` to current company currency and propagates currency to child orders.
 
@@ -576,7 +576,7 @@ The `purchases` plugin maintains 5 primary physical domain models and 14 domain 
 - **Cluster**: `Account` (`Webkul\Website\Filament\Customer\Clusters\Account`).
 - **`QuotationResource`**: Pages `ListQuotations`, `ViewQuotation`.
 - **`PurchaseOrderResource`**: Pages `ListPurchaseOrders`, `ViewPurchaseOrder`.
-- **`OrderResource`**: Shared customer table and infolist schemas.
+- **`OrderResource`**: Abstract base resource (`Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\OrderResource`) defining shared customer table and infolist schemas without registering direct panel routes.
 - **Livewire Components**:
   - `RespondQuotation`: Handles vendor online acceptance/decline via signed token routes.
   - `ListProducts`: Renders product line table in customer portal view.

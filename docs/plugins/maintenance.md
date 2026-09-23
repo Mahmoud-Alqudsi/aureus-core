@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/maintenance
 confidence: high
 ---
@@ -478,6 +478,7 @@ plugins/webkul/maintenance/
       5. `unscheduled`: `whereNull('scheduled_at')`
       6. `cancelled`: `onlyTrashed()`
     - Form Schema (`MaintenanceRequestForm`):
+      - Applies `hide_deleted_unless_selected($state)` across relationship fields (equipment, team, technician, company) to support historical soft-deleted records when editing existing requests while filtering them out of new selections.
       - Stage Progress Stepper: `FormProgressStepper::make('stage_id')` showing ordered workflow stages.
       - Request Details: Name (disabled on edit), Equipment (live select auto-populating Category, Requested At, Team, Technician, and Company), Category, Requested At, Maintenance Type (`corrective` vs `preventive`), Recurring Checkbox, Fused Recurrence Group (`repeat_interval`, `repeat_unit`, `repeat_type`).
       - Tabbed Notes & Instructions:

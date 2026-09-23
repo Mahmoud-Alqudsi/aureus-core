@@ -10,7 +10,7 @@ confidence: high
 
 ## Executive Summary & Architectural Synthesis
 
-Aureus ERP builds its entire administrative and customer portal interfaces on **Filament v5** (specifically `v5.7.6`) and **Livewire v4** (`v4.3.3`), orchestrated through Laravel 13. Rather than constructing a monolithic Filament application under `app/Filament/`, Aureus ERP adopts a **modular package-driven Filament architecture** where user interface components are distributed across 28 domain-specific plugins under `plugins/webkul/`.
+Aureus ERP builds its entire administrative and customer portal interfaces on **Filament v5** (specifically `v5.8.1`) and **Livewire v4** (`v4.4.5`), orchestrated through Laravel 13. Rather than constructing a monolithic Filament application under `app/Filament/`, Aureus ERP adopts a **modular package-driven Filament architecture** where user interface components are distributed across 28 domain-specific plugins under `plugins/webkul/`.
 
 The application registers two distinct Filament panels:
 1. **`admin` panel**: The full-featured enterprise management workspace accessible at `/admin`, configured with top navigation, Filament Shield role-based access control, multi-factor authentication, database notifications, global search, and multi-locale support.
@@ -26,7 +26,7 @@ At the time of verification, the repository contains:
 - **24 Filament Widget Classes** across **26 files** in `src/Filament/**/Widgets/` (24 classes extending Filament Widget base classes or `FullCalendarWidget`, plus 2 Livewire components acting as internal widget sub-components)
 
 [VERIFIED]
-Evidence: `app/Providers/Filament/AdminPanelProvider.php`; `app/Providers/Filament/CustomerPanelProvider.php`; `plugins/webkul/`; `composer.lock` → `filament/filament` (`v5.7.6`), `livewire/livewire` (`v4.3.3`)
+Evidence: `app/Providers/Filament/AdminPanelProvider.php`; `app/Providers/Filament/CustomerPanelProvider.php`; `plugins/webkul/`; `composer.lock` → `filament/filament` (`v5.8.1`), `livewire/livewire` (`v4.4.5`)
 
 ---
 

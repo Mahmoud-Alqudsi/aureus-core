@@ -69,14 +69,14 @@ When writing code, developing plugins, generating migrations, configuring securi
 ### 3. Livewire Framework Version
 
 - **Term / Class**: Livewire Framework
-- **What it actually is**: Livewire version 4.3.3, installed as a framework dependency via Composer.
+- **What it actually is**: Livewire version 4.4.5, installed as a framework dependency via Composer.
 - **Common misconception**: Believing Livewire is on version 3 based on historical or stale repository documentation or configuration notes.
 - **Evidence**:
-  - `composer.lock` (package `livewire/livewire` installed version: `v4.3.3`)
+  - `composer.lock` (package `livewire/livewire` installed version: `v4.4.5`)
   - `docs/ai/context.md:34, 42`
   - [`AGENTS.md`](../../AGENTS.md) and this documentation now align with the installed v4 baseline.
 - **Prescriptive Rule**:
-  - Developers and AI agents MUST adhere to Livewire 4.3.3 APIs and conventions when authoring or debugging Livewire components.
+  - Developers and AI agents MUST adhere to Livewire 4.4.5 APIs and conventions when authoring or debugging Livewire components.
   - Developers MUST NOT rely on deprecated Livewire v3 patterns when newer v4 specifications apply.
   - Per the source-of-truth hierarchy, `composer.lock` MUST override any conflicting documentation or agent guideline statements regarding package versions.
 

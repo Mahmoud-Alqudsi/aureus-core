@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/employees
 confidence: high
 ---
@@ -638,6 +638,7 @@ All UI resources belong to the `NavigationGroup::Employee` navigation group:
     - `SkillsRelationManager` (`RelationGroup::make('Manage Skills', ...)->icon('heroicon-o-bolt')`)
     - `ResumeRelationManager` (`RelationGroup::make('Manage Resumes', ...)->icon('heroicon-o-clipboard-document-list')`)
   - **Form Structure (`EmployeeForm`)**:
+    - Applies `hide_deleted_unless_selected($state)` across relationship fields (department, manager, coach) to support soft-deleted records when editing existing employees while filtering them out of new selections.
     - Header: Avatar image upload (`partner.avatar`), Name, Job Title, Work Contact details (email, phone, mobile), Department, Job Position, Manager (`parent_id`), Coach (`coach_id`), Employee Tags (`categories`).
     - Tab 1: **Work Information**: Location (Company Address, Work Location), Approvers (Leave Manager, Attendance Manager), Schedule (Working Hours Calendar, Timezone), Organization Details (Company, Color).
     - Tab 2: **Private Information**: Private Contact (Street, City, Postal Code, State, Country, Email, Phone, Car Plate, Distance from home to work), Family Status (Marital status, Spouse name/birthdate, Children), Emergency Contact (Name, Phone), Citizenship (Country of birth, Identification No, Passport No, SSN, SIN), Education (Certificate level, Field of study, School), Work Permit (Visa No, Work Permit No, Visa Expiration, Permit Expiration).

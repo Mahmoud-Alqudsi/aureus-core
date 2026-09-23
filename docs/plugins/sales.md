@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-23
 scope: plugins/webkul/sales
 confidence: high
 ---
@@ -353,7 +353,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
    - **Table**: `sales_order_lines`
    - **Traits**: `BelongsToCompany`, `ChecksCompanyConsistency`, `HasFactory`, `SortableTrait`.
    - **Key Attributes**: `order_id`, `product_id`, `product_uom_id`, `product_uom_qty`, `qty_delivered`, `qty_invoiced`, `qty_to_invoice`, `price_unit`, `discount`, `price_subtotal`, `price_tax`, `price_total`, `purchase_price`, `margin`, `margin_percent`, `qty_delivered_method` (`QtyDeliveredMethod`), `state` (`OrderState`), `display_type`, `is_downpayment`, `is_expense`, `route_id`, `warehouse_id`, `company_id`, `salesman_id`, `order_partner_id`.
-   - **Lifecycle Hooks**: Links matching optional products (`OrderOption`) on creation/update; triggers inventory procurement rule recomputation on quantity change when order is confirmed.
+   - **Lifecycle Hooks**: Links matching optional products (`OrderOption`) on creation/update; triggers inventory procurement rule recomputation on quantity change when order is confirmed; safely verifies parent order existence in `computeWarehouseId()` before synchronizing warehouse and route identifiers. Relationship queries in `QuotationForm` apply `hide_deleted_unless_selected($state)`.
 3. **`Team` (`Webkul\Sale\Models\Team`)**:
    - **Table**: `sales_teams`
    - **Traits**: `BelongsToCompany`, `HasChatter`, `HasCustomFields`, `HasFactory`, `HasLogActivity`, `SoftDeletes`, `SortableTrait`.

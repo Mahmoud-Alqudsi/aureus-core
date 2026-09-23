@@ -30,6 +30,30 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### Upstream Synchronization Reconciled on Topic Branch (2026-09-23)
+
+- **Evidentiary Tier**: Git-Verified history on branch `chore/upstream-sync-20260923-2942d1cb8`.
+- **Status**: **Integrated locally with zero conflicts; knowledge base atomically synchronized**.
+- **Recorded Scope**:
+  - **Upstream Merge**: Merged 27 commits from `upstream/master` (Webkul fork up to target `4033c70554ee5d13daeaee52ff14ecf46f365314`) from merge-base `d7d471894d91f153633242ce802c464e0414d9bc` into topic branch `chore/upstream-sync-20260923-2942d1cb8` at merge commit `a0c11c67b`.
+  - **Dependency Updates**: Filament packages upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated static compiled assets. `composer.json` remained unchanged and validated cleanly under `composer validate --strict`.
+  - **Domain Improvements & Fixes**:
+    - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, and soft-delete relationship query refactoring.
+    - `purchases`: Purchase order bill confirmation fix (`ConfirmAction`).
+    - `fields`: Custom field validation handling improvements (`FieldForm`).
+    - `plugin-manager`: Settings migrations automated `--force` flag and Spatie settings cache clearing in `InstallCommand`.
+    - `inventories`: `ProductQuantity` quantities calculations and stock move soft-delete filtering.
+    - `sales`: `OrderLine` fixes and price list navigation layout resolution.
+  - **Downstream Invariants Preserved**: Zero new migrations (schema unchanged at 262 tables). No upstream changes to `.github/workflows/`. Downstream privacy preservation in `InstallCommand` retained.
+  - **Living Documentation & Knowledge Reconciliation**: Comprehensive 2-pass audit across all 14 affected domain plugins and architectural baselines:
+    - Updated [`docs/architecture/change-impact.md`](architecture/change-impact.md) (Section 22) and [`docs/verification-matrix.md`](verification-matrix.md) (Section 9) directly on the synchronization topic branch before opening the Pull Request, in strict compliance with Section 8 of `upstream-sync.md`.
+    - Synchronized framework baselines (Laravel `v13.31.0`, Filament `v5.8.1`, Livewire `v4.4.5`) across `docs/README.md`, `docs/ai/context.md`, `docs/ai/terminology.md`, `docs/ai/forbidden-patterns.md`, `docs/architecture/filament-architecture.md`, `docs/architecture/overview.md`.
+    - Documented soft-delete relationship form query scoping pattern (`hide_deleted_unless_selected`) in `docs/ai/coding-rules.md:4.6`, `docs/plugins/support.md`, `docs/plugins/inventories.md`, `docs/plugins/purchases.md`, `docs/plugins/sales.md`, `docs/plugins/manufacturing.md`, `docs/plugins/maintenance.md`, `docs/plugins/employees.md`, `docs/plugins/partners.md`, `docs/plugins/projects.md`, and `docs/plugins/blogs.md`.
+    - Documented cross-tenant authorized querying pattern (`withoutGlobalScope(CompaniesScope::class)` with `allowed_company_ids()`) and helpers (`allowed_companies()`, `allowed_company_ids()`) in `docs/security/multi-company.md`, `docs/database/company-isolation.md`, `docs/plugins/support.md`, and `docs/plugins/accounts.md`.
+    - Documented `ProductQuantity` `uom()` and `productCategory()` `HasOneThrough` relationships in `docs/database/models-index.md` and `docs/plugins/inventories.md`.
+    - Documented stored XSS mitigation in `docs/security/threat-model.md` and `docs/plugins/accounts.md`.
+    - Documented document total discount calculation in `docs/business-rules/accounting.md`.
+
 ### AI Template Governance, Upstream Sync Decoupling & CI Fast-Track (2026-09-23)
 
 - **Evidentiary Tier**: Git-Verified history on branch `chore/governance-sync-and-ci-fast-track`.

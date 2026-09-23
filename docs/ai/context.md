@@ -29,9 +29,9 @@ Use these labels precisely:
 | Component | Installed / declared version | Evidence |
 | --- | --- | --- |
 | PHP | runtime `8.3.29`; project constraint `^8.3` | `php -v`; `composer.json` → `require.php` |
-| Laravel | `v13.21.1` | `composer.lock` → `laravel/framework` |
-| Filament | `v5.7.6` | `composer.lock` → `filament/filament` |
-| Livewire | `v4.3.3` | `composer.lock` → `livewire/livewire` |
+| Laravel | `v13.31.0` | `composer.lock` → `laravel/framework` |
+| Filament | `v5.8.1` | `composer.lock` → `filament/filament` |
+| Livewire | `v4.4.5` | `composer.lock` → `livewire/livewire` |
 | Pest | `v4.7.5` | `composer.lock` → `pestphp/pest` |
 | Filament Shield | `4.2.0` | `composer.lock` → `bezhansalleh/filament-shield` |
 | Laravel Sanctum | `v4.3.3` | `composer.lock` → `laravel/sanctum` |

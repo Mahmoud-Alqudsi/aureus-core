@@ -27,7 +27,7 @@ The `plugin-manager` module is the central packaging foundation and module lifec
 2. **Console Command Engine**: Houses all 4 Artisan console command files in the entire repository:
    - `InstallERP` (`erp:install`): Orchestrates full ERP system setup, database migrations, initial Super Admin creation, default company/settings assignment, role/permission generation via Filament Shield, and storage linking.
    - `FindMissingTranslations` (`translations:check`): Performs automated parity and structural auditing across translation files for all plugins against the canonical English (`en`) baseline.
-   - `InstallCommand` (`{shortName}:install`): Dynamically bound per package to manage asset/config publishing, migrations, seeders, dependency resolution, and permission generation.
+   - `InstallCommand` (`{shortName}:install`): Dynamically bound per package to manage asset/config publishing, migrations, seeders, dependency resolution, Spatie settings migrations (executing with `--force` and automatically clearing Spatie settings cache via `settings:clear-cache`), and permission generation.
    - `UninstallCommand` (`{shortName}:uninstall`): Dynamically bound per package to validate dependent packages, roll back migrations, remove database records, and refresh caches.
 3. **Admin Panel UI**: Delivers a full administrative interface (`PluginResource`) with responsive card grid views, tabbed filtering (`Apps`, `Extra`, `Installed`, `Not Installed`), manual plugin discovery synchronization, and interactive modal dialogs for installing and uninstalling optional modules with data impact analysis.
 4. **Access Control Integration**: Configures dynamic permission key formatting for Filament Shield via `PermissionManager` to enforce standardized plugin-scoped authorization across all resources, pages, and widgets.
@@ -78,7 +78,7 @@ The `plugin-manager` module is the central packaging foundation and module lifec
   - `spatie/eloquent-sortable` (`v4.5.0`): Implements `Sortable` and uses `SortableTrait` on `Plugin` model.
   - `spatie/laravel-permission` (`v6.24.0`): Queries/syncs `Role` and `Permission` models in `InstallERP` and `InstallCommand`.
   - `bezhansalleh/filament-shield` (`4.2.0`): Configures dynamic permission key formatting via `FilamentShield::buildPermissionKeyUsing()` and role utilities via `Utils`.
-  - `filament/filament` (`v5.7.6`): Filament resources, tables, pages, infolists, and assets.
+  - `filament/filament` (`v5.8.1`): Filament resources, tables, pages, infolists, and assets.
   - `laravel/prompts` (`v0.3.10`): Interactive text and password input in `InstallERP`.
   - `guzzlehttp/guzzle` (`7.10.0`): Imported in `Installer` listener.
 

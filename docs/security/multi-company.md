@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-25
+last_verified: 2026-09-23
 scope: security
 confidence: high
 ---
@@ -21,11 +21,16 @@ Aureus ERP provides opt-in, session-aware company filtering for Eloquent models 
 The `Webkul\Support\Services\CompanyContext` class is the source of truth for the current company session.
 It determines which companies the user is allowed to access and which ones are currently "active" in their session.
 
-- **Allowed Companies**: Determined by the `seesAllCompanies()` bypass or the user's explicit relationships (`$user->allowedCompanies()`).
-- **Active Companies**: Stored in the session under the key `active_company_ids` (`CompanyContext::SESSION_KEY`). If the session is empty, it selects the user's `default_company_id` when allowed, otherwise the first allowed company.
+- **Allowed Companies**: Determined by the `seesAllCompanies()` bypass or the user's explicit relationships (`$user->allowedCompanies()`). Accessible globally via helper functions:
+  - `allowed_companies(): Collection` — Resolves the collection of allowed `Company` models.
+  - `allowed_company_ids(): array` — Returns integer IDs of allowed companies.
+- **Active Companies**: Stored in the session under the key `active_company_ids` (`CompanyContext::SESSION_KEY`). If the session is empty, it selects the user's `default_company_id` when allowed, otherwise the first allowed company. Accessible globally via:
+  - `active_company_ids(): array` — Returns active company IDs in session.
+  - `current_company_id(): ?int` — Returns the current primary active company ID.
 
 **Evidence:**
 - `plugins/webkul/support/src/Services/CompanyContext.php`
+- `plugins/webkul/support/src/helpers.php:456-475`
 
 ## CompanyScope
 [VERIFIED]
@@ -68,3 +73,20 @@ Explicit inventory logic checks cross-company transfers. `ChecksCrossCompanyTran
 - `plugins/webkul/inventories/src/Models/Concerns/ChecksCrossCompanyTransfer.php`
 - `plugins/webkul/inventories/src/Models/Operation.php`
 - `plugins/webkul/inventories/src/Models/Scrap.php`
+
+## Cross-Company Form Selection Pattern
+[VERIFIED]
+When a Filament form schema needs to present selectable records belonging to an explicitly chosen tenant (for example, choosing an `Account` for a specific company in `AccountProductSchema::accountOptions($companyId)`), global scoping like `CompaniesScope` would otherwise restrict choices to the session's active companies.
+
+To safely allow cross-tenant record selection while strictly preventing unauthorized tenant access:
+1. The requested `$companyId` is verified against `allowed_company_ids()`:
+   ```php
+   if (filled($companyId) && in_array((int) $companyId, allowed_company_ids(), true)) {
+       $query->withoutGlobalScope(CompaniesScope::class);
+   }
+   ```
+2. If the user is not authorized for that company, `withoutGlobalScope` is not called, preserving isolation.
+
+**Evidence:**
+- `plugins/webkul/accounts/src/Filament/Resources/ProductResource/Schemas/AccountProductSchema.php:194-202`
+- `plugins/webkul/support/src/helpers.php:470-475`

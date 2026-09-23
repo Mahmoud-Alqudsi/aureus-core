@@ -63,9 +63,9 @@ The `table-views` plugin provides a centralized Filament table personalization a
   - Autoload-dev PSR-4: `Webkul\TableViews\Tests\` -> `tests/`
   - Extra Laravel Providers: `Webkul\TableViews\TableViewsServiceProvider`
 - **External Dependencies Consumed via Root Composer** (`composer.lock`):
-  - `filament/filament` (`v5.7.6`): Filament render hooks, tabs, forms, actions, notifications, and asset registration.
+  - `filament/filament` (`v5.8.1`): Filament render hooks, tabs, forms, actions, notifications, and asset registration.
   - `guava/filament-icon-picker` (`2.1.2`): Icon picker component used in view creation/edit modals (`CreateViewAction`, `EditViewAction`).
-  - `livewire/livewire` (`v4.3.3`): Component state hydration, URL query sync (`#[Url]`), and live event dispatching.
+  - `livewire/livewire` (`v4.4.5`): Component state hydration, URL query sync (`#[Url]`), and live event dispatching.
 - **Frontend Dependencies (`package.json`)**:
   - `tailwindcss` (`^3.4.15`), `postcss` (`^8.4.49`), `autoprefixer` (`^10.4.20`).
 

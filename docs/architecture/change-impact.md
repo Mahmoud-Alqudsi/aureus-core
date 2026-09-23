@@ -470,7 +470,7 @@ Record-level access control resolves ownership dynamically via `Webkul\Security\
 
 ### 10.1 Presentation Architecture
 
-Filament v5 (`v5.7.6`) and Livewire v4 (`v4.3.3`) power the presentation tier across both panels:
+Filament v5 (`v5.8.1`) and Livewire v4 (`v4.4.5`) power the presentation tier across both panels:
 - **204 Filament Resource Classes**
 - **474 Total Pages** (398 Resource Pages, 76 Custom/Cluster/Settings Pages)
 - **46 Filament Clusters**
@@ -739,7 +739,7 @@ The following comprehensive matrix details the impact surface, hazard level, man
 | **AI Rule - plugin-rules** | Modifying plugin creation or lifecycle rules | Plugin structure, ServiceProvider conventions, dependency wiring | **HIGH** | New plugins created with non-standard layout or broken provider registration. | Lead Architect | Verify checklist reflects current `plugin-manager` package mechanics. | Verify new plugins pass all 13 plugin creation checklist items. | `docs/ai/plugin-rules.md`. |
 | **AI Rule - database-rules** | Modifying database, migration, or foreign key rules | Schema design, delete behaviors, migration registration standards | **HIGH** | Unregistered migrations on disk; unjustified foreign key delete actions. | Database Specialist | Verify rules reflect semantic lifecycle determination over statistical defaults. | Audit new migrations against database rules checklist. | `docs/ai/database-rules.md`. |
 | **AI Rule - security-rules** | Modifying tenancy, Bouncer, or query scoping rules | Multi-company enforcement, raw SQL safety, authorization checks | **CRITICAL** | Insecure code generation; un-scoped raw queries; multi-company vulnerabilities. | Security Specialist | Verify security rules enforce complete query surface review. | Audit security tests and raw SQL sites against updated rules. | `docs/ai/security-rules.md`. |
-| **AI Rule - coding-rules** | Modifying general coding or Filament standards | Code style, Livewire v4 idioms, Filament form/table conventions | **MEDIUM** | Outdated Livewire v3 patterns generated; inconsistent component design. | Tech Lead | Verify alignment with Livewire v4.3.3 and Filament v5.7.6 specifications. | Run Laravel Pint and PHPStan across modified files. | `docs/ai/coding-rules.md`. |
+| **AI Rule - coding-rules** | Modifying general coding or Filament standards | Code style, Livewire v4 idioms, Filament form/table conventions | **MEDIUM** | Outdated Livewire v3 patterns generated; inconsistent component design. | Tech Lead | Verify alignment with Livewire v4.4.5 and Filament v5.8.1 specifications. | Run Laravel Pint and PHPStan across modified files. | `docs/ai/coding-rules.md`. |
 | **AI Rule - testing-rules** | Modifying Pest testing conventions or priority tiers | Automated test structure, priority thresholds, coverage standards | **MEDIUM** | Ineffective tests written; priority high-risk zones left untested. | QA / Testing Lead | Verify testing standards enforce real model interactions over excessive mocking. | Run test runner to verify compliance with test formatting standards. | `docs/ai/testing-rules.md`. |
 
 ---
@@ -927,3 +927,32 @@ Every rule, catalog entry, and architectural constraint in this document is back
 **Verification record:** Git parent topology, upstream reachability, protected-branch integration, and `git diff --check` were verified. GitHub Actions on synchronization commit `dcd449b96` completed successfully: Pest against MySQL and PostgreSQL, all twelve Playwright database/shard jobs and both report jobs, and the translation check. The local PHP/Composer runtime could not be used for an independent rerun because of a WSL socket failure. Pint and an explicit PHP syntax-only pass were not separate CI jobs. A rehearsal against operational production data is not established by fresh-install CI and remains outside this repository-only verification.
 
 **Evidence:** `git show dcd449b96`; `git show ddbd24ba4`; `git merge-base --is-ancestor d7d471894 origin/develop`; `git diff c2b4ddaa2..origin/develop`; `plugins/webkul/{accounts,inventories,manufacturing,products,purchases,sales}/src/*ServiceProvider.php`; `.github/workflows/{pest_tests,playwright_tests,translations_check}.yml`; GitHub Actions runs `35284954990`, `35284955122`, and `35284955199`; `.github/workflows/playwright_report.yml` at `upstream/master`; `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`; `plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php`.
+
+---
+
+## 22. Upstream Synchronization Record — 2026-09-23
+
+**Status:** [VERIFIED]
+
+**Accepted range and topology:** `upstream/master` target `4033c70554ee5d13daeaee52ff14ecf46f365314` (27 commits beyond merge-base `d7d471894d91f153633242ce802c464e0414d9bc`) was merged into synchronization branch `chore/upstream-sync-20260923-2942d1cb8` at merge commit `a0c11c67b56d0974418cb8d6ab50648cddbaeb5a`. Both parent lineages (`2942d1cb8` from `origin/develop` and `4033c7055` from `upstream/master`) are preserved.
+
+**Observed impact:**
+- **Blast radius:** 101 files modified (985 insertions, 705 deletions across `plugins/webkul/*`, `composer.lock`, and precompiled assets).
+- **Database & Schema:** Zero migrations added or modified. The database schema remains unchanged across all 262 tables.
+- **Dependencies:** Filament upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated vendor assets in `plugins/webkul/support/resources/dist/`. `composer.json` remained untouched.
+- **Automation & Security:** Zero modifications to `.github/workflows/`. Downstream CI governance and Fast-Track optimizations remain 100% intact.
+- **Domain Bugfixes:**
+  - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, and relationship query refactoring for soft-deletes.
+  - `purchases`: Purchase order bill confirmation fix (`ConfirmAction`).
+  - `fields`: Custom field validation handling improvements (`FieldForm`).
+  - `plugin-manager`: Settings migration automated `--force` flag and Spatie settings cache clearing in `InstallCommand`.
+  - `inventories`: `ProductQuantity` quantities calculations and stock move soft-delete filtering.
+  - `sales`: `OrderLine` fixes and price list navigation layout resolution.
+
+**Explicit downstream decisions:**
+- Downstream privacy and branding preservation retained: the GitHub starring prompt in `InstallCommand` remains removed.
+- CI workflows and AI governance files are preserved as Downstream-Owned assets with zero regression.
+
+**Verification record:** Git parent topology, zero-conflict merge resolution, `git diff --check`, and strict Composer manifest validation (`composer validate --strict`) were verified locally.
+
+**Evidence:** `git show a0c11c67b`; `git rev-parse upstream/master` (`4033c7055`); `git diff 2942d1cb8..HEAD`; `composer validate --strict`.
