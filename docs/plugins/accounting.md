@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-25
 scope: plugins/webkul/accounting
 confidence: high
 ---
@@ -370,7 +370,7 @@ Every report implements `HasPageShield`, `InteractsWithForms`, `NormalizeDateFil
 
 ### 4. Operational Cluster Resources
 - **Accounting Cluster (`Accounting`)**:
-  - `JournalEntryResource`: Manual journal entry management (`ListJournalEntries`, `CreateJournalEntry`, `ViewJournalEntry`, `EditJournalEntry`). Custom form fields, custom table columns/filters, sub-navigation linking to payment records, and `JournalEntryExporter`.
+  - `JournalEntryResource`: Manual journal entry management (`ListJournalEntries`, `CreateJournalEntry`, `ViewJournalEntry`, `EditJournalEntry`). Custom form fields, custom table columns/filters, sub-navigation linking to payment records, and `JournalEntryExporter`. Form schema (`JournalEntryForm`) applies `hide_deleted_unless_selected($state)` to the company relationship query on `company_id`.
   - `JournalItemResource`: Read-only general ledger line browser (`ListJournalItems`) with `JournalItemExporter`. Creation, direct editing, and manual line deletion are disabled (`canCreate(): false`, `canEdit(): false`, `canDelete(): false`) to maintain ledger integrity.
 - **Customers Cluster (`Customers`)**:
   - `InvoiceResource`: Customer invoices (`ListInvoices`, `CreateInvoice`, `ViewInvoice`, `EditInvoice`, `ManagePayments`). Extended product repeater with deep-linking (`openProduct` action).

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-25
 scope: plugins/webkul/accounts
 confidence: high
 ---
@@ -514,13 +514,13 @@ The `accounts` module defines 20 Filament resources under `plugins/webkul/accoun
   - `ViewInvoice` (`view` => `/{record}`)
   - `EditInvoice` (`edit` => `/{record}/edit`)
   - `ManagePayments` (`payments` => `/{record}/payments`)
-- **Components**: `InvoiceForm`, `InvoicesTable`, `InvoiceInfolist`, `InvoiceSummary` (Livewire summary), `InvoiceExporter`. Actions include `ConfirmAction` (using `$this->cancel(shouldRollBackDatabaseTransaction: true)` for transactional rollback on failure), `PayAction`, and `PreviewAction` (rendering responsive localized document preview with per-item discount percentages and tax breakdowns).
+- **Components**: `InvoiceForm` (relationship queries for partner, journal, currency, and payment terms apply `hide_deleted_unless_selected($state)`), `InvoicesTable`, `InvoiceInfolist`, `InvoiceSummary` (Livewire summary), `InvoiceExporter`. Actions include `ConfirmAction` (using `$this->cancel(shouldRollBackDatabaseTransaction: true)` for transactional rollback on failure), `PayAction` (applying `hide_deleted_unless_selected($state)` on journal and payment method line selections), and `PreviewAction` (rendering responsive localized document preview with per-item discount percentages and tax breakdowns).
 
 ### 2. `BillResource` (`BillResource.php`)
 - **Model**: `Webkul\Account\Models\Bill` (`MoveType::IN_INVOICE`)
 - **Navigation Icon**: `heroicon-o-rectangle-stack`
 - **Pages**: `ListBills`, `CreateBill`, `ViewBill`, `EditBill`, `ManagePayments`.
-- **Components**: `BillForm`, `BillsTable`, `BillInfolist`, `InvoiceSummary`, `BillExporter`. Actions include `ConfirmAction`, `PayAction`, and `PreviewAction`.
+- **Components**: `BillForm` (relationship queries for vendor, journal, currency, and payment terms apply `hide_deleted_unless_selected($state)`), `BillsTable`, `BillInfolist`, `InvoiceSummary`, `BillExporter`. Actions include `ConfirmAction`, `PayAction`, and `PreviewAction`.
 
 ### 3. `CreditNoteResource` (`CreditNoteResource.php`)
 - **Model**: `Webkul\Account\Models\CreditNote` (`MoveType::OUT_REFUND`)
@@ -544,13 +544,13 @@ The `accounts` module defines 20 Filament resources under `plugins/webkul/accoun
 - **Model**: `Webkul\Account\Models\Journal`
 - **Navigation Icon**: `heroicon-o-book-open`
 - **Pages**: `ListJournals`, `CreateJournal`, `ViewJournal`, `EditJournal`.
-- **Components**: `JournalForm`, `JournalsTable`, `JournalInfolist`.
+- **Components**: `JournalForm` (relationship queries apply `hide_deleted_unless_selected($state)` for accounts and currencies), `JournalsTable`, `JournalInfolist`.
 
 ### 7. `PaymentResource` (`PaymentResource.php`)
 - **Model**: `Webkul\Account\Models\Payment`
 - **Navigation Icon**: `heroicon-o-banknotes`
 - **Pages**: `ListPayments`, `CreatePayment`, `ViewPayment`, `EditPayment`.
-- **Components**: `PaymentForm`, `PaymentsTable`, `PaymentInfolist`, `PaymentExporter`.
+- **Components**: `PaymentForm` (relationship queries apply `hide_deleted_unless_selected($state)` for journals, partners, and payment methods), `PaymentsTable`, `PaymentInfolist`, `PaymentExporter`.
 
 ### 8. `TaxResource` (`TaxResource.php`)
 - **Model**: `Webkul\Account\Models\Tax`

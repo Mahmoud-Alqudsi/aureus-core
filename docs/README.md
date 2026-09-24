@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-22
+last_verified: 2026-09-25
 scope: documentation-index
 confidence: high
 ---

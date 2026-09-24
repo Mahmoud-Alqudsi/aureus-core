@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-29
+last_verified: 2026-09-25
 scope: plugins/webkul/security
 confidence: high
 ---
@@ -411,7 +411,7 @@ The plugin houses static reference JSON files in `src/Data/`:
      - `EditUser`: Updates user, enforces admin protection constraints, and manages soft deletion.
      - `ViewUsers`: Displays user details.
    - Schemas & Tables:
-     - `UserForm`: Configures general info (name, email, password on create), permission assignment (roles, resource_permission with self-downgrade block, teams required when GROUP), partner avatar upload (`users/avatars`), language, active toggle, and multi-company relations (enforcing default company is among allowed companies).
+     - `UserForm`: Configures general info (name, email, password on create), permission assignment (roles, resource_permission with self-downgrade block, teams required when GROUP), partner avatar upload (`users/avatars`), language, active toggle, and multi-company relations (enforcing default company is among allowed companies; `defaultCompany` relationship query applies `hide_deleted_unless_selected($state)` while bypassing `AllowedCompanyScope`).
      - `UserInfolist`: Read-only layout with badges for roles, teams, and allowed companies.
      - `UsersTable`: Reorderable columns, partner avatar, team badges, role names, company tags, and filters for resource_permission, default_company, allowed_companies, teams, and roles.
 

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-04
+last_verified: 2026-09-25
 scope: architecture
 confidence: high
 ---
@@ -939,11 +939,10 @@ Every rule, catalog entry, and architectural constraint in this document is back
 **Observed impact:**
 - **Blast radius:** 101 files modified (985 insertions, 705 deletions across `plugins/webkul/*`, `composer.lock`, and precompiled assets).
 - **Database & Schema:** Zero migrations added or modified. The database schema remains unchanged across all 262 tables.
-- **Dependencies:** Filament upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated vendor assets in `plugins/webkul/support/resources/dist/`. `composer.json` remained untouched.
+- **Dependencies:** Filament upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated vendor assets in `public/css/filament/`, `public/fonts/filament/`, and `public/js/filament/`. `composer.json` remained untouched.
 - **Automation & Security:** Zero modifications to `.github/workflows/`. Downstream CI governance and Fast-Track optimizations remain 100% intact.
 - **Domain Bugfixes:**
-  - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, and relationship query refactoring for soft-deletes.
-  - `purchases`: Purchase order bill confirmation fix (`ConfirmAction`).
+  - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, purchase order bill confirmation fix via `ConfirmAction`, and relationship query refactoring for soft-deletes.
   - `fields`: Custom field validation handling improvements (`FieldForm`).
   - `plugin-manager`: Settings migration automated `--force` flag and Spatie settings cache clearing in `InstallCommand`.
   - `inventories`: `ProductQuantity` quantities calculations and stock move soft-delete filtering.

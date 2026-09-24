@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-22
+last_verified: 2026-09-25
 scope: documentation-changelog
 confidence: high
 ---
@@ -30,6 +30,17 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### Upstream Sync Knowledge-Base Gaps Reconciled (2026-09-25)
+
+- **Evidentiary Tier**: Git-Verified history on branch `docs/reconcile-upstream-sync-knowledge-base`.
+- **Status**: **100% Knowledge Base and Source Code Parity Established**.
+- **Recorded Scope**:
+  - **Eliminated Phantom Architecture**: Removed nonexistent global helper `active_company_ids(): array` from [`docs/security/multi-company.md`](security/multi-company.md), documenting canonical `app(CompanyContext::class)->activeIds()` retrieval and verifying `helpers.php` boundaries.
+  - **Completed Soft-Delete Pattern Documentation**: Documented `hide_deleted_unless_selected($state)` across the four previously omitted plugins: `accounting` (`JournalEntryForm`), `accounts` (`BillForm`, `InvoiceForm`, `JournalForm`, `PaymentForm`, `PayAction`), `products` (`ProductForm`, `PackagingForm`, `ManageAttributes`), and `security` (`UserForm`).
+  - **Custom Field Validation Overhaul**: Fully documented six added validation rules (`requiredIfAccepted`, `length`, `maxItems`, `maxLength`, `minItems`, `minLength`) and two removed rules (`maxSize`, `minSize`) in [`docs/plugins/fields.md`](plugins/fields.md).
+  - **Impact and Asset Alignment**: Clarified `ConfirmAction` ownership under `accounts` resolving vendor bill confirmation from purchase orders, and corrected compiled Filament asset paths in [`docs/architecture/change-impact.md`](architecture/change-impact.md) Section 22 to `public/css/filament/`, `public/fonts/filament/`, and `public/js/filament/`.
+  - **Frontmatter Verification Audit**: Bumped `last_verified: 2026-09-25` across all reviewed living documentation files.
+
 ### Upstream Synchronization Reconciled on Topic Branch (2026-09-23)
 
 - **Evidentiary Tier**: Git-Verified history on branch `chore/upstream-sync-20260923-2942d1cb8`.
@@ -39,7 +50,7 @@ In accordance with the repository's documentation accuracy rules, historical eve
   - **Dependency Updates**: Filament packages upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated static compiled assets. `composer.json` remained unchanged and validated cleanly under `composer validate --strict`.
   - **Domain Improvements & Fixes**:
     - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, and soft-delete relationship query refactoring.
-    - `purchases`: Purchase order bill confirmation fix (`ConfirmAction`).
+    - `accounts` & `purchases`: Purchase order bill confirmation fix via `ConfirmAction` in `accounts` (`InvoiceResource/Actions/ConfirmAction` utilizing `$this->cancel(shouldRollBackDatabaseTransaction: true)`).
     - `fields`: Custom field validation handling improvements (`FieldForm`).
     - `plugin-manager`: Settings migrations automated `--force` flag and Spatie settings cache clearing in `InstallCommand`.
     - `inventories`: `ProductQuantity` quantities calculations and stock move soft-delete filtering.
@@ -48,7 +59,7 @@ In accordance with the repository's documentation accuracy rules, historical eve
   - **Living Documentation & Knowledge Reconciliation**: Comprehensive 2-pass audit across all 14 affected domain plugins and architectural baselines:
     - Updated [`docs/architecture/change-impact.md`](architecture/change-impact.md) (Section 22) and [`docs/verification-matrix.md`](verification-matrix.md) (Section 9) directly on the synchronization topic branch before opening the Pull Request, in strict compliance with Section 8 of `upstream-sync.md`.
     - Synchronized framework baselines (Laravel `v13.31.0`, Filament `v5.8.1`, Livewire `v4.4.5`) across `docs/README.md`, `docs/ai/context.md`, `docs/ai/terminology.md`, `docs/ai/forbidden-patterns.md`, `docs/architecture/filament-architecture.md`, `docs/architecture/overview.md`.
-    - Documented soft-delete relationship form query scoping pattern (`hide_deleted_unless_selected`) in `docs/ai/coding-rules.md:4.6`, `docs/plugins/support.md`, `docs/plugins/inventories.md`, `docs/plugins/purchases.md`, `docs/plugins/sales.md`, `docs/plugins/manufacturing.md`, `docs/plugins/maintenance.md`, `docs/plugins/employees.md`, `docs/plugins/partners.md`, `docs/plugins/projects.md`, and `docs/plugins/blogs.md`.
+    - Documented soft-delete relationship form query scoping pattern (`hide_deleted_unless_selected`) in `docs/ai/coding-rules.md:4.6`, `docs/plugins/support.md`, and across all 14 affected plugins (`accounting`, `accounts`, `blogs`, `employees`, `inventories`, `maintenance`, `manufacturing`, `partners`, `products`, `projects`, `purchases`, `sales`, `security`, and `support`).
     - Documented cross-tenant authorized querying pattern (`withoutGlobalScope(CompaniesScope::class)` with `allowed_company_ids()`) and helpers (`allowed_companies()`, `allowed_company_ids()`) in `docs/security/multi-company.md`, `docs/database/company-isolation.md`, `docs/plugins/support.md`, and `docs/plugins/accounts.md`.
     - Documented `ProductQuantity` `uom()` and `productCategory()` `HasOneThrough` relationships in `docs/database/models-index.md` and `docs/plugins/inventories.md`.
     - Documented stored XSS mitigation in `docs/security/threat-model.md` and `docs/plugins/accounts.md`.
