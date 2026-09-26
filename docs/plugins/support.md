@@ -84,7 +84,7 @@ The `support` module is the primary architectural bedrock and shared foundation 
     - Registers header version render hook (`PanelsRenderHook::USER_MENU_PROFILE_BEFORE`) via `registerHooks()`
     - Registers router macros (`softDeletableApiResource`) via `registerRouterMacros()`
   - `packageBooted()`:
-    - Registers global Gate before-rule: intercepts ability `'bypass_company_scope'` and returns `true` if the authenticated user has the `super_admin` role (`SupportServiceProvider.php:94-104`)
+    - Registers global Gate before-rule: intercepts ability `'bypass_company_scope'` and returns `true` if the authenticated user has the `super_admin` role (`plugins/webkul/support/src/SupportServiceProvider.php:94-104`)
     - Registers Livewire component `'accept-invitation'` (`Webkul\Security\Livewire\AcceptInvitation::class`)
     - Registers Web route `POST company-context/set` (`CompanyContextController::class, 'set'`)
     - Registers Filament render hook `PanelsRenderHook::GLOBAL_SEARCH_BEFORE` to inject `support::company-switcher` in the `admin` panel
@@ -878,7 +878,7 @@ The `support` plugin provides shared infrastructure consumed across core and opt
 **Test Coverage Status: HAS TESTS.**
 
 1. **`EmailTemplate` Missing Database Migration Anomaly**:
-   - `SupportServiceProvider.php:60` registers `'2025_01_03_061444_create_email_templates_table'` in `hasMigrations()`, but the migration file `2025_01_03_061444_create_email_templates_table.php` is completely missing from disk.
+   - `plugins/webkul/support/src/SupportServiceProvider.php:60` registers `'2025_01_03_061444_create_email_templates_table'` in `hasMigrations()`, but the migration file `2025_01_03_061444_create_email_templates_table.php` is completely missing from disk.
    - Consequently, the `email_templates` database table is not created.
    - `EmailTemplateService` (`plugins/webkul/support/src/Services/EmailTemplateService.php`) queries `EmailTemplate` and imports `Webkul\Support\Mail\DynamicEmail` (which also does not exist on disk).
    - [INFERRED] It is inferred that `EmailTemplate` was an early prototype for database-driven mail templating that was abandoned in favor of direct Blade view mailables (`EmailService.php`), leaving orphaned model, service, factory, and resource classes.

@@ -350,7 +350,7 @@ When injected into a page using `HasTableViews`:
 [VERIFIED]
 1. **`filtered-list-updated`** (Livewire Browser Event):
    - Dispatched by `HasTableViews::createTableViewAction()` after creating a new saved view (`$this->dispatch('filtered-list-updated')`).
-   - Listened to by the tabs component (`wire:listen="filtered-list-updated"`) in `favorites-views.blade.php:17` to trigger reactive re-rendering of the top tab bar.
+   - Listened to by the tabs component (`wire:listen="filtered-list-updated"`) in `plugins/webkul/table-views/resources/views/filament/resources/pages/list-records/favorites-views.blade.php:17` to trigger reactive re-rendering of the top tab bar.
 
 ## Listeners
 [NOT APPLICABLE]

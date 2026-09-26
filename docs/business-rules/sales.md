@@ -280,13 +280,13 @@ If order is not in `OrderState::SALE`: $\implies \text{InvoiceStatus::NO}$. Othe
 
 | Parameter / Field | Source Location | Exact Value / Formula | Behavior When Violated | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Minimum Unit Price** | `OrderRequest.php:52` | `price_unit >= 0` | Validation error HTTP 422: `"The price unit must be at least 0."` | [VERIFIED] |
-| **Maximum Unit Price** | `OrderRequest.php:52` | `price_unit <= 99999999999` | Validation error HTTP 422: Value exceeds numerical capacity. | [VERIFIED] |
-| **Minimum Quantity** | `OrderRequest.php:50` | `product_uom_qty >= 0.0001` | Validation error HTTP 422: Quantity cannot be zero or negative. | [VERIFIED] |
-| **Discount Percentage Range** | `OrderRequest.php:53` | `discount >= 0 && discount <= 100` | Validation error HTTP 422: Discount must be between 0 and 100%. | [VERIFIED] |
-| **Quotation Expiration Validity** | `QuotationAndOrderSettings.php:9` | Default days added to `now()` | Descriptive only. Does **not** block quotation confirmation even if date is past. | [VERIFIED] |
-| **Zero Invoiceable Quantity Barrier** | `CreateInvoiceAction.php:71-79` | `qty_to_invoice == 0` on all lines | Halts execution with warning notification; prevents creation of blank invoices. | [VERIFIED] |
-| **Administrative Lock Barrier** | `QuotationForm.php:106,567` | `Order::$locked === true` | UI fields and line items become disabled; prevents unauthorized edits. | [VERIFIED] |
+| **Minimum Unit Price** | `plugins/webkul/sales/src/Http/Requests/OrderRequest.php:52` | `price_unit >= 0` | Validation error HTTP 422: `"The price unit must be at least 0."` | [VERIFIED] |
+| **Maximum Unit Price** | `plugins/webkul/sales/src/Http/Requests/OrderRequest.php:52` | `price_unit <= 99999999999` | Validation error HTTP 422: Value exceeds numerical capacity. | [VERIFIED] |
+| **Minimum Quantity** | `plugins/webkul/sales/src/Http/Requests/OrderRequest.php:50` | `product_uom_qty >= 0.0001` | Validation error HTTP 422: Quantity cannot be zero or negative. | [VERIFIED] |
+| **Discount Percentage Range** | `plugins/webkul/sales/src/Http/Requests/OrderRequest.php:53` | `discount >= 0 && discount <= 100` | Validation error HTTP 422: Discount must be between 0 and 100%. | [VERIFIED] |
+| **Quotation Expiration Validity** | `plugins/webkul/sales/src/Settings/QuotationAndOrderSettings.php:9` | Default days added to `now()` | Descriptive only. Does **not** block quotation confirmation even if date is past. | [VERIFIED] |
+| **Zero Invoiceable Quantity Barrier** | `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/QuotationResource/Actions/CreateInvoiceAction.php:71-79` | `qty_to_invoice == 0` on all lines | Halts execution with warning notification; prevents creation of blank invoices. | [VERIFIED] |
+| **Administrative Lock Barrier** | `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/QuotationResource/Schemas/QuotationForm.php:106,567` | `Order::$locked === true` | UI fields and line items become disabled; prevents unauthorized edits. | [VERIFIED] |
 | **Database Decimal Precision** | Migrations | `DECIMAL(15, 4)` | Supports up to 4 decimal places across all sales amounts and quantities. | [VERIFIED] |
 
 ---

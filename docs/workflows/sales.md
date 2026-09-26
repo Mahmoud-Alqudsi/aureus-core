@@ -202,11 +202,11 @@ Evidence: `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/Quotation
 
 | Downstream Document | Document State at Cancellation | System Behavior | Source Evidence |
 | :--- | :--- | :--- | :--- |
-| **Delivery Operation** | `draft`, `confirmed`, `assigned` | **Cancelled**. `ProcurementRequester::cancelOperations()` filters non-settled operations and invokes `InventoryFacade::cancelTransfer($operation)`. | `ProcurementRequester.php:223-228` |
-| **Delivery Operation** | `done` (Validated Delivery) | **Untouched**. Operation remains `done`; stock quantities already deducted are **not** returned or reversed. Cancellation is **not blocked**. | `ProcurementRequester.php:224-225` |
-| **Customer Invoice** | `draft` | **Untouched**. Invoice remains in `draft` state linked to the order in `sales_order_invoices`. | `OrderWorkflow.php:76-93` |
-| **Customer Invoice** | `posted` | **Untouched**. Invoice remains `posted` in the general ledger. No credit note or cancellation is triggered. Cancellation is **not blocked**. | `OrderWorkflow.php:76-93` |
-| **Payment** | `posted` / `paid` | **Untouched**. Payment ledger entries and reconciliations remain intact. | `OrderWorkflow.php:76-93` |
+| **Delivery Operation** | `draft`, `confirmed`, `assigned` | **Cancelled**. `ProcurementRequester::cancelOperations()` filters non-settled operations and invokes `InventoryFacade::cancelTransfer($operation)`. | `plugins/webkul/sales/src/Services/ProcurementRequester.php:223-228` |
+| **Delivery Operation** | `done` (Validated Delivery) | **Untouched**. Operation remains `done`; stock quantities already deducted are **not** returned or reversed. Cancellation is **not blocked**. | `plugins/webkul/sales/src/Services/ProcurementRequester.php:224-225` |
+| **Customer Invoice** | `draft` | **Untouched**. Invoice remains in `draft` state linked to the order in `sales_order_invoices`. | `plugins/webkul/sales/src/Services/OrderWorkflow.php:76-93` |
+| **Customer Invoice** | `posted` | **Untouched**. Invoice remains `posted` in the general ledger. No credit note or cancellation is triggered. Cancellation is **not blocked**. | `plugins/webkul/sales/src/Services/OrderWorkflow.php:76-93` |
+| **Payment** | `posted` / `paid` | **Untouched**. Payment ledger entries and reconciliations remain intact. | `plugins/webkul/sales/src/Services/OrderWorkflow.php:76-93` |
 
 ### Reset to Quotation
 - If an order is in `state = CANCEL`, the user can click **"Back to Quotation"** (`BackToQuotationAction`).

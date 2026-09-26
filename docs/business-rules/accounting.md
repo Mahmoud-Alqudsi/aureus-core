@@ -364,15 +364,15 @@ Every numerical boundary and tolerance threshold enforced by source code in the 
 
 | Parameter / Field | Source Location | Exact Value / Formula | Behavior When Violated | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Minimum Document Amount** | `MoveWorkflow.php:254` | `float_compare(amount_total, 0, rounding) < 0` | Throws `Exception('The total amount of the document cannot be negative.')`. Zero total is permitted; negative total is strictly blocked. | [VERIFIED] |
-| **Manual Journal Balancing Threshold** | `JournalEntryForm.php:610` | `abs(round(totalDebit - totalCredit, 2)) < 0.01` | If difference $\ge 0.01$, UI automatically injects an "Automatic Balancing" line to the journal's suspense account. | [VERIFIED] |
-| **Tax Repartition Positive Sum** | `TaxPartition.php:128` | `bccomp((string) $positive, '100', 2) === 0` | Throws `ValidationException`: Total positive factors must equal exactly 100.00%. | [VERIFIED] |
-| **Tax Repartition Negative Sum** | `TaxPartition.php:134` | `bccomp((string) $negative, '-100', 2) === 0` | Throws `ValidationException`: Total negative factors must equal exactly -100.00%. | [VERIFIED] |
-| **Tax Repartition Base Line Count** | `TaxPartition.php:92` | Exactly 1 line per document type | Throws `ValidationException` if `repartition_type = BASE` count $\ne 1$ for invoice or refund. | [VERIFIED] |
-| **Tax Repartition Tax Line Count** | `TaxPartition.php:102` | $\ge 1$ line per document type | Throws `ValidationException` if `repartition_type = TAX` count $< 1$. | [VERIFIED] |
-| **Floating-Point Zero Epsilon** | `Currency.php:119-121` | $\text{epsilon} = \text{rounding} \text{ (default } 0.01 \text{ or } 10^{-\text{decimal\_places}})$ | Values where $|x| < \text{epsilon}$ evaluate to zero (`floatIsZero = true`). | [VERIFIED] |
-| **Currency Conversion Fallback** | `Currency.php:99` | Rate $> 0$ fallback to `1.0` | If currency rate is missing, non-positive, or unconfigured, system silently defaults rate to 1.0. | [VERIFIED] |
-| **Material Tax Line Balance** | `TaxAccountingMapper.php:251` | `!$company->currency->isZero(balance)` | Zero-balance tax lines are discarded before saving unless document currency amount is non-zero. | [VERIFIED] |
+| **Minimum Document Amount** | `plugins/webkul/accounts/src/Services/MoveWorkflow.php:254` | `float_compare(amount_total, 0, rounding) < 0` | Throws `Exception('The total amount of the document cannot be negative.')`. Zero total is permitted; negative total is strictly blocked. | [VERIFIED] |
+| **Manual Journal Balancing Threshold** | `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalEntryResource/Schemas/JournalEntryForm.php:610` | `abs(round(totalDebit - totalCredit, 2)) < 0.01` | If difference $\ge 0.01$, UI automatically injects an "Automatic Balancing" line to the journal's suspense account. | [VERIFIED] |
+| **Tax Repartition Positive Sum** | `plugins/webkul/accounts/src/Models/TaxPartition.php:128` | `bccomp((string) $positive, '100', 2) === 0` | Throws `ValidationException`: Total positive factors must equal exactly 100.00%. | [VERIFIED] |
+| **Tax Repartition Negative Sum** | `plugins/webkul/accounts/src/Models/TaxPartition.php:134` | `bccomp((string) $negative, '-100', 2) === 0` | Throws `ValidationException`: Total negative factors must equal exactly -100.00%. | [VERIFIED] |
+| **Tax Repartition Base Line Count** | `plugins/webkul/accounts/src/Models/TaxPartition.php:92` | Exactly 1 line per document type | Throws `ValidationException` if `repartition_type = BASE` count $\ne 1$ for invoice or refund. | [VERIFIED] |
+| **Tax Repartition Tax Line Count** | `plugins/webkul/accounts/src/Models/TaxPartition.php:102` | $\ge 1$ line per document type | Throws `ValidationException` if `repartition_type = TAX` count $< 1$. | [VERIFIED] |
+| **Floating-Point Zero Epsilon** | `plugins/webkul/support/src/Models/Currency.php:119-121` | $\text{epsilon} = \text{rounding} \text{ (default } 0.01 \text{ or } 10^{-\text{decimal\_places}})$ | Values where $|x| < \text{epsilon}$ evaluate to zero (`floatIsZero = true`). | [VERIFIED] |
+| **Currency Conversion Fallback** | `plugins/webkul/support/src/Models/Currency.php:99` | Rate $> 0$ fallback to `1.0` | If currency rate is missing, non-positive, or unconfigured, system silently defaults rate to 1.0. | [VERIFIED] |
+| **Material Tax Line Balance** | `plugins/webkul/accounts/src/Services/TaxAccountingMapper.php:251` | `!$company->currency->isZero(balance)` | Zero-balance tax lines are discarded before saving unless document currency amount is non-zero. | [VERIFIED] |
 
 ---
 

@@ -135,7 +135,7 @@ From `plugins/webkul/blogs/composer.json`:
 
 ## Runtime Plugin Dependencies
 [VERIFIED]
-- **Declared in Service Provider**: `website` (`hasDependencies(['website'])` in `BlogServiceProvider.php:37-39`).
+- **Declared in Service Provider**: `website` (`hasDependencies(['website'])` in `plugins/webkul/blogs/src/BlogServiceProvider.php:37-39`).
 - **Core Dependencies (Inherent)**:
   - `security`: Authenticated `User` model (`author_id`, `creator_id`, `last_editor_id`), policy evaluation.
   - `support`: `NavigationGroup::Website`, `ImageService` for responsive thumbnails/banners, Spatie Translatable concerns.

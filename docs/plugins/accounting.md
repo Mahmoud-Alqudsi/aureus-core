@@ -622,7 +622,7 @@ sequenceDiagram
 - `plugins/webkul/accounting/src/Filament/Widgets/JournalChartsWidget.php:8-26`
 - `plugins/webkul/accounting/src/Filament/Widgets/JournalChartWidget.php:16-312`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/ProfitLoss.php:28-264`
-- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/TrialBalance.php:28-250`
+- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/TrialBalance.php:28-205`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/BalanceSheet.php:28-250`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/GeneralLedger.php:28-240`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/PartnerLedger.php:28-240`

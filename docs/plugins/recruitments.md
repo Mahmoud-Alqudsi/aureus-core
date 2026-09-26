@@ -127,7 +127,7 @@ Defined in `plugins/webkul/recruitments/composer.json`:
 
 ## Runtime Plugin Dependencies
 [VERIFIED]
-- **`employees`**: Declared via `$package->hasDependencies(['employees'])` in `RecruitmentServiceProvider.php:42-44`. Provides the base job positions, departments, employees, skill classifications, and work calendar schedules.
+- **`employees`**: Declared via `$package->hasDependencies(['employees'])` in `plugins/webkul/recruitments/src/RecruitmentServiceProvider.php:42-44`. Provides the base job positions, departments, employees, skill classifications, and work calendar schedules.
 
 ## Directory Structure
 [VERIFIED]
@@ -794,7 +794,7 @@ sequenceDiagram
    - The `recruitments` plugin contains **NO automated test files** (neither unit nor feature tests). Changes to applicant lifecycle logic, partner synchronization, or employee conversion must be verified manually or through newly authored test suites.
 
 2. **Hardcoded Stage IDs in Job Grid Filter Actions**:
-   - In `Webkul\Recruitment\Filament\Clusters\Applications\Resources\JobByPositionResource\Tables\JobByPositionsTable.php:22,80`, the "New Applications" query and redirect filter hardcode stage ID `1` (`where('stage_id', 1)` and `'values' => [1]`). If the default stage ID in the database is not `1` (due to re-seeding or stage deletion/recreation), this filter will display incorrect counts or return empty results.
+   - In `plugins/webkul/recruitments/src/Filament/Clusters/Applications/Resources/JobByPositionResource/Tables/JobByPositionsTable.php:22,80`, the "New Applications" query and redirect filter hardcode stage ID `1` (`where('stage_id', 1)` and `'values' => [1]`). If the default stage ID in the database is not `1` (due to re-seeding or stage deletion/recreation), this filter will display incorrect counts or return empty results.
 
 3. **Synchronous Email Dispatching in HTTP Cycle**:
    - `ApplicantRefuseMail`, `ApplicationConfirmMail`, and `InterviewerAssignedMail` are dispatched synchronously using `app(EmailService::class)->send(...)` within Filament form save operations (`EditApplicant::afterSave` and `refuse` actions) rather than queued background jobs. SMTP delays or connection timeouts will directly block the recruiter's UI request.
