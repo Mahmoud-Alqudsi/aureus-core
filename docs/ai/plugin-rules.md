@@ -139,7 +139,7 @@ Before modifying, refactoring, or extending an existing plugin in `plugins/webku
 - Check whether the entity requires:
   - A dedicated Policy (e.g., in `src/Policies/`).
   - Filament Shield permission generation (`config/filament-shield.php`).
-  - Record ownership resolution via `HasOwner` and `Webkul\Security\Bouncer`.
+  - Record ownership resolution via `HasOwnershipScope` and `Webkul\Security\Bouncer`.
 - Remember: **Declaration ≠ Enforcement**. Declaring a policy or permission in UI schemas does NOT guarantee backend or API isolation.
 
 ### 8. Cross-Plugin Coupling Audit

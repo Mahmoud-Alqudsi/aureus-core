@@ -96,7 +96,7 @@ These constraints are absolute. No task, instruction, or optimization justifies 
 7. **Do not assume a workflow is functional** because an enum, schema, or UI element represents it. Trace the execution path. See `docs/ai/forbidden-patterns.md`.
 8. **Do not modify files outside the task scope**, even to fix unrelated issues. Note them and move on.
 9. **Do not hardcode versions.** Always verify against `composer.lock`, not documentation or cached values.
-10. **Do not use `DB::` for domain queries.** Use `Model::query()` and Eloquent relationships. See `docs/ai/coding-rules.md`.
+10. **Do not use `DB::` for domain queries.** Use `Model::query()` and Eloquent relationships. See `docs/ai/security-rules.md`.
 
 ## Verification Expectations
 
