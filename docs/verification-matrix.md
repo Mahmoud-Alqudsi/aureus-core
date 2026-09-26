@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-09-26
 scope: verification
 confidence: high
 ---
@@ -99,8 +99,8 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 | **TERM-015** | Unified financial moves: `accounts_account_moves` stores invoices, bills, credit notes via `MoveType` | VERIFIED | HIGH | `Move` model with `MoveType` enum; `Invoice` classes in invoices/sales are proxies | plugins/webkul/accounts/src/Models/Move.php | Move, MoveType | accounts, invoices | accounting | 2026-09-04 | Phase 11 Auditor | No independent tables named invoices or bills exist in database |
 | **COUNT-001** | Total plugins count in repository is exactly 28 (9 Core, 19 Optional) | VERIFIED | HIGH | Directory enumeration under `plugins/webkul/*`; `Package::isCore()` verification | plugins/webkul/ | Package | all | plugins | 2026-09-04 | Phase 11 Auditor | Reconciled across Phases 1–10; dated snapshot fact |
 | **COUNT-002** | Exactly 6 plugins are Zero-Table Extension Layers owning 0 migrations and 0 database tables | VERIFIED | HIGH | Verification of absence of `database/migrations/` in the 6 plugin directories | plugins/webkul/accounting/ | Package | 6 plugins | database | 2026-09-04 | Phase 11 Auditor | accounting, barcode, contacts, full-calendar, invoices, timesheets |
-| **COUNT-003** | Total database tables created across 22 schema-owning plugins is exactly 262 tables | VERIFIED | HIGH | Migration analysis across all 22 schema-owning plugins | database/migrations/ | Schema | all | database | 2026-09-04 | Phase 11 Auditor | Documented in `docs/database/overview.md` and schema conventions |
-| **COUNT-004** | Total physical foreign keys across database schema is 1,016 foreign keys | VERIFIED | HIGH | AST parsing of `foreignId` and `foreign()` declarations in migrations | database/migrations/ | Blueprint | all | database | 2026-09-04 | Phase 11 Auditor | Documented in `docs/database/schema-conventions.md` |
+| **COUNT-003** | Total database tables created across 22 schema-owning plugins is exactly 266 tables | VERIFIED | HIGH | Migration analysis across all 22 schema-owning plugins | database/migrations/ | Schema | all | database | 2026-09-26 | Phase 11 Auditor | Documented in `docs/database/overview.md` and schema conventions |
+| **COUNT-004** | Total physical foreign keys across database schema is 1,046 foreign keys | VERIFIED | HIGH | AST parsing of `foreignId` and `foreign()` declarations in migrations | database/migrations/ | Blueprint | all | database | 2026-09-26 | Phase 11 Auditor | Documented in `docs/database/schema-conventions.md` |
 | **COUNT-005** | Foreign-key delete rule distribution: ~60% nullOnDelete, ~22% cascadeOnDelete, ~18% restrictOnDelete | VERIFIED | HIGH | Statistical aggregation: 607 nullOnDelete, 226 cascadeOnDelete, 181 restrictOnDelete | database/migrations/ | Blueprint | all | database | 2026-09-04 | Phase 11 Auditor | Semantic lifecycle governs new keys; frequency cannot justify choices |
 | **COUNT-006** | Total domain event classes in repository is exactly 28 across 5 plugins | VERIFIED | HIGH | AST enumeration of classes in `plugins/webkul/*/src/Events/` | plugins/webkul/sales/src/Events/ | Event | 5 plugins | reactive | 2026-09-04 | Phase 11 Auditor | accounts (7), inventories (6), manufacturing (5), purchases (5), sales (5) |
 | **COUNT-007** | Total event listener classes in repository is exactly 6 across 3 plugins | VERIFIED | HIGH | AST enumeration of classes in `plugins/webkul/*/src/Listeners/` | plugins/webkul/sales/src/Listeners/ | Listener | 3 plugins | reactive | 2026-09-04 | Phase 11 Auditor | sales (3), purchases (2), plugin-manager (1) |

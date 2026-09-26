@@ -10,7 +10,7 @@ confidence: high
 
 ## 1. Overview & Core Tenets
 
-This document defines the binding physical schema, migration registration, referential integrity, foreign key lifecycle, and database design rules for Aureus ERP. Across 262 database tables and over 1,000 foreign keys, database integrity is the fundamental foundation of the system.
+This document defines the binding physical schema, migration registration, referential integrity, foreign key lifecycle, and database design rules for Aureus ERP. Across 266 database tables and 1,046 foreign keys, database integrity is the fundamental foundation of the system.
 
 Every rule herein is prescriptive. Developers and AI agents creating migrations, modifying tables, or defining relationships MUST adhere to these rules.
 
@@ -86,7 +86,7 @@ The repository demonstrates concrete evidence of both failure modes:
 
 ## 3. Foreign-Key Delete Behavior Decision Rule
 
-Across 1016 physical foreign keys, Aureus ERP exhibits the following observed distribution:
+Across 1,046 physical foreign keys, Aureus ERP exhibits the following observed distribution:
 - `nullOnDelete()`: 607 keys (59.7%)
 - `cascadeOnDelete()`: 226 keys (22.2%)
 - `restrictOnDelete()`: 181 keys (17.8%)

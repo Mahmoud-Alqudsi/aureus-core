@@ -30,6 +30,14 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### Repository-Wide Count Reconciliations (2026-09-26)
+
+- **Evidentiary Tier**: Git-Verified history on branch `docs/kb-improvement-roadmap`.
+- **Status**: **Reconciled count drifts against live repository source truth**.
+- **Recorded Scope**:
+  - `COUNT-003`: 262 -> 266 (5 Spatie permission tables with variable names were not previously counted)
+  - `COUNT-004`: 1,016 -> 1,046 (upstream migration additions)
+
 ### Retired Dangling Execution Prompt and Exit Report References (2026-09-26)
 
 - **Evidentiary Tier**: Git-Verified history on branch `docs/kb-improvement-roadmap`.

@@ -218,8 +218,8 @@ A fresh repository audit confirms that automated test coverage is **highly uneve
 
 #### 1. Core Plugins (9 Total)
 - **Core Plugins with Automated Tests (2)**:
-  - `partners` (9 test files)
-  - `support` (17 test files)
+  - `partners` (10 test files)
+  - `support` (18 test files)
 - **Core Plugins with ZERO Automated Test Coverage (7)**:
   - `analytics` (`tests/` does not exist)
   - `chatter` (`tests/` does not exist)
@@ -232,14 +232,14 @@ A fresh repository audit confirms that automated test coverage is **highly uneve
 #### 2. Optional Plugins (19 Total)
 - **Optional Plugins with Automated Tests (9)**:
   - `accounting` (9 test files)
-  - `accounts` (42 test files)
-  - `employees` (5 test files)
+  - `accounts` (44 test files)
+  - `employees` (6 test files)
   - `inventories` (41 test files)
   - `manufacturing` (8 test files)
-  - `products` (16 test files)
+  - `products` (19 test files)
   - `projects` (8 test files)
-  - `purchases` (15 test files)
-  - `sales` (17 test files)
+  - `purchases` (16 test files)
+  - `sales` (20 test files)
 - **Optional Plugins with ZERO Automated Test Coverage (10)**:
   - `barcode` (`tests/` does not exist)
   - `blogs` (`tests/` does not exist)

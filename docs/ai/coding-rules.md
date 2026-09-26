@@ -64,7 +64,7 @@ However:
 │ 1. ShouldQueue Notification   │ Webkul\Chatter\Notifications\ChatterDatabaseNotification         │
 │                               │ implements ShouldQueue and uses Queueable trait                  │
 │ 2. Reactive Event Listeners   │ 28 Domain Events + 6 Listeners executing synchronously           │
-│ 3. Model Observers            │ 7 Eloquent Observers synchronizing state across plugins          │
+│ 3. Model Observers            │ 8 Eloquent Observers synchronizing state across plugins          │
 │ 4. Client-Side Polling        │ AdminPanelProvider polling databaseNotifications every 30s       │
 │ 5. Console Scheduling         │ routes/console.php configuring Artisan scheduled commands        │
 └───────────────────────────────┴──────────────────────────────────────────────────────────────────┘
@@ -73,7 +73,7 @@ However:
 1. **Queued Notification Delivery**:
    - `Webkul\Chatter\Notifications\ChatterDatabaseNotification` (`plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php:11`) implements `Illuminate\Contracts\Queue\ShouldQueue` and uses `Illuminate\Bus\Queueable`. When notifications are dispatched via `Notification::send()`, Laravel routes them through the configured queue driver.
 2. **Synchronous Reactive Decoupling (Events & Observers)**:
-   - The repository decouples heavy cross-plugin workflows (e.g. recalculating sales order quantities when warehouse transfers validate, or updating invoice status when payments post) using **28 domain events**, **6 listeners**, and **7 model observers** (documented in `docs/architecture/events-catalog.md`). These execute synchronously within the request transaction.
+   - The repository decouples heavy cross-plugin workflows (e.g. recalculating sales order quantities when warehouse transfers validate, or updating invoice status when payments post) using **28 domain events**, **6 listeners**, and **8 model observers** (documented in `docs/architecture/events-catalog.md`). These execute synchronously within the request transaction.
 3. **Browser-Driven Notification Polling**:
    - Instead of WebSockets or push daemons, `app/Providers/Filament/AdminPanelProvider.php:55-56` configures `->databaseNotifications()->databaseNotificationsPolling('30s')`. Real-time alerts are pulled periodically by the client browser.
 4. **Artisan Console Scheduling**:

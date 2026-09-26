@@ -217,7 +217,7 @@ Foundational frameworks and cross-cutting architectural mechanisms:
 | [`docs/architecture/overview.md`](architecture/overview.md) | Architectural shape, local-package integration, and provider lifecycle |
 | [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md) | Filament Admin/Customer panels, resources, pages, widgets, and clusters |
 | [`docs/architecture/dynamic-schema.md`](architecture/dynamic-schema.md) | Custom fields dynamic schema mutation, DDL operations, and UI injection |
-| [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) | Complete catalog of 28 domain events, 6 listeners, 7 observers, and 53 services |
+| [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) | Complete catalog of 28 domain events, 6 listeners, 8 observers, and 54 services |
 | [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md) | Plugin discovery, registration, lifecycle, installation, and dependency handling |
 | [`docs/architecture/change-impact.md`](architecture/change-impact.md) | Change Impact Analysis master control guide, blast radius assessment (Phase 11) |
 
