@@ -14,7 +14,7 @@ Active Optional Module. Registered explicitly in `bootstrap/providers.php:54` as
 
 ## Core/Optional
 [VERIFIED]
-**Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/products/src/ProductServiceProvider.php:24-64`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('products')` (`plugins/webkul/products/src/ProductServiceProvider.php:68` and `plugins/webkul/products/src/ProductPlugin.php:23`).
+**Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/products/src/ProductServiceProvider.php:24-64`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('products')` (`plugins/webkul/products/src/ProductServiceProvider.php:71` and `plugins/webkul/products/src/ProductPlugin.php:23`).
 
 ## Enabled/Disabled
 [VERIFIED]

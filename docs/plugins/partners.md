@@ -352,7 +352,7 @@ The `partners` module defines 7 Eloquent models:
 - **Behavior**: Local proxy/alias for the foundational `Bank` entity defined in the `support` module.
 
 ### 5. `Industry` (`Webkul\Partner\Models\Industry`)
-- **Table**: `partners_industries` (`plugins/webkul/partners/src/Models/Industry.php:18`)
+- **Table**: `partners_industries` (`plugins/webkul/partners/src/Models/Industry.php:17`)
 - **Inheritance**: Extends `Illuminate\Database\Eloquent\Model`
 - **Traits Used**:
   - `Illuminate\Database\Eloquent\Factories\HasFactory`
@@ -363,7 +363,7 @@ The `partners` module defines 7 Eloquent models:
   - `boot()`: In `creating`, sets `$industry->creator_id ??= Auth::id()`.
 
 ### 6. `Tag` (`Webkul\Partner\Models\Tag`)
-- **Table**: `partners_tags` (`plugins/webkul/partners/src/Models/Tag.php:18`)
+- **Table**: `partners_tags` (`plugins/webkul/partners/src/Models/Tag.php:17`)
 - **Inheritance**: Extends `Illuminate\Database\Eloquent\Model`
 - **Traits Used**:
   - `Illuminate\Database\Eloquent\Factories\HasFactory`
@@ -374,7 +374,7 @@ The `partners` module defines 7 Eloquent models:
   - `boot()`: In `creating`, sets `$tag->creator_id ??= Auth::id()`.
 
 ### 7. `Title` (`Webkul\Partner\Models\Title`)
-- **Table**: `partners_titles` (`plugins/webkul/partners/src/Models/Title.php:17`)
+- **Table**: `partners_titles` (`plugins/webkul/partners/src/Models/Title.php:16`)
 - **Inheritance**: Extends `Illuminate\Database\Eloquent\Model`
 - **Traits Used**:
   - `Illuminate\Database\Eloquent\Factories\HasFactory`

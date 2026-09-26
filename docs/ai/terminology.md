@@ -57,7 +57,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/security/src/Bouncer.php` (`namespace Webkul\Security; class Bouncer ...`)
   - `plugins/webkul/security/src/Facades/Bouncer.php`
-  - `plugins/webkul/security/src/Models/Scopes/OwnershipScope.php:26` (`bouncer()->getAuthorizedUserIds(...)`)
+  - `plugins/webkul/security/src/Models/Scopes/OwnershipScope.php:31` (`bouncer()->getAuthorizedUserIds(...)`)
   - Neither `composer.json` nor `composer.lock` contains `silber/bouncer`.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT document, require, or treat Bouncer as `silber/bouncer`.
@@ -458,7 +458,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Common misconception**: Assuming that all Eloquent relationships on a model are declared statically in that model's PHP class file, and concluding that a relationship does not exist merely because it is absent from the model's source file.
 - **Evidence**:
   - `plugins/webkul/sales/src/SaleServiceProvider.php` (`packageBooted()`)
-  - `docs/architecture/overview.md:96-101`
+  - `docs/architecture/overview.md#cross-plugin-investigation-boundary`
   - `docs/database/relationships.md`
 - **Prescriptive Rule**:
   - Before concluding that a model lacks an Eloquent relationship, developers MUST search the repository for `resolveRelationUsing`.

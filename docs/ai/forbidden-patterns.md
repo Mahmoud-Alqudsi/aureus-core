@@ -35,7 +35,7 @@ Every pattern documented here has occurred in this repository or in historical a
   - Multi-company relational consistency between parent and child models (e.g. verifying that a warehouse belongs to the same company as the sales order) was historically filtered in UI select dropdowns, but lacked backend enforcement until `ChecksCompanyConsistency` was introduced.
 - **Evidence**:
   - `docs/security/authorization.md:25-28`
-  - `docs/business-rules/accounting.md:376`
+  - `docs/business-rules/accounting.md#5-validation-constraints--enforcement-matrix`
   - `plugins/webkul/support/src/Traits/ChecksCompanyConsistency.php`
 - **Rule that prevents it**:
   - Developers and AI agents MUST NOT treat policy declarations, Filament Shield permissions, or UI form rules as proof of complete backend authorization or validation coverage.
@@ -169,7 +169,7 @@ Every pattern documented here has occurred in this repository or in historical a
   - Historical documentation reported 6 observers and 52 services. Fresh verification revealed **7 observers** (discovering `ProductAttributeObserver` in `products`) and **53 services**.
   - Similarly, assuming 19 optional plugins have 10 tested without fresh checking leads to inaccurate audit conclusions.
 - **Evidence**:
-  - `docs/architecture/events-catalog.md:398-412`
+  - `docs/architecture/events-catalog.md#8-historical-discrepancy--verification-audit`
   - `docs/ai/testing-rules.md:23-55`
 - **Rule that prevents it**:
   - Whenever an architectural rule, security review, or documentation metric depends on numerical precision, developers and AI agents MUST freshly verify the count from source code.

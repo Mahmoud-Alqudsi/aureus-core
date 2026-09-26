@@ -40,7 +40,7 @@ Specifically, this document formalizes:
 Calculates the selling price unit (`price_unit`), discounted unit price, line subtotal, tax amount, and total price for each line item on a quotation or sales order.
 
 - **Status**: [VERIFIED]
-- **Evidence**: `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/QuotationResource/Schemas/QuotationForm.php:1160-1275`, `plugins/webkul/sales/src/Services/OrderCalculator.php:52-115`, `plugins/webkul/sales/src/Models/OrderLine.php:30-80`.
+- **Evidence**: `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/QuotationResource/Schemas/QuotationForm.php:1173-1275`, `plugins/webkul/sales/src/Services/OrderCalculator.php:52-115`, `plugins/webkul/sales/src/Models/OrderLine.php:30-80`.
 
 #### Unit Price Resolution Algorithm (`QuotationForm::calculateUnitPrice`)
 When a product is added to a quotation line in the administrative UI, the default unit price is resolved via the following sequence:

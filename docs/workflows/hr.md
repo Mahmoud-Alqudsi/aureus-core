@@ -189,7 +189,7 @@ When an employee departs, the HR officer enters offboarding details in the Setti
 ```
 
 [VERIFIED]
-Evidence: `plugins/webkul/employees/src/Filament/Resources/EmployeeResource/Schemas/EmployeeForm.php:671-689`, `plugins/webkul/employees/src/Models/Employee.php:250-303`
+Evidence: `plugins/webkul/employees/src/Filament/Resources/EmployeeResource/Schemas/EmployeeForm.php:671-689`, `plugins/webkul/employees/src/Models/Employee.php:244-303`
 
 ---
 
@@ -270,7 +270,7 @@ Evidence: `plugins/webkul/recruitments/database/migrations/`, `plugins/webkul/em
 | `Employee::boot()` | Model saving | Synchronous | Internal closure | Automatically creates or updates linked `Partner` record. |
 
 [VERIFIED]
-Evidence: `plugins/webkul/recruitments/src/Models/Applicant.php`, `plugins/webkul/employees/src/Models/Employee.php:250-256`
+Evidence: `plugins/webkul/recruitments/src/Models/Applicant.php`, `plugins/webkul/employees/src/Models/Employee.php:244-256`
 
 ---
 

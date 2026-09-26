@@ -823,4 +823,4 @@ sequenceDiagram
 - Settings: `plugins/webkul/sales/src/Settings/`
 - Routes: `plugins/webkul/sales/routes/api.php`
 - Tests: `plugins/webkul/sales/tests/`
-- ERD References: `docs/database/erds/operations.md:424-462`, `docs/database/erds/finance.md:236-243`
+- ERD References: `docs/database/erds/operations.md:425-462`, `docs/database/erds/finance.md:236-243`

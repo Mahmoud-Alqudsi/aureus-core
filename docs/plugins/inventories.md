@@ -701,7 +701,7 @@ sequenceDiagram
 - Inventory Manager: `plugins/webkul/inventories/src/InventoryManager.php:21-154`
 - Move Completer: `plugins/webkul/inventories/src/Services/MoveCompleter.php:16-328`
 - Move Reserver: `plugins/webkul/inventories/src/Services/MoveReserver.php:1-250`
-- Quant Model: `plugins/webkul/inventories/src/Models/ProductQuantity.php:25-625`
+- Quant Model: `plugins/webkul/inventories/src/Models/ProductQuantity.php:26-625`
 - Move Model: `plugins/webkul/inventories/src/Models/Move.php:33-1266`
 - MoveLine Model: `plugins/webkul/inventories/src/Models/MoveLine.php:21-541`
 - Location Model: `plugins/webkul/inventories/src/Models/Location.php:26-711`

@@ -14,7 +14,7 @@ Active Optional Module. Registered explicitly in `bootstrap/providers.php:48` as
 
 ## Core/Optional
 [VERIFIED]
-**Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/accounts/src/AccountServiceProvider.php:50-152`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('accounts')` (`plugins/webkul/accounts/src/AccountServiceProvider.php:172,181,199,270` and `plugins/webkul/accounts/src/AccountPlugin.php:23`).
+**Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/accounts/src/AccountServiceProvider.php:50-152`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('accounts')` (`plugins/webkul/accounts/src/AccountServiceProvider.php:176,185,194,282` and `plugins/webkul/accounts/src/AccountPlugin.php:23`).
 
 ## Enabled/Disabled
 [VERIFIED]

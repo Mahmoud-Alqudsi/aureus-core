@@ -64,7 +64,7 @@ The following prerequisites must be met in database state before the sales workf
 6. **Price Lists (Optional)**: If `ProductSettings::$enable_price_lists` is enabled, customer default `price_list_id` is loaded and applied to line prices via `PriceListResolver`.
 
 [VERIFIED]
-Evidence: `plugins/webkul/sales/src/Models/Order.php:280-299`, `plugins/webkul/sales/src/Services/ProcurementRequester.php:53-58`
+Evidence: `plugins/webkul/sales/src/Models/Order.php:287-299`, `plugins/webkul/sales/src/Services/ProcurementRequester.php:53-58`
 
 ---
 
@@ -292,7 +292,7 @@ Evidence: `plugins/webkul/sales/src/Services/OrderCalculator.php:117-177,255-289
    - `Order` utilizes `HasOwnershipScope` to allow role-based visibility restrictions (e.g. salespersons viewing only their own quotations vs sales managers viewing all team orders).
 
 [VERIFIED]
-Evidence: `plugins/webkul/sales/src/Policies/OrderPolicy.php:1-110`, `plugins/webkul/sales/src/Models/Order.php:41-45`
+Evidence: `plugins/webkul/sales/src/Policies/OrderPolicy.php:1-110`, `plugins/webkul/sales/src/Models/Order.php:42-46`
 
 ---
 
@@ -331,7 +331,7 @@ Evidence: `plugins/webkul/sales/database/migrations/`
 | `Webkul\Account\Events\MovePaid` | `PaymentWorkflow::post()` | Synchronous when invoice is fully paid. | `Webkul\Sale\Listeners\SendSMSNotificationListener` | Sends automated payment receipt SMS to customer and administrator. |
 
 [VERIFIED]
-Evidence: `plugins/webkul/sales/src/SaleServiceProvider.php:105-112`, `plugins/webkul/sales/src/Events/*.php`
+Evidence: `plugins/webkul/sales/src/SaleServiceProvider.php:106-117`, `plugins/webkul/sales/src/Events/*.php`
 
 ---
 
