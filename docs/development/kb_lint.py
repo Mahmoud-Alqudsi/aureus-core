@@ -485,7 +485,9 @@ CITE_RE = re.compile(
     r"(?P<rng>\d+(?:\s*[\u2013\-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[\u2013\-]\s*\d+)?)*)$")
 
 
-BASENAME_HINT_RE = re.compile(r"`((?:[\w.\-]+/)+[\w.\-]+\.md)`")
+BASENAME_HINT_RE = re.compile(
+    r"`((?:[\w.\-]+/)+[\w.\-]+\.(?:md|php|yml|yaml|json|ts|js|xml|lock|css))`"
+)
 
 
 @check("line-citations", "`path:line` evidence pointers resolve and are not blank / out of range")
@@ -508,14 +510,17 @@ def check_line_citations(kb, o, add):
                         real = r
                         break
                 if real is None and "/" not in path:
-                    # Evidence tables often split 'Path' and 'Symbol' into separate cells
-                    # of the same row, e.g. `docs/database/erds/operations.md` | `operations.md:40,505`.
-                    # A bare basename here is shorthand for that sibling cell's directory.
-                    for hint in BASENAME_HINT_RE.findall(line):
-                        if posixpath.basename(hint) == path:
-                            r = kb.resolve(hint)
-                            if r and (kb.root / r).is_file():
-                                real = r
+                    # Look for the full path in a nearby line: either the same line,
+                    # or the nearest preceding section heading (up to 20 lines back).
+                    context_lines = [line] + list(reversed(lines[max(0, i - 21):i - 1]))
+                    for ctx in context_lines:
+                        for hint in BASENAME_HINT_RE.findall(ctx):
+                            if posixpath.basename(hint) == path:
+                                r = kb.resolve(hint)
+                                if r and (kb.root / r).is_file():
+                                    real = r
+                                break
+                        if real:
                             break
                 if real is None:
                     if path.endswith(".md"):
