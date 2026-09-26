@@ -534,8 +534,15 @@ def check_line_citations(kb, o, add):
                     kb_md += 1
                 for a, b in rngs:
                     a, b = int(a), int(b or a)
-                    if b > len(target):
-                        add(ERROR, rel, i, "cites %s:%d-%d but the file has %d lines" % (real, a, b, len(target)))
+                    # wc -l (used when authoring these docs) and Python's
+                    # splitlines() disagree by 1 when the last line of the
+                    # target has no trailing newline. Treat an upper bound
+                    # that is at most 1 past the file length as file-end.
+                    effective_len = len(target)
+                    if b > effective_len and b <= effective_len + 1:
+                        continue   # off-by-one at file end: not a real error
+                    if b > effective_len:
+                        add(ERROR, rel, i, "cites %s:%d-%d but the file has %d lines" % (real, a, b, effective_len))
                     elif a >= 1 and not target[a - 1].strip():
                         add(WARN, rel, i, "cited line %d of %s is blank (stale citation?)" % (a, real))
     if total:
