@@ -65,6 +65,15 @@ When verifying behavior, resolving conflicting statements, or implementing featu
 3. **Security & Tenancy**: Study [`docs/security/authorization.md`](security/authorization.md) and [`docs/security/multi-company.md`](security/multi-company.md).
 4. **Testing Standards**: Read [`docs/ai/testing-rules.md`](ai/testing-rules.md) for Pest v4 test execution and conventions.
 
+### For Gemini CLI Users
+
+Gemini CLI loads the AI entry point and workspace skills automatically
+once this repository is trusted. Run `/permissions trust` (or
+`gemini trust` from the terminal) the first time you open the
+repository so that the six `aureus-*` skills under `.agents/skills/`
+become available. The trust decision is persisted per-folder to
+`~/.gemini/trustedFolders.json` and applies to future sessions.
+
 ---
 
 ## Technology Baseline

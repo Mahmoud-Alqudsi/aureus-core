@@ -39,7 +39,7 @@ ERROR, WARN, INFO = "ERROR", "WARN", "INFO"
 SEV_ORDER = {ERROR: 0, WARN: 1, INFO: 2}
 
 REQUIRED_FM = ("status", "source_of_truth", "last_verified", "scope", "confidence")
-SKILL_ROOTS = (".agents/skills", "agents/skills", ".claude/skills", ".gemini/skills")
+SKILL_ROOTS = (".agents/skills", "agents/skills", ".claude/skills")
 KB_PREFIXES = ("docs/", ".agents/", "agents/", ".claude/", ".gemini/")
 AGENT_FACING = ("AGENTS.md", "CLAUDE.md", "GEMINI.md", "docs/ai/")   # + every SKILL.md
 HISTORICAL_FILES = {"docs/CHANGELOG.md"}                 # historical by nature
@@ -348,12 +348,6 @@ def check_skills(kb, o, add):
             add(WARN, rel, 0, "uses stage labels (O5/O6...) without defining them inside the skill")
         if index_txt and name and name not in index_txt:
             add(WARN, rel, 1, "skill is not listed in %s" % index_rel)
-    on_agents = any(s.startswith((".agents/", "agents/")) for s in kb.skill_dirs)
-    on_claude = any(s.startswith(".claude/") for s in kb.skill_dirs)
-    on_gemini = any(s.startswith(".gemini/") for s in kb.skill_dirs)
-    if on_agents and not on_claude and not on_gemini:
-        add(INFO, "", 0, "skills live only under .agents/skills; Claude Code reads .claude/skills and Gemini CLI "
-                         "reads .gemini/skills - bridge whichever you actually use")
     for tool_file, tool_name in (("CLAUDE.md", "Claude Code"), ("GEMINI.md", "Gemini CLI")):
         if "AGENTS.md" in kb.files and tool_file not in kb.files:
             add(INFO, "", 0, "no %s: %s reads its own entry file, not AGENTS.md; a pointer file importing "
