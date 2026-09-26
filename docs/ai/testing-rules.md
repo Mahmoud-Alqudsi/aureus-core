@@ -212,7 +212,7 @@ Universal 100% test coverage is NOT prescribed; rather, high-risk operational pa
 
 ## 6. New Plugin Testing Rule
 
-Because repository history does not establish a uniform testing standard across older modules, Phase 10 introduces the following **binding future rule**:
+Because repository history does not establish a uniform testing standard across older modules, the project introduces the following **binding future rule**:
 
 ### Mandatory Testing Standard for New Plugins
 > **MANDATORY RULE FOR ALL NEW PLUGINS:**

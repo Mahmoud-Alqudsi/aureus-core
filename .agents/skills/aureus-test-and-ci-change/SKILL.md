@@ -1,6 +1,6 @@
 ---
 name: aureus-test-and-ci-change
-description: Plan or implement Aureus Pest, Playwright, translation-check, or GitHub Actions validation changes while preserving O6 boundaries and proportionate verification. Do not use for ordinary application feature work without a testing or CI change.
+description: Plan or implement Aureus Pest, Playwright, translation-check, or GitHub Actions validation changes while preserving CI governance boundaries and proportionate verification. Do not use for ordinary application feature work without a testing or CI change.
 ---
 
 # Aureus Test and CI Change
@@ -15,7 +15,7 @@ Read [`AGENTS.md`](../../../AGENTS.md), [`docs/ai/context.md`](../../../docs/ai/
 
 Identify the changed behavior, nearest test, shared helpers/bootstrap, command invocation, workflow trigger, job permissions, artifacts, and status-check implications. A green or failed historical run is evidence only when its environment and failure cause are relevant to the proposed decision.
 
-Do not infer that a workflow is a required GitHub gate merely because its YAML exists. GitHub enforcement is a separate O5/O6 concern.
+Do not infer that a workflow is a required GitHub gate merely because its YAML exists. Server-side GitHub enforcement (branch rulesets) is a separate administrative concern from workflow definitions.
 
 ## Deliver the change safely
 

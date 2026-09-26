@@ -10,7 +10,7 @@ confidence: high
 
 ## How to use this glossary
 
-This glossary defines the authoritative terminology, system concepts, and misconception corrections for Aureus ERP. It establishes exact definitions and distinguishes lookalike terms, legacy habits, and conceptual traps identified across Phases 1–9 of the repository audit.
+This glossary defines the authoritative terminology, system concepts, and misconception corrections for Aureus ERP. It establishes exact definitions and distinguishes lookalike terms, legacy habits, and conceptual traps identified across the repository audit.
 
 Every entry in this glossary is backed by verified source code, tests, migrations, configuration, Composer metadata, and verified repository documentation (covering architecture, security, database, workflows, and business rules).
 

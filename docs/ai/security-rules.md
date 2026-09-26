@@ -42,7 +42,7 @@ Every rule in this document is prescriptive. Developers and AI agents MUST stric
 
 ### The Reality of Current Practice vs. Future Standard
 - **Audit Finding**: Approximately **143 files** in the repository perform raw database operations (`DB::table`, `DB::raw`, `DB::select`, `DB::statement`).
-- **Honest Assessment**: The raw-SQL company-isolation rule is **NOT an already-established repository practice**; Phase 10 is introducing it as a **mandatory future rule because current practice across existing plugins is inconsistent**.
+- **Honest Assessment**: The raw-SQL company-isolation rule is **NOT an already-established repository practice**; it is being introduced as a **mandatory future rule because current practice across existing plugins is inconsistent**.
 - Historically, some reporting widgets, installation commands, and analytical calculations utilized raw SQL without universally filtering by `company_id` across every joined table, relying informally on surrounding context.
 - Moving forward, raw SQL is classified as a **critical review zone**.
 

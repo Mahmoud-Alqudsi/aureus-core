@@ -10,7 +10,7 @@ confidence: high
 
 ## 1. Overview & Purpose
 
-This document is the capstone file of the Phase 10 AI Rules system. It codifies the twelve critical anti-patterns, conceptual traps, and recurring mistakes identified across Phases 1–9 of the Aureus ERP audit.
+This document is the capstone file of the Aureus ERP AI governance rules. It codifies the twelve critical anti-patterns, conceptual traps, and recurring mistakes identified across the repository audit.
 
 While other rule files define what developers and AI agents *must* do, this document explicitly defines what developers and AI agents **MUST NOT DO**.
 
@@ -136,7 +136,7 @@ Every pattern documented here has occurred in this repository or in historical a
 - **What it looks like**: Discovering a bug or typo in an existing plugin or historical documentation file (such as `AGENTS.md` or a core service) and directly editing that file while tasked with a scoped documentation phase.
 - **Why it is tempting**: Developers and AI agents instinctively want to fix bugs immediately upon discovery.
 - **Specific Aureus ERP instance(s)**:
-  - During Phase 10, typos in `AGENTS.md` (Livewire v3) and missing migrations in `support` were identified. Directly editing those files would violate phase isolation and create unreviewed code modifications.
+  - During earlier documentation audits, typos in `AGENTS.md` (Livewire v3) and missing migrations in `support` were identified. Directly editing those files would violate task isolation and create unreviewed code modifications.
 - **Evidence**:
   - `AGENTS.md:97`
   - `docs/development/change-management.md:61`
@@ -166,7 +166,7 @@ Every pattern documented here has occurred in this repository or in historical a
 - **What it looks like**: Copying historical summary numbers (e.g. "6 observers", "52 services", "9 tested plugins") from past reports into new architectural documentation.
 - **Why it is tempting**: Re-scanning dozens of directories and running fresh AST parsing scripts requires extra effort.
 - **Specific Aureus ERP instance(s)**:
-  - Historical documentation reported 6 observers and 52 services. Fresh verification in Phase 3/10 revealed **7 observers** (discovering `ProductAttributeObserver` in `products`) and **53 services**.
+  - Historical documentation reported 6 observers and 52 services. Fresh verification revealed **7 observers** (discovering `ProductAttributeObserver` in `products`) and **53 services**.
   - Similarly, assuming 19 optional plugins have 10 tested without fresh checking leads to inaccurate audit conclusions.
 - **Evidence**:
   - `docs/architecture/events-catalog.md:398-412`

@@ -55,7 +55,7 @@ For a focused bug fix, steps 1–5 plus the affected test normally form a suffic
 - A plugin folder or Composer `extra.laravel.providers` entry does not, by itself, establish runtime activation; check `bootstrap/providers.php`, the provider, and installation guards.
 - `Package::hasDependencies()` does not declare Composer requirements. Inspect the plugin-manager installation command for its actual effect.
 - A registered Filament plugin does not imply its resources are available in both panels; inspect its `register()` conditions.
-- Existing documentation for Phases 3–13 is not phase-completion evidence and should not replace source verification.
+- Existing documentation is not completion evidence and should not replace source verification.
 - Do not read every plugin document or the entire repository before a focused task.
 
 ## Escalation rule
