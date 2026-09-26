@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Check if any staged files touch docs/**, AGENTS.md, or agents/** (including .agents/**)
+CHANGED_KB_FILES=$(git diff --cached --name-only | grep -E '^(docs/|AGENTS\.md$|(\.?)agents/)' || true)
+
+if [ -n "$CHANGED_KB_FILES" ]; then
+    echo "Knowledge base files staged for commit:"
+    echo "$CHANGED_KB_FILES"
+    echo "Running knowledge base linter (docs/development/kb_lint.py --root . --strict)..."
+    python3 docs/development/kb_lint.py --root . --strict
+fi

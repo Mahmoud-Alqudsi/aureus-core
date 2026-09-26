@@ -467,10 +467,34 @@ A systematic audit of quality tools, static analyzers, and linters yielded the f
 | **Deptrac** | Absent | **NO** | **NOT CONFIGURED** | Not present in repository |
 | **Pest Arch Tests**| Absent | **NO** | **NOT CONFIGURED** | Zero `arch()` references in test codebase |
 | **Translations Check**| Custom Artisan command | **YES** | **PRESENT AND EXECUTED IN CI** | Executed in `translations_check.yml` |
+| **Knowledge Base Linter**| Custom Python script ([`docs/development/kb_lint.py`](kb_lint.py)) | **NO** | **PRESENT AND EXECUTED LOCALLY (PRE-COMMIT)** | Versioned Git hook [`scripts/hooks/pre-commit`](../../scripts/hooks/pre-commit) |
 
 ### Code Quality Observation
 
 Laravel Pint is configured for local development via [`pint.json`](../../pint.json) and referenced in [`AGENTS.md`](../../AGENTS.md), but is not currently executed as part of CI validation. Adding a CI style-check step is recommended if project governance requires automated style enforcement.
+
+### Knowledge Base Linting & Git Pre-Commit Hook
+
+A dedicated static consistency checker for the documentation tree and AI guidance is provided in [`docs/development/kb_lint.py`](kb_lint.py). It validates Markdown links, front matter, banned terminology, citation targets, numeric consistency, and skill definitions without modifying files.
+
+To prevent documentation regressions locally before they are committed, the repository ships a versioned Git pre-commit hook at [`scripts/hooks/pre-commit`](../../scripts/hooks/pre-commit). The hook inspects staged changes via `git diff --cached --name-only` and runs:
+
+```bash
+python3 docs/development/kb_lint.py --root . --strict
+```
+
+whenever a commit touches `docs/**`, `AGENTS.md`, or `agents/**` (including `.agents/**`), blocking the commit on a non-zero exit code.
+
+#### One-Time Developer Setup
+
+Git does not execute repository-tracked hooks automatically. Developers must configure Git to use the versioned hook directory right after cloning:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+> [!NOTE]
+> In the current solo-maintainer setup, running `kb_lint.py` locally via the versioned pre-commit hook provides immediate feedback and catches documentation regressions before commit. If external contributors join the project in the future, the same check can be promoted to a GitHub Actions workflow under `.github/workflows/`.
 
 ---
 
