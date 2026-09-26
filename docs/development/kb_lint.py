@@ -550,13 +550,15 @@ def _scope_for_counts(rel):
 
 
 HIST_RE = re.compile(r"(?i)historical|previously|earlier|reported|corrected|CORR-|revealed|discover|formerly|"
-                     r"legacy|used to|\bwas\b|\bwere\b")
+                     r"legacy|used to|\bwas\b|\bwere\b|"
+                     r"following\s+the\s+upstream|after\s+the\s+upstream|updated\s+total\s+table\s+count\s+to")
 # Numbers scoped to a sub-domain or a sub-pattern are not drift; they are
 # different metrics that happen to share the word "tables". Skip lines where
 # the count is explicitly qualified.
 SCOPED_COUNT_RE = re.compile(
     r"(?i)operations[- ]domain|\bid\(\)\s*(?:PK|primary)|\bstandard\s+id\(\)|"
-    r"\bsubtotal\b|\bsub-pattern\b|\bwithin\s+the\s+\w+\s+domain\b"
+    r"\bsubtotal\b|\bsub-pattern\b|\bwithin\s+the\s+\w+\s+domain\b|"
+    r"\$table->id\(\)|standard\s+domain\s+entity|standard\s+ID\s+tables"
 )
 APPROX_RE = re.compile(r"(?i)(?:over|more than|about|approximately|around|~|>)\s*$")
 
