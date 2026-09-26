@@ -168,7 +168,7 @@ The `full-calendar` plugin defines **zero database migrations** and owns **zero 
   - **Base Class**: Extends `Filament\Widgets\Widget`.
   - **Implemented Contracts**: `HasActions`, `HasConfigurations`, `HasEvents`, `HasForms`, `HasHeaderActions`, `HasModalActions`, `HasRawJs`, `HasRecords`.
   - **Used Concerns**: `CanBeConfigured`, `InteractsWithActions`, `InteractsWithEvents`, `InteractsWithForms`, `InteractsWithHeaderActions`, `InteractsWithModalActions`, `InteractsWithRawJS`, `InteractsWithRecord`.
-  - **Blade View**: `full-calendar::filament.widgets.full-calendar` (`resources/views/filament/widgets/full-calendar.blade.php`).
+  - **Blade View**: `full-calendar::filament.widgets.full-calendar` (`plugins/webkul/full-calendar/resources/views/filament/widgets/full-calendar.blade.php`).
   - **Column Span**: Defaults to `'full'`.
   - **Default Header Actions**: `[CreateAction::make()]`.
   - **Default Modal Actions**: `[EditAction::make(), DeleteAction::make()]`.
