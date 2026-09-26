@@ -443,8 +443,8 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Common misconception**: Assuming that a Filament resource with `shouldRegisterNavigation = false` is broken, deprecated, or dead code.
 - **Evidence**:
   - `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`
-  - `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:20`
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:719-724`
+  - `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`
+  - `docs/architecture/filament-architecture.md:293-298`
 - **Prescriptive Rule**:
   - Developers MUST NOT change `shouldRegisterNavigation` to `true` on foundational core resources without verifying whether a presentation plugin owns user-facing navigation.
   - When exposing customized or clustered views of core resources, presentation plugins MUST control navigation registration.
@@ -473,8 +473,8 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Common misconception**: Assuming that because a permission, validation rule, or state restriction is declared in a Filament form or Policy, the backend logic and database are automatically protected from unauthorized or inconsistent state transitions.
 - **Evidence**:
   - `docs/security/authorization.md:25-28`
-  - `docs/business-rules/accounting.md:376`
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:312, 1160-1170, 1861-1862`
+  - `docs/ai/security-rules.md:148-155`
+  - `docs/ai/forbidden-patterns.md:29-43`
 - **Prescriptive Rule**:
   - Future documentation and code MUST distinguish between a capability being declared and that capability actually being enforced on the relevant execution path.
   - Security-critical constraints, financial balances, and company boundaries MUST be enforced at the service or model level, NOT solely in UI schemas or form requests.

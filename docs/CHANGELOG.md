@@ -30,6 +30,18 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### Retired Dangling Execution Prompt and Exit Report References (2026-09-26)
+
+- **Evidentiary Tier**: Git-Verified history on branch `docs/kb-improvement-roadmap`.
+- **Status**: **Reconciled external prompt citations and retired undefined artifact requirement**.
+- **Recorded Scope**:
+  - **Retired External Authoring Spec Citations**: Removed four dangling citations to untracked external authoring execution prompt files across [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md) (Patterns 6 and 7) and [`docs/ai/terminology.md`](ai/terminology.md) (Sections 23 and 25). Replaced with verified repository evidence:
+    - Pattern 6 (Absolute vs Relative Paths): Cited [`docs/CHANGELOG.md:351`](CHANGELOG.md) (Machine Path Gate) and [`docs/development/change-management.md:84`](development/change-management.md).
+    - Pattern 7 (Silent Protected-File Modification): Cited `AGENTS.md:97` (Critical Constraint #8) and [`docs/development/change-management.md:61`](development/change-management.md).
+    - Section 23 (Navigation Composition Pattern): Cited [`plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`](../plugins/webkul/partners/src/Filament/Resources/PartnerResource.php), [`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`](../plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php), and [`docs/architecture/filament-architecture.md:293-298`](architecture/filament-architecture.md).
+    - Section 25 (Declaration ≠ Enforcement): Cited [`docs/security/authorization.md:25-28`](security/authorization.md), [`docs/ai/security-rules.md:148-155`](ai/security-rules.md), and [`docs/ai/forbidden-patterns.md:29-43`](ai/forbidden-patterns.md).
+  - **Retired Dangling "Exit Report" Requirement**: Removed the obsolete reference to an undefined "Exit Report" in [`docs/ai/forbidden-patterns.md:143`](ai/forbidden-patterns.md). Aligned out-of-scope bug reporting with `AGENTS.md` Critical Constraint #8 and standard PR/task notes.
+
 ### Upstream Sync Knowledge-Base Gaps Reconciled (2026-09-25)
 
 - **Evidentiary Tier**: Git-Verified history on branch `docs/reconcile-upstream-sync-knowledge-base`.

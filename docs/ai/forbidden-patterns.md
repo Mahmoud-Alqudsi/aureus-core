@@ -123,7 +123,8 @@ Every pattern documented here has occurred in this repository or in historical a
 - **Specific Aureus ERP instance(s)**:
   - Early historical phase audits leaked machine-local user paths, breaking portability across developer workstations and failing automated CI path audits.
 - **Evidence**:
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:231-246, 1750-1755`
+  - `docs/CHANGELOG.md:351`
+  - `docs/development/change-management.md:84`
 - **Rule that prevents it**:
   - Canonical documentation in `docs/` MUST use repository-relative paths exclusively (e.g. `plugins/webkul/sales/src/Models/Order.php`).
   - Machine-specific absolute paths and `file://` URIs are STRICTLY FORBIDDEN in canonical documentation files.
@@ -137,10 +138,11 @@ Every pattern documented here has occurred in this repository or in historical a
 - **Specific Aureus ERP instance(s)**:
   - During Phase 10, typos in `AGENTS.md` (Livewire v3) and missing migrations in `support` were identified. Directly editing those files would violate phase isolation and create unreviewed code modifications.
 - **Evidence**:
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:464-494, 1867-1872`
+  - `AGENTS.md:97`
+  - `docs/development/change-management.md:61`
 - **Rule that prevents it**:
   - Developers and AI agents MUST NOT modify files outside the authorized write scope of the current task.
-  - Discovered bugs or proposed corrections outside the active scope MUST be documented in the Exit Report under "Proposed corrections (not applied)".
+  - Discovered bugs or proposed corrections outside the active scope MUST be noted in task output or pull request notes rather than edited silently.
 
 ---
 
