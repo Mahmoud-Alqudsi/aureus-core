@@ -6,6 +6,13 @@ scope: global
 confidence: high
 ---
 
+<!-- lint: search-only -->
+
+> **How to use this file**: do not read it whole. Locate a specific
+> model or table by name with
+> `rg -n '<ModelName>|<table_name>' docs/database/models-index.md`
+> and read only the matched section.
+
 # Database Schema & Eloquent Models Catalog
 
 ## 1. Purpose
