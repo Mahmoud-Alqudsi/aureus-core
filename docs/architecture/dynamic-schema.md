@@ -10,7 +10,7 @@ confidence: high
 
 ## 1. Overview
 
-Aureus ERP employs a modular, decoupled package architecture where base data models in Core or foundational plugins (such as `partners` and `products`) remain unaware of optional downstream business domains (such as `accounts`, `inventories`, `manufacturing`, and `purchases`). 
+Aureus ERP employs a modular, decoupled package architecture where base data models in foundational plugins (`partners` as core, `products` as master-catalog) remain unaware of optional downstream business domains (such as `accounts`, `inventories`, `manufacturing`, and `purchases`). 
 
 To achieve cross-plugin integration without introducing hard compile-time dependencies or modifying base database migrations, the system relies on **three distinct runtime dynamic mechanisms**:
 

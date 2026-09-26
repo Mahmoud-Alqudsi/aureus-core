@@ -439,7 +439,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 ### 23. Navigation Composition Pattern (`shouldRegisterNavigation = false`)
 
 - **Term / Class**: Deliberate Navigation Composition Pattern
-- **What it actually is**: An intentional architectural design where a foundational core plugin (e.g., `partners`, `accounts`) defines Filament resources with `protected static bool $shouldRegisterNavigation = false;` to suppress them from the navigation sidebar. A sibling presentation or optional plugin (e.g., `contacts`, `invoices`, `accounting`) then surfaces the user-facing navigation items under organized clusters and navigation groups.
+- **What it actually is**: An intentional architectural design where a foundational base plugin (core `partners` or headless `accounts`) defines Filament resources with `protected static bool $shouldRegisterNavigation = false;` to suppress them from the navigation sidebar. A sibling presentation or optional plugin (e.g., `contacts`, `invoices`, `accounting`) then surfaces the user-facing navigation items under organized clusters and navigation groups.
 - **Common misconception**: Assuming that a Filament resource with `shouldRegisterNavigation = false` is broken, deprecated, or dead code.
 - **Evidence**:
   - `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`
