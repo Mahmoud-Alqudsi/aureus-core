@@ -77,6 +77,20 @@ The repo-root [`GEMINI.md`](../GEMINI.md) is a one-line pointer that imports
 AGENTS.md via the `@AGENTS.md` directive, so both agents land on
 the same operating protocol.
 
+### Repository Setup
+
+After cloning, activate the versioned pre-commit KB lint hook once:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+Every commit touching `docs/`, `AGENTS.md`, or `agents/**` then
+runs `scripts/kb_lint.py --root . --strict` and blocks on any
+finding. See
+[`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md)
+for details. The config is local per clone; it is not pushed.
+
 ---
 
 ## Technology Baseline
