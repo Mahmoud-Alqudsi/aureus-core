@@ -73,6 +73,9 @@ once this repository is trusted. Run `/permissions trust` (or
 repository so that the six `aureus-*` skills under `.agents/skills/`
 become available. The trust decision is persisted per-folder to
 `~/.gemini/trustedFolders.json` and applies to future sessions.
+The repo-root [`GEMINI.md`](../GEMINI.md) is a one-line pointer that imports
+AGENTS.md via the `@AGENTS.md` directive, so both agents land on
+the same operating protocol.
 
 ---
 

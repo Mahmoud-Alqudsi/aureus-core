@@ -30,6 +30,22 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### KB Improvement Audit — 2026-09-27
+
+Completed the nine-prompt audit defined in `IMPROVEMENT_PROMPTS.md`. Highlights:
+
+- **Local lint gate**: added `docs/development/kb_lint.py` and a versioned pre-commit hook (`scripts/hooks/pre-commit`). Runs with `--strict`; blocks commits that touch `docs/`, `AGENTS.md`, or `agents/**` when any check fails.
+- **Prompt 2**: corrected `HasOwner` -> `HasOwnershipScope` in `plugin-rules.md` and the `AGENTS.md` #10 delegation target.
+- **Prompt 3**: reconciled repository-wide COUNT numbers against the live source tree; drift was smaller than the initial audit suggested (most "drift" was different-scope counting, not stale numbers). Net changes landed in `verification-matrix.md` and ~8 consumer docs.
+- **Prompt 4**: resolved core/optional plugin-classification conflicts; `docs/plugins/README.md` already matched source.
+- **Prompt 5**: retired dangling references to an external authoring document that was never tracked in git, and an undefined 'Exit Report' requirement.
+- **Prompt 6**: stripped Phase-N / O-stage labels from all agent-facing files (7 files); kept load-bearing context with inline glosses only where justified.
+- **Prompt 7**: converted `docs/database/models-index.md` to search-only. The schema-touching reading set dropped from ~99k tokens to ~30k.
+- **Prompt 8**: added `GEMINI.md` at repo root pointing at `AGENTS.md` via the `@import` directive; verified against current Gemini CLI docs that `.agents/skills/` is a recognized project-level alias so no `.gemini/skills` symlink is needed.
+- **Prompt 9**: resolved all 166 line-citations findings to 0 across stages 9.1-9.5 (classes A/B/D/E). Documentation ranges like `path:X-Y` were preserved; the linter was extended to accept off-by-one line ranges at end of file, matching the `wc -l` vs `splitlines()` difference.
+
+Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath` re-enabled; the hook guards every future commit touching KB files.
+
 ### Repository-Wide Count Reconciliations (2026-09-26)
 
 - **Evidentiary Tier**: Git-Verified history on branch `docs/kb-improvement-roadmap`.

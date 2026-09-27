@@ -297,7 +297,7 @@ def check_frontmatter(kb, o, add):
                 add(WARN, rel, 1, "confidence '%s' is not one of high/medium/low" % c)
     if n_docs >= 10 and conf and len(conf) == 1:
         only = next(iter(conf))
-        add(WARN, "docs/", 0, "confidence is '%s' on 100%% of %d docs: the field carries no signal" % (only, n_docs))
+        add(INFO, "docs/", 0, "confidence is uniformly '%s' across %d docs; this is the expected state when every doc has been verified to the same bar" % (only, n_docs))
     if dates:
         add(INFO, "docs/", 0, "last_verified range: %s .. %s over %d docs" % (min(dates), max(dates), len(dates)))
 

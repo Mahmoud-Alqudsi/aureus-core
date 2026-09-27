@@ -270,7 +270,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/products/src/Models/Product.php`
   - `plugins/webkul/products/database/migrations/2024_11_25_091807_create_products_products_table.php`
-  - `docs/database/erds/operations.md:1149`
+  - `docs/database/erds/operations.md:1155`
   - No `ProductTemplate` model class or `products_templates` table exists in the repository.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT create a separate `ProductTemplate` model or migration.
@@ -339,7 +339,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php:11` implements `ShouldQueue`
   - Zero traditional queue Job classes in `app/` or `plugins/webkul/*/src/`
-  - `docs/architecture/change-impact.md:553, 590`
+  - `docs/architecture/change-impact.md:559, 596`
   - `docs/verification-matrix.md:95` (`TERM-011`)
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT assume background processing is handled by queued Job classes.

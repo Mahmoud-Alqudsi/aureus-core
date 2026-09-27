@@ -1,5 +1,8 @@
 # Improvement Prompts — Aureus ERP Knowledge Base
 
+> **Status: COMPLETE.** All nine prompts executed and merged.
+> See docs/CHANGELOG.md for the closure entry.
+
 كل برومبت أدناه مستقل بذاته، ومكتوب بالإنجليزية عمداً لأنه سيُنفَّذ بواسطة وكيل ذكاء اصطناعي (Gemini CLI في حالتك) داخل مستودع كل توثيقه بالإنجليزية — الصق البرومبت كما هو في الوكيل مباشرة، وليس في هذه المحادثة. الصياغة عامة وتصلح لأي وكيل بصلاحية وصول للكود؛ البرومبت 8 وحده مخصص لـ Gemini CLI تحديداً.
 
 **سير عمل مناسب لعمل فردي (بدل فرع منفصل لكل برومبت):**

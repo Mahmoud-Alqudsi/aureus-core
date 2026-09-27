@@ -315,7 +315,7 @@ git log -n 1 --format="%H %P" origin/develop
 ```
 
 > [!NOTE]
-> **Completion Boundary**: Upstream synchronization terminates upon integration into `develop`. Release promotion from `develop` to `master` is a distinct software release activity governed independently by [`git-workflow.md`](git-workflow.md#9-release-promotion-procedure).
+> **Completion Boundary**: Upstream synchronization terminates upon integration into `develop`. Release promotion from `develop` to `master` is a distinct software release activity governed independently by [`git-workflow.md`](git-workflow.md#release-and-version-tag-policy).
 
 ---
 

@@ -6,6 +6,12 @@ scope: architecture
 confidence: high
 ---
 
+<!-- lint: search-only -->
+
+> **How to use this file**: do not read it whole. Locate the
+> specific section or entry by name with `rg` and read only the
+> matched section.
+
 # Change Impact Analysis & Architecture Master Control Guide
 
 ## 1. Purpose & Core Objective
