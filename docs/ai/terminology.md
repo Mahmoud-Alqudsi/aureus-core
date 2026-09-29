@@ -10,7 +10,7 @@ confidence: high
 
 ## How to use this glossary
 
-This glossary defines the authoritative terminology, system concepts, and misconception corrections for Aureus ERP. It establishes exact definitions and distinguishes lookalike terms, legacy habits, and conceptual traps identified across Phases 1–9 of the repository audit.
+This glossary defines the authoritative terminology, system concepts, and misconception corrections for Aureus ERP. It establishes exact definitions and distinguishes lookalike terms, legacy habits, and conceptual traps identified across the repository audit.
 
 Every entry in this glossary is backed by verified source code, tests, migrations, configuration, Composer metadata, and verified repository documentation (covering architecture, security, database, workflows, and business rules).
 
@@ -57,7 +57,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/security/src/Bouncer.php` (`namespace Webkul\Security; class Bouncer ...`)
   - `plugins/webkul/security/src/Facades/Bouncer.php`
-  - `plugins/webkul/security/src/Models/Scopes/OwnershipScope.php:26` (`bouncer()->getAuthorizedUserIds(...)`)
+  - `plugins/webkul/security/src/Models/Scopes/OwnershipScope.php:31` (`bouncer()->getAuthorizedUserIds(...)`)
   - Neither `composer.json` nor `composer.lock` contains `silber/bouncer`.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT document, require, or treat Bouncer as `silber/bouncer`.
@@ -270,7 +270,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/products/src/Models/Product.php`
   - `plugins/webkul/products/database/migrations/2024_11_25_091807_create_products_products_table.php`
-  - `docs/database/erds/operations.md:1149`
+  - `docs/database/erds/operations.md:1155`
   - No `ProductTemplate` model class or `products_templates` table exists in the repository.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT create a separate `ProductTemplate` model or migration.
@@ -339,7 +339,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php:11` implements `ShouldQueue`
   - Zero traditional queue Job classes in `app/` or `plugins/webkul/*/src/`
-  - `docs/architecture/change-impact.md:553, 590`
+  - `docs/architecture/change-impact.md:559, 596`
   - `docs/verification-matrix.md:95` (`TERM-011`)
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT assume background processing is handled by queued Job classes.
@@ -439,12 +439,12 @@ When writing code, developing plugins, generating migrations, configuring securi
 ### 23. Navigation Composition Pattern (`shouldRegisterNavigation = false`)
 
 - **Term / Class**: Deliberate Navigation Composition Pattern
-- **What it actually is**: An intentional architectural design where a foundational core plugin (e.g., `partners`, `accounts`) defines Filament resources with `protected static bool $shouldRegisterNavigation = false;` to suppress them from the navigation sidebar. A sibling presentation or optional plugin (e.g., `contacts`, `invoices`, `accounting`) then surfaces the user-facing navigation items under organized clusters and navigation groups.
+- **What it actually is**: An intentional architectural design where a foundational base plugin (core `partners` or headless `accounts`) defines Filament resources with `protected static bool $shouldRegisterNavigation = false;` to suppress them from the navigation sidebar. A sibling presentation or optional plugin (e.g., `contacts`, `invoices`, `accounting`) then surfaces the user-facing navigation items under organized clusters and navigation groups.
 - **Common misconception**: Assuming that a Filament resource with `shouldRegisterNavigation = false` is broken, deprecated, or dead code.
 - **Evidence**:
   - `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`
-  - `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:20`
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:719-724`
+  - `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`
+  - `docs/architecture/filament-architecture.md:293-298`
 - **Prescriptive Rule**:
   - Developers MUST NOT change `shouldRegisterNavigation` to `true` on foundational core resources without verifying whether a presentation plugin owns user-facing navigation.
   - When exposing customized or clustered views of core resources, presentation plugins MUST control navigation registration.
@@ -458,7 +458,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Common misconception**: Assuming that all Eloquent relationships on a model are declared statically in that model's PHP class file, and concluding that a relationship does not exist merely because it is absent from the model's source file.
 - **Evidence**:
   - `plugins/webkul/sales/src/SaleServiceProvider.php` (`packageBooted()`)
-  - `docs/architecture/overview.md:96-101`
+  - `docs/architecture/overview.md#cross-plugin-investigation-boundary`
   - `docs/database/relationships.md`
 - **Prescriptive Rule**:
   - Before concluding that a model lacks an Eloquent relationship, developers MUST search the repository for `resolveRelationUsing`.
@@ -473,8 +473,8 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Common misconception**: Assuming that because a permission, validation rule, or state restriction is declared in a Filament form or Policy, the backend logic and database are automatically protected from unauthorized or inconsistent state transitions.
 - **Evidence**:
   - `docs/security/authorization.md:25-28`
-  - `docs/business-rules/accounting.md:376`
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:312, 1160-1170, 1861-1862`
+  - `docs/ai/security-rules.md:148-155`
+  - `docs/ai/forbidden-patterns.md:29-43`
 - **Prescriptive Rule**:
   - Future documentation and code MUST distinguish between a capability being declared and that capability actually being enforced on the relevant execution path.
   - Security-critical constraints, financial balances, and company boundaries MUST be enforced at the service or model level, NOT solely in UI schemas or form requests.

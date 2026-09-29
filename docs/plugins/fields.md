@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-30
+last_verified: 2026-09-25
 scope: plugins/webkul/fields
 confidence: high
 ---
@@ -316,7 +316,7 @@ Unlike traditional metadata systems storing dynamic attributes in key-value EAV 
   - 3-column layout dividing configuration into:
     - **General Section**: `name` (required, max 255), `code` (required, disabled on edit, regex `/^[a-zA-Z_][a-zA-Z0-9_]*$/`, validated against existing columns via `Schema::getColumnListing($table)`).
     - **Options Section**: Dynamic `Repeater` for option items; visible only when type is `select`, `checkbox_list`, or `radio`.
-    - **Form Settings Section**: Repeaters for configuring client/server `validations` (e.g. `required`, `maxLength`, `regex`, `gt`, `lt`, `after`, `unique`, `requiredIf`) and `additional-settings` (e.g. `prefix`, `suffix`, `helperText`, `placeholder`, `disabled`, `mask`, `autofocus`, `default`).
+    - **Form Settings Section**: Repeaters for configuring client/server `validations` (supporting conditional rules like `required`, `requiredIf`, `requiredIfAccepted`, `requiredUnless`, `prohibitedIf`, `prohibitedUnless`, length/item constraints like `length`, `maxLength`, `minLength`, `maxItems`, `minItems`, `gt`, `gte`, `lt`, `lte`, `multipleOf`, format rules `regex`, `notRegex`, `email`, `url`, `uuid`, `ip`, `json`, `accepted`, `declined`, date comparisons `after`, `afterOrEqual`, `before`, `beforeOrEqual`, and database `unique`; obsolete `maxSize`/`minSize` rules were removed) and `additional-settings` (e.g. `prefix`, `suffix`, `helperText`, `placeholder`, `disabled`, `mask`, `autofocus`, `default`).
     - **Table Settings Section**: `use_in_table` toggle plus repeaters for `alignment`, `weight`, `size`, `color`, `icon`, `searchable`, `sortable`, `copyable`, `tooltip`.
     - **Infolist Settings Section**: Repeaters for entry visual options (`weight`, `size`, `color`, `badge`, `copyable`, `helperText`, `hint`).
     - **Settings Sidebar**: `type` select (11 supported types), `input_type` select (for text fields), `is_multiselect` toggle (for select), `sort` integer input.

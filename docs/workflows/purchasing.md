@@ -277,7 +277,7 @@ Aureus ERP evaluates the three-way relationship between Purchase Orders, Goods R
 3. **Discrepancy Reflection**:
    - When an over-billed invoice is posted, `ComputePurchaseOrderFromMoveListener` runs `OrderCalculator::recompute()`.
    - `OrderLine::qty_invoiced` increases beyond `qty_received`, causing `qty_to_invoice` to become **negative** (`qty_received - qty_invoiced < 0`).
-   - If `qty_to_invoice < 0`, subsequent clicks on `CreateBillAction` automatically switch `MoveType` to **`IN_REFUND`** (Debit Note / Refund) to credit back the over-billed quantity (`Biller.php:14-17`).
+   - If `qty_to_invoice < 0`, subsequent clicks on `CreateBillAction` automatically switch `MoveType` to **`IN_REFUND`** (Debit Note / Refund) to credit back the over-billed quantity (`plugins/webkul/purchases/src/Services/Biller.php:14-17`).
 4. **Summary**:
    - There is **NO automated 3-way match blocking engine or tolerance-rule validator** that rejects mismatched vendor bills during posting.
    - The system relationship is **primarily informational, status-based, and manual**, supported by automated quantity defaults based on `purchase_method` and automatic debit-note creation for negative balances.
@@ -295,10 +295,10 @@ Unlike the sales module, the purchasing module implements **strict guardrails** 
 
 | Document State at Cancellation | System Behavior | Enforcement Mechanism |
 | :--- | :--- | :--- |
-| **PO with Received Goods (`qty_received > 0`)** | **BLOCKED**. Cancellation is rejected with error notification: *"The order cannot be canceled since they have receipts that are already done."* | Enforced in UI (`CancelAction.php:29-37`) and API (`PurchaseOrderController.php:226-230`). |
-| **PO with Active Vendor Bills (`state !== MoveState::CANCEL`)** | **BLOCKED**. Cancellation is rejected with error notification: *"The order cannot be canceled. You must first cancel their related vendor bills."* | Enforced in UI (`CancelAction.php:39-47`) and API (`PurchaseOrderController.php:232-236`). |
-| **PO with Unvalidated Receipts (`draft`, `confirmed`, `assigned`) & No Bills** | **ALLOWED**. `OrderWorkflow::cancel()` executes: sets `state = CANCELED`, cancels draft receipts via `ReceiptPlanner::cancelOperations()`, and dispatches `OrderCanceled`. | `OrderWorkflow.php:131-145`, `ReceiptPlanner.php:377-385` |
-| **Requisition Cancellation** | **ALLOWED**. `PurchaseAgreementResource\Pages\EditPurchaseAgreement` sets `state = CANCELED` via `cancelRecord` action. | `EditPurchaseAgreement.php:91-104` |
+| **PO with Received Goods (`qty_received > 0`)** | **BLOCKED**. Cancellation is rejected with error notification: *"The order cannot be canceled since they have receipts that are already done."* | Enforced in UI (`plugins/webkul/purchases/src/Filament/Admin/Clusters/Orders/Resources/OrderResource/Actions/CancelAction.php:29-37`) and API (`plugins/webkul/purchases/src/Http/Controllers/API/V1/PurchaseOrderController.php:226-230`). |
+| **PO with Active Vendor Bills (`state !== MoveState::CANCEL`)** | **BLOCKED**. Cancellation is rejected with error notification: *"The order cannot be canceled. You must first cancel their related vendor bills."* | Enforced in UI (`plugins/webkul/purchases/src/Filament/Admin/Clusters/Orders/Resources/OrderResource/Actions/CancelAction.php:39-47`) and API (`plugins/webkul/purchases/src/Http/Controllers/API/V1/PurchaseOrderController.php:232-236`). |
+| **PO with Unvalidated Receipts (`draft`, `confirmed`, `assigned`) & No Bills** | **ALLOWED**. `OrderWorkflow::cancel()` executes: sets `state = CANCELED`, cancels draft receipts via `ReceiptPlanner::cancelOperations()`, and dispatches `OrderCanceled`. | `plugins/webkul/purchases/src/Services/OrderWorkflow.php:131-145`, `plugins/webkul/purchases/src/Services/ReceiptPlanner.php:377-385` |
+| **Requisition Cancellation** | **ALLOWED**. `PurchaseAgreementResource\Pages\EditPurchaseAgreement` sets `state = CANCELED` via `cancelRecord` action. | `plugins/webkul/purchases/src/Filament/Admin/Clusters/Orders/Resources/PurchaseAgreementResource/Pages/EditPurchaseAgreement.php:91-104` |
 
 [VERIFIED]
 Evidence: `plugins/webkul/purchases/src/Filament/Admin/Clusters/Orders/Resources/OrderResource/Actions/CancelAction.php:28-48`, `plugins/webkul/purchases/src/Http/Controllers/API/V1/PurchaseOrderController.php:220-237`

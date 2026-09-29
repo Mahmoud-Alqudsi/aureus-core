@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-22
+last_verified: 2026-09-25
 scope: documentation-index
 confidence: high
 ---
@@ -64,6 +64,32 @@ When verifying behavior, resolving conflicting statements, or implementing featu
 2. **Plugin Architecture**: Browse [`docs/plugins/README.md`](plugins/README.md) for core vs optional plugin capabilities.
 3. **Security & Tenancy**: Study [`docs/security/authorization.md`](security/authorization.md) and [`docs/security/multi-company.md`](security/multi-company.md).
 4. **Testing Standards**: Read [`docs/ai/testing-rules.md`](ai/testing-rules.md) for Pest v4 test execution and conventions.
+
+### For Gemini CLI Users
+
+Gemini CLI loads the AI entry point and workspace skills automatically
+once this repository is trusted. Run `/permissions trust` (or
+`gemini trust` from the terminal) the first time you open the
+repository so that the six `aureus-*` skills under `.agents/skills/`
+become available. The trust decision is persisted per-folder to
+`~/.gemini/trustedFolders.json` and applies to future sessions.
+The repo-root [`GEMINI.md`](../GEMINI.md) is a one-line pointer that imports
+AGENTS.md via the `@AGENTS.md` directive, so both agents land on
+the same operating protocol.
+
+### Repository Setup
+
+After cloning, activate the versioned pre-commit KB lint hook once:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+Every commit touching `docs/`, `AGENTS.md`, or `agents/**` then
+runs `scripts/kb_lint.py --root . --strict` and blocks on any
+finding. See
+[`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md)
+for details. The config is local per clone; it is not pushed.
 
 ---
 
@@ -208,7 +234,7 @@ Foundational frameworks and cross-cutting architectural mechanisms:
 | [`docs/architecture/overview.md`](architecture/overview.md) | Architectural shape, local-package integration, and provider lifecycle |
 | [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md) | Filament Admin/Customer panels, resources, pages, widgets, and clusters |
 | [`docs/architecture/dynamic-schema.md`](architecture/dynamic-schema.md) | Custom fields dynamic schema mutation, DDL operations, and UI injection |
-| [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) | Complete catalog of 28 domain events, 6 listeners, 7 observers, and 53 services |
+| [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) | Complete catalog of 28 domain events, 6 listeners, 8 observers, and 54 services |
 | [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md) | Plugin discovery, registration, lifecycle, installation, and dependency handling |
 | [`docs/architecture/change-impact.md`](architecture/change-impact.md) | Change Impact Analysis master control guide, blast radius assessment (Phase 11) |
 

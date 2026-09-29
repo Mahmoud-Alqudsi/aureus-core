@@ -6,6 +6,12 @@ scope: database-operations
 confidence: high
 ---
 
+<!-- lint: search-only -->
+
+> **How to use this file**: do not read it whole. Locate the
+> specific section or entry by name with `rg` and read only the
+> matched section.
+
 # Operations Database ERD
 
 [VERIFIED] This document provides the source-code-verified architectural Entity Relationship Diagram (ERD) and referential data model for the Operations database area of Aureus ERP. It documents physical database tables, column structures, referential integrity constraints, Eloquent model mappings, company isolation boundaries, polymorphic interfaces, and dynamic runtime relationships established across the complete operational spectrum of 15 plugins:

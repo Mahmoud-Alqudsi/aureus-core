@@ -10,7 +10,7 @@ confidence: high
 
 ## 1. Overview & Purpose
 
-This document is the capstone file of the Phase 10 AI Rules system. It codifies the twelve critical anti-patterns, conceptual traps, and recurring mistakes identified across Phases 1–9 of the Aureus ERP audit.
+This document is the capstone file of the Aureus ERP AI governance rules. It codifies the twelve critical anti-patterns, conceptual traps, and recurring mistakes identified across the repository audit.
 
 While other rule files define what developers and AI agents *must* do, this document explicitly defines what developers and AI agents **MUST NOT DO**.
 
@@ -35,7 +35,7 @@ Every pattern documented here has occurred in this repository or in historical a
   - Multi-company relational consistency between parent and child models (e.g. verifying that a warehouse belongs to the same company as the sales order) was historically filtered in UI select dropdowns, but lacked backend enforcement until `ChecksCompanyConsistency` was introduced.
 - **Evidence**:
   - `docs/security/authorization.md:25-28`
-  - `docs/business-rules/accounting.md:376`
+  - `docs/business-rules/accounting.md#5-validation-constraints--enforcement-matrix`
   - `plugins/webkul/support/src/Traits/ChecksCompanyConsistency.php`
 - **Rule that prevents it**:
   - Developers and AI agents MUST NOT treat policy declarations, Filament Shield permissions, or UI form rules as proof of complete backend authorization or validation coverage.
@@ -123,7 +123,8 @@ Every pattern documented here has occurred in this repository or in historical a
 - **Specific Aureus ERP instance(s)**:
   - Early historical phase audits leaked machine-local user paths, breaking portability across developer workstations and failing automated CI path audits.
 - **Evidence**:
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:231-246, 1750-1755`
+  - `docs/CHANGELOG.md:351`
+  - `docs/development/change-management.md:84`
 - **Rule that prevents it**:
   - Canonical documentation in `docs/` MUST use repository-relative paths exclusively (e.g. `plugins/webkul/sales/src/Models/Order.php`).
   - Machine-specific absolute paths and `file://` URIs are STRICTLY FORBIDDEN in canonical documentation files.
@@ -135,12 +136,13 @@ Every pattern documented here has occurred in this repository or in historical a
 - **What it looks like**: Discovering a bug or typo in an existing plugin or historical documentation file (such as `AGENTS.md` or a core service) and directly editing that file while tasked with a scoped documentation phase.
 - **Why it is tempting**: Developers and AI agents instinctively want to fix bugs immediately upon discovery.
 - **Specific Aureus ERP instance(s)**:
-  - During Phase 10, typos in `AGENTS.md` (Livewire v3) and missing migrations in `support` were identified. Directly editing those files would violate phase isolation and create unreviewed code modifications.
+  - During earlier documentation audits, typos in `AGENTS.md` (Livewire v3) and missing migrations in `support` were identified. Directly editing those files would violate task isolation and create unreviewed code modifications.
 - **Evidence**:
-  - `Aureus ERP — Phase 10_Remaining AI Rules — Final Master Execution Prompt.md:464-494, 1867-1872`
+  - `AGENTS.md:97`
+  - `docs/development/change-management.md:61`
 - **Rule that prevents it**:
   - Developers and AI agents MUST NOT modify files outside the authorized write scope of the current task.
-  - Discovered bugs or proposed corrections outside the active scope MUST be documented in the Exit Report under "Proposed corrections (not applied)".
+  - Discovered bugs or proposed corrections outside the active scope MUST be noted in task output or pull request notes rather than edited silently.
 
 ---
 
@@ -164,10 +166,10 @@ Every pattern documented here has occurred in this repository or in historical a
 - **What it looks like**: Copying historical summary numbers (e.g. "6 observers", "52 services", "9 tested plugins") from past reports into new architectural documentation.
 - **Why it is tempting**: Re-scanning dozens of directories and running fresh AST parsing scripts requires extra effort.
 - **Specific Aureus ERP instance(s)**:
-  - Historical documentation reported 6 observers and 52 services. Fresh verification in Phase 3/10 revealed **7 observers** (discovering `ProductAttributeObserver` in `products`) and **53 services**.
+  - Historical documentation reported 6 observers and 52 services. Fresh verification revealed **7 observers** (discovering `ProductAttributeObserver` in `products`) and **53 services**.
   - Similarly, assuming 19 optional plugins have 10 tested without fresh checking leads to inaccurate audit conclusions.
 - **Evidence**:
-  - `docs/architecture/events-catalog.md:398-412`
+  - `docs/architecture/events-catalog.md#8-historical-discrepancy--verification-audit`
   - `docs/ai/testing-rules.md:23-55`
 - **Rule that prevents it**:
   - Whenever an architectural rule, security review, or documentation metric depends on numerical precision, developers and AI agents MUST freshly verify the count from source code.

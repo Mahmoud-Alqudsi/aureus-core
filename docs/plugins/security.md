@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-29
+last_verified: 2026-09-25
 scope: plugins/webkul/security
 confidence: high
 ---
@@ -74,7 +74,7 @@ The `security` module is the primary identity, authentication, authorization, an
     - Binds `Webkul\Security\PermissionRegistrar` singleton in the service container
   - `packageBooted()`:
     - Requires global helper functions file `plugins/webkul/security/src/Helpers/helpers.php`
-    - Registers global Gate before-rule: intercepts ability `'bypass_ownership_scope'` and returns `true` if the authenticated user has the `super_admin` role or the role name configured in `config('filament-shield.super_admin.name')` (`SecurityServiceProvider.php:50-63`)
+    - Registers global Gate before-rule: intercepts ability `'bypass_ownership_scope'` and returns `true` if the authenticated user has the `super_admin` role or the role name configured in `config('filament-shield.super_admin.name')` (`plugins/webkul/security/src/SecurityServiceProvider.php:50-63`)
 
 ## Filament Plugin class
 [VERIFIED]
@@ -411,7 +411,7 @@ The plugin houses static reference JSON files in `src/Data/`:
      - `EditUser`: Updates user, enforces admin protection constraints, and manages soft deletion.
      - `ViewUsers`: Displays user details.
    - Schemas & Tables:
-     - `UserForm`: Configures general info (name, email, password on create), permission assignment (roles, resource_permission with self-downgrade block, teams required when GROUP), partner avatar upload (`users/avatars`), language, active toggle, and multi-company relations (enforcing default company is among allowed companies).
+     - `UserForm`: Configures general info (name, email, password on create), permission assignment (roles, resource_permission with self-downgrade block, teams required when GROUP), partner avatar upload (`users/avatars`), language, active toggle, and multi-company relations (enforcing default company is among allowed companies; `defaultCompany` relationship query applies `hide_deleted_unless_selected($state)` while bypassing `AllowedCompanyScope`).
      - `UserInfolist`: Read-only layout with badges for roles, teams, and allowed companies.
      - `UsersTable`: Reorderable columns, partner avatar, team badges, role names, company tags, and filters for resource_permission, default_company, allowed_companies, teams, and roles.
 
@@ -468,7 +468,7 @@ None. `plugins/webkul/security/src/Filament/` contains zero widget classes.
 - **Admin Panel (`admin`)**:
   - `SecurityPlugin::register()` discovers all 4 resources (`UserResource`, `RoleResource`, `TeamResource`, `CompanyResource`) and all 3 settings cluster pages (`ManageUsers`, `ManageCurrency`, `ManageActivity`).
   - Configures password reset capability conditionally based on `UserSettings->enable_reset_password`.
-  - MFA TOTP authentication (`AppAuthentication`) is enforced via `AdminPanelProvider.php:114-117`.
+  - MFA TOTP authentication (`AppAuthentication`) is enforced via `app/Providers/Filament/AdminPanelProvider.php:114-117`.
 - **Customer Panel (`customer`)**:
   - `SecurityPlugin::register()` checks `$panel->getId() == 'admin'` and contributes zero resources, pages, or widgets to the customer panel. (The customer panel operates under guard `customer` mapped to `Webkul\Website\Models\Partner`).
 
@@ -515,7 +515,7 @@ The plugin defines 4 policy classes under `plugins/webkul/security/src/Policies/
 
 3. **`RolePolicy`** (`plugins/webkul/security/src/Policies/RolePolicy.php:9`):
    - Uses `HandlesAuthorization`.
-   - Explicitly registered for `Webkul\Security\Models\Role` in `SupportServiceProvider.php:92`.
+   - Explicitly registered for `Webkul\Security\Models\Role` in `plugins/webkul/support/src/SupportServiceProvider.php:92`.
    - Methods: `viewAny` (`view_any_role`), `view` (`view_role`), `create` (`create_role`), `update` (`update_role`), `delete` (`delete_role`), `deleteAny` (`delete_any_role`).
    - [VERIFIED AUTHORING BUG] Lines 66, 74, 82, 90, 98: `forceDelete`, `forceDeleteAny`, `restore`, `restoreAny`, and `reorder` check permissions `force_delete_field`, `force_delete_any_field`, `restore_field`, `restore_any_field`, and `reorder_field` instead of role permissions.
 
@@ -750,16 +750,16 @@ Redirects to Dashboard (coupled to Webkul\Project\Filament\Pages\Dashboard)
    - `Webkul\Security\Livewire\AcceptInvitation` (`plugins/webkul/security/src/Livewire/AcceptInvitation.php:13,89`) hardcodes a redirect to `Webkul\Project\Filament\Pages\Dashboard::getUrl()`. If the optional `projects` plugin is uninstalled or disabled, newly invited users encounter a fatal runtime error upon submitting their password.
 
 3. **Authoring Bugs in `RolePolicy`**:
-   - `RolePolicy.php:66,74,82,90,98` mistakenly checks `*_field` permissions (`force_delete_field`, `restore_field`, etc.) instead of `*_role` permissions for soft deletion, restore, and reordering actions.
+   - `plugins/webkul/security/src/Policies/RolePolicy.php:66,74,82,90,98` mistakenly checks `*_field` permissions (`force_delete_field`, `restore_field`, etc.) instead of `*_role` permissions for soft deletion, restore, and reordering actions.
 
 4. **Authoring Bug in `UsersTable` Teams Filter**:
-   - `UsersTable.php:99` configures the `teams` select filter options using `Role::query()->pluck('name', 'id')` instead of querying the `Team` model, resulting in roles being displayed inside the teams filter dropdown.
+   - `plugins/webkul/security/src/Filament/Resources/UserResource/Tables/UsersTable.php:99` configures the `teams` select filter options using `Role::query()->pluck('name', 'id')` instead of querying the `Team` model, resulting in roles being displayed inside the teams filter dropdown.
 
 5. **Discrepancy Between `InvitationFactory` / `InvitationResource` and Database Schema**:
    - `InvitationFactory.php` and `InvitationResource.php` reference columns `role_id`, `token`, `expires_at`, `invited_by`, and `accepted_at`. None of these columns exist in the physical `user_invitations` table (which contains only `id`, `email`, and timestamps). Calling the factory or consuming the API resource will result in SQL exceptions or undefined property warnings.
 
 6. **Notification Severity Typo on Failed Invitations**:
-   - `ListUsers.php:82` sends a notification configured with `->success()` instead of `->danger()` when an invitation email fails to send due to a caught exception.
+   - `plugins/webkul/security/src/Filament/Resources/UserResource/Pages/ListUsers.php:82` sends a notification configured with `->success()` instead of `->danger()` when an invitation email fails to send due to a caught exception.
 
 7. **Dead Code / Leftover Class**:
    - `Webkul\Security\Package` (`plugins/webkul/security/src/Package.php`) is an obsolete local class extending Spatie Package that is never imported or utilized by `SecurityServiceProvider`.

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-25
 scope: plugins/webkul/products
 confidence: high
 ---
@@ -14,7 +14,7 @@ Active Optional Module. Registered explicitly in `bootstrap/providers.php:54` as
 
 ## Core/Optional
 [VERIFIED]
-**Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/products/src/ProductServiceProvider.php:24-64`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('products')` (`plugins/webkul/products/src/ProductServiceProvider.php:68` and `plugins/webkul/products/src/ProductPlugin.php:23`).
+**Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/products/src/ProductServiceProvider.php:24-64`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('products')` (`plugins/webkul/products/src/ProductServiceProvider.php:71` and `plugins/webkul/products/src/ProductPlugin.php:23`).
 
 ## Enabled/Disabled
 [VERIFIED]
@@ -513,10 +513,10 @@ The plugin defines 13 physical database tables (12 owned entity tables + 1 junct
        - `CreateProduct` (`ProductResource/Pages/CreateProduct.php`): Handles cross-company exception bubbling and database transactions.
        - `EditProduct` (`ProductResource/Pages/EditProduct.php`): Injects Chatter action, dynamic header actions from `ProductSchemaRegistry`, label printing modal action (`print`), and record navigation tabs (`HasRecordNavigationTabs`).
        - `ViewProduct` (`ProductResource/Pages/ViewProduct.php`): Injects Chatter action, dynamic header actions, and label printing action.
-       - `ManageAttributes` (`ProductResource/Pages/ManageAttributes.php`): Relationship page for `$product->attributes()`. Displays assigned attributes and value badges. Includes header action `GenerateVariantsAction::make()`, guards against creating/editing/deleting attributes or options in use via `VariantUsage`, and executes inline variant re-generation.
+       - `ManageAttributes` (`ProductResource/Pages/ManageAttributes.php`): Relationship page for `$product->attributes()`. Displays assigned attributes and value badges. Relationship queries apply `hide_deleted_unless_selected($state)` on attribute selection. Includes header action `GenerateVariantsAction::make()`, guards against creating/editing/deleting attributes or options in use via `VariantUsage`, and executes inline variant re-generation.
        - `ManageVariants` (`ProductResource/Pages/ManageVariants.php`): Relationship page for `$product->variants()`. Displays configured variants with combination badge columns (`attribute: option`), edit modal, and view modal with print action.
      - Form Schemas:
-       - `ProductForm` (`ProductResource/Schemas/ProductForm.php`): 3-column layout featuring General section (name, rich text description, tags), Media section (multi-image upload), Inventory logistics section (weight, volume), Settings section (product type radio, reference, barcode, category select, company select with foreign company clear cascading), Pricing section (sales price with UOM, cost price with PO UOM). Injects slots from `ProductSchemaRegistry`.
+       - `ProductForm` (`ProductResource/Schemas/ProductForm.php`): 3-column layout featuring General section (name, rich text description, tags), Media section (multi-image upload), Inventory logistics section (weight, volume), Settings section (product type radio, reference, barcode, category select applying `hide_deleted_unless_selected($state)`, company select with foreign company clear cascading), Pricing section (sales price with UOM, cost price with PO UOM applying `hide_deleted_unless_selected($state)`). Injects slots from `ProductSchemaRegistry`.
      - Infolists: `ProductInfolist` (`ProductResource/Schemas/ProductInfolist.php`).
      - Tables: `ProductsTable` (`ProductResource/Tables/ProductsTable.php`).
      - Actions: `GenerateVariantsAction` (`ProductResource/Actions/GenerateVariantsAction.php`).
@@ -535,7 +535,7 @@ The plugin defines 13 physical database tables (12 owned entity tables + 1 junct
   4. `PackagingResource` (`plugins/webkul/products/src/Filament/Resources/PackagingResource.php`):
      - Navigation: `protected static bool $shouldRegisterNavigation = false;`.
      - Sub-Pages: `ManagePackagings` (`PackagingResource/Pages/ManagePackagings.php`).
-     - Form: `PackagingForm`.
+     - Form: `PackagingForm` (relationship queries apply `hide_deleted_unless_selected($state)` on package type).
      - Table: `PackagingsTable`.
      - Infolist: `PackagingInfolist`.
   5. `PriceListResource` (`plugins/webkul/products/src/Filament/Resources/PriceListResource.php`):

@@ -167,7 +167,7 @@ $$\text{product\_qty} > \text{available\_qty}$$
 - The UI triggers a **warning notification** (`Notification::make()->warning()`).
 - **Non-Blocking Finding**: The system does **not block** confirmation. The buyer can exceed blanket quantities.
 
-#### Agreement Expiration Filtering (`OrderForm.php:113-130`)
+#### Agreement Expiration Filtering (`plugins/webkul/purchases/src/Filament/Admin/Clusters/Orders/Resources/OrderResource/Schemas/OrderForm.php:113-130`)
 When selecting an agreement on an RFQ or purchase order:
 $$\text{starts\_at} \le \text{now}() \quad \land \quad (\text{ends\_at} \ge \text{now}() \lor \text{ends\_at} \text{ is null}) \quad \land \quad \text{state} = \text{RequisitionState::CONFIRMED}$$
 - Expired agreements are excluded from selection in the UI.
@@ -253,11 +253,11 @@ The following numerical thresholds and validation barriers are enforced in the p
 
 | Parameter / Field | Source Location | Exact Value / Formula | Behavior When Violated | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Manager Approval Validation Floor** | `OrderSettings.php:11` | Default `5000` (`order_validation_amount`) | If `total_amount >= 5000` and user lacks `GLOBAL`/`GROUP` permission, state halts at `TO_APPROVE`. | [VERIFIED] |
-| **Receipt Cancellation Barrier** | `CancelAction.php:29`<br>`PurchaseOrderController.php:226` | `qty_received > 0` | Rejects order cancellation: *"The order cannot be canceled since they have receipts that are already done."* | [VERIFIED] |
-| **Vendor Bill Cancellation Barrier** | `CancelAction.php:39`<br>`PurchaseOrderController.php:232` | Any linked bill $\ne$ `CANCEL` | Rejects order cancellation: *"The order cannot be canceled. You must first cancel their related vendor bills."* | [VERIFIED] |
-| **Ordered vs Received Reduction Barrier** | `ReceiptPlanner.php:67-72` | `product_qty < qty_received` | Throws `Exception`: Cannot reduce ordered quantity below already received stock. | [VERIFIED] |
-| **Reordering Warehouse Consistency** | `ReceiptPlanner.php:307-319` | Warehouse mismatch with `OrderPoint` | Throws `Exception`: Receipt warehouse must match reordering rule location hierarchy. | [VERIFIED] |
+| **Manager Approval Validation Floor** | `plugins/webkul/purchases/src/Settings/OrderSettings.php:11` | Default `5000` (`order_validation_amount`) | If `total_amount >= 5000` and user lacks `GLOBAL`/`GROUP` permission, state halts at `TO_APPROVE`. | [VERIFIED] |
+| **Receipt Cancellation Barrier** | `plugins/webkul/purchases/src/Filament/Admin/Clusters/Orders/Resources/OrderResource/Actions/CancelAction.php:29`<br>`plugins/webkul/purchases/src/Http/Controllers/API/V1/PurchaseOrderController.php:226` | `qty_received > 0` | Rejects order cancellation: *"The order cannot be canceled since they have receipts that are already done."* | [VERIFIED] |
+| **Vendor Bill Cancellation Barrier** | `plugins/webkul/purchases/src/Filament/Admin/Clusters/Orders/Resources/OrderResource/Actions/CancelAction.php:39`<br>`plugins/webkul/purchases/src/Http/Controllers/API/V1/PurchaseOrderController.php:232` | Any linked bill $\ne$ `CANCEL` | Rejects order cancellation: *"The order cannot be canceled. You must first cancel their related vendor bills."* | [VERIFIED] |
+| **Ordered vs Received Reduction Barrier** | `plugins/webkul/purchases/src/Services/ReceiptPlanner.php:67-72` | `product_qty < qty_received` | Throws `Exception`: Cannot reduce ordered quantity below already received stock. | [VERIFIED] |
+| **Reordering Warehouse Consistency** | `plugins/webkul/purchases/src/Services/ReceiptPlanner.php:307-319` | Warehouse mismatch with `OrderPoint` | Throws `Exception`: Receipt warehouse must match reordering rule location hierarchy. | [VERIFIED] |
 | **Minimum Purchase Price** | `PurchaseOrderRequest.php` | `price_unit >= 0` | Validation error HTTP 422: Price unit must be at least 0. | [VERIFIED] |
 | **Maximum Purchase Price** | `PurchaseOrderRequest.php` | `price_unit <= 99999999999` | Validation error HTTP 422: Price unit exceeds numerical bounds. | [VERIFIED] |
 | **Minimum Order Quantity** | `PurchaseOrderRequest.php` | `product_qty >= 0.0001` | Validation error HTTP 422: Order quantity must be greater than zero. | [VERIFIED] |

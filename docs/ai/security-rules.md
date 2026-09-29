@@ -37,9 +37,12 @@ Every rule in this document is prescriptive. Developers and AI agents MUST stric
 > 3. **A raw query MUST NOT merely add a company condition to one table while leaving another relevant company-scoped relation exposed.**
 > 4. **If intentionally bypassing an established company scope, the reason MUST be documented in code and the isolation logic MUST be reviewed explicitly.**
 
+### Approved Alternative to Raw `DB::` Queries
+`Model::query()` combined with Eloquent relationships is the approved alternative to `DB::table()`, `DB::select()`, and `DB::raw()` for domain queries, because it automatically inherits the isolation suite (`BelongsToCompany`, `CompanyScope`, `CompanyContext`).
+
 ### The Reality of Current Practice vs. Future Standard
 - **Audit Finding**: Approximately **143 files** in the repository perform raw database operations (`DB::table`, `DB::raw`, `DB::select`, `DB::statement`).
-- **Honest Assessment**: The raw-SQL company-isolation rule is **NOT an already-established repository practice**; Phase 10 is introducing it as a **mandatory future rule because current practice across existing plugins is inconsistent**.
+- **Honest Assessment**: The raw-SQL company-isolation rule is **NOT an already-established repository practice**; it is being introduced as a **mandatory future rule because current practice across existing plugins is inconsistent**.
 - Historically, some reporting widgets, installation commands, and analytical calculations utilized raw SQL without universally filtering by `company_id` across every joined table, relying informally on surrounding context.
 - Moving forward, raw SQL is classified as a **critical review zone**.
 

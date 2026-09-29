@@ -15,7 +15,7 @@ This document provides a source-code-verified specification of database schema d
 ## Verification Rules
 [VERIFIED]
 All architectural claims and schema metrics in this document are verified against the repository source code:
-- **Database Facts**: 262 database tables identified across root migrations and plugin migrations. 1016 foreign keys represent actual database foreign key constraints (constrained(): 843, foreign(): 173. All FK analysis must include both methods).
+- **Database Facts**: 266 database tables identified across root migrations and plugin migrations. 1,046 foreign keys represent actual database foreign key constraints (constrained(): 843, foreign(): 173. All FK analysis must include both methods).
 - **Model Mappings**: Verified from 321 PHP files across `app/Models/` and `plugins/webkul/*/src/Models/` (315 Eloquent models [1 root `User` + 314 plugin models] and 6 supporting concern traits and global scope classes. Count verified via: `find app/Models plugins/webkul/*/src/Models -type f -name "*.php" | wc -l`).
 - **Strict Separation**: Distinguishes between database-level constraints (physical foreign keys, unique indexes, column defaults) and application-level ORM behaviors (global scopes, soft deleting, cast mappings, polymorphic resolution).
 
@@ -74,9 +74,9 @@ Evidence:
 [VERIFIED]
 Primary key definitions across Aureus ERP adhere to explicit architectural patterns:
 
-1. **Standard Domain Entity Tables (197 tables with standard id)**:
-   - **Pattern**: 197 standard ID tables:
-     - `$table->id()`: 194 tables
+1. **Standard Domain Entity Tables (196 tables with standard id)**:
+   - **Pattern**: 196 standard ID tables:
+     - `$table->id()`: 193 tables
      - `$table->id('id')`: 1 table
      - `bigIncrements('id')`: 2 tables (Spatie roles and permissions)
    - **Physical Type**: Laravel `$table->id()` creates an auto-incrementing BIGINT primary key abstraction whose physical implementation depends on the database engine. MySQL uses AUTO_INCREMENT while PostgreSQL uses BIGSERIAL/identity-style sequences.
@@ -108,7 +108,7 @@ Evidence:
 
 ## Foreign Key Conventions
 [VERIFIED]
-Aureus ERP enforces relational integrity heavily at the database layer. A total of **1016 foreign keys** are defined across creation and alteration migration files.
+Aureus ERP enforces relational integrity heavily at the database layer. A total of **1,046 foreign keys** are defined across creation and alteration migration files.
 
 ### Foreign Key Construction Styles
 1. **Modern Fluent Syntax (Dominant)**:
@@ -169,7 +169,7 @@ Evidence:
 
 ## Delete Behavior Conventions
 [VERIFIED]
-Foreign keys in Aureus ERP define explicit referential action rules on physical deletion across 1016 foreign keys. Important: Counts include: nullOnDelete(), cascadeOnDelete(), restrictOnDelete(), explicit onDelete(...)
+Foreign keys in Aureus ERP define explicit referential action rules on physical deletion across 1,046 foreign keys. Important: Counts include: nullOnDelete(), cascadeOnDelete(), restrictOnDelete(), explicit onDelete(...)
 
 | Behavior | Count | Percentage |
 |---|---:|---:|
@@ -178,7 +178,7 @@ Foreign keys in Aureus ERP define explicit referential action rules on physical 
 | RESTRICT on delete | 181 | 17.8% |
 | Default / No Action | 2 | 0.2% |
 
-Total: 1016 foreign keys
+Total: 1,046 foreign keys
 
 ### Database Hard Deletes vs. Eloquent SoftDeletes
 - **Database Delete Rules (`ON DELETE ...`)**: Only triggered when a row is physically removed (`DELETE FROM ...`) or via `forceDelete()`.
@@ -351,9 +351,9 @@ Evidence:
 ---
 
 ## Verified Facts
-- Standard domain entity tables (197 tables with standard id) use `$table->id()`.
+- Standard domain entity tables (196 tables with standard id) use `$table->id()`.
 - UUID usage is limited to framework/system tables. Notable examples include failed_jobs.uuid and notifications.id, where notifications.id is defined as a UUID primary key.
-- 1016 foreign keys are defined in migrations.
+- 1,046 foreign keys are defined in migrations.
 - Native database enums are used selectively. The repository contains 19 enum columns across specific migrations, while string columns with PHP backed Enum casting remain the dominant convention.
 - 38 JSON / JSONB columns exist for non-relational configurations, audit diffs, translation strings, and UI presets.
 - Soft deletion is implemented on 61 tables with soft deletes using `deleted_at` timestamp.
@@ -366,7 +366,7 @@ None identified.
 
 ## Unknowns
 ```
-None identified.
+No known unknowns at this time; re-verify against source on the next upstream synchronization.
 ```
 
 ---

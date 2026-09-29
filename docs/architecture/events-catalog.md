@@ -17,9 +17,9 @@ Rather than relying on tight direct coupling between modules, core transactional
 Repository-wide class counts at the time of verification:
 - **28 Domain Event Classes** across 5 plugins (`accounts`: 7, `inventories`: 6, `manufacturing`: 5, `purchases`: 5, `sales`: 5)
 - **6 Listener Classes** across 3 plugins (`sales`: 3, `purchases`: 2, `plugin-manager`: 1)
-- **7 Eloquent Model Observer Classes** across 3 plugins (`inventories`: 3, `manufacturing`: 2, `products`: 2)
+- **8 Eloquent Model Observer Classes** across 4 plugins (`accounts`: 1, `inventories`: 3, `manufacturing`: 2, `products`: 2)
 - **1 Laravel Notification Class** (`Webkul\Chatter\Notifications\ChatterDatabaseNotification`)
-- **53 Service Classes** providing business calculations, document sequencing, and UI schema extensions
+- **54 Service Classes** providing business calculations, document sequencing, and UI schema extensions
 
 *(Note: These figures represent repository-wide concrete class counts at the snapshot date, not the number of components participating in any single isolated workflow or plugin).*
 
@@ -33,7 +33,7 @@ Repository-wide class counts at the time of verification:
          ▼                                 ▼      ▼                               ▼
 ┌───────────────────────────────┐ ┌──────────────────────────────┐ ┌──────────────────────────────┐
 │  Domain Events & Listeners    │ │  Eloquent Model Observers    │ │  Shared Domain Services      │
-│  (28 Events, 6 Listeners)     │ │  (7 Observers)               │ │  (53 Services)               │
+│  (28 Events, 6 Listeners)     │ │  (8 Observers)               │ │  (54 Services)               │
 ├───────────────────────────────┤ ├──────────────────────────────┤ ├──────────────────────────────┤
 │ • Decoupled transactional     │ │ • Master record lifecycle    │ │ • Synchronous cross-plugin   │
 │   state progression.          │ │   synchronization.           │ │   orchestration.             │
@@ -344,7 +344,7 @@ Evidence: `plugins/webkul/purchases/src/Models/Order.php`; `plugins/webkul/purch
 
 ## 6. Important Service Interactions
 
-Aureus ERP contains 53 service classes. The following table highlights the core services that govern cross-plugin architecture, sequencing, security, and schema contribution:
+Aureus ERP contains 54 service classes. The following table highlights the core services that govern cross-plugin architecture, sequencing, security, and schema contribution:
 
 | Service Class | Owning Plugin | Primary Architectural Role & Cross-Plugin Interactions |
 | :--- | :--- | :--- |

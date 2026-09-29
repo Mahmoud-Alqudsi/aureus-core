@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-22
+last_verified: 2026-09-25
 scope: documentation-changelog
 confidence: high
 ---
@@ -30,6 +30,53 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ## Operational Governance Maintenance
 
+### KB Improvement Audit — 2026-09-27
+
+Completed the nine-prompt audit defined in `IMPROVEMENT_PROMPTS.md`. Highlights:
+
+- **Local lint gate**: added `docs/development/kb_lint.py` and a versioned pre-commit hook (`scripts/hooks/pre-commit`). Runs with `--strict`; blocks commits that touch `docs/`, `AGENTS.md`, or `agents/**` when any check fails.
+- **Prompt 2**: corrected `HasOwner` -> `HasOwnershipScope` in `plugin-rules.md` and the `AGENTS.md` #10 delegation target.
+- **Prompt 3**: reconciled repository-wide COUNT numbers against the live source tree; drift was smaller than the initial audit suggested (most "drift" was different-scope counting, not stale numbers). Net changes landed in `verification-matrix.md` and ~8 consumer docs.
+- **Prompt 4**: resolved core/optional plugin-classification conflicts; `docs/plugins/README.md` already matched source.
+- **Prompt 5**: retired dangling references to an external authoring document that was never tracked in git, and an undefined 'Exit Report' requirement.
+- **Prompt 6**: stripped Phase-N / O-stage labels from all agent-facing files (7 files); kept load-bearing context with inline glosses only where justified.
+- **Prompt 7**: converted `docs/database/models-index.md` to search-only. The schema-touching reading set dropped from ~99k tokens to ~30k.
+- **Prompt 8**: added `GEMINI.md` at repo root pointing at `AGENTS.md` via the `@import` directive; verified against current Gemini CLI docs that `.agents/skills/` is a recognized project-level alias so no `.gemini/skills` symlink is needed.
+- **Prompt 9**: resolved all 166 line-citations findings to 0 across stages 9.1-9.5 (classes A/B/D/E). Documentation ranges like `path:X-Y` were preserved; the linter was extended to accept off-by-one line ranges at end of file, matching the `wc -l` vs `splitlines()` difference.
+
+Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath` re-enabled; the hook guards every future commit touching KB files.
+
+### Repository-Wide Count Reconciliations (2026-09-26)
+
+- **Evidentiary Tier**: Git-Verified history on branch `docs/kb-improvement-roadmap`.
+- **Status**: **Reconciled count drifts against live repository source truth**.
+- **Recorded Scope**:
+  - `COUNT-003`: 262 -> 266 (5 Spatie permission tables with variable names were not previously counted)
+  - `COUNT-004`: 1,016 -> 1,046 (upstream migration additions)
+
+### Retired Dangling Execution Prompt and Exit Report References (2026-09-26)
+
+- **Evidentiary Tier**: Git-Verified history on branch `docs/kb-improvement-roadmap`.
+- **Status**: **Reconciled external prompt citations and retired undefined artifact requirement**.
+- **Recorded Scope**:
+  - **Retired External Authoring Spec Citations**: Removed four dangling citations to untracked external authoring execution prompt files across [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md) (Patterns 6 and 7) and [`docs/ai/terminology.md`](ai/terminology.md) (Sections 23 and 25). Replaced with verified repository evidence:
+    - Pattern 6 (Absolute vs Relative Paths): Cited [`docs/CHANGELOG.md:351`](CHANGELOG.md) (Machine Path Gate) and [`docs/development/change-management.md:84`](development/change-management.md).
+    - Pattern 7 (Silent Protected-File Modification): Cited `AGENTS.md:97` (Critical Constraint #8) and [`docs/development/change-management.md:61`](development/change-management.md).
+    - Section 23 (Navigation Composition Pattern): Cited [`plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`](../plugins/webkul/partners/src/Filament/Resources/PartnerResource.php), [`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`](../plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php), and [`docs/architecture/filament-architecture.md:293-298`](architecture/filament-architecture.md).
+    - Section 25 (Declaration ≠ Enforcement): Cited [`docs/security/authorization.md:25-28`](security/authorization.md), [`docs/ai/security-rules.md:148-155`](ai/security-rules.md), and [`docs/ai/forbidden-patterns.md:29-43`](ai/forbidden-patterns.md).
+  - **Retired Dangling "Exit Report" Requirement**: Removed the obsolete reference to an undefined "Exit Report" in [`docs/ai/forbidden-patterns.md:143`](ai/forbidden-patterns.md). Aligned out-of-scope bug reporting with `AGENTS.md` Critical Constraint #8 and standard PR/task notes.
+
+### Upstream Sync Knowledge-Base Gaps Reconciled (2026-09-25)
+
+- **Evidentiary Tier**: Git-Verified history on branch `docs/reconcile-upstream-sync-knowledge-base`.
+- **Status**: **100% Knowledge Base and Source Code Parity Established**.
+- **Recorded Scope**:
+  - **Eliminated Phantom Architecture**: Removed nonexistent global helper `active_company_ids(): array` from [`docs/security/multi-company.md`](security/multi-company.md), documenting canonical `app(CompanyContext::class)->activeIds()` retrieval and verifying `helpers.php` boundaries.
+  - **Completed Soft-Delete Pattern Documentation**: Documented `hide_deleted_unless_selected($state)` across the four previously omitted plugins: `accounting` (`JournalEntryForm`), `accounts` (`BillForm`, `InvoiceForm`, `JournalForm`, `PaymentForm`, `PayAction`), `products` (`ProductForm`, `PackagingForm`, `ManageAttributes`), and `security` (`UserForm`).
+  - **Custom Field Validation Overhaul**: Fully documented six added validation rules (`requiredIfAccepted`, `length`, `maxItems`, `maxLength`, `minItems`, `minLength`) and two removed rules (`maxSize`, `minSize`) in [`docs/plugins/fields.md`](plugins/fields.md).
+  - **Impact and Asset Alignment**: Clarified `ConfirmAction` ownership under `accounts` resolving vendor bill confirmation from purchase orders, and corrected compiled Filament asset paths in [`docs/architecture/change-impact.md`](architecture/change-impact.md) Section 22 to `public/css/filament/`, `public/fonts/filament/`, and `public/js/filament/`.
+  - **Frontmatter Verification Audit**: Bumped `last_verified: 2026-09-25` across all reviewed living documentation files.
+
 ### Upstream Synchronization Reconciled on Topic Branch (2026-09-23)
 
 - **Evidentiary Tier**: Git-Verified history on branch `chore/upstream-sync-20260923-2942d1cb8`.
@@ -39,7 +86,7 @@ In accordance with the repository's documentation accuracy rules, historical eve
   - **Dependency Updates**: Filament packages upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated static compiled assets. `composer.json` remained unchanged and validated cleanly under `composer validate --strict`.
   - **Domain Improvements & Fixes**:
     - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, and soft-delete relationship query refactoring.
-    - `purchases`: Purchase order bill confirmation fix (`ConfirmAction`).
+    - `accounts` & `purchases`: Purchase order bill confirmation fix via `ConfirmAction` in `accounts` (`InvoiceResource/Actions/ConfirmAction` utilizing `$this->cancel(shouldRollBackDatabaseTransaction: true)`).
     - `fields`: Custom field validation handling improvements (`FieldForm`).
     - `plugin-manager`: Settings migrations automated `--force` flag and Spatie settings cache clearing in `InstallCommand`.
     - `inventories`: `ProductQuantity` quantities calculations and stock move soft-delete filtering.
@@ -48,7 +95,7 @@ In accordance with the repository's documentation accuracy rules, historical eve
   - **Living Documentation & Knowledge Reconciliation**: Comprehensive 2-pass audit across all 14 affected domain plugins and architectural baselines:
     - Updated [`docs/architecture/change-impact.md`](architecture/change-impact.md) (Section 22) and [`docs/verification-matrix.md`](verification-matrix.md) (Section 9) directly on the synchronization topic branch before opening the Pull Request, in strict compliance with Section 8 of `upstream-sync.md`.
     - Synchronized framework baselines (Laravel `v13.31.0`, Filament `v5.8.1`, Livewire `v4.4.5`) across `docs/README.md`, `docs/ai/context.md`, `docs/ai/terminology.md`, `docs/ai/forbidden-patterns.md`, `docs/architecture/filament-architecture.md`, `docs/architecture/overview.md`.
-    - Documented soft-delete relationship form query scoping pattern (`hide_deleted_unless_selected`) in `docs/ai/coding-rules.md:4.6`, `docs/plugins/support.md`, `docs/plugins/inventories.md`, `docs/plugins/purchases.md`, `docs/plugins/sales.md`, `docs/plugins/manufacturing.md`, `docs/plugins/maintenance.md`, `docs/plugins/employees.md`, `docs/plugins/partners.md`, `docs/plugins/projects.md`, and `docs/plugins/blogs.md`.
+    - Documented soft-delete relationship form query scoping pattern (`hide_deleted_unless_selected`) in `docs/ai/coding-rules.md:4.6`, `docs/plugins/support.md`, and across all 14 affected plugins (`accounting`, `accounts`, `blogs`, `employees`, `inventories`, `maintenance`, `manufacturing`, `partners`, `products`, `projects`, `purchases`, `sales`, `security`, and `support`).
     - Documented cross-tenant authorized querying pattern (`withoutGlobalScope(CompaniesScope::class)` with `allowed_company_ids()`) and helpers (`allowed_companies()`, `allowed_company_ids()`) in `docs/security/multi-company.md`, `docs/database/company-isolation.md`, `docs/plugins/support.md`, and `docs/plugins/accounts.md`.
     - Documented `ProductQuantity` `uom()` and `productCategory()` `HasOneThrough` relationships in `docs/database/models-index.md` and `docs/plugins/inventories.md`.
     - Documented stored XSS mitigation in `docs/security/threat-model.md` and `docs/plugins/accounts.md`.

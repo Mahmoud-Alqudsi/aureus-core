@@ -270,13 +270,13 @@ The following numerical boundaries and validation limits are enforced in the inv
 
 | Parameter / Field | Source Location | Exact Value / Formula | Behavior When Violated | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Minimum Move Line Quantity** | `MoveCompleter.php:89` | `float_compare(line->qty, 0, rounding) < 0` | Throws `Exception('Quantity cannot be negative')`. Line quantity must be $\ge 0$. | [VERIFIED] |
-| **Serial Number Stock Limit** | `Move.php:1247-1258` | $\text{Quantity} \le 1.0$ per serial | Throws `Exception`: Serial-tracked products cannot have more than 1 unit per serial number. | [VERIFIED] |
-| **UOM Rounding Precision Alignment** | `MoveCompleter.php:148-156` | `float_compare(roundUom, roundDigits, 2) !== 0` | Throws `Exception`: Move line quantity cannot violate UOM fractional rounding precision. | [VERIFIED] |
-| **Price Precision** | `MoveMerger.php:21` | `PRICE_PRECISION = 2` | Unit prices during move merges and offsets are rounded to 2 decimal places. | [VERIFIED] |
+| **Minimum Move Line Quantity** | `plugins/webkul/inventories/src/Services/MoveCompleter.php:89` | `float_compare(line->qty, 0, rounding) < 0` | Throws `Exception('Quantity cannot be negative')`. Line quantity must be $\ge 0$. | [VERIFIED] |
+| **Serial Number Stock Limit** | `plugins/webkul/inventories/src/Models/Move.php:1247-1258` | $\text{Quantity} \le 1.0$ per serial | Throws `Exception`: Serial-tracked products cannot have more than 1 unit per serial number. | [VERIFIED] |
+| **UOM Rounding Precision Alignment** | `plugins/webkul/inventories/src/Services/MoveCompleter.php:148-156` | `float_compare(roundUom, roundDigits, 2) !== 0` | Throws `Exception`: Move line quantity cannot violate UOM fractional rounding precision. | [VERIFIED] |
+| **Price Precision** | `plugins/webkul/inventories/src/Services/MoveMerger.php:21` | `PRICE_PRECISION = 2` | Unit prices during move merges and offsets are rounded to 2 decimal places. | [VERIFIED] |
 | **Database Quantity Storage** | Migrations | `DECIMAL(15, 4)` | Quantities support up to 4 decimal places across all stock ledgers. | [VERIFIED] |
-| **Package Wholeness** | `MoveCompleter.php:258-278` | Single destination location per package | Throws `Exception`: A package container cannot be partially split across multiple locations. | [VERIFIED] |
-| **Done Move Cancellation Barrier** | `MoveCanceller.php:14` | `state === MoveState::DONE` | Throws `Exception`: Completed stock moves cannot be cancelled; requires a formal return. | [VERIFIED] |
+| **Package Wholeness** | `plugins/webkul/inventories/src/Services/MoveCompleter.php:258-278` | Single destination location per package | Throws `Exception`: A package container cannot be partially split across multiple locations. | [VERIFIED] |
+| **Done Move Cancellation Barrier** | `plugins/webkul/inventories/src/Services/MoveCanceller.php:14` | `state === MoveState::DONE` | Throws `Exception`: Completed stock moves cannot be cancelled; requires a formal return. | [VERIFIED] |
 
 ---
 

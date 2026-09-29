@@ -168,7 +168,7 @@ The `full-calendar` plugin defines **zero database migrations** and owns **zero 
   - **Base Class**: Extends `Filament\Widgets\Widget`.
   - **Implemented Contracts**: `HasActions`, `HasConfigurations`, `HasEvents`, `HasForms`, `HasHeaderActions`, `HasModalActions`, `HasRawJs`, `HasRecords`.
   - **Used Concerns**: `CanBeConfigured`, `InteractsWithActions`, `InteractsWithEvents`, `InteractsWithForms`, `InteractsWithHeaderActions`, `InteractsWithModalActions`, `InteractsWithRawJS`, `InteractsWithRecord`.
-  - **Blade View**: `full-calendar::filament.widgets.full-calendar` (`resources/views/filament/widgets/full-calendar.blade.php`).
+  - **Blade View**: `full-calendar::filament.widgets.full-calendar` (`plugins/webkul/full-calendar/resources/views/filament/widgets/full-calendar.blade.php`).
   - **Column Span**: Defaults to `'full'`.
   - **Default Header Actions**: `[CreateAction::make()]`.
   - **Default Modal Actions**: `[EditAction::make(), DeleteAction::make()]`.
@@ -253,7 +253,7 @@ The plugin implements a decoupled architecture connecting FullCalendar v6, Alpin
 
 ### Browser Window Events
 [VERIFIED]
-The Alpine component (`resources/js/app.js:131-135`) listens for the following global window events:
+The Alpine component (`plugins/webkul/full-calendar/resources/js/app.js:131-135`) listens for the following global window events:
 - `full-calendar--refresh`: Invokes `calendar.refetchEvents()` to reload all event feeds from Livewire.
 - `full-calendar--prev`: Moves calendar to the previous time interval (`calendar.prev()`).
 - `full-calendar--next`: Moves calendar to the next time interval (`calendar.next()`).
@@ -288,7 +288,7 @@ No plugin-specific settings schema exists under `database/settings/`.
 ## Translations
 [VERIFIED]
 - **Declared in Provider**: `FullCalendarServiceProvider::configureCustomPackage()` invokes `$package->hasTranslations()`.
-- **Physical State**: The `plugins/webkul/full-calendar/resources/lang/` directory **does not exist**. FullCalendar relies on built-in locales imported via `@fullcalendar/core/locales-all` in JavaScript (`resources/js/app.js:17, 47`) and translated labels supplied by child widgets in domain plugins.
+- **Physical State**: The `plugins/webkul/full-calendar/resources/lang/` directory **does not exist**. FullCalendar relies on built-in locales imported via `@fullcalendar/core/locales-all` in JavaScript (`plugins/webkul/full-calendar/resources/js/app.js:17, 47`) and translated labels supplied by child widgets in domain plugins.
 
 ## Tests
 [VERIFIED]
@@ -419,7 +419,7 @@ sequenceDiagram
    - **Critical Fact**: `plugins/webkul/full-calendar/` contains **0 test files**. No Pest tests, PHPUnit tests, or Playwright E2E browser tests exist for calendar components anywhere in the repository.
    - Any regression in Livewire-to-Alpine event dispatching, timezone parsing, or action mounting cannot be detected by automated CI/CD pipelines.
 2. **Raw JavaScript String Execution (`InteractsWithRawJS`)**:
-   - `eventClassNames`, `eventContent`, `eventDidMount`, and `eventWillUnmount` output raw JavaScript strings directly into Blade templates (`resources/views/filament/widgets/full-calendar.blade.php:26-29`).
+   - `eventClassNames`, `eventContent`, `eventDidMount`, and `eventWillUnmount` output raw JavaScript strings directly into Blade templates (`plugins/webkul/full-calendar/resources/views/filament/widgets/full-calendar.blade.php:26-29`).
    - If unsanitized user or tenant input is ever interpolated into these methods in child classes, it creates potential Cross-Site Scripting (XSS) vulnerabilities.
 3. **FullCalendar Exclusive End-Date Inconsistency**:
    - FullCalendar treats all-day range end dates as exclusive (e.g., May 1 to May 3 in FullCalendar means May 1 through May 2). `calculateTimezoneOffset()` subtracts one day, but child widgets overriding `onDateSelect()` without applying this normalization can cause off-by-one date storage bugs.

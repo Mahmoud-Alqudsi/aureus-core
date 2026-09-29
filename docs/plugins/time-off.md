@@ -112,7 +112,7 @@ From `plugins/webkul/time-off/composer.json`:
 
 ## Runtime Plugin Dependencies
 [VERIFIED]
-- **Declared in Service Provider**: `employees` (`hasDependencies(['employees'])` in `TimeOffServiceProvider.php:35-37`).
+- **Declared in Service Provider**: `employees` (`hasDependencies(['employees'])` in `plugins/webkul/time-off/src/TimeOffServiceProvider.php:35-37`).
 - **Core Dependencies (Inherent)**: `security` (`User`), `support` (`Company`, `Calendar`, `CalendarLeave`, `ActivityType`, `CompanyScope`), `chatter` (`HasChatter`, `HasLogActivity`), `fields` (`HasCustomFields`), `full-calendar` (`FullCalendarPlugin`, `FullCalendarWidget`).
 
 ## Directory Structure
@@ -693,8 +693,8 @@ Suppose an organization defines a *Standard Vacation Plan*:
 1. **Absence of Dedicated Automated Test Files (Zero Tests)**: `plugins/webkul/time-off/` contains **zero automated test files**. Any regressions in balance computation, collision detection, half-day handling, or multi-step approval state transitions cannot be caught by CI test suites.
 2. **Unlisted Database Migration**: Migration `plugins/webkul/time-off/database/migrations/2026_08_04_100000_share_default_time_off_leave_types.php` exists on disk but is **not registered** in `TimeOffServiceProvider::$package->hasMigrations([...])`. Running package-managed migration commands (`php artisan package:install time-off` or `php artisan package:migrate time-off`) will skip this migration unless executed via global `php artisan migrate`.
 3. **Absence of Background Accrual Runner Command**: While the database models (`LeaveAccrualPlan`, `LeaveAccrualLevel`, `LeaveAllocation`) define detailed scheduling timestamps (`last_called`, `next_call`, `last_executed_carryover_date`), there is currently no registered scheduled Artisan command or queue worker that automatically iterates over allocations to execute monthly/weekly accruals. Accruals must be calculated or triggered programmatically or via manual allocation updates.
-4. **Duplicate Seeder Class Call**: `DatabaseSeeder.php:21` executes `$this->call([LeaveTypeSeeder::class])` twice during package seeding.
-5. **State String Inconsistencies in Reporting Widget**: `LeaveTypeWidget.php:51-58` queries for states `'draft'`, `'validate'`, and `'cancel'`, whereas the canonical `State` enum defines `'confirm'`, `'validate_one'`, `'validate_two'`, and `'refuse'`. As a result, certain chart aggregations may return zero values if legacy state strings are absent.
+4. **Duplicate Seeder Class Call**: `plugins/webkul/time-off/database/seeders/DatabaseSeeder.php:21` executes `$this->call([LeaveTypeSeeder::class])` twice during package seeding.
+5. **State String Inconsistencies in Reporting Widget**: `plugins/webkul/time-off/src/Filament/Widgets/LeaveTypeWidget.php:51-58` queries for states `'draft'`, `'validate'`, and `'cancel'`, whereas the canonical `State` enum defines `'confirm'`, `'validate_one'`, `'validate_two'`, and `'refuse'`. As a result, certain chart aggregations may return zero values if legacy state strings are absent.
 
 ## Change Impact
 [VERIFIED]

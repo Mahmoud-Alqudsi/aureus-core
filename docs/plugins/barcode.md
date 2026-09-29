@@ -207,7 +207,7 @@ plugins/webkul/barcode/
 ## Database
 [NOT APPLICABLE]
 - [VERIFIED] Verified from source code and migrations: contains **0 database tables, 0 migrations, 0 seeders, and 0 factories** (no `database/` directory exists).
-- Cross-references verified in `docs/database/erds/operations.md:40, 505-517, 1124`.
+- Cross-references verified in `docs/database/erds/operations.md:46, 512-524, 1131`.
 - Barcode lookups operate entirely against physical columns owned by other modules:
   - `products_products.barcode` & `products_products.reference` (owned by `products`)
   - `products_packagings.barcode` (owned by `products`)
@@ -534,4 +534,4 @@ Defined in `plugins/webkul/barcode/routes/web.php`:
 | `E-BAR-015` | `plugins/webkul/barcode/src/Support/NativeApp.php` | `NativeApp` | Native mobile shell bridge, dynamic titles, and deep-link generation |
 | `E-BAR-016` | `plugins/webkul/barcode/resources/dist/barcode.js` | `barcode.js` | Client-side Alpine.js barcodeScanner component and event handlers |
 | `E-BAR-017` | `plugins/webkul/barcode/resources/dist/html5-qrcode.min.js` | `html5-qrcode.min.js` | Bundled local QR/barcode camera scanning JavaScript library |
-| `E-BAR-018` | `docs/database/erds/operations.md` | `operations.md:40, 505-517, 1124` | Phase 4 ERD verification of 0 database tables and 0 migrations |
+| `E-BAR-018` | `docs/database/erds/operations.md` | `operations.md:46, 512-524, 1131` | Phase 4 ERD verification of 0 database tables and 0 migrations |

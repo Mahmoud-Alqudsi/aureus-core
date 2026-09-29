@@ -35,7 +35,7 @@ Then search for direct references with `rg`. Before naming, creating, or changin
 | Run or update the knowledge-base readiness audit | `docs/development/knowledge-base-readiness-audit.md`; `docs/development/change-management.md`; applicable scenario controls | The matching repository skill, direct source evidence, existing tests/configuration/workflows, and deferred-control status; use read-only inspection unless a separately approved task authorizes a mutation |
 | Audit or execute an approved upstream synchronization | `docs/development/git-workflow.md`; `docs/development/upstream-sync.md`; applicable CI governance | Git remotes, branch divergence, incoming commit range, changed files, migrations, dependency manifests, and affected tests |
 | Touch company, authentication, authorization, policy, raw-query, or ownership code | `docs/security/authorization.md`; `docs/security/multi-company.md`; `docs/security/ownership-scopes.md`; `docs/security/threat-model.md` | The target implementation, its tests, related traits/scopes/providers, and direct call sites. Consult the listed security documentation, then confirm against the implementation. |
-| Touch a database schema or persistence behaviour | `docs/database/overview.md`; `docs/database/company-isolation.md`; `docs/database/schema-conventions.md`; `docs/database/models-index.md`; `docs/database/relationships.md` | The model, migration, factory, tests, and every directly related plugin provider. Consult the listed database documentation, then confirm against the implementation. |
+| Touch a database schema or persistence behaviour | `docs/database/overview.md`; `docs/database/company-isolation.md`; `docs/database/schema-conventions.md`; `docs/database/models-index.md` (search-only: use `rg`, do not read whole); `docs/database/relationships.md` | The model, migration, factory, tests, and every directly related plugin provider. Consult the listed database documentation, then confirm against the implementation. |
 
 ## Plugin change checklist
 
@@ -55,7 +55,7 @@ For a focused bug fix, steps 1–5 plus the affected test normally form a suffic
 - A plugin folder or Composer `extra.laravel.providers` entry does not, by itself, establish runtime activation; check `bootstrap/providers.php`, the provider, and installation guards.
 - `Package::hasDependencies()` does not declare Composer requirements. Inspect the plugin-manager installation command for its actual effect.
 - A registered Filament plugin does not imply its resources are available in both panels; inspect its `register()` conditions.
-- Existing documentation for Phases 3–13 is not phase-completion evidence and should not replace source verification.
+- Existing documentation is not completion evidence and should not replace source verification.
 - Do not read every plugin document or the entire repository before a focused task.
 
 ## Escalation rule

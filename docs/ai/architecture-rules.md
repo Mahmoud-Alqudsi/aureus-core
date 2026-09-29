@@ -166,9 +166,9 @@ Aureus ERP configures two separate, isolated Filament panels:
 
 ### Mechanism & Rationale
 
-In Aureus ERP, core foundational plugins (such as `partners` and `accounts`) define robust Filament resources providing forms, tables, infolists, and actions. However, to prevent cluttered navigation sidebars and allow modular UI composition:
+In Aureus ERP, foundational plugins — the core `partners` and the headless-base `accounts` — define robust Filament resources providing forms, tables, infolists, and actions. However, to prevent cluttered navigation sidebars and allow modular UI composition:
 
-Foundational core resources deliberately set:
+Foundational resources deliberately set:
 ```php
 protected static bool $shouldRegisterNavigation = false;
 ```

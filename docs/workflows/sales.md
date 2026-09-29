@@ -64,7 +64,7 @@ The following prerequisites must be met in database state before the sales workf
 6. **Price Lists (Optional)**: If `ProductSettings::$enable_price_lists` is enabled, customer default `price_list_id` is loaded and applied to line prices via `PriceListResolver`.
 
 [VERIFIED]
-Evidence: `plugins/webkul/sales/src/Models/Order.php:280-299`, `plugins/webkul/sales/src/Services/ProcurementRequester.php:53-58`
+Evidence: `plugins/webkul/sales/src/Models/Order.php:287-299`, `plugins/webkul/sales/src/Services/ProcurementRequester.php:53-58`
 
 ---
 
@@ -202,11 +202,11 @@ Evidence: `plugins/webkul/sales/src/Filament/Clusters/Orders/Resources/Quotation
 
 | Downstream Document | Document State at Cancellation | System Behavior | Source Evidence |
 | :--- | :--- | :--- | :--- |
-| **Delivery Operation** | `draft`, `confirmed`, `assigned` | **Cancelled**. `ProcurementRequester::cancelOperations()` filters non-settled operations and invokes `InventoryFacade::cancelTransfer($operation)`. | `ProcurementRequester.php:223-228` |
-| **Delivery Operation** | `done` (Validated Delivery) | **Untouched**. Operation remains `done`; stock quantities already deducted are **not** returned or reversed. Cancellation is **not blocked**. | `ProcurementRequester.php:224-225` |
-| **Customer Invoice** | `draft` | **Untouched**. Invoice remains in `draft` state linked to the order in `sales_order_invoices`. | `OrderWorkflow.php:76-93` |
-| **Customer Invoice** | `posted` | **Untouched**. Invoice remains `posted` in the general ledger. No credit note or cancellation is triggered. Cancellation is **not blocked**. | `OrderWorkflow.php:76-93` |
-| **Payment** | `posted` / `paid` | **Untouched**. Payment ledger entries and reconciliations remain intact. | `OrderWorkflow.php:76-93` |
+| **Delivery Operation** | `draft`, `confirmed`, `assigned` | **Cancelled**. `ProcurementRequester::cancelOperations()` filters non-settled operations and invokes `InventoryFacade::cancelTransfer($operation)`. | `plugins/webkul/sales/src/Services/ProcurementRequester.php:223-228` |
+| **Delivery Operation** | `done` (Validated Delivery) | **Untouched**. Operation remains `done`; stock quantities already deducted are **not** returned or reversed. Cancellation is **not blocked**. | `plugins/webkul/sales/src/Services/ProcurementRequester.php:224-225` |
+| **Customer Invoice** | `draft` | **Untouched**. Invoice remains in `draft` state linked to the order in `sales_order_invoices`. | `plugins/webkul/sales/src/Services/OrderWorkflow.php:76-93` |
+| **Customer Invoice** | `posted` | **Untouched**. Invoice remains `posted` in the general ledger. No credit note or cancellation is triggered. Cancellation is **not blocked**. | `plugins/webkul/sales/src/Services/OrderWorkflow.php:76-93` |
+| **Payment** | `posted` / `paid` | **Untouched**. Payment ledger entries and reconciliations remain intact. | `plugins/webkul/sales/src/Services/OrderWorkflow.php:76-93` |
 
 ### Reset to Quotation
 - If an order is in `state = CANCEL`, the user can click **"Back to Quotation"** (`BackToQuotationAction`).
@@ -292,7 +292,7 @@ Evidence: `plugins/webkul/sales/src/Services/OrderCalculator.php:117-177,255-289
    - `Order` utilizes `HasOwnershipScope` to allow role-based visibility restrictions (e.g. salespersons viewing only their own quotations vs sales managers viewing all team orders).
 
 [VERIFIED]
-Evidence: `plugins/webkul/sales/src/Policies/OrderPolicy.php:1-110`, `plugins/webkul/sales/src/Models/Order.php:41-45`
+Evidence: `plugins/webkul/sales/src/Policies/OrderPolicy.php:1-110`, `plugins/webkul/sales/src/Models/Order.php:42-46`
 
 ---
 
@@ -331,7 +331,7 @@ Evidence: `plugins/webkul/sales/database/migrations/`
 | `Webkul\Account\Events\MovePaid` | `PaymentWorkflow::post()` | Synchronous when invoice is fully paid. | `Webkul\Sale\Listeners\SendSMSNotificationListener` | Sends automated payment receipt SMS to customer and administrator. |
 
 [VERIFIED]
-Evidence: `plugins/webkul/sales/src/SaleServiceProvider.php:105-112`, `plugins/webkul/sales/src/Events/*.php`
+Evidence: `plugins/webkul/sales/src/SaleServiceProvider.php:106-117`, `plugins/webkul/sales/src/Events/*.php`
 
 ---
 

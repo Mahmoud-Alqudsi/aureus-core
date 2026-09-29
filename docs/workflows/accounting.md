@@ -140,7 +140,7 @@ Evidence: `plugins/webkul/accounts/src/Services/MoveWorkflow.php:238-285`, `plug
 | **Duplicate** | Standard Filament table/page duplicate action | Model replication | Copies header attributes and lines into a brand-new draft move with `name = null` and `posted_before = false`. |
 
 [VERIFIED]
-Evidence: `plugins/webkul/accounts/src/Services/MoveWorkflow.php:40-182`, `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource/Actions/`
+Evidence: `plugins/webkul/accounts/src/Services/MoveWorkflow.php:20-182`, `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource/Actions/`
 
 ---
 

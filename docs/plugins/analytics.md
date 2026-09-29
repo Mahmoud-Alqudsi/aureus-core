@@ -289,7 +289,7 @@ The `analytics` plugin relies on 3 upstream core infrastructure plugins and is c
      - `TopAssigneesWidget` (`plugins/webkul/projects/src/Filament/Widgets/TopAssigneesWidget.php:51-70`): Joins `users` on `analytic_records.user_id` and filters by partner and date ranges.
      - `TopProjectsWidget` (`plugins/webkul/projects/src/Filament/Widgets/TopProjectsWidget.php:47-78`): Joins `projects_projects` on `analytic_records.project_id`, aggregating `SUM(analytic_records.unit_amount)` and `COUNT(DISTINCT analytic_records.task_id)`.
 2. **`timesheets` Plugin (Optional — Code-Level & UI Consumer)**:
-   - Owns **0 dedicated physical tables and 0 migrations** (`docs/database/erds/operations.md:47, 1125`).
+   - Owns **0 dedicated physical tables and 0 migrations** (`docs/database/erds/operations.md:53, 1132`).
    - Defines `Webkul\Timesheet\Models\Timesheet` (`plugins/webkul/timesheets/src/Models/Timesheet.php:8`) extending `Webkul\Project\Models\Timesheet` (which extends `Webkul\Analytic\Models\Record`), attaching `HasCustomFields`.
    - Provides administrative UI via `TimesheetResource` for managing time records stored in `analytic_records`.
 3. **`accounts` Plugin (Optional — Schema/Concept Field Consumer)**:

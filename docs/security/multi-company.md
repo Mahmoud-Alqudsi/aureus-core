@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-09-25
 scope: security
 confidence: high
 ---
@@ -22,15 +22,15 @@ The `Webkul\Support\Services\CompanyContext` class is the source of truth for th
 It determines which companies the user is allowed to access and which ones are currently "active" in their session.
 
 - **Allowed Companies**: Determined by the `seesAllCompanies()` bypass or the user's explicit relationships (`$user->allowedCompanies()`). Accessible globally via helper functions:
-  - `allowed_companies(): Collection` — Resolves the collection of allowed `Company` models.
-  - `allowed_company_ids(): array` — Returns integer IDs of allowed companies.
-- **Active Companies**: Stored in the session under the key `active_company_ids` (`CompanyContext::SESSION_KEY`). If the session is empty, it selects the user's `default_company_id` when allowed, otherwise the first allowed company. Accessible globally via:
-  - `active_company_ids(): array` — Returns active company IDs in session.
-  - `current_company_id(): ?int` — Returns the current primary active company ID.
+  - `allowed_companies(): Collection` — Resolves the collection of allowed `Company` models (`app(CompanyContext::class)->allowedCompanies()`).
+  - `allowed_company_ids(): array` — Returns integer IDs of allowed companies (`app(CompanyContext::class)->allowedIds()`).
+- **Active Companies**: Stored in the session under the key `active_company_ids` (`CompanyContext::SESSION_KEY`). If the session is empty, it selects the user's `default_company_id` when allowed, otherwise the first allowed company. Resolved through the service via `app(CompanyContext::class)->activeIds(): array`. Global helper functions for the primary active company are:
+  - `current_company(): ?Company` — Returns the current primary active company model (`app(CompanyContext::class)->currentCompany()`).
+  - `current_company_id(): ?int` — Returns the current primary active company ID (`app(CompanyContext::class)->currentId()`).
 
 **Evidence:**
 - `plugins/webkul/support/src/Services/CompanyContext.php`
-- `plugins/webkul/support/src/helpers.php:456-475`
+- `plugins/webkul/support/src/helpers.php:342-354, 463-475`
 
 ## CompanyScope
 [VERIFIED]

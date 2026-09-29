@@ -1,10 +1,16 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-04
+last_verified: 2026-09-25
 scope: architecture
 confidence: high
 ---
+
+<!-- lint: search-only -->
+
+> **How to use this file**: do not read it whole. Locate the
+> specific section or entry by name with `rg` and read only the
+> matched section.
 
 # Change Impact Analysis & Architecture Master Control Guide
 
@@ -12,7 +18,7 @@ confidence: high
 
 Change Impact Analysis in Aureus ERP establishes an authoritative, evidence-driven engineering control layer for evaluating the blast radius, ripple effects, security implications, data integrity hazards, and verification obligations of any proposed modification to the repository.
 
-In an enterprise resource planning (ERP) platform comprising **28 modular plugins**, **2 distinct Filament panels**, **262 database tables**, over **1,000 foreign keys**, **28 domain events**, **6 event listeners**, **7 model observers**, and **53 domain services**, changes are almost never strictly local. A one-line adjustment in a model trait, database migration, enum definition, or service method can propagate cascading failures across multi-company isolation boundaries, financial ledgers, transactional workflows, and customer-facing interfaces.
+In an enterprise resource planning (ERP) platform comprising **28 modular plugins**, **2 distinct Filament panels**, **266 database tables**, **1,046 foreign keys**, **28 domain events**, **6 event listeners**, **8 model observers**, and **54 domain services**, changes are almost never strictly local. A one-line adjustment in a model trait, database migration, enum definition, or service method can propagate cascading failures across multi-company isolation boundaries, financial ledgers, transactional workflows, and customer-facing interfaces.
 
 This document transforms the empirical knowledge verified across Phases 0–10 into an operational decision-making framework. It equips developers and AI coding agents to answer six foundational questions before modifying any file:
 1. **What direct, indirect, and transitive components are affected by this change?**
@@ -35,7 +41,7 @@ The scope of Change Impact Analysis encompasses the complete Aureus ERP software
 │ Presentation Layer:   Filament Admin (/admin) & Customer (/) Panels, Clusters, Resources, Pages, UI   │
 │ Security & Isolation: Bouncer, OwnershipScope, Multi-Company Isolation Suite, Auth Guards, Policies    │
 │ Domain Plugins:       28 Plugins (9 Core, 19 Optional) under plugins/webkul/*, Zero-Table Extensions  │
-│ Reactive Runtime:     28 Domain Events, 6 Listeners, 7 Observers, 53 Services, Sequences, Polling     │
+│ Reactive Runtime:     28 Domain Events, 6 Listeners, 8 Observers, 54 Services, Sequences, Polling     │
 │ Persistence Layer:    MySQL Schemas, Migrations, Foreign Key Cascades, Dynamic Relations, Custom Fields│
 │ Packaging & Config:   wikimedia/composer-merge-plugin, bootstrap/providers.php, config/*, Cache       │
 │ Quality & Governance: Automated Test Suites (Pest v4), Manual Testing, Canonical Architecture Docs     │
@@ -327,7 +333,7 @@ $package
 
 ### 7.2 Foreign-Key Delete Behavior Decision Framework
 
-Across 1016 physical foreign keys, Aureus ERP exhibits the following observed distribution:
+Across 1,046 physical foreign keys, Aureus ERP exhibits the following observed distribution:
 - `nullOnDelete()`: 607 keys (59.7%)
 - `cascadeOnDelete()`: 226 keys (22.2%)
 - `restrictOnDelete()`: 181 keys (17.8%)
@@ -590,7 +596,7 @@ Established deferred and reactive mechanisms in Aureus ERP:
 1. **Queued Notifications**: `Webkul\Chatter\Notifications\ChatterDatabaseNotification` implements `ShouldQueue` and uses `Queueable`.
 2. **Client-Side Notification Polling**: `AdminPanelProvider` configures `->databaseNotifications()->databaseNotificationsPolling('30s')`.
 3. **Artisan Console Scheduling**: `routes/console.php` exposes scheduled commands executed via cron.
-4. **Synchronous Reactive Decoupling**: 28 Events, 6 Listeners, and 7 Observers coordinate work without worker daemons.
+4. **Synchronous Reactive Decoupling**: 28 Events, 6 Listeners, and 8 Observers coordinate work without worker daemons.
 
 ---
 
@@ -682,7 +688,7 @@ The following comprehensive matrix details the impact surface, hazard level, man
 | **Database - Data Backfill** | Executing data migration or backfill scripts | Existing production records, data consistency, long-running locks | **HIGH** | Transaction timeout; locking production tables during high traffic; corrupting historical data. | Database Specialist | Test backfill in chunks using `lazy()` or chunking; execute in transaction. | Run script on staging clone with production data volume; verify record counts. | Migration documentation, release notes. |
 | **Database - Rollbacks** | Defining or executing migration `down()` method | Development rollbacks, failed deployment recovery, data safety | **HIGH** | `down()` method dropping columns containing irreplaceable audit or financial data. | Database Specialist | Verify whether `down()` method safely restores schema without silent data loss. | Test `migrate:rollback` and subsequent `migrate` in local environment. | `docs/database/schema-conventions.md`. |
 | **Tenancy - CompanyContext** | Modifying `CompanyContext` service logic | Active company resolution, allowed company set, user session | **CRITICAL** | Global multi-tenant breach; users seeing records from unauthorized sister companies. | Security Specialist & Lead Arch. | Trace `CompanyContext::getActiveCompany()` and `getAvailableCompanies()`. | Security test suite asserting company boundaries across multi-company users. | `docs/database/company-isolation.md`, `docs/security/multi-company.md`. |
-| **Tenancy - CompanyScope** | Modifying `CompanyScope` or `CompaniesScope` classes | All single-tenant and multi-tenant Eloquent queries globally | **CRITICAL** | System-wide cross-tenant data exposure or global query failure on 262 tables. | Security Specialist & Lead Arch. | Review generated SQL `WHERE (company_id IN (...) OR company_id IS NULL)`. | Unit tests asserting scope query manipulation across all query types. | `docs/database/company-isolation.md`, `docs/ai/security-rules.md`. |
+| **Tenancy - CompanyScope** | Modifying `CompanyScope` or `CompaniesScope` classes | All single-tenant and multi-tenant Eloquent queries globally | **CRITICAL** | System-wide cross-tenant data exposure or global query failure on 266 tables. | Security Specialist & Lead Arch. | Review generated SQL `WHERE (company_id IN (...) OR company_id IS NULL)`. | Unit tests asserting scope query manipulation across all query types. | `docs/database/company-isolation.md`, `docs/ai/security-rules.md`. |
 | **Tenancy - AllowedCompanies** | Modifying `RestrictToAllowedCompanies` model trait | Multi-company scoping on Company model, `AllowedCompanyScope` enforcement | **CRITICAL** | Cross-tenant company visibility leakage; users seeing unauthorized companies in selector. | Security Specialist | Trace `AllowedCompanyScope` query filtering and `CompanyContext` session sanitization. | Feature test asserting unauthorized companies excluded from user queries. | `docs/security/multi-company.md`, `docs/ai/security-rules.md`. |
 | **Tenancy - Cross-Company** | Modifying `ChecksCrossCompanyTransfer` concern | Warehouse transfers between locations across company borders | **HIGH** | Unauthorized stock transfers moving inventory between distinct legal entities. | Inventory Domain Lead | Trace `CrossCompanyTransferGuard::validate()` on stock operations and transfers. | Test moving stock between same-company locations vs cross-company locations. | `docs/workflows/inventory.md`, `docs/business-rules/inventory.md`. |
 | **Tenancy - Raw SQL Query** | Altering raw SQL queries (`DB::table`, `DB::select`) | Performance queries, financial reports, dashboard aggregations | **CRITICAL** | Cross-tenant data leaks in un-scoped joins, subqueries, or aggregate calculations. | Security Lead & Senior Dev | Audit the complete 6-point query surface (primary, joins, subqueries, pivots, aggs). | Pest test asserting zero foreign-company rows returned by raw query. | `docs/ai/security-rules.md`, `docs/database/company-isolation.md`. |
@@ -728,7 +734,7 @@ The following comprehensive matrix details the impact surface, hazard level, man
 | **Reactive - Notifications** | Modifying `ChatterDatabaseNotification` | In-app alerts, database notifications, asynchronous queueing | **LOW** | Failing to deliver critical workflow notifications to assigned users. | Plugin Lead | Verify `ShouldQueue` contract and `via()` database channel configuration. | Notification test asserting notification record created in `notifications`. | `docs/architecture/overview.md`, chatter docs. |
 | **Reactive - UI Polling** | Changing `databaseNotificationsPolling` configuration | Real-time notification updates, server request frequency | **LOW** | Excessive server load from aggressive polling, or delayed user notifications. | Core Architect | Review polling interval (default 30s) against server capacity. | Browser verification observing notification bell update interval. | `docs/architecture/filament-architecture.md`. |
 | **Reactive - Console Cron** | Modifying scheduled commands in `routes/console.php` | Background maintenance, automated recurring tasks | **MEDIUM** | Missed execution of scheduled recurring jobs; cron command failures. | DevOps / Core Lead | Verify command signature, parameters, and schedule interval (`daily`, `hourly`). | Test executing command directly via `php artisan` in terminal. | `docs/architecture/overview.md`, `routes/console.php`. |
-| **Services - Domain Service** | Modifying method signatures or logic in Domain Services | Core business calculations, stock moves, invoice posting | **HIGH** | Broken cross-plugin service calls; invalid calculations propagated to models. | Domain Lead | Identify all 53 domain services and audit consuming callers across plugins. | Service unit and integration tests asserting calculation accuracy. | Owning plugin docs, `docs/architecture/overview.md`. |
+| **Services - Domain Service** | Modifying method signatures or logic in Domain Services | Core business calculations, stock moves, invoice posting | **HIGH** | Broken cross-plugin service calls; invalid calculations propagated to models. | Domain Lead | Identify all 54 domain services and audit consuming callers across plugins. | Service unit and integration tests asserting calculation accuracy. | Owning plugin docs, `docs/architecture/overview.md`. |
 | **Services - Cross-Plugin Calls** | Calling an optional plugin service from another plugin | Modularity boundaries, runtime decoupling, optionality | **HIGH** | Application crashes when target optional plugin is disabled in production. | Architecture Lead | Verify existence check: `Package::isPluginInstalled('plugin-name')` before call. | Test executing workflow with target plugin enabled vs deactivated. | `docs/ai/architecture-rules.md`, `docs/ai/plugin-rules.md`. |
 | **Testing - Untested Plugin** | Adding automated tests to one of the 17 untested plugins | Test suite coverage, CI verification reliability | **LOW** *(Positive)* | Test failures caused by incomplete test environment setup or missing factories. | QA / Testing Lead | Follow Phase 10 Testing Rules: create isolated test suite with proper fixtures. | Run `vendor/bin/pest plugins/webkul/<plugin>/tests/`. | `docs/ai/testing-rules.md`. |
 | **Testing - Existing Tests** | Modifying existing Pest tests in the 11 tested plugins | Regression suite validity, continuous integration pipeline | **MEDIUM** | Relaxing assertions weakens quality gate; deleting tests masks regressions. | QA / Testing Lead | Verify assertions remain strict; avoid testing mock data instead of real behavior. | Run full test suite: `php artisan test --compact`. | `docs/ai/testing-rules.md`. |
@@ -938,12 +944,11 @@ Every rule, catalog entry, and architectural constraint in this document is back
 
 **Observed impact:**
 - **Blast radius:** 101 files modified (985 insertions, 705 deletions across `plugins/webkul/*`, `composer.lock`, and precompiled assets).
-- **Database & Schema:** Zero migrations added or modified. The database schema remains unchanged across all 262 tables.
-- **Dependencies:** Filament upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated vendor assets in `plugins/webkul/support/resources/dist/`. `composer.json` remained untouched.
+- **Database & Schema:** Zero migrations added or modified. The database schema remains unchanged across all 266 tables.
+- **Dependencies:** Filament upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated vendor assets in `public/css/filament/`, `public/fonts/filament/`, and `public/js/filament/`. `composer.json` remained untouched.
 - **Automation & Security:** Zero modifications to `.github/workflows/`. Downstream CI governance and Fast-Track optimizations remain 100% intact.
 - **Domain Bugfixes:**
-  - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, and relationship query refactoring for soft-deletes.
-  - `purchases`: Purchase order bill confirmation fix (`ConfirmAction`).
+  - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, purchase order bill confirmation fix via `ConfirmAction`, and relationship query refactoring for soft-deletes.
   - `fields`: Custom field validation handling improvements (`FieldForm`).
   - `plugin-manager`: Settings migration automated `--force` flag and Spatie settings cache clearing in `InstallCommand`.
   - `inventories`: `ProductQuantity` quantities calculations and stock move soft-delete filtering.

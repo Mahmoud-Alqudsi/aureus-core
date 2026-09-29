@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-09-25
 scope: plugins/webkul/accounting
 confidence: high
 ---
@@ -353,11 +353,11 @@ Every report implements `HasPageShield`, `InteractsWithForms`, `NormalizeDateFil
    - Lists all accounts in the chart with Opening Balance (Debit/Credit), Period Movement (Debit/Credit), and Ending Balance (Debit/Credit).
    - Validates that overall ledger debits equal credits across active date bounds.
    - Excel Export: `TrialBalanceExport`. PDF View: `accounting::filament.clusters.reporting.pages.pdfs.trial-balance`.
-4. **`GeneralLedger`** (`plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/GeneralLedger.php:28`):
+4. **`GeneralLedger`** (`plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/GeneralLedger.php:29`):
    - Comprehensive audit subledger grouping all posted move lines by account code.
    - Displays entry dates, document names, counterpart partners, journal references, debits, credits, and progressive running balance.
    - Excel Export: `GeneralLedgerExport`. PDF View: `accounting::filament.clusters.reporting.pages.pdfs.general-ledger`.
-5. **`PartnerLedger`** (`plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/PartnerLedger.php:28`):
+5. **`PartnerLedger`** (`plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/PartnerLedger.php:29`):
    - Customer and vendor subledger grouping transactions by commercial partner.
    - Tracks individual invoices, credit notes, payments, due dates, residual amounts, and net partner balance.
    - Excel Export: `PartnerLedgerExport`. PDF View: `accounting::filament.clusters.reporting.pages.pdfs.partner-ledger`.
@@ -370,7 +370,7 @@ Every report implements `HasPageShield`, `InteractsWithForms`, `NormalizeDateFil
 
 ### 4. Operational Cluster Resources
 - **Accounting Cluster (`Accounting`)**:
-  - `JournalEntryResource`: Manual journal entry management (`ListJournalEntries`, `CreateJournalEntry`, `ViewJournalEntry`, `EditJournalEntry`). Custom form fields, custom table columns/filters, sub-navigation linking to payment records, and `JournalEntryExporter`.
+  - `JournalEntryResource`: Manual journal entry management (`ListJournalEntries`, `CreateJournalEntry`, `ViewJournalEntry`, `EditJournalEntry`). Custom form fields, custom table columns/filters, sub-navigation linking to payment records, and `JournalEntryExporter`. Form schema (`JournalEntryForm`) applies `hide_deleted_unless_selected($state)` to the company relationship query on `company_id`.
   - `JournalItemResource`: Read-only general ledger line browser (`ListJournalItems`) with `JournalItemExporter`. Creation, direct editing, and manual line deletion are disabled (`canCreate(): false`, `canEdit(): false`, `canDelete(): false`) to maintain ledger integrity.
 - **Customers Cluster (`Customers`)**:
   - `InvoiceResource`: Customer invoices (`ListInvoices`, `CreateInvoice`, `ViewInvoice`, `EditInvoice`, `ManagePayments`). Extended product repeater with deep-linking (`openProduct` action).
@@ -622,10 +622,10 @@ sequenceDiagram
 - `plugins/webkul/accounting/src/Filament/Widgets/JournalChartsWidget.php:8-26`
 - `plugins/webkul/accounting/src/Filament/Widgets/JournalChartWidget.php:16-312`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/ProfitLoss.php:28-264`
-- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/TrialBalance.php:28-250`
+- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/TrialBalance.php:28-205`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/BalanceSheet.php:28-250`
-- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/GeneralLedger.php:28-240`
-- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/PartnerLedger.php:28-240`
+- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/GeneralLedger.php:29-240`
+- `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/PartnerLedger.php:29-240`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/AgedReceivable.php:28-250`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/AgedPayable.php:28-250`
 - `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalEntryResource.php:24-105`
