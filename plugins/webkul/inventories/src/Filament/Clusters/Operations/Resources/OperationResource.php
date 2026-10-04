@@ -22,10 +22,12 @@ use Webkul\Inventory\Settings\TraceabilitySettings;
 use Webkul\Inventory\Settings\WarehouseSettings;
 use Webkul\Product\Settings\ProductSettings;
 use Webkul\TableViews\Filament\Components\PresetView;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class OperationResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Operation::class;
 

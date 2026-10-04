@@ -19,9 +19,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Sc
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Tables\RoutesTable;
 use Webkul\Inventory\Models\Route;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class RouteResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Route::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-path';

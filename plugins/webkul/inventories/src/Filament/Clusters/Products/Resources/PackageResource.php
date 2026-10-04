@@ -21,9 +21,12 @@ use Webkul\Inventory\Filament\Clusters\Products\Resources\PackageResource\Schema
 use Webkul\Inventory\Filament\Clusters\Products\Resources\PackageResource\Tables\PackagesTable;
 use Webkul\Inventory\Models\Package;
 use Webkul\Inventory\Settings\OperationSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PackageResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Package::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cube';
