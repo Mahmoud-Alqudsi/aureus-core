@@ -14,10 +14,12 @@ use Webkul\Partner\Filament\Resources\PartnerResource\Schemas\PartnerInfolist;
 use Webkul\Partner\Filament\Resources\PartnerResource\Support\PartnerSchemaRegistry;
 use Webkul\Partner\Filament\Resources\PartnerResource\Tables\PartnersTable;
 use Webkul\Partner\Models\Partner;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PartnerResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Partner::class;
 
