@@ -19,7 +19,10 @@ class ManageAddresses extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
 
-    protected static ?string $relatedResource = AddressResource::class;
+    public static function getRelationshipTitle(): string
+    {
+        return __('partners::filament/resources/partner/pages/manage-addresses.title');
+    }
 
     public function form(Schema $schema): Schema
     {
