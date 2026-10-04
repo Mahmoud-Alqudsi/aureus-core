@@ -24,10 +24,11 @@ use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrd
 use Webkul\Manufacturing\Models\BillOfMaterial;
 use Webkul\Manufacturing\Models\Order;
 use Webkul\Manufacturing\Settings\OperationSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class ManufacturingOrderResource extends Resource
 {
-    use HasCustomFields;
+    use HasCustomFields, HasNavigationLabelTitles;
 
     protected static ?string $model = Order::class;
 

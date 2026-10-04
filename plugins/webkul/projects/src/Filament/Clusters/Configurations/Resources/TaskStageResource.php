@@ -10,9 +10,12 @@ use Webkul\Project\Filament\Clusters\Configurations\Resources\TaskStageResource\
 use Webkul\Project\Filament\Clusters\Configurations\Resources\TaskStageResource\Schemas\TaskStageForm;
 use Webkul\Project\Filament\Clusters\Configurations\Resources\TaskStageResource\Tables\TaskStagesTable;
 use Webkul\Project\Models\TaskStage;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TaskStageResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = TaskStage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
