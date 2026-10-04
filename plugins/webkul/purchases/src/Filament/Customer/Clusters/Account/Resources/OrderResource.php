@@ -9,10 +9,13 @@ use Filament\Tables\Table;
 use Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\OrderResource\Schemas\OrderInfolist;
 use Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\OrderResource\Tables\OrdersTable;
 use Webkul\Purchase\Models\Order;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Website\Filament\Customer\Clusters\Account;
 
 abstract class OrderResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Order::class;
 
     protected static bool $shouldRegisterNavigation = false;

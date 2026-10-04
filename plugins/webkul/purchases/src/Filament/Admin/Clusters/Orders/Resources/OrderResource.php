@@ -14,10 +14,12 @@ use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\OrderResource\Schem
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\OrderResource\Tables\OrdersTable;
 use Webkul\Purchase\Models\Order;
 use Webkul\Purchase\Settings\OrderSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class OrderResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Order::class;
 

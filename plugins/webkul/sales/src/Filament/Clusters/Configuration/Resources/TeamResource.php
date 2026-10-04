@@ -15,9 +15,12 @@ use Webkul\Sale\Filament\Clusters\Configuration\Resources\TeamResource\Schemas\T
 use Webkul\Sale\Filament\Clusters\Configuration\Resources\TeamResource\Schemas\TeamInfolist;
 use Webkul\Sale\Filament\Clusters\Configuration\Resources\TeamResource\Tables\TeamsTable;
 use Webkul\Sale\Models\Team;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TeamResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Team::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-users';
