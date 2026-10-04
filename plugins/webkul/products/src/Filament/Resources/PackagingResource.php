@@ -9,12 +9,20 @@ use Webkul\Product\Filament\Resources\PackagingResource\Schemas\PackagingForm;
 use Webkul\Product\Filament\Resources\PackagingResource\Schemas\PackagingInfolist;
 use Webkul\Product\Filament\Resources\PackagingResource\Tables\PackagingsTable;
 use Webkul\Product\Models\Packaging;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PackagingResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Packaging::class;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('products::filament/resources/packaging.navigation.title');
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -2,6 +2,7 @@
 
 return [
     'title'          => 'Category',
+    'plural-title'   => 'Product Categories',
 
     'log-attributes' => [
         'name'                 => 'Name',

@@ -24,6 +24,11 @@ class AttributeResource extends Resource
 
     protected static bool $isGloballySearchable = false;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('products::filament/resources/attribute.navigation.title');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return AttributeForm::configure($schema);

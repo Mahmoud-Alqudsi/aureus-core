@@ -10,9 +10,12 @@ use Webkul\Product\Filament\Resources\CategoryResource\Schemas\CategoryForm;
 use Webkul\Product\Filament\Resources\CategoryResource\Schemas\CategoryInfolist;
 use Webkul\Product\Filament\Resources\CategoryResource\Tables\CategoriesTable;
 use Webkul\Product\Models\Category;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class CategoryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Category::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-folder';
@@ -22,6 +25,16 @@ class CategoryResource extends Resource
     protected static bool $isGloballySearchable = false;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getModelLabel(): string
+    {
+        return __('products::models/category.title');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('products::models/category.plural-title');
+    }
 
     public static function form(Schema $schema): Schema
     {
