@@ -9,9 +9,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Webkul\Partner\Filament\Resources\BankAccountResource\Schemas\BankAccountForm;
 use Webkul\Partner\Filament\Resources\BankAccountResource\Tables\BankAccountsTable;
 use Webkul\Partner\Models\BankAccount;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class BankAccountResource extends Resource
 {
+    use HasNavigationLabelTitles;
+    
     protected static ?string $model = BankAccount::class;
 
     protected static bool $shouldRegisterNavigation = false;
