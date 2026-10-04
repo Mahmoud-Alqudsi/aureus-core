@@ -11,9 +11,12 @@ use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DegreeResource
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DegreeResource\Schemas\DegreeInfolist;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DegreeResource\Tables\DegreesTable;
 use Webkul\Recruitment\Models\Degree;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class DegreeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Degree::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-briefcase';

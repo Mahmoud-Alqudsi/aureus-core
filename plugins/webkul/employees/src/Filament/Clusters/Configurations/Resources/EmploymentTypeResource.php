@@ -11,9 +11,12 @@ use Webkul\Employee\Filament\Clusters\Configurations\Resources\EmploymentTypeRes
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\EmploymentTypeResource\Schemas\EmploymentTypeInfolist;
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\EmploymentTypeResource\Tables\EmploymentTypesTable;
 use Webkul\Employee\Models\EmploymentType;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class EmploymentTypeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = EmploymentType::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube-transparent';

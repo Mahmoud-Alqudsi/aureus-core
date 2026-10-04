@@ -17,10 +17,13 @@ use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\AccrualPlanResourc
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\AccrualPlanResource\Schemas\AccrualPlanForm;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\AccrualPlanResource\Schemas\AccrualPlanInfolist;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\AccrualPlanResource\Tables\AccrualPlansTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\LeaveAccrualPlan;
 
 class AccrualPlanResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = LeaveAccrualPlan::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-paper-airplane';
