@@ -18,6 +18,8 @@ class ManageBankAccounts extends ManageRelatedRecords
 
     protected static string $relationship = 'bankAccounts';
 
+    protected static ?string $relatedResource = BankAccountResource::class;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
     public static function getNavigationLabel(): string
