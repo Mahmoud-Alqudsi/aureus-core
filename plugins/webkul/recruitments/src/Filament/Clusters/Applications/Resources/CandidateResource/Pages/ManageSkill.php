@@ -21,4 +21,9 @@ class ManageSkill extends ManageRelatedRecords
     {
         return __('employees::filament/resources/employee/pages/manage-skill.navigation.title');
     }
+
+    public static function getRelationshipTitle(): string
+    {
+        return __('employees::filament/resources/employee/pages/manage-skill.relationship-title');
+    }
 }
