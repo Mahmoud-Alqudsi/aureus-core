@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'ضريبة',
+    'plural-model-label' => 'ضرائب',
+
     'form' => [
         'sections' => [
             'fields' => [

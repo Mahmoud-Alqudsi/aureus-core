@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'وسم محاسبي',
+    'plural-model-label' => 'وسوم محاسبية',
+
     'form' => [
         'fields' => [
             'color'         => 'اللون',

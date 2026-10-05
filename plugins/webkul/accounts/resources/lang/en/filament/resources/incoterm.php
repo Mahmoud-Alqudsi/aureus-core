@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Incoterm',
+    'plural-model-label' => 'Incoterms',
+
     'form' => [
         'fields' => [
             'code' => 'Code',

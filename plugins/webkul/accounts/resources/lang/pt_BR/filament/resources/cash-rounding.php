@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Regra de arredondamento de caixa',
+    'plural-model-label' => 'Regras de arredondamento de caixa',
+
     'form' => [
         'fields' => [
             'name'               => 'Nome',

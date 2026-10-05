@@ -24,6 +24,16 @@ class CashRoundingResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/cash-rounding.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/cash-rounding.plural-model-label');
+    }
+
     public static function isDiscovered(): bool
     {
         if (app()->runningInConsole()) {

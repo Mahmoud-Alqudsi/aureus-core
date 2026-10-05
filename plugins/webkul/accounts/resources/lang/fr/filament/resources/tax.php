@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Taxe',
+    'plural-model-label' => 'Taxes',
+
     'form' => [
         'sections' => [
             'fields' => [

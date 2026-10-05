@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Règle d\'arrondi de caisse',
+    'plural-model-label' => 'Règles d\'arrondi de caisse',
+
     'form' => [
         'fields' => [
             'name'               => 'Nom',

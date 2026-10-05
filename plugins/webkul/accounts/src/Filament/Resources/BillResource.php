@@ -39,6 +39,16 @@ class BillResource extends Resource
 
     protected static bool $isGloballySearchable = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/bill.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/bill.plural-model-label');
+    }
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

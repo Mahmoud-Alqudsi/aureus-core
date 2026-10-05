@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'title' => 'إشعار دائن',
+    'model-label'        => 'إشعار دائن',
+    'plural-model-label' => 'إشعارات دائنة',
 
     'navigation' => [
         'title' => 'إشعارات دائنة',

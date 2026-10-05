@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'قاعدة تقريب نقدي',
+    'plural-model-label' => 'قواعد تقريب نقدي',
+
     'form' => [
         'fields' => [
             'name'               => 'الاسم',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Account',
+    'plural-model-label' => 'Accounts',
+
     'global-search' => [
         'code' => 'Code',
         'type' => 'Type',

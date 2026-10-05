@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Groupe de taxes',
+    'plural-model-label' => 'Groupes de taxes',
+
     'form' => [
         'sections' => [
             'fields' => [

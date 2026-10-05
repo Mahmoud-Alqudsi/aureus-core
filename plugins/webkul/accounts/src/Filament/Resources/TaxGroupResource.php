@@ -30,6 +30,16 @@ class TaxGroupResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/tax-group.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/tax-group.plural-model-label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return TaxGroupForm::configure($schema);

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Payment Term',
+    'plural-model-label' => 'Payment Terms',
+
     'form' => [
         'sections' => [
             'fields' => [

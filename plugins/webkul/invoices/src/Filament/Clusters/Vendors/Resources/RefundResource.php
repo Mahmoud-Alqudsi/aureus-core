@@ -30,11 +30,6 @@ class RefundResource extends BaseRefundResource
         return null;
     }
 
-    public static function getModelLabel(): string
-    {
-        return __('invoices::filament/clusters/vendors/resources/refund.title');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('invoices::filament/clusters/vendors/resources/refund.navigation.title');

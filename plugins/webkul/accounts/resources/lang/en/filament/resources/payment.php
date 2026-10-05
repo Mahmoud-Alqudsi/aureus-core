@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'Payment',
-
-    'navigation' => [
-        'title' => 'Payments',
-        'group' => 'Invoices',
-    ],
+    'model-label'        => 'Payment',
+    'plural-model-label' => 'Payments',
 
     'global-search' => [
         'partner' => 'Partner',
