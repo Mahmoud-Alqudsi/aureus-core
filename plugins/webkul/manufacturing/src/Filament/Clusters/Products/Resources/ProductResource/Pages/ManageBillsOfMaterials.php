@@ -26,7 +26,7 @@ class ManageBillsOfMaterials extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('manufacturing::filament/clusters/products/resources/product/pages/bill-of-materials.navigation.title');
     }

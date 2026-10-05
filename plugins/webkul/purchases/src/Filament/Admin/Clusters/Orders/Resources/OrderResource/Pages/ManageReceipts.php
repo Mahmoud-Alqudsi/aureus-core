@@ -35,7 +35,7 @@ class ManageReceipts extends ManageRelatedRecords
         return Package::isPluginInstalled('inventories');
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('purchases::filament/admin/clusters/orders/resources/order/pages/manage-receipts.navigation.title');
     }
