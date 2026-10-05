@@ -45,7 +45,7 @@ class ManageQuantities extends ManageRelatedRecords
             );
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('inventories::filament/clusters/products/resources/lot/pages/manage-quantities.title');
     }

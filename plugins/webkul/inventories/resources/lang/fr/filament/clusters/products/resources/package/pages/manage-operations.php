@@ -3,6 +3,8 @@
 return [
     'title' => 'Gérer les opérations',
 
+    'relationship-title' => 'Opérations',
+
     'table' => [
         'actions' => [
             'delete' => [

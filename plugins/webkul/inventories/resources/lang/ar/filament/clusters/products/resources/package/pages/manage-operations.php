@@ -3,6 +3,8 @@
 return [
     'title' => 'إدارة العمليات',
 
+    'relationship-title' => 'العمليات',
+
     'table' => [
         'actions' => [
             'delete' => [

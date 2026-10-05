@@ -32,6 +32,11 @@ class ManageOperations extends ManageRelatedRecords
         return __('inventories::filament/clusters/products/resources/package/pages/manage-operations.title');
     }
 
+    public static function getRelationshipTitle(): string
+    {
+        return __('inventories::filament/clusters/products/resources/package/pages/manage-operations.relationship-title');
+    }
+
     public function getPresetTableViews(): array
     {
         return OperationResource::getPresetTableViews();
