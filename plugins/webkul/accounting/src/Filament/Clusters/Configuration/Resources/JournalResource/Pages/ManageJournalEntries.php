@@ -18,7 +18,7 @@ class ManageJournalEntries extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('accounting::filament/clusters/configurations/resources/journal/pages/manage-journal-entries.navigation.title');
     }
