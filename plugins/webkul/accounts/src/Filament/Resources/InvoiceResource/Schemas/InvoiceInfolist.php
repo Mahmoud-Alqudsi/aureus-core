@@ -45,6 +45,7 @@ class InvoiceInfolist
                 Section::make()
                     ->schema([
                         TextEntry::make('payment_state')
+                            ->label(__('accounts::filament/resources/invoice.infolist.section.general.entries.payment-state'))
                             ->badge(),
                     ])
                     ->compact(),

@@ -201,6 +201,7 @@ return [
             'general' => [
                 'title'   => 'عام',
                 'entries' => [
+                    'payment-state'    => 'حالة الدفع',
                     'customer-invoice' => 'فاتورة العميل',
                     'customer'         => 'العميل',
                     'invoice-date'     => 'تاريخ الفاتورة',

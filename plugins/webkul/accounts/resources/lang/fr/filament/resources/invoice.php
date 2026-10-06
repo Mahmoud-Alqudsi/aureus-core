@@ -201,6 +201,7 @@ return [
             'general' => [
                 'title'   => 'Général',
                 'entries' => [
+                    'payment-state'    => 'État du paiement',
                     'customer-invoice' => 'Facture client',
                     'customer'         => 'Client',
                     'invoice-date'     => 'Date de facture',
