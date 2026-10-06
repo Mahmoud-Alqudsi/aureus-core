@@ -19,6 +19,7 @@ return [
         'tabs' => [
             'due-terms' => [
                 'title' => 'شروط الاستحقاق',
+                'add-action-label' => 'إضافة شرط استحقاق',
 
                 'repeater' => [
                     'due-terms' => [
@@ -32,6 +33,13 @@ return [
                     ],
                 ],
             ],
+        ],
+
+        'preview' => [
+            'title'       => 'معاينة شروط الدفع',
+            'example'     => 'مثال: <strong>:total</strong> في :date',
+            'no-terms'    => 'لم يتم تحديد شروط استحقاق للمعاينة',
+            'installment' => 'القسط رقم <strong>#:number</strong> بمبلغ <strong>:amount</strong> مستحق في :date',
         ],
     ],
 

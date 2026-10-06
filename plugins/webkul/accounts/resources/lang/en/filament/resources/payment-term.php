@@ -19,6 +19,7 @@ return [
         'tabs' => [
             'due-terms' => [
                 'title' => 'Due Terms',
+                'add-action-label' => 'Add Due Term',
 
                 'repeater' => [
                     'due-terms' => [
@@ -32,6 +33,13 @@ return [
                     ],
                 ],
             ],
+        ],
+
+        'preview' => [
+            'example'     => 'Example: <strong>:total</strong> on :date',
+            'no-terms'    => 'No due terms defined to preview',
+            'title'       => 'Payment terms preview',
+            'installment' => 'Installment <strong>#:number</strong> of <strong>:amount</strong> due on :date',
         ],
     ],
 
