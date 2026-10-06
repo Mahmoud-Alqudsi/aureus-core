@@ -54,7 +54,6 @@ class FiscalPositionsTable
                 IconColumn::make('auto_reply')
                     ->searchable()
                     ->sortable()
-                    ->label(__('Detect Automatically'))
                     ->label(__('accounts::filament/resources/fiscal-position.table.columns.detect-automatically')),
             ])
             ->recordActions([

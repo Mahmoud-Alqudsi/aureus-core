@@ -34,7 +34,6 @@ class TaxesTable
                     ->label(__('accounts::filament/resources/tax.table.columns.company'))
                     ->sortable(),
                 TextColumn::make('taxGroup.name')
-                    ->label(__('Tax Group'))
                     ->label(__('accounts::filament/resources/tax.table.columns.tax-group'))
                     ->searchable()
                     ->sortable(),

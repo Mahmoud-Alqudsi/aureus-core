@@ -21,16 +21,19 @@ return [
         ],
         'tabs' => [
             'account-mapping' => [
-                'table' => [
+                'title'            => 'Account Mapping',
+                'add-action-label' => 'Add Account Mapping',
+                'table'            => [
                     'columns' => [
                         'source-account'      => 'Source Account',
                         'destination-account' => 'Destination Account',
                     ],
                 ],
-
             ],
             'tax-mapping' => [
-                'table' => [
+                'title'            => 'Tax Mapping',
+                'add-action-label' => 'Add Tax Mapping',
+                'table'            => [
                     'columns' => [
                         'tax-source'      => 'Tax Source',
                         'tax-destination' => 'Tax Destination',

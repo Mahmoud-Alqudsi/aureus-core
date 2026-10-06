@@ -61,7 +61,7 @@ class FiscalPositionInfolist
                     ])->columnSpanFull(),
                 Tabs::make('Mappings')
                     ->tabs([
-                        Tab::make('Tax Mapping')
+                        Tab::make(__('accounts::filament/resources/fiscal-position.form.tabs.tax-mapping.title'))
                             ->schema([
                                 RepeatableEntry::make('taxes')
                                     ->hiddenLabel()
@@ -83,7 +83,7 @@ class FiscalPositionInfolist
                                             ->placeholder('-'),
                                     ]),
                             ]),
-                        Tab::make('Account Mapping')
+                        Tab::make(__('accounts::filament/resources/fiscal-position.form.tabs.account-mapping.title'))
                             ->schema([
                                 RepeatableEntry::make('accounts')
                                     ->hiddenLabel()

@@ -21,16 +21,19 @@ return [
         ],
         'tabs' => [
             'account-mapping' => [
-                'table' => [
+                'title'            => 'Mappage des comptes',
+                'add-action-label' => 'Ajouter un mappage de compte',
+                'table'            => [
                     'columns' => [
                         'source-account'      => 'Compte source',
                         'destination-account' => 'Compte de destination',
                     ],
                 ],
-
             ],
             'tax-mapping' => [
-                'table' => [
+                'title'            => 'Mappage des taxes',
+                'add-action-label' => 'Ajouter un mappage de taxe',
+                'table'            => [
                     'columns' => [
                         'tax-source'      => 'Taxe source',
                         'tax-destination' => 'Taxe de destination',

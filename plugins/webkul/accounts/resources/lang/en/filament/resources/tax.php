@@ -2,7 +2,21 @@
 
 return [
     'form' => [
+        'tabs' => [
+            'repartition-lines' => [
+                'title' => 'Repartition Lines',
+            ],
+            'descriptions' => [
+                'title' => 'Descriptions',
+            ],
+        ],
+
         'sections' => [
+            'invoice-refund-distribution' => [
+                'title'       => 'Invoice & Refund Distribution',
+                'description' => 'Define how this tax affects accounts for invoices and refunds.',
+            ],
+
             'fields' => [
                 'name'                         => 'Name',
                 'tax-type'                     => 'Tax Type',
@@ -38,12 +52,15 @@ return [
                     'title' => 'Advanced Options',
 
                     'fields' => [
-                        'invoice-label'       => 'Invoice label',
-                        'tax-group'           => 'Tax Group',
-                        'country'             => 'Country',
-                        'include-in-price'    => 'Included in Price',
-                        'include-base-amount' => 'Affect Base of Subsequent Taxes',
-                        'is-base-affected'    => 'Base Affected by Previous Taxes',
+                        'invoice-label'            => 'Invoice label',
+                        'tax-group'                => 'Tax Group',
+                        'country'                  => 'Country',
+                        'include-in-price'             => 'Included in Price',
+                        'include-in-price-tooltip'     => 'Overrides the Company\'s default on whether the price you use on the product and invoices includes this tax.',
+                        'include-base-amount'          => 'Affect Base of Subsequent Taxes',
+                        'include-base-amount-tooltip'  => 'If set, taxes with a higher sequence than this one will be affected by it, provided they accept it.',
+                        'is-base-affected'             => 'Base Affected by Previous Taxes',
+                        'is-base-affected-tooltip'     => 'If set, taxes with a lower sequence might affect this one, provided they try to do it.',
                     ],
                 ],
 
