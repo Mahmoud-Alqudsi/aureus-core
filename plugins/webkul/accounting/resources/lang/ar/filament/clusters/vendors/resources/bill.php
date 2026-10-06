@@ -1,10 +1,8 @@
 <?php
 
 return [
-    'title' => 'الفاتورة',
-
     'navigation' => [
-        'title' => 'الفواتير',
+        'title' => 'فواتير الموردين',
     ],
 
     'global-search' => [

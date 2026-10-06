@@ -1,8 +1,9 @@
 <?php
 
 return [
+
     'navigation' => [
-        'title' => 'سمات المنتج',
+        'title' => 'سمات المنتجات',
         'group' => 'المنتجات',
     ],
 ];

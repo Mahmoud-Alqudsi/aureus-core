@@ -1,10 +1,9 @@
 <?php
 
 return [
-    'model-label' => 'تقريب النقد',
 
     'navigation' => [
-        'title' => 'تقريب النقد',
+        'title' => 'تقريبات النقد',
         'group' => 'المحاسبة',
     ],
 ];
