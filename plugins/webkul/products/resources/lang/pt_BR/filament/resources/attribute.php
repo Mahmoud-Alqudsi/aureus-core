@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'navigation' => [
+        'title' => 'Atributos',
+    ],
+
     'form' => [
         'sections' => [
             'general' => [
