@@ -2,27 +2,22 @@
     $id = $getId();
     $isInline = $isInline();
     $currentState = $getState();
-    
+
     // Handle Enum values
     if ($currentState instanceof \BackedEnum) {
         $currentState = $currentState->value;
     }
 @endphp
 
-<x-dynamic-component
-    :component="$getEntryWrapperView()"
-    :entry="$entry"
->
-    <div
-        {{
-            \Filament\Support\prepare_inherited_attributes($attributes)
-                ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'state-container',
-                    'flex justify-end flex-wrap' => $isInline,
-                ])
-        }}
-    >
+<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
+    <div {{
+    \Filament\Support\prepare_inherited_attributes($attributes)
+        ->merge($getExtraAttributes(), escape: false)
+        ->class([
+            'state-container',
+            'flex justify-end flex-wrap' => $isInline,
+        ])
+        }}>
         @foreach ($getOptions() as $value => $label)
             @php
                 $inputId = "{$id}-{$value}";
@@ -30,25 +25,15 @@
             @endphp
 
             <div class="state">
-                <input
-                    disabled
-                    @if($isChecked) checked @endif
-                    id="{{ $inputId }}"
-                    name="{{ $id }}"
-                    type="radio"
-                    value="{{ $value }}"
-                    class="peer pointer-events-none absolute opacity-0"
-                />
+                <input disabled @if($isChecked) checked @endif id="{{ $inputId }}" name="{{ $id }}" type="radio"
+                    value="{{ $value }}" class="peer pointer-events-none absolute opacity-0" />
 
-                <label
-                    for="{{ $inputId }}"
-                    @class([
-                        'stage-button',
-                        'fi-btn',
-                        'fi-btn-color-' . $getColor($value),
-                    ])
-                    style="pointer-events: none;"
-                >
+                <label for="{{ $inputId }}" @class([
+                    'stage-button',
+                    'fi-btn',
+                    'fi-btn-color-' . $getColor($value),
+                ])
+                    style="pointer-events: none;">
                     {{ $label }}
                 </label>
             </div>
@@ -63,8 +48,8 @@
             align-items: center;
             justify-content: center;
             border-radius: 0;
-            padding-left: 30px;
-            padding-right: 20px;
+            padding-inline-start: 30px;
+            padding-inline-end: 20px;
             padding-top: 8px;
             padding-bottom: 8px;
             border: 1px solid var(--gray-300);
@@ -77,67 +62,69 @@
             position: relative;
             transition-duration: 75ms;
         }
-        
+
         .dark .stage-button {
             background-color: var(--gray-900);
             border: 1px solid var(--gray-700);
             color: var(--gray-300);
         }
-        
+
         .stage-button:after {
             content: "";
             position: absolute;
             top: 50%;
-            right: -14px;
+            inset-inline-end: -14px;
             width: 26px;
             height: 26px;
             z-index: 1;
             transform: translateY(-50%) rotate(45deg);
             background-color: #ffffff;
-            border-right: 1px solid var(--gray-300);
-            border-top: 1px solid var(--gray-300);
+            border-inline-end: 1px solid var(--gray-300);
+            border-block-start: 1px solid var(--gray-300);
             transition-duration: 75ms;
         }
-        
+
         .dark .stage-button:after {
             background-color: var(--gray-900);
-            border-right: 1px solid var(--gray-700);
-            border-top: 1px solid var(--gray-700);
+            border-inline-end: 1px solid var(--gray-700);
+            border-block-start: 1px solid var(--gray-700);
         }
-        
+
         .state-container .state:last-child .stage-button {
-            border-radius: 0 8px 8px 0;
+            border-start-end-radius: 8px;
+            border-end-end-radius: 8px;
         }
-        
+
         .state-container .state:first-child .stage-button {
-            border-radius: 8px 0 0 8px;
+            border-start-start-radius: 8px;
+            border-end-start-radius: 8px;
         }
-        
+
         .state-container .state:last-child .stage-button:after {
             content: none;
         }
-        
-        input:checked + .stage-button {
+
+        input:checked+.stage-button {
             color: #fff;
             background-color: var(--primary-600);
             border: 1px solid var(--primary-600);
         }
-        
-        input:checked + .stage-button:after {
+
+        input:checked+.stage-button:after {
             background-color: var(--primary-600);
-            border-right: 1px solid var(--primary-600);
-            border-top: 1px solid var(--primary-600);
+            border-inline-end: 1px solid var(--primary-600);
+            border-block-start: 1px solid var(--primary-600);
         }
-        
-        .dark input:checked + .stage-button {
+
+        .dark input:checked+.stage-button {
             background-color: var(--primary-500);
             border: 1px solid var(--primary-500);
         }
-        
-        .dark input:checked + .stage-button:after {
+
+        .dark input:checked+.stage-button:after {
             background-color: var(--primary-500);
-            border-right: 1px solid var(--primary-500);
-            border-top: 1px solid var(--primary-500);
+            border-inline-end: 1px solid var(--primary-500);
+            border-block-start: 1px solid var(--primary-500);
         }
     </style>
 @endpush
