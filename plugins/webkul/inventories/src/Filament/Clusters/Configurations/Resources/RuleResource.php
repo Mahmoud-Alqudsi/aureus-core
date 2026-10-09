@@ -17,9 +17,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RuleResource\Sch
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RuleResource\Tables\RulesTable;
 use Webkul\Inventory\Models\Rule;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class RuleResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Rule::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';

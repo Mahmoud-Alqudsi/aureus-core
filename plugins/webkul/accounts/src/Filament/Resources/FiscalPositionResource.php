@@ -16,9 +16,12 @@ use Webkul\Account\Filament\Resources\FiscalPositionResource\Schemas\FiscalPosit
 use Webkul\Account\Filament\Resources\FiscalPositionResource\Schemas\FiscalPositionInfolist;
 use Webkul\Account\Filament\Resources\FiscalPositionResource\Tables\FiscalPositionsTable;
 use Webkul\Account\Models\FiscalPosition;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class FiscalPositionResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = FiscalPosition::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-uturn-left';

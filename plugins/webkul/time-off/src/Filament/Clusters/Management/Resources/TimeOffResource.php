@@ -16,12 +16,13 @@ use Webkul\TimeOff\Filament\Clusters\Management\Resources\TimeOffResource\Pages\
 use Webkul\TimeOff\Filament\Clusters\Management\Resources\TimeOffResource\Schemas\TimeOffForm;
 use Webkul\TimeOff\Filament\Clusters\Management\Resources\TimeOffResource\Schemas\TimeOffInfolist;
 use Webkul\TimeOff\Filament\Clusters\Management\Resources\TimeOffResource\Tables\TimeOffsTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\Leave;
 use Webkul\TimeOff\Traits\TimeOffHelper;
 
 class TimeOffResource extends Resource
 {
-    use HasCustomFields, TimeOffHelper;
+    use HasCustomFields, HasNavigationLabelTitles, TimeOffHelper;
 
     protected static ?string $model = Leave::class;
 

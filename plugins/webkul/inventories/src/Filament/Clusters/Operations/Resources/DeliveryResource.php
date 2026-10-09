@@ -18,9 +18,12 @@ use Webkul\Inventory\Filament\Clusters\Operations\Resources\DeliveryResource\Pag
 use Webkul\Inventory\Filament\Clusters\Operations\Resources\DeliveryResource\Pages\ViewDelivery;
 use Webkul\Inventory\Filament\Clusters\Operations\Resources\DeliveryResource\Tables\DeliveriesTable;
 use Webkul\Inventory\Models\Delivery;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class DeliveryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Delivery::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-truck';

@@ -11,9 +11,12 @@ use Webkul\Sale\Filament\Clusters\Configuration\Resources\TagResource\Schemas\Ta
 use Webkul\Sale\Filament\Clusters\Configuration\Resources\TagResource\Schemas\TagInfolist;
 use Webkul\Sale\Filament\Clusters\Configuration\Resources\TagResource\Tables\TagsTable;
 use Webkul\Sale\Models\Tag;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TagResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Tag::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';

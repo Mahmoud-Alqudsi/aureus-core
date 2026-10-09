@@ -15,9 +15,12 @@ use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\JobPositionRes
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\JobPositionResource\Schemas\JobPositionInfolist;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\JobPositionResource\Tables\JobPositionsTable;
 use Webkul\Recruitment\Models\JobPosition;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class JobPositionResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = JobPosition::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-briefcase';
@@ -25,6 +28,16 @@ class JobPositionResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $cluster = Configurations::class;
+
+    public static function getModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/job-position.navigation.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/job-position.navigation.title');
+    }
 
     public static function getNavigationGroup(): string
     {

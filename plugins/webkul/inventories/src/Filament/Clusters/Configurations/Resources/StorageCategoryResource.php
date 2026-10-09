@@ -23,9 +23,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\StorageCategoryR
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\StorageCategoryResource\Tables\StorageCategoriesTable;
 use Webkul\Inventory\Models\StorageCategory;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class StorageCategoryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = StorageCategory::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-folder';

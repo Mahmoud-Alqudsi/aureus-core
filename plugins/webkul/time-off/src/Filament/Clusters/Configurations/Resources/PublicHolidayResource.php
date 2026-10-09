@@ -11,10 +11,13 @@ use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\PublicHolidayResou
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\PublicHolidayResource\Schemas\PublicHolidayForm;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\PublicHolidayResource\Schemas\PublicHolidayInfolist;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\PublicHolidayResource\Tables\PublicHolidaysTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\CalendarLeave;
 
 class PublicHolidayResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = CalendarLeave::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-lifebuoy';

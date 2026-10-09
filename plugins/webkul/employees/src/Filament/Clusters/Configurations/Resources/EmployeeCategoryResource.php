@@ -11,9 +11,12 @@ use Webkul\Employee\Filament\Clusters\Configurations\Resources\EmployeeCategoryR
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\EmployeeCategoryResource\Schemas\EmployeeCategoryInfolist;
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\EmployeeCategoryResource\Tables\EmployeeCategoriesTable;
 use Webkul\Employee\Models\EmployeeCategory;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class EmployeeCategoryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = EmployeeCategory::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';

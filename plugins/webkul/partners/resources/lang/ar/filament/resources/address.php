@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'navigation' => [
+        'title' => 'العناوين',
+    ],
+
     'form' => [
         'partner' => 'الشريك',
         'name'    => 'الاسم',

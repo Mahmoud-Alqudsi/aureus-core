@@ -17,9 +17,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\LocationResource
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\LocationResource\Tables\LocationsTable;
 use Webkul\Inventory\Models\Location;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class LocationResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Location::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';

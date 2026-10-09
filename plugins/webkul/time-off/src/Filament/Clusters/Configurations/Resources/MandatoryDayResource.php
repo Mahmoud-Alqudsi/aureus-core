@@ -11,10 +11,13 @@ use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\MandatoryDayResour
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\MandatoryDayResource\Schemas\MandatoryDayForm;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\MandatoryDayResource\Schemas\MandatoryDayInfolist;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\MandatoryDayResource\Tables\MandatoryDaysTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\LeaveMandatoryDay;
 
 class MandatoryDayResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = LeaveMandatoryDay::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';

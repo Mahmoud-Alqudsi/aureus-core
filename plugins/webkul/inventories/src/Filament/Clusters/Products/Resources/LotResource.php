@@ -19,10 +19,12 @@ use Webkul\Inventory\Filament\Clusters\Products\Resources\LotResource\Schemas\Lo
 use Webkul\Inventory\Filament\Clusters\Products\Resources\LotResource\Tables\LotsTable;
 use Webkul\Inventory\Models\Lot;
 use Webkul\Inventory\Settings\TraceabilitySettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class LotResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Lot::class;
 

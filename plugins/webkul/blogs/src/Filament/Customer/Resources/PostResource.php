@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Blog\Filament\Customer\Resources\PostResource\Pages\ViewPost;
 use Webkul\Blog\Models\Post;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PostResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     public static ?string $parentResource = CategoryResource::class;
 
     protected static ?string $model = Post::class;

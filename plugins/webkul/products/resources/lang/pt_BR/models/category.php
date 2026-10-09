@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'title' => 'Categoria',
+    'title'        => 'Categoria',
+    'plural-title' => 'Categorias de produtos',
 
     'log-attributes' => [
         'name'        => 'Nome',

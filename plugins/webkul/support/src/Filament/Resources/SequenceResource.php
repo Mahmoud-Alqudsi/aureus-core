@@ -21,11 +21,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Enums\SequenceResetFrequency;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Filament\Resources\SequenceResource\Pages\ManageSequences;
 use Webkul\Support\Models\Sequence;
 
 class SequenceResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Sequence::class;
 
     protected static ?int $navigationSort = 10;

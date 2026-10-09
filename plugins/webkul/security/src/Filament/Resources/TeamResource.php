@@ -12,9 +12,12 @@ use Webkul\Security\Filament\Resources\TeamResource\Schemas\TeamInfolist;
 use Webkul\Security\Filament\Resources\TeamResource\Tables\TeamsTable;
 use Webkul\Security\Models\Team;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TeamResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Team::class;
 
     protected static ?int $navigationSort = 3;

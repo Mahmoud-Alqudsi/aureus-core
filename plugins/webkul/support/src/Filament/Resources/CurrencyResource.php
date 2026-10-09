@@ -13,11 +13,14 @@ use Webkul\Support\Filament\Resources\CurrencyResource\Pages\ListCurrencies;
 use Webkul\Support\Filament\Resources\CurrencyResource\Pages\ViewCurrency;
 use Webkul\Support\Filament\Resources\CurrencyResource\Schemas\CurrencyForm;
 use Webkul\Support\Filament\Resources\CurrencyResource\Schemas\CurrencyInfolist;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Filament\Resources\CurrencyResource\Tables\CurrenciesTable;
 use Webkul\Support\Models\Currency;
 
 class CurrencyResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Currency::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';

@@ -14,9 +14,12 @@ use Webkul\Account\Filament\Resources\TaxGroupResource\Schemas\TaxGroupForm;
 use Webkul\Account\Filament\Resources\TaxGroupResource\Schemas\TaxGroupInfolist;
 use Webkul\Account\Filament\Resources\TaxGroupResource\Tables\TaxGroupsTable;
 use Webkul\Account\Models\TaxGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TaxGroupResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = TaxGroup::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-group';

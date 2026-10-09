@@ -15,9 +15,12 @@ use Webkul\Purchase\Filament\Admin\Clusters\Configurations\Resources\VendorPrice
 use Webkul\Purchase\Filament\Admin\Clusters\Configurations\Resources\VendorPriceResource\Schemas\VendorPriceInfolist;
 use Webkul\Purchase\Filament\Admin\Clusters\Configurations\Resources\VendorPriceResource\Tables\VendorPricesTable;
 use Webkul\Purchase\Models\ProductSupplier;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class VendorPriceResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = ProductSupplier::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-archive-box';

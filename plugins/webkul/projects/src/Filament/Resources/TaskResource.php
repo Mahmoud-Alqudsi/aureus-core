@@ -26,10 +26,11 @@ use Webkul\Project\Models\TaskStage;
 use Webkul\Project\Settings\TaskSettings;
 use Webkul\Project\Settings\TimeSettings;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TaskResource extends Resource
 {
-    use HasCustomFields;
+    use HasCustomFields, HasNavigationLabelTitles;
 
     protected static ?string $model = Task::class;
 
@@ -38,6 +39,11 @@ class TaskResource extends Resource
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getModelLabel(): string
+    {
+        return __('projects::models/task.title');
+    }
 
     public static function getNavigationLabel(): string
     {

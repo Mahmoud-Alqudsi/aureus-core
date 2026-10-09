@@ -11,9 +11,12 @@ use Webkul\Inventory\Filament\Clusters\Operations\Resources\ReplenishmentResourc
 use Webkul\Inventory\Filament\Clusters\Operations\Resources\ReplenishmentResource\Schemas\ReplenishmentForm;
 use Webkul\Inventory\Filament\Clusters\Operations\Resources\ReplenishmentResource\Tables\ReplenishmentsTable;
 use Webkul\Inventory\Models\OrderPoint;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class ReplenishmentResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = OrderPoint::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrows-up-down';
