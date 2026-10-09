@@ -12,9 +12,12 @@ use Webkul\Employee\Filament\Clusters\Reportings\Resources\EmployeeSkillResource
 use Webkul\Employee\Filament\Clusters\Reportings\Resources\EmployeeSkillResource\Schemas\EmployeeSkillInfolist;
 use Webkul\Employee\Filament\Clusters\Reportings\Resources\EmployeeSkillResource\Tables\EmployeeSkillsTable;
 use Webkul\Employee\Models\EmployeeSkill;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class EmployeeSkillResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = EmployeeSkill::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';

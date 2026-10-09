@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Timesheet\Filament\Resources\TimesheetResource\Pages\ManageTimesheets;
 use Webkul\Timesheet\Filament\Resources\TimesheetResource\Schemas\TimesheetForm;
 use Webkul\Timesheet\Filament\Resources\TimesheetResource\Tables\TimesheetsTable;
@@ -16,9 +17,14 @@ use Webkul\Timesheet\Models\Timesheet;
 
 class TimesheetResource extends Resource
 {
-    use HasCustomFields;
+    use HasCustomFields, HasNavigationLabelTitles;
 
     protected static ?string $model = Timesheet::class;
+
+    public static function getModelLabel(): string
+    {
+        return __('timesheets::filament/resources/timesheet.title');
+    }
 
     public static function getNavigationLabel(): string
     {

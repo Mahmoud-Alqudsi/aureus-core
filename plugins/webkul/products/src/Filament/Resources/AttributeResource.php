@@ -9,10 +9,13 @@ use Filament\Tables\Table;
 use Webkul\Product\Filament\Resources\AttributeResource\Schemas\AttributeForm;
 use Webkul\Product\Filament\Resources\AttributeResource\Schemas\AttributeInfolist;
 use Webkul\Product\Filament\Resources\AttributeResource\Tables\AttributesTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Product\Models\Attribute;
 
 class AttributeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+    
     protected static ?string $model = Attribute::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-swatch';
@@ -20,6 +23,11 @@ class AttributeResource extends Resource
     protected static bool $shouldRegisterNavigation = false;
 
     protected static bool $isGloballySearchable = false;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('products::filament/resources/attribute.navigation.title');
+    }
 
     public static function form(Schema $schema): Schema
     {

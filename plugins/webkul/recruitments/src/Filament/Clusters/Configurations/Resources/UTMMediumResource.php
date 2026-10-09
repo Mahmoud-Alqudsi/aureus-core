@@ -12,9 +12,12 @@ use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\UTMMediumResou
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\UTMMediumResource\Schemas\UTMMediumInfolist;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\UTMMediumResource\Tables\UTMMediaTable;
 use Webkul\Recruitment\Models\UTMMedium;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class UTMMediumResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = UTMMedium::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';

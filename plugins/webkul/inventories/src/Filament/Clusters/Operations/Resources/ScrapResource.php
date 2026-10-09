@@ -20,9 +20,12 @@ use Webkul\Inventory\Settings\OperationSettings;
 use Webkul\Inventory\Settings\TraceabilitySettings;
 use Webkul\Inventory\Settings\WarehouseSettings;
 use Webkul\Product\Settings\ProductSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class ScrapResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Scrap::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-trash';

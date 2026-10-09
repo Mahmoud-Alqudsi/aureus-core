@@ -9,10 +9,13 @@ use Webkul\Blog\Filament\Admin\Clusters\Configurations\Resources\TagResource\Pag
 use Webkul\Blog\Filament\Admin\Clusters\Configurations\Resources\TagResource\Schemas\TagForm;
 use Webkul\Blog\Filament\Admin\Clusters\Configurations\Resources\TagResource\Tables\TagsTable;
 use Webkul\Blog\Models\Tag;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Website\Filament\Admin\Clusters\Configurations;
 
 class TagResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Tag::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';

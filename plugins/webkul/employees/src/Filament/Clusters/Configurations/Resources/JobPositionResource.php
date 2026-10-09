@@ -14,9 +14,12 @@ use Webkul\Employee\Filament\Clusters\Configurations\Resources\JobPositionResour
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\JobPositionResource\Schemas\JobPositionInfolist;
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\JobPositionResource\Tables\JobPositionsTable;
 use Webkul\Employee\Models\EmployeeJobPosition;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class JobPositionResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = EmployeeJobPosition::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-briefcase';

@@ -11,9 +11,12 @@ use Webkul\Account\Filament\Resources\AccountTagResource\Schemas\AccountTagForm;
 use Webkul\Account\Filament\Resources\AccountTagResource\Schemas\AccountTagInfolist;
 use Webkul\Account\Filament\Resources\AccountTagResource\Tables\AccountTagsTable;
 use Webkul\Account\Models\Tag;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class AccountTagResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Tag::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';

@@ -11,9 +11,12 @@ use Webkul\Employee\Filament\Clusters\Configurations\Resources\DepartureReasonRe
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\DepartureReasonResource\Schemas\DepartureReasonInfolist;
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\DepartureReasonResource\Tables\DepartureReasonsTable;
 use Webkul\Employee\Models\DepartureReason;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class DepartureReasonResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = DepartureReason::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-fire';

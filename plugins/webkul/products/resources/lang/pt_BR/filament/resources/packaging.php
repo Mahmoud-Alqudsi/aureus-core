@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'navigation' => [
+        'title' => 'Embalagens',
+    ],
+
     'form' => [
         'name'    => 'Nome',
         'barcode' => 'Código de barras',

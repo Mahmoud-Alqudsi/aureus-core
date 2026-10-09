@@ -15,10 +15,13 @@ use Webkul\TimeOff\Filament\Clusters\Management\Resources\AllocationResource\Pag
 use Webkul\TimeOff\Filament\Clusters\Management\Resources\AllocationResource\Schemas\AllocationForm;
 use Webkul\TimeOff\Filament\Clusters\Management\Resources\AllocationResource\Schemas\AllocationInfolist;
 use Webkul\TimeOff\Filament\Clusters\Management\Resources\AllocationResource\Tables\AllocationsTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\LeaveAllocation;
 
 class AllocationResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = LeaveAllocation::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';

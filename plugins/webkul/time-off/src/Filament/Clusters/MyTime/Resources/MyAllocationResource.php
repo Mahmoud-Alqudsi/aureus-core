@@ -14,10 +14,13 @@ use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyAllocationResource\Pages
 use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyAllocationResource\Schemas\MyAllocationForm;
 use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyAllocationResource\Schemas\MyAllocationInfolist;
 use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyAllocationResource\Tables\MyAllocationsTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\LeaveAllocation;
 
 class MyAllocationResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = LeaveAllocation::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar';

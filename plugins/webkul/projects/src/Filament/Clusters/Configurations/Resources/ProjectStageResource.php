@@ -11,9 +11,12 @@ use Webkul\Project\Filament\Clusters\Configurations\Resources\ProjectStageResour
 use Webkul\Project\Filament\Clusters\Configurations\Resources\ProjectStageResource\Tables\ProjectStagesTable;
 use Webkul\Project\Models\ProjectStage;
 use Webkul\Project\Settings\TaskSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class ProjectStageResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = ProjectStage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';

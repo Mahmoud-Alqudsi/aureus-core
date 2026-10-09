@@ -18,9 +18,12 @@ use Webkul\Account\Filament\Resources\PaymentTermResource\Schemas\PaymentTermFor
 use Webkul\Account\Filament\Resources\PaymentTermResource\Schemas\PaymentTermInfolist;
 use Webkul\Account\Filament\Resources\PaymentTermResource\Tables\PaymentTermsTable;
 use Webkul\Account\Models\PaymentTerm;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PaymentTermResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = PaymentTerm::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
