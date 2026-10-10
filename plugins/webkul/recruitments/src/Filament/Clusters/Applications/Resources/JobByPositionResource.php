@@ -10,9 +10,12 @@ use Webkul\Recruitment\Filament\Clusters\Applications;
 use Webkul\Recruitment\Filament\Clusters\Applications\Resources\JobByPositionResource\Pages\ListJobByPositions;
 use Webkul\Recruitment\Filament\Clusters\Applications\Resources\JobByPositionResource\Tables\JobByPositionsTable;
 use Webkul\Recruitment\Models\JobByPosition;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class JobByPositionResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = JobByPosition::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-briefcase';

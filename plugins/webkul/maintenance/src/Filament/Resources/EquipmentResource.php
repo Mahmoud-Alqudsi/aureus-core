@@ -15,10 +15,11 @@ use Webkul\Maintenance\Filament\Resources\EquipmentResource\Schemas\EquipmentInf
 use Webkul\Maintenance\Filament\Resources\EquipmentResource\Tables\EquipmentTable;
 use Webkul\Maintenance\Models\Equipment;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class EquipmentResource extends Resource
 {
-    use HasCustomFields;
+    use HasCustomFields, HasNavigationLabelTitles;
 
     protected static ?string $model = Equipment::class;
 

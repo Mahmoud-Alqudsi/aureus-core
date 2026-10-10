@@ -2,6 +2,7 @@
 
 return [
     'title'          => 'فئة المنتج',
+    'plural-title'   => 'فئات المنتجات',
 
     'log-attributes' => [
         'name'                 => 'الاسم',

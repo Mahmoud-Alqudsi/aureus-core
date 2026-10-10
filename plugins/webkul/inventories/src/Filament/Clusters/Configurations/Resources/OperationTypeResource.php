@@ -15,9 +15,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\OperationTypeRes
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\OperationTypeResource\Schemas\OperationTypeInfolist;
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\OperationTypeResource\Tables\OperationTypesTable;
 use Webkul\Inventory\Models\OperationType;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class OperationTypeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = OperationType::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-queue-list';

@@ -11,9 +11,12 @@ use Webkul\Account\Filament\Resources\IncotermResource\Schemas\IncotermForm;
 use Webkul\Account\Filament\Resources\IncotermResource\Schemas\IncotermInfolist;
 use Webkul\Account\Filament\Resources\IncotermResource\Tables\IncotermsTable;
 use Webkul\Account\Models\Incoterm;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class IncotermResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Incoterm::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-globe-alt';

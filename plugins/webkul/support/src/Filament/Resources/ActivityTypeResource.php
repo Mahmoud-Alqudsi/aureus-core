@@ -14,10 +14,13 @@ use Webkul\Support\Filament\Resources\ActivityTypeResource\Pages\ViewActivityTyp
 use Webkul\Support\Filament\Resources\ActivityTypeResource\Schemas\ActivityTypeForm;
 use Webkul\Support\Filament\Resources\ActivityTypeResource\Schemas\ActivityTypeInfolist;
 use Webkul\Support\Filament\Resources\ActivityTypeResource\Tables\ActivityTypesTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Models\ActivityType;
 
 class ActivityTypeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = ActivityType::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
@@ -29,6 +32,16 @@ class ActivityTypeResource extends Resource
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $pluginName = 'support';
+
+    public static function getModelLabel(): string
+    {
+        return __('support::filament/resources/activity-type.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('support::filament/resources/activity-type.navigation.title');
+    }
 
     public static function form(Schema $schema): Schema
     {

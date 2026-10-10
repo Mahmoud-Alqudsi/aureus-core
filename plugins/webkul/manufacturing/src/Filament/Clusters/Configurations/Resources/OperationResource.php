@@ -21,9 +21,12 @@ use Webkul\Manufacturing\Filament\Clusters\Configurations\Resources\OperationRes
 use Webkul\Manufacturing\Models\BillOfMaterial;
 use Webkul\Manufacturing\Models\Operation;
 use Webkul\Manufacturing\Settings\OperationSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class OperationResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Operation::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';

@@ -14,10 +14,13 @@ use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\LeaveTypeResource\
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\LeaveTypeResource\Schemas\LeaveTypeForm;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\LeaveTypeResource\Schemas\LeaveTypeInfolist;
 use Webkul\TimeOff\Filament\Clusters\Configurations\Resources\LeaveTypeResource\Tables\LeaveTypesTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\LeaveType;
 
 class LeaveTypeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = LeaveType::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
@@ -29,6 +32,11 @@ class LeaveTypeResource extends Resource
     public static function getModelLabel(): string
     {
         return __('time-off::filament/clusters/configurations/resources/leave-type.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('time-off::filament/clusters/configurations/resources/leave-type.navigation.title');
     }
 
     public static function form(Schema $schema): Schema

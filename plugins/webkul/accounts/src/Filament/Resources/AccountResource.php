@@ -12,10 +12,12 @@ use Webkul\Account\Filament\Resources\AccountResource\Schemas\AccountInfolist;
 use Webkul\Account\Filament\Resources\AccountResource\Tables\AccountsTable;
 use Webkul\Account\Models\Account;
 use Webkul\Field\Filament\Traits\HasCustomFields;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class AccountResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Account::class;
 

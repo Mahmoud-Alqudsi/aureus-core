@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Departments',
+    'title' => 'Activity Type',
 
     'navigation' => [
-        'title' => 'Departments',
-        'group' => 'Employees',
+        'title' => 'Activity Types',
+        'group' => 'Settings',
     ],
 
     'form' => [

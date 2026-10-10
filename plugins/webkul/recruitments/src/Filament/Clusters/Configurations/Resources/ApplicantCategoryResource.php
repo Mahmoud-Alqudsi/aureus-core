@@ -11,9 +11,12 @@ use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\ApplicantCateg
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\ApplicantCategoryResource\Schemas\ApplicantCategoryInfolist;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\ApplicantCategoryResource\Tables\ApplicantCategoriesTable;
 use Webkul\Recruitment\Models\ApplicantCategory;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class ApplicantCategoryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = ApplicantCategory::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';

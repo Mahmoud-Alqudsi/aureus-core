@@ -20,10 +20,11 @@ use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\WorkOrderResourc
 use Webkul\Manufacturing\Models\Order;
 use Webkul\Manufacturing\Models\WorkOrder;
 use Webkul\Manufacturing\Settings\OperationSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class WorkOrderResource extends Resource
 {
-    use HasCustomFields;
+    use HasCustomFields, HasNavigationLabelTitles;
 
     protected static ?string $model = WorkOrder::class;
 

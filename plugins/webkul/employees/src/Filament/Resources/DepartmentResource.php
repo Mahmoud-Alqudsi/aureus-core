@@ -19,9 +19,12 @@ use Webkul\Employee\Filament\Resources\DepartmentResource\Schemas\DepartmentInfo
 use Webkul\Employee\Filament\Resources\DepartmentResource\Tables\DepartmentsTable;
 use Webkul\Employee\Models\Department;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class DepartmentResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Department::class;
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;

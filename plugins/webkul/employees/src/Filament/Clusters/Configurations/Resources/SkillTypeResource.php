@@ -15,9 +15,12 @@ use Webkul\Employee\Filament\Clusters\Configurations\Resources\SkillTypeResource
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\SkillTypeResource\Schemas\SkillTypeInfolist;
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\SkillTypeResource\Tables\SkillTypesTable;
 use Webkul\Employee\Models\SkillType;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class SkillTypeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = SkillType::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';

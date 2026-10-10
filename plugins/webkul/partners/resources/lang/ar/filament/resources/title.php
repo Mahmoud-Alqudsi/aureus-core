@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'navigation' => [
+        'title' => 'الألقاب',
+    ],
+
     'form' => [
         'name'       => 'الاسم',
         'short-name' => 'الاسم المختصر',

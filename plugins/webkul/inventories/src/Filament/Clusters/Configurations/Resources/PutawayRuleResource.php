@@ -12,9 +12,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\PutawayRuleResou
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\PutawayRuleResource\Tables\PutawayRulesTable;
 use Webkul\Inventory\Models\PutawayRule;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PutawayRuleResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = PutawayRule::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrows-pointing-in';

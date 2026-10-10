@@ -8,9 +8,12 @@ use Filament\Tables\Table;
 use Webkul\Partner\Filament\Resources\TagResource\Schemas\TagForm;
 use Webkul\Partner\Filament\Resources\TagResource\Tables\TagsTable;
 use Webkul\Partner\Models\Tag;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TagResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Tag::class;
 
     protected static bool $shouldRegisterNavigation = false;

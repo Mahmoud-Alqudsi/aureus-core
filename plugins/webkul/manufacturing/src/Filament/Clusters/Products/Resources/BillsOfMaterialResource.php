@@ -21,9 +21,12 @@ use Webkul\Manufacturing\Filament\Clusters\Products\Resources\BillsOfMaterialRes
 use Webkul\Manufacturing\Filament\Clusters\Products\Resources\BillsOfMaterialResource\Tables\BillsOfMaterialTable;
 use Webkul\Manufacturing\Models\BillOfMaterial;
 use Webkul\Manufacturing\Settings\OperationSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class BillsOfMaterialResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = BillOfMaterial::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';

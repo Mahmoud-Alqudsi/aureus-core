@@ -16,11 +16,13 @@ use Webkul\Product\Filament\Resources\ProductResource\Schemas\ProductInfolist;
 use Webkul\Product\Filament\Resources\ProductResource\Support\ProductSchemaRegistry;
 use Webkul\Product\Filament\Resources\ProductResource\Tables\ProductsTable;
 use Webkul\Product\Models\Product;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Models\UOM;
 
 class ProductResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Product::class;
 

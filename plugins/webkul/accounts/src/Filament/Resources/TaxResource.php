@@ -18,9 +18,12 @@ use Webkul\Account\Filament\Resources\TaxResource\Schemas\TaxForm;
 use Webkul\Account\Filament\Resources\TaxResource\Schemas\TaxInfolist;
 use Webkul\Account\Filament\Resources\TaxResource\Tables\TaxesTable;
 use Webkul\Account\Models\Tax;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TaxResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Tax::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';

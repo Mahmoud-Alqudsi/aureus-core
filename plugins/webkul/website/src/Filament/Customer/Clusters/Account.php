@@ -3,10 +3,12 @@
 namespace Webkul\Website\Filament\Customer\Clusters;
 
 use Filament\Clusters\Cluster;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 use Filament\Facades\Filament;
 
 class Account extends Cluster
 {
+    use HasClusterBreadcrumbs;
     protected static ?int $navigationSort = 1000;
 
     public static function getNavigationLabel(): string

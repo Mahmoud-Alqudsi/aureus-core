@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'navigation' => [
+        'title' => 'Addresses',
+    ],
+
     'form' => [
         'partner' => 'Partner',
         'name'    => 'Name',

@@ -12,9 +12,12 @@ use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\UTMSourceResou
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\UTMSourceResource\Schemas\UTMSourceInfolist;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\UTMSourceResource\Tables\UTMSourcesTable;
 use Webkul\Recruitment\Models\UTMSource;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class UTMSourceResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = UTMSource::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-globe-americas';

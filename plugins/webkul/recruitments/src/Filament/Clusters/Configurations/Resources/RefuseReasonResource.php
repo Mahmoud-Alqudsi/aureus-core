@@ -11,9 +11,12 @@ use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\RefuseReasonRe
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\RefuseReasonResource\Schemas\RefuseReasonInfolist;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\RefuseReasonResource\Tables\RefuseReasonsTable;
 use Webkul\Recruitment\Models\RefuseReason;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class RefuseReasonResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = RefuseReason::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-uturn-left';

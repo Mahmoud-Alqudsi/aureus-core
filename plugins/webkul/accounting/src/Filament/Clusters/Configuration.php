@@ -4,19 +4,17 @@ namespace Webkul\Accounting\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 
 class Configuration extends Cluster
 {
+    use HasClusterBreadcrumbs;
+
     protected static ?string $slug = 'accounting/configurations';
 
     protected static ?int $navigationSort = 6;
 
     public static function getNavigationLabel(): string
-    {
-        return __('accounting::filament/clusters/configurations.navigation.title');
-    }
-
-    public static function getClusterBreadcrumb(): ?string
     {
         return __('accounting::filament/clusters/configurations.navigation.title');
     }

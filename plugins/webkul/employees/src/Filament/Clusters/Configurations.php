@@ -3,11 +3,13 @@
 namespace Webkul\Employee\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 use Filament\Panel;
 use Webkul\Support\Enums\NavigationGroup;
 
 class Configurations extends Cluster
 {
+    use HasClusterBreadcrumbs;
     protected static ?int $navigationSort = 4;
 
     public static function getSlug(?Panel $panel = null): string

@@ -19,10 +19,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\WarehouseResourc
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\WarehouseResource\Tables\WarehousesTable;
 use Webkul\Inventory\Models\Warehouse;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class WarehouseResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Warehouse::class;
 

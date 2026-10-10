@@ -19,10 +19,11 @@ use Webkul\Blog\Filament\Admin\Resources\PostResource\Tables\PostsTable;
 use Webkul\Blog\Models\Post;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PostResource extends Resource
 {
-    use HasCustomFields, Translatable;
+    use HasCustomFields, HasNavigationLabelTitles, Translatable;
 
     protected static ?string $model = Post::class;
 

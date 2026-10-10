@@ -10,9 +10,12 @@ use Webkul\Accounting\Filament\Clusters\Accounting;
 use Webkul\Accounting\Filament\Clusters\Accounting\Resources\JournalItemResource\Pages\ListJournalItems;
 use Webkul\Accounting\Filament\Clusters\Accounting\Resources\JournalItemResource\Tables\JournalItemsTable;
 use Webkul\Accounting\Models\JournalItem;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class JournalItemResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = JournalItem::class;
 
     protected static bool $shouldRegisterNavigation = true;

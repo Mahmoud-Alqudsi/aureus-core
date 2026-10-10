@@ -12,9 +12,12 @@ use Webkul\Product\Filament\Resources\PriceListResource\Pages\ViewPriceList;
 use Webkul\Product\Filament\Resources\PriceListResource\Schemas\PriceListForm;
 use Webkul\Product\Filament\Resources\PriceListResource\Tables\PriceListsTable;
 use Webkul\Product\Models\PriceList;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PriceListResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = PriceList::class;
 
     protected static bool $shouldRegisterNavigation = false;

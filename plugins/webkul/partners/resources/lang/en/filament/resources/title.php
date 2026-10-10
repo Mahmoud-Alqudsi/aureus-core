@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'navigation' => [
+        'title' => 'Titles',
+    ],
+
     'form' => [
         'name'       => 'Name',
         'short-name' => 'Short Name',

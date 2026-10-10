@@ -11,9 +11,12 @@ use Webkul\Employee\Filament\Clusters\Configurations\Resources\WorkLocationResou
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\WorkLocationResource\Schemas\WorkLocationInfolist;
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\WorkLocationResource\Tables\WorkLocationsTable;
 use Webkul\Employee\Models\WorkLocation;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class WorkLocationResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = WorkLocation::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';

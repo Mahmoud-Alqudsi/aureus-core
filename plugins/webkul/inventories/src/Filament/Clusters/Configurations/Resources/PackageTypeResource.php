@@ -16,9 +16,12 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\PackageTypeResou
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\PackageTypeResource\Tables\PackageTypesTable;
 use Webkul\Inventory\Models\PackageType;
 use Webkul\Inventory\Settings\OperationSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PackageTypeResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = PackageType::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-archive-box';

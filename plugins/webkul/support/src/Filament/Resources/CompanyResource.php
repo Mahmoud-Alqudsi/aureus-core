@@ -17,12 +17,14 @@ use Webkul\Support\Filament\Resources\CompanyResource\RelationManagers\BranchesR
 use Webkul\Support\Filament\Resources\CompanyResource\Schemas\CompanyForm;
 use Webkul\Support\Filament\Resources\CompanyResource\Schemas\CompanyInfolist;
 use Webkul\Support\Filament\Resources\CompanyResource\Tables\CompaniesTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Scopes\AllowedCompanyScope;
 
 class CompanyResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Company::class;
 

@@ -20,10 +20,12 @@ use Webkul\Recruitment\Filament\Clusters\Applications\Resources\CandidateResourc
 use Webkul\Recruitment\Filament\Clusters\Applications\Resources\CandidateResource\Schemas\CandidateInfolist;
 use Webkul\Recruitment\Filament\Clusters\Applications\Resources\CandidateResource\Tables\CandidatesTable;
 use Webkul\Recruitment\Models\Candidate;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class CandidateResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Candidate::class;
 

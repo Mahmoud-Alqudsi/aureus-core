@@ -19,9 +19,12 @@ use Webkul\Inventory\Filament\Clusters\Operations\Resources\DropshipResource\Pag
 use Webkul\Inventory\Filament\Clusters\Operations\Resources\DropshipResource\Tables\DropshipsTable;
 use Webkul\Inventory\Models\Dropship;
 use Webkul\Inventory\Settings\LogisticSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class DropshipResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Dropship::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-truck';
