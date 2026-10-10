@@ -27,7 +27,7 @@ class ManageMoves extends ManageRelatedRecords
         return SubNavigationPosition::Top;
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('accounting::filament/clusters/vendors/resources/product/pages/manage-moves.title');
     }

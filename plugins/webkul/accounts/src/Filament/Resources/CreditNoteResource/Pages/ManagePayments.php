@@ -23,7 +23,7 @@ class ManagePayments extends ManageRelatedRecords
         return SubNavigationPosition::Top;
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('accounts::filament/resources/credit-note/pages/manage-payments.navigation.title');
     }

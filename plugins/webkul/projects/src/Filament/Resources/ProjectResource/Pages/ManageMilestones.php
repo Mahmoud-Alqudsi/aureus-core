@@ -36,7 +36,7 @@ class ManageMilestones extends ManageRelatedRecords
         return $parameters['record']?->allow_milestones;
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('projects::filament/resources/project/pages/manage-milestones.title');
     }

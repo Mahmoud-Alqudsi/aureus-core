@@ -26,7 +26,7 @@ class ManageTimesheets extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('projects::filament/resources/task/pages/manage-timesheets.title');
     }

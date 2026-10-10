@@ -19,7 +19,7 @@ class ManageAddresses extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('partners::filament/resources/partner/pages/manage-addresses.title');
     }

@@ -22,7 +22,7 @@ class ManageRoutes extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-path';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('inventories::filament/clusters/configurations/resources/warehouse/pages/manage-routes.title');
     }

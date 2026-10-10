@@ -32,4 +32,9 @@ class ManageDistributionForInvoice extends ManageRelatedRecords
     {
         return __('accounts::filament/resources/tax/pages/manage-distribution-for-invoice.navigation.title');
     }
+
+    public static function getRelationshipTitle(): string
+    {
+        return __('accounts::filament/resources/tax/pages/manage-distribution-for-invoice.relationship-title');
+    }
 }

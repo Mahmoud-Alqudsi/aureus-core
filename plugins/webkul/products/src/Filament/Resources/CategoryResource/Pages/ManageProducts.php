@@ -23,7 +23,7 @@ class ManageProducts extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('products::filament/resources/category/pages/manage-products.title');
     }
