@@ -3,10 +3,12 @@
 namespace Webkul\Website\Filament\Admin\Clusters;
 
 use Filament\Clusters\Cluster;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 use Webkul\Support\Enums\NavigationGroup;
 
 class Configurations extends Cluster
 {
+    use HasClusterBreadcrumbs;
     protected static ?string $slug = 'website/configurations';
 
     protected static ?int $navigationSort = 3;

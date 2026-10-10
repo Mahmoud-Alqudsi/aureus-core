@@ -3,10 +3,12 @@
 namespace Webkul\Support\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 use Webkul\Support\Enums\NavigationGroup;
 
 class Settings extends Cluster
 {
+    use HasClusterBreadcrumbs;
     protected static ?int $navigationSort = 1000;
 
     public static function canAccessClusteredComponents(): bool
