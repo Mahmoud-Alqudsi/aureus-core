@@ -63,7 +63,7 @@ class ManageQuantities extends ManageRelatedRecords
             || $parameters['record']->is_configurable;
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('inventories::filament/clusters/products/resources/product/pages/manage-quantities.title');
     }

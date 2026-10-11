@@ -26,4 +26,9 @@ class ManagePaymentDueTerm extends ManageRelatedRecords
     {
         return __('accounts::filament/resources/payment-term/pages/manage-payment-term.navigation.title');
     }
+
+    public static function getRelationshipTitle(): string
+    {
+        return __('accounts::filament/resources/payment-term/pages/manage-payment-term.relationship-title');
+    }
 }

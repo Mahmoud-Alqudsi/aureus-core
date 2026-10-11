@@ -20,7 +20,7 @@ class ManagePurchases extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-check';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('purchases::filament/admin/clusters/orders/resources/vendor/pages/manage-purchases.navigation.title');
     }

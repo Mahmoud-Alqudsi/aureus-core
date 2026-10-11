@@ -37,7 +37,7 @@ class ManageLocations extends ManageRelatedRecords
         return settings(WarehouseSettings::class)->enable_locations;
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('inventories::filament/clusters/configurations/resources/storage-category/pages/manage-locations.title');
     }

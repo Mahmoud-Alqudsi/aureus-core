@@ -23,7 +23,7 @@ class ManageRules extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('inventories::filament/clusters/configurations/resources/route/pages/manage-rules.title');
     }
