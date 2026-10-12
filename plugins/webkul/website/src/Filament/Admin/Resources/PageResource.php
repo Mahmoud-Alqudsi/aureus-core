@@ -17,11 +17,12 @@ use Webkul\Website\Filament\Admin\Resources\PageResource\Pages\ViewPage;
 use Webkul\Website\Filament\Admin\Resources\PageResource\Schemas\PageForm;
 use Webkul\Website\Filament\Admin\Resources\PageResource\Schemas\PageInfolist;
 use Webkul\Website\Filament\Admin\Resources\PageResource\Tables\PagesTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Website\Models\Page as PageModel;
 
 class PageResource extends Resource
 {
-    use HasCustomFields, Translatable;
+    use HasCustomFields, HasNavigationLabelTitles, Translatable;
 
     protected static ?string $model = PageModel::class;
 

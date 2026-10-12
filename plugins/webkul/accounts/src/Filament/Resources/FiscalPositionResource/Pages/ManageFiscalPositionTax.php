@@ -26,4 +26,9 @@ class ManageFiscalPositionTax extends ManageRelatedRecords
     {
         return __('accounts::filament/resources/fiscal-position/pages/manage-fiscal-position.navigation.title');
     }
+
+    public static function getRelationshipTitle(): string
+    {
+        return __('accounts::filament/resources/fiscal-position/pages/manage-fiscal-position.relationship-title');
+    }
 }

@@ -10,11 +10,12 @@ use Webkul\Blog\Filament\Admin\Clusters\Configurations\Resources\CategoryResourc
 use Webkul\Blog\Filament\Admin\Clusters\Configurations\Resources\CategoryResource\Schemas\CategoryForm;
 use Webkul\Blog\Filament\Admin\Clusters\Configurations\Resources\CategoryResource\Tables\CategoriesTable;
 use Webkul\Blog\Models\Category;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Website\Filament\Admin\Clusters\Configurations;
 
 class CategoryResource extends Resource
 {
-    use Translatable;
+    use HasNavigationLabelTitles, Translatable;
 
     protected static ?string $model = Category::class;
 

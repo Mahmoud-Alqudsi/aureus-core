@@ -3,10 +3,12 @@
 namespace Webkul\Accounting\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 use Webkul\Support\Enums\NavigationGroup;
 
 class Accounting extends Cluster
 {
+    use HasClusterBreadcrumbs;
     protected static ?string $slug = 'accounting/accounting';
 
     protected static ?int $navigationSort = 4;

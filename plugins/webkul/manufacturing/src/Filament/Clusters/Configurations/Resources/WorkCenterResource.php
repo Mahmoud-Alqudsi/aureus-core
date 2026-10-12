@@ -21,9 +21,12 @@ use Webkul\Manufacturing\Filament\Clusters\Configurations\Resources\WorkCenterRe
 use Webkul\Manufacturing\Filament\Clusters\Configurations\Resources\WorkCenterResource\Tables\WorkCentersTable;
 use Webkul\Manufacturing\Models\WorkCenter;
 use Webkul\Manufacturing\Settings\OperationSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class WorkCenterResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = WorkCenter::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-wrench-screwdriver';

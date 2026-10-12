@@ -23,10 +23,12 @@ use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseAgreementRe
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseAgreementResource\Tables\PurchaseAgreementsTable;
 use Webkul\Purchase\Models\Requisition;
 use Webkul\Purchase\Settings\OrderSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PurchaseAgreementResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Requisition::class;
 

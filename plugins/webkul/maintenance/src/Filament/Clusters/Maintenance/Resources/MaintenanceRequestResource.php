@@ -17,10 +17,11 @@ use Webkul\Maintenance\Filament\Clusters\Maintenance\Resources\MaintenanceReques
 use Webkul\Maintenance\Filament\Clusters\Maintenance\Resources\MaintenanceRequestResource\Schemas\MaintenanceRequestInfolist;
 use Webkul\Maintenance\Filament\Clusters\Maintenance\Resources\MaintenanceRequestResource\Tables\MaintenanceRequestsTable;
 use Webkul\Maintenance\Models\MaintenanceRequest;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class MaintenanceRequestResource extends Resource
 {
-    use HasCustomFields;
+    use HasCustomFields, HasNavigationLabelTitles;
 
     protected static ?string $model = MaintenanceRequest::class;
 

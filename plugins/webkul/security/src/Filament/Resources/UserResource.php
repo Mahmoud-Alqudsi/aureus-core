@@ -21,9 +21,12 @@ use Webkul\Security\Filament\Resources\UserResource\Tables\UsersTable;
 use Webkul\Security\Models\User;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class UserResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = User::class;
 
     protected static ?int $navigationSort = 4;

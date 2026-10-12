@@ -16,10 +16,12 @@ use Webkul\Account\Filament\Resources\PaymentResource\Schemas\PaymentInfolist;
 use Webkul\Account\Filament\Resources\PaymentResource\Tables\PaymentsTable;
 use Webkul\Account\Models\Payment;
 use Webkul\Field\Filament\Traits\HasCustomFields;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PaymentResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Payment::class;
 

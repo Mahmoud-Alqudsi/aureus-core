@@ -14,9 +14,12 @@ use Webkul\Account\Filament\Resources\JournalResource\Schemas\JournalForm;
 use Webkul\Account\Filament\Resources\JournalResource\Schemas\JournalInfolist;
 use Webkul\Account\Filament\Resources\JournalResource\Tables\JournalsTable;
 use Webkul\Account\Models\Journal;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class JournalResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Journal::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-book-open';

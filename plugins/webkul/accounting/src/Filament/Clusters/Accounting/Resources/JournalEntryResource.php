@@ -20,10 +20,12 @@ use Webkul\Accounting\Filament\Clusters\Customers\Resources\PaymentResource\Page
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\PaymentResource\Pages\ViewPayment as VendorViewPayment;
 use Webkul\Accounting\Models\JournalEntry;
 use Webkul\Field\Filament\Traits\HasCustomFields;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class JournalEntryResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = JournalEntry::class;
 

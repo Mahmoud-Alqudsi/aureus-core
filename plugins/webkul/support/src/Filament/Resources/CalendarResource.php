@@ -16,10 +16,13 @@ use Webkul\Support\Filament\Resources\CalendarResource\RelationManagers\Calendar
 use Webkul\Support\Filament\Resources\CalendarResource\Schemas\CalendarForm;
 use Webkul\Support\Filament\Resources\CalendarResource\Schemas\CalendarInfolist;
 use Webkul\Support\Filament\Resources\CalendarResource\Tables\CalendarsTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Models\Calendar;
 
 class CalendarResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Calendar::class;
 
     protected static bool $shouldRegisterNavigation = false;

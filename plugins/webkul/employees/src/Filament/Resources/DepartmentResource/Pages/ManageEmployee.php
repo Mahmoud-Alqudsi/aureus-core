@@ -20,4 +20,9 @@ class ManageEmployee extends ManageRelatedRecords
     {
         return __('employees::filament/resources/department/pages/manage-employee.navigation.title');
     }
+
+    public static function getRelationshipTitle(): string
+    {
+        return __('employees::filament/resources/department/pages/manage-employee.relationship-title');
+    }
 }

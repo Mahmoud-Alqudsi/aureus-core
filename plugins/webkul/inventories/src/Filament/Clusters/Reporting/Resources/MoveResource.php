@@ -12,9 +12,12 @@ use Webkul\Inventory\Settings\OperationSettings;
 use Webkul\Inventory\Settings\TraceabilitySettings;
 use Webkul\Inventory\Settings\WarehouseSettings;
 use Webkul\Product\Settings\ProductSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class MoveResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = MoveLine::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrows-right-left';

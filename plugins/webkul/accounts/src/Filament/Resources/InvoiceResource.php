@@ -20,11 +20,13 @@ use Webkul\Account\Filament\Resources\InvoiceResource\Tables\InvoicesTable;
 use Webkul\Account\Livewire\InvoiceSummary;
 use Webkul\Account\Models\Invoice;
 use Webkul\Field\Filament\Traits\HasCustomFields;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 
 class InvoiceResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Invoice::class;
 

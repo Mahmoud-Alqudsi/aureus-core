@@ -7,9 +7,12 @@ use Webkul\Blog\Filament\Customer\Resources\CategoryResource\Pages\ListCategorie
 use Webkul\Blog\Filament\Customer\Resources\CategoryResource\Pages\ViewCategory;
 use Webkul\Blog\Filament\Customer\Resources\PostResource\Pages\ViewPost;
 use Webkul\Blog\Models\Category;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class CategoryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Category::class;
 
     protected static ?string $slug = 'blog';

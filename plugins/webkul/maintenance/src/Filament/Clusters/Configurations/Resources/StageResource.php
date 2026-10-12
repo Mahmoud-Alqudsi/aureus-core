@@ -11,9 +11,12 @@ use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\StageResource\
 use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\StageResource\Schemas\StageInfolist;
 use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\StageResource\Tables\StagesTable;
 use Webkul\Maintenance\Models\Stage;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class StageResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Stage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';

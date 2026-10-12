@@ -3,10 +3,12 @@
 namespace Webkul\Purchase\Filament\Admin\Clusters;
 
 use Filament\Clusters\Cluster;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 use Webkul\Support\Enums\NavigationGroup;
 
 class Products extends Cluster
 {
+    use HasClusterBreadcrumbs;
     protected static ?string $slug = 'purchase/products';
 
     protected static ?int $navigationSort = 2;

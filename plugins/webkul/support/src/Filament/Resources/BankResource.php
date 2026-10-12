@@ -7,10 +7,13 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Webkul\Support\Filament\Resources\BankResource\Schemas\BankForm;
 use Webkul\Support\Filament\Resources\BankResource\Tables\BanksTable;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Models\Bank;
 
 class BankResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Bank::class;
 
     protected static bool $shouldRegisterNavigation = false;

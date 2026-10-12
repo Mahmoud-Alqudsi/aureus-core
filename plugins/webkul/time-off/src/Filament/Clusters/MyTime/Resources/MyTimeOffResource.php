@@ -14,12 +14,13 @@ use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyTimeOffResource\Pages\Ed
 use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyTimeOffResource\Pages\ListMyTimeOffs;
 use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyTimeOffResource\Pages\ViewMyTimeOff;
 use Webkul\TimeOff\Filament\Clusters\MyTime\Resources\MyTimeOffResource\Schemas\MyTimeOffInfolist;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\TimeOff\Models\Leave;
 use Webkul\TimeOff\Traits\TimeOffHelper;
 
 class MyTimeOffResource extends Resource
 {
-    use TimeOffHelper;
+    use HasNavigationLabelTitles, TimeOffHelper;
 
     protected static ?string $model = Leave::class;
 

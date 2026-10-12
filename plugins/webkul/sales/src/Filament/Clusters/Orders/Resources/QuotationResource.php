@@ -22,9 +22,12 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Schemas\Quo
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Tables\QuotationsTable;
 use Webkul\Sale\Models\Quotation as Order;
 
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
+
 class QuotationResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Order::class;
 

@@ -15,9 +15,12 @@ use Webkul\Field\Filament\Resources\FieldResource\Tables\FieldsTable;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Field\Models\Field;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class FieldResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Field::class;
 
     protected static ?int $navigationSort = 5;

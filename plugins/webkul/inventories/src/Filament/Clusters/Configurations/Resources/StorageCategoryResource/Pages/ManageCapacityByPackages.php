@@ -42,7 +42,7 @@ class ManageCapacityByPackages extends ManageRelatedRecords
         return settings(OperationSettings::class)->enable_packages;
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('inventories::filament/clusters/configurations/resources/storage-category/pages/manage-capacity-by-packages.title');
     }

@@ -21,7 +21,7 @@ class ManageContacts extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('partners::filament/resources/partner/pages/manage-contacts.title');
     }

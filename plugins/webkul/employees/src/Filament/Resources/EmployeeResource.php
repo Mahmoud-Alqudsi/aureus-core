@@ -24,10 +24,12 @@ use Webkul\Employee\Filament\Resources\EmployeeResource\Tables\EmployeesTable;
 use Webkul\Employee\Models\Employee;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class EmployeeResource extends Resource
 {
     use HasCustomFields;
+    use HasNavigationLabelTitles;
 
     protected static ?string $model = Employee::class;
 

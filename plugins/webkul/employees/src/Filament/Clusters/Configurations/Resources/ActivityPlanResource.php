@@ -14,9 +14,12 @@ use Webkul\Employee\Filament\Clusters\Configurations\Resources\ActivityPlanResou
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\ActivityPlanResource\Schemas\ActivityPlanInfolist;
 use Webkul\Employee\Filament\Clusters\Configurations\Resources\ActivityPlanResource\Tables\ActivityPlansTable;
 use Webkul\Employee\Models\ActivityPlan;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class ActivityPlanResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = ActivityPlan::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-briefcase';

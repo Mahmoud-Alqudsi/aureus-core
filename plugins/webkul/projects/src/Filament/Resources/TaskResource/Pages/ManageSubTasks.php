@@ -28,7 +28,7 @@ class ManageSubTasks extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('projects::filament/resources/task/pages/manage-sub-tasks.title');
     }

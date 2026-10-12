@@ -23,4 +23,9 @@ class ManageMilestone extends ManageRelatedRecords
     {
         return __('time-off::filament/clusters/configurations/resources/accrual-plan/pages/manage-milestone.navigation.label');
     }
+
+    public static function getRelationshipTitle(): string
+    {
+        return __('time-off::filament/clusters/configurations/resources/accrual-plan/pages/manage-milestone.relationship-title');
+    }
 }

@@ -3,10 +3,12 @@
 namespace Webkul\Inventory\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 use Webkul\Support\Enums\NavigationGroup;
 
 class Reporting extends Cluster
 {
+    use HasClusterBreadcrumbs;
     protected static ?string $slug = 'inventory/reporting';
 
     protected static ?int $navigationSort = 3;

@@ -25,7 +25,7 @@ class ManageOperations extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('manufacturing::filament/clusters/configurations/resources/work-center/pages/manage-operations.title');
     }

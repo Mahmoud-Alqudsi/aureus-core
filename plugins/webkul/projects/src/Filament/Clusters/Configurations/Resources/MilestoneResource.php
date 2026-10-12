@@ -13,10 +13,11 @@ use Webkul\Project\Filament\Clusters\Configurations\Resources\MilestoneResource\
 use Webkul\Project\Filament\Clusters\Configurations\Resources\MilestoneResource\Tables\MilestonesTable;
 use Webkul\Project\Models\Milestone;
 use Webkul\Project\Settings\TaskSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class MilestoneResource extends Resource
 {
-    use HasCustomFields;
+    use HasCustomFields, HasNavigationLabelTitles;
 
     protected static ?string $model = Milestone::class;
 

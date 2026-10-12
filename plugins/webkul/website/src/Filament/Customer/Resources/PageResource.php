@@ -3,11 +3,14 @@
 namespace Webkul\Website\Filament\Customer\Resources;
 
 use Filament\Resources\Resource;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Website\Filament\Customer\Resources\PageResource\Pages\ViewPage;
 use Webkul\Website\Models\Page;
 
 class PageResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Page::class;
 
     protected static ?string $recordRouteKeyName = 'slug';

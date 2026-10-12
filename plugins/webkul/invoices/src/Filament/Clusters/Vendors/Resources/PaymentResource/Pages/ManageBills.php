@@ -22,7 +22,7 @@ class ManageBills extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('invoices::filament/clusters/vendors/resources/payment/pages/manage-bills.navigation.title');
     }

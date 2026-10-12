@@ -8,9 +8,12 @@ use Filament\Tables\Table;
 use Webkul\Partner\Filament\Resources\IndustryResource\Schemas\IndustryForm;
 use Webkul\Partner\Filament\Resources\IndustryResource\Tables\IndustriesTable;
 use Webkul\Partner\Models\Industry;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class IndustryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Industry::class;
 
     protected static bool $shouldRegisterNavigation = false;

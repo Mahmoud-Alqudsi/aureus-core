@@ -14,9 +14,12 @@ use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\EquipmentCateg
 use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\EquipmentCategoryResource\Schemas\EquipmentCategoryInfolist;
 use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\EquipmentCategoryResource\Tables\EquipmentCategoriesTable;
 use Webkul\Maintenance\Models\EquipmentCategory;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class EquipmentCategoryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = EquipmentCategory::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';

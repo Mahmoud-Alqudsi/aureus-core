@@ -12,9 +12,12 @@ use Webkul\Account\Filament\Resources\CashRoundingResource\Schemas\CashRoundingI
 use Webkul\Account\Filament\Resources\CashRoundingResource\Tables\CashRoundingsTable;
 use Webkul\Account\Models\CashRounding;
 use Webkul\Account\Settings\CustomerInvoiceSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class CashRoundingResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = CashRounding::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-adjustments-horizontal';

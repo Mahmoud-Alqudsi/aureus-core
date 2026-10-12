@@ -3,10 +3,13 @@
 namespace Webkul\Support\Filament\Resources;
 
 use Filament\Resources\Resource;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Support\Models\Country;
 
 class CountryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Country::class;
 
     protected static bool $shouldRegisterNavigation = false;

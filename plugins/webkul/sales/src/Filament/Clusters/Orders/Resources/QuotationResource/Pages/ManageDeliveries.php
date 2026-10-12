@@ -32,7 +32,7 @@ class ManageDeliveries extends ManageRelatedRecords
         return Package::isPluginInstalled('inventories');
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('sales::filament/clusters/orders/resources/quotation/pages/manage-deliveries.navigation.title');
     }

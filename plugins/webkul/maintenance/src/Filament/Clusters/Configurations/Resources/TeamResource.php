@@ -10,9 +10,12 @@ use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\TeamResource\P
 use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\TeamResource\Schemas\TeamForm;
 use Webkul\Maintenance\Filament\Clusters\Configurations\Resources\TeamResource\Tables\TeamsTable;
 use Webkul\Maintenance\Models\Team;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class TeamResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Team::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-group';

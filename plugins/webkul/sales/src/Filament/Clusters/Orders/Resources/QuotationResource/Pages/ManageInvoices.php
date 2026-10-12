@@ -20,9 +20,9 @@ class ManageInvoices extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
-        return __('Invoices');
+        return __('sales::filament/clusters/orders/resources/quotation/pages/manage-invoices.navigation.title');
     }
 
     public static function getNavigationBadge($parameters = []): ?string

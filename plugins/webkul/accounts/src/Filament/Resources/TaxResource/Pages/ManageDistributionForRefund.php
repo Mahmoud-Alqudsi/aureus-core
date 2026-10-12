@@ -32,4 +32,9 @@ class ManageDistributionForRefund extends ManageRelatedRecords
     {
         return __('accounts::filament/resources/tax/pages/manage-distribution-for-refund.navigation.title');
     }
+
+    public static function getRelationshipTitle(): string
+    {
+        return __('accounts::filament/resources/tax/pages/manage-distribution-for-refund.relationship-title');
+    }
 }
