@@ -1,11 +1,11 @@
 @php
-    $gridDirection = $getGridDirection() ?? 'column';
-    $hasInlineLabel = $hasInlineLabel();
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $isInline = $isInline();
-    $isMultiple = $isMultiple();
-    $statePath = $getStatePath();
+$gridDirection = $getGridDirection() ?? 'column';
+$hasInlineLabel = $hasInlineLabel();
+$id = $getId();
+$isDisabled = $isDisabled();
+$isInline = $isInline();
+$isMultiple = $isMultiple();
+$statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component
@@ -16,42 +16,42 @@
     <x-slot
         name="label"
         @class([
-            'sm:pt-1.5' => $hasInlineLabel,
-        ])
+    'sm:pt-1.5' => $hasInlineLabel,
+])
     >
         {{ $getLabel() }}
     </x-slot>
 
     <div
         {{
-            \Filament\Support\prepare_inherited_attributes($attributes)
-                ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'state-container',
-                    'grid' => ! $isInline && $gridDirection === 'row',
-                    'flex justify-end flex-wrap' => $isInline,
-                ])
+    \Filament\Support\prepare_inherited_attributes($attributes)
+        ->merge($getExtraAttributes(), escape: false)
+        ->class([
+            'state-container',
+            'grid' => !$isInline && $gridDirection === 'row',
+            'flex justify-end flex-wrap' => $isInline,
+        ])
         }}
     >
         {{ $getChildComponentContainer() }}
 
         @foreach ($getOptions() as $value => $label)
             @php
-                $inputId = "{$id}-{$value}";
-                $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
+    $inputId = "{$id}-{$value}";
+    $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
             @endphp
 
             <div
                 @class([
-                    'state' => true,
-                    'border-primary-500',
-                    'break-inside-avoid pt-3' => (! $isInline) && ($gridDirection === 'column'),
-                ])
+        'state' => true,
+        'border-primary-500',
+        'break-inside-avoid pt-3' => (!$isInline) && ($gridDirection === 'column'),
+    ])
             >
                 <input
                     @disabled($shouldOptionBeDisabled)
                     id="{{ $inputId }}"
-                    @if (! $isMultiple)
+                    @if (!$isMultiple)
                         name="{{ $id }}"
                     @endif
                     type="{{ $isMultiple ? 'checkbox' : 'radio' }}"
@@ -79,20 +79,21 @@
 @push('styles')
     <style>
         .stage-button {
+            position: relative;
             border-radius: 0;
             padding-inline-start: 30px;
             padding-inline-end: 20px;
             border: 1px solid var(--gray-300);
             box-shadow: none;
             min-height: 38px;
-            position: relative;
         }
 
         .dark .stage-button {
-            border: 1px solid var(--gray-700);
+            border-color: var(--gray-700);
         }
 
-        .stage-button:after {
+        /* Stage connector */
+        .stage-button::after {
             content: "";
             position: absolute;
             top: 50%;
@@ -103,20 +104,26 @@
             transform: translateY(-50%) rotate(45deg);
             background-color: #ffffff;
             border-inline-end: 1px solid var(--gray-300);
-            border-block-start: 1px solid var(--gray-300);
+            border-top: 1px solid var(--gray-300);
             transition-duration: 75ms;
         }
 
-        .dark .stage-button:after {
-            background-color: var(--gray-900);
-            border-inline-end: 1px solid hsla(0, 0%, 100%, .2);
-            border-block-start: 1px solid hsla(0, 0%, 100%, .2);
+        /* Mirror the connector for Arabic / RTL */
+        html[dir="rtl"] .stage-button::after {
+            transform: translateY(-50%) rotate(-45deg);
         }
 
-        .dark .stage-button:hover:after {
+        .dark .stage-button::after {
+            background-color: var(--gray-900);
+            border-inline-end: 1px solid hsla(0, 0%, 100%, .2);
+            border-top: 1px solid hsla(0, 0%, 100%, .2);
+        }
+
+        .dark .stage-button:hover::after {
             background-color: var(--gray-800);
         }
 
+        /* Round the outer corners logically */
         .state-container .state:last-child .stage-button {
             border-start-end-radius: 8px;
             border-end-end-radius: 8px;
@@ -127,31 +134,33 @@
             border-end-start-radius: 8px;
         }
 
-        .state-container .state:last-child .stage-button:after {
+        /* No connector after the final stage */
+        .state-container .state:last-child .stage-button::after {
             content: none;
         }
 
-        input:checked + .stage-button {
+        /* Selected stage */
+        input:checked+.stage-button {
             color: #fff;
-            border: 1px solid var(--color-500);
+            border-color: var(--color-500);
         }
 
-        input:checked + .stage-button:after {
+        input:checked+.stage-button::after {
             background-color: var(--color-600);
             border-inline-end: 1px solid var(--color-500);
-            border-block-start: 1px solid var(--color-500);
+            border-top: 1px solid var(--color-500);
         }
 
-        .dark input:checked + .stage-button:after {
+        .dark input:checked+.stage-button::after {
             background-color: var(--color-600);
         }
 
-        input:checked + .stage-button:hover:after {
+        input:checked+.stage-button:hover::after {
             background-color: var(--color-500);
             transition-duration: 75ms;
         }
 
-        .dark input:checked + .stage-button:hover:after {
+        .dark input:checked+.stage-button:hover::after {
             background-color: var(--color-500);
         }
     </style>

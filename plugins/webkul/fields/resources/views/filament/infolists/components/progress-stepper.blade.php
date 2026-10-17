@@ -50,14 +50,13 @@
             border-radius: 0;
             padding-inline-start: 30px;
             padding-inline-end: 20px;
-            padding-top: 8px;
-            padding-bottom: 8px;
+            padding-block: 8px;
             border: 1px solid var(--gray-300);
             box-shadow: none;
             min-height: 38px;
             font-size: 0.875rem;
             font-weight: 500;
-            background-color: white;
+            background-color: #ffffff;
             color: var(--gray-700);
             position: relative;
             transition-duration: 75ms;
@@ -65,11 +64,12 @@
 
         .dark .stage-button {
             background-color: var(--gray-900);
-            border: 1px solid var(--gray-700);
+            border-color: var(--gray-700);
             color: var(--gray-300);
         }
 
-        .stage-button:after {
+        /* Connector between stages */
+        .stage-button::after {
             content: "";
             position: absolute;
             top: 50%;
@@ -80,16 +80,22 @@
             transform: translateY(-50%) rotate(45deg);
             background-color: #ffffff;
             border-inline-end: 1px solid var(--gray-300);
-            border-block-start: 1px solid var(--gray-300);
+            border-top: 1px solid var(--gray-300);
             transition-duration: 75ms;
         }
 
-        .dark .stage-button:after {
-            background-color: var(--gray-900);
-            border-inline-end: 1px solid var(--gray-700);
-            border-block-start: 1px solid var(--gray-700);
+        /* Mirror the diagonal connector in RTL */
+        html[dir="rtl"] .stage-button::after {
+            transform: translateY(-50%) rotate(-45deg);
         }
 
+        .dark .stage-button::after {
+            background-color: var(--gray-900);
+            border-inline-end-color: var(--gray-700);
+            border-top-color: var(--gray-700);
+        }
+
+        /* Outer corners */
         .state-container .state:last-child .stage-button {
             border-start-end-radius: 8px;
             border-end-end-radius: 8px;
@@ -100,31 +106,34 @@
             border-end-start-radius: 8px;
         }
 
-        .state-container .state:last-child .stage-button:after {
+        /* Remove the connector after the final stage */
+        .state-container .state:last-child .stage-button::after {
             content: none;
         }
 
+        /* Current stage */
         input:checked+.stage-button {
-            color: #fff;
+            color: #ffffff;
             background-color: var(--primary-600);
-            border: 1px solid var(--primary-600);
+            border-color: var(--primary-600);
         }
 
-        input:checked+.stage-button:after {
+        input:checked+.stage-button::after {
             background-color: var(--primary-600);
-            border-inline-end: 1px solid var(--primary-600);
-            border-block-start: 1px solid var(--primary-600);
+            border-inline-end-color: var(--primary-600);
+            border-top-color: var(--primary-600);
         }
 
+        /* Dark mode: current stage */
         .dark input:checked+.stage-button {
             background-color: var(--primary-500);
-            border: 1px solid var(--primary-500);
+            border-color: var(--primary-500);
         }
 
-        .dark input:checked+.stage-button:after {
+        .dark input:checked+.stage-button::after {
             background-color: var(--primary-500);
-            border-inline-end: 1px solid var(--primary-500);
-            border-block-start: 1px solid var(--primary-500);
+            border-inline-end-color: var(--primary-500);
+            border-top-color: var(--primary-500);
         }
     </style>
 @endpush
