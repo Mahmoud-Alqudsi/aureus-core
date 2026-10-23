@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-30
+last_verified: 2026-10-23
 scope: plugins/webkul/full-calendar
 confidence: high
 ---
@@ -325,7 +325,7 @@ None (`—`).
 
 1. **Relationship with `support` Plugin**:
    - `support` physically owns the working calendar tables: `calendars`, `calendar_attendances`, and `calendar_leaves` (`plugins/webkul/support/database/migrations/2026_04_02_000001_create_calendars_table.php`).
-   - `support` provides the admin CRUD resource `CalendarResource` (`plugins/webkul/support/src/Filament/Resources/CalendarResource.php:21`) for managing company work schedules, attendance intervals, and leave periods.
+   - `support` provides the admin CRUD resource `CalendarResource` (`plugins/webkul/support/src/Filament/Resources/CalendarResource.php:22`) for managing company work schedules, attendance intervals, and leave periods.
    - `full-calendar` does not directly query `support`'s tables; domain modules integrate `support`'s models into calendar widgets.
 2. **Adoption in `time-off` Plugin**:
    - `Webkul\TimeOff\TimeOffPlugin` (`plugins/webkul/time-off/src/TimeOffPlugin.php:49-53`) configures `FullCalendarPlugin::make()->selectable()->editable(true)->setPlugins(['multiMonth'])`.

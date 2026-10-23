@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/invoices
 confidence: high
 ---
@@ -594,10 +594,10 @@ sequenceDiagram
 - **Package Configuration & Dependency**: `plugins/webkul/invoices/src/InvoiceServiceProvider.php:13-44`
 - **Plugin Lifecycle & Discovery**: `plugins/webkul/invoices/src/InvoicePlugin.php:9-53`
 - **Navigation Groups & Clusters**:
-  - `plugins/webkul/invoices/src/Filament/Clusters/Customers.php:8-21`
-  - `plugins/webkul/invoices/src/Filament/Clusters/Vendors.php:8-21`
-  - `plugins/webkul/invoices/src/Filament/Clusters/Configuration.php:8-23`
-  - `plugins/webkul/invoices/src/Filament/Clusters/PluginSettings.php:8-23`
+  - `plugins/webkul/invoices/src/Filament/Clusters/Customers.php:9-21`
+  - `plugins/webkul/invoices/src/Filament/Clusters/Vendors.php:9-21`
+  - `plugins/webkul/invoices/src/Filament/Clusters/Configuration.php:9-23`
+  - `plugins/webkul/invoices/src/Filament/Clusters/PluginSettings.php:9-23`
 - **Customer Invoicing Suite**:
   - `plugins/webkul/invoices/src/Filament/Clusters/Customers/Resources/InvoiceResource.php:19-80`
   - `plugins/webkul/invoices/src/Filament/Clusters/Customers/Resources/CreditNoteResource.php:19-87`

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/fields
 confidence: high
 ---
@@ -286,9 +286,9 @@ Unlike traditional metadata systems storing dynamic attributes in key-value EAV 
 ## Filament resources/pages/widgets/clusters
 [VERIFIED]
 ### Resources
-- **`Webkul\Field\Filament\Resources\FieldResource`** (`plugins/webkul/fields/src/Filament/Resources/FieldResource.php:19`):
+- **`Webkul\Field\Filament\Resources\FieldResource`** (`plugins/webkul/fields/src/Filament/Resources/FieldResource.php:20`):
   - **Model**: `Webkul\Field\Models\Field`
-  - **Navigation Group**: `NavigationGroup::Setting` (`settings`) (`plugins/webkul/fields/src/Filament/Resources/FieldResource.php:37`)
+  - **Navigation Group**: `NavigationGroup::Setting` (`settings`) (`plugins/webkul/fields/src/Filament/Resources/FieldResource.php:38`)
   - **Navigation Sort**: `5`
   - **Labels**: Localized via `__('fields::filament/resources/field.navigation.title')`
   - **Form**: Delegated to `FieldForm::configure($schema)`

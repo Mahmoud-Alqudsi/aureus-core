@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/timesheets
 confidence: high
 ---
@@ -25,7 +25,7 @@ Active Optional Module. Registered in `bootstrap/providers.php:32` as `Webkul\Ti
 The `timesheets` module provides dedicated standalone administrative time tracking, employee work logging, and project task duration management within Aureus ERP. It functions as a lightweight UI, policy, and custom fields layer extending the Project management and Core Analytics infrastructure:
 
 1. **Centralized Time Tracking UI (`TimesheetResource`)**:
-   - Surfaces a top-level administrative timesheet management interface (`admin/timesheets`) under navigation group `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:28-31`).
+   - Surfaces a top-level administrative timesheet management interface (`admin/timesheets`) under navigation group `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:34-36`).
    - Uses a single-page modal-driven table UI (`ManageTimesheets`) utilizing Filament's `ManageRecords` flow for creating, editing, and deleting timesheet entries without leaving the list view.
 2. **Unified Financial/Operational Ledger Reuse**:
    - Rather than creating redundant physical tables, the module extends `Webkul\Project\Models\Timesheet`, which directly extends `Webkul\Analytic\Models\Record` on the Core `analytic_records` database table.
@@ -245,9 +245,9 @@ classDiagram
 [VERIFIED]
 
 ### 1. `TimesheetResource`
-- **Class**: `Webkul\Timesheet\Filament\Resources\TimesheetResource` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:17`)
+- **Class**: `Webkul\Timesheet\Filament\Resources\TimesheetResource` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:18`)
 - **Model**: `Webkul\Timesheet\Models\Timesheet`
-- **Navigation Group**: `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:30`)
+- **Navigation Group**: `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:34-36`)
 - **Navigation Label**: `timesheets::filament/resources/timesheet.navigation.title` ("Timesheets")
 - **Global Search Attributes**: `['user.name', 'project.name', 'task.title', 'date']` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:40`)
 - **Global Search Result Title**: `$record->user->name`

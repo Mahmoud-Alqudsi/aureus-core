@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: documentation-changelog
 confidence: high
 ---
@@ -25,6 +25,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 1. **Git-Verified History**: Backed directly by immutable Git commit hashes, author timestamps, and repository diffs (`git log -- docs/`).
 2. **Documented Execution History**: Backed by documented phase execution reports, verification matrices, and structured project logs where exact commit hashes were synthesized or consolidated.
 3. **Reconstructed / Active History**: Actively in progress or reconstructed from conversational context; explicitly flagged to prevent false claims of Git verification.
+
+---
+
+## Knowledge-Base Restructure — Phase 1 Baseline Corrections (2026-10-23)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure` at commit `74c8b860ce1e13593bf7f480de4ca4a525b8cc18`.
+- Repaired 12 stale line-citation starts across the accounting, fields, full-calendar, invoices, partners, and timesheets plugin documents by pointing each claim at a non-blank source line.
+- Reconciled the Playwright inventory in [`docs/application/overview.md`](application/overview.md) to 19 specs and 7 page objects, matching the source tree and the CI inventory.
+- Corrected the current documentation-maintenance record: the executable knowledge-base linter is [`scripts/kb_lint.py`](../scripts/kb_lint.py), not `docs/development/kb_lint.py`. Earlier historical entries are preserved as historical records.
+- Verification target for this phase: `python3 scripts/kb_lint.py --root . --strict` with zero errors and zero warnings; no application code, tests, migrations, dependencies, or CI workflows are changed by this phase.
 
 ---
 

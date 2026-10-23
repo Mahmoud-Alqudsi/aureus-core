@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/partners
 confidence: high
 ---
@@ -873,7 +873,7 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
 - `Title` Model: `plugins/webkul/partners/src/Models/Title.php:12-42`
 - `AccountType` Enum: `plugins/webkul/partners/src/Enums/AccountType.php:7-32`
 - `AddressType` Enum: `plugins/webkul/partners/src/Enums/AddressType.php:7-29`
-- `PartnerResource`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:18-99`
+- `PartnerResource`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:19-99`
 - `PartnerForm`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource/Schemas/PartnerForm.php:25-293`
 - `PartnerInfolist`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource/Schemas/PartnerInfolist.php:21-184`
 - `PartnersTable`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource/Tables/PartnersTable.php:38-344`

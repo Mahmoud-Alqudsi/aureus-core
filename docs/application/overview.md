@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-04
+last_verified: 2026-10-23
 scope: application-foundation
 confidence: high
 ---
@@ -413,8 +413,8 @@ A Playwright-based end-to-end test suite with the following structure:
 
 | Component | Files |
 |:---|:---|
-| **Page Objects** | 6 files: plugin management, company management, user management, sales, purchases, inventories, website |
-| **Test Specs** | 15 spec files covering plugins, companies, users, sales (4 specs), purchases (5 specs), inventories (5 specs), website (2 specs) |
+| **Page Objects** | 7 files: plugin management, company management, user management, sales, purchases, inventories, website |
+| **Test Specs** | 19 spec files covering plugins, companies, users, sales (4 specs), purchases (5 specs), inventories (5 specs), website (2 specs) |
 | **Utilities** | `setup.ts` (test setup/authentication), `utils/admin.ts` (admin helpers), `locator/erp_locator.ts` (page element locators) |
 | **Config** | `playwright.config.ts` |
 

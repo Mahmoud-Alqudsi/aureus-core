@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/accounting
 confidence: high
 ---
@@ -628,8 +628,8 @@ sequenceDiagram
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/PartnerLedger.php:29-240`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/AgedReceivable.php:28-250`
 - `plugins/webkul/accounting/src/Filament/Clusters/Reporting/Pages/AgedPayable.php:28-250`
-- `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalEntryResource.php:24-105`
-- `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalItemResource.php:14-78`
+- `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalEntryResource.php:25-105`
+- `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalItemResource.php:15-78`
 - `plugins/webkul/accounting/src/Filament/Concerns/GatesAccountingSetup.php:12-65`
 - `plugins/webkul/accounting/config/filament-shield.php:1-84`
 - `plugins/webkul/accounting/tests/Feature/Filament/AgedPayableTest.php:1-120`
