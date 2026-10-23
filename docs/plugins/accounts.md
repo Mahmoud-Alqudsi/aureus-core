@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/accounts
 confidence: high
 ---
@@ -807,6 +807,8 @@ Located in `plugins/webkul/accounts/resources/lang/en/`:
 ## Tests
 [VERIFIED]
 The `accounts` plugin has a comprehensive suite of **43 test files** (18 API feature tests, 6 Filament feature tests, 19 Workflow feature tests) plus 1 test helper located in `plugins/webkul/accounts/tests/`:
+
+- **Direct Playwright UI coverage**: The administrative company journey is covered by [`02_companies/01_companies.spec.ts`](../../tests/e2e-pw/tests/02_companies/01_companies.spec.ts). See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for its page-object mapping and coverage boundary.
 
 - **API Feature Tests (`tests/Feature/API/V1/`)**:
   - `AccountTest.php`, `BillTest.php`, `CashRoundingTest.php`, `CategoryTest.php`, `CreditNoteTest.php`, `CustomerTest.php`, `FiscalPositionTest.php`, `IncotermTest.php`, `InvoiceTest.php`, `JournalTest.php`, `PaymentDueTermTest.php`, `PaymentTermTest.php`, `ProductTest.php`, `ProductVariantTest.php`, `RefundTest.php`, `TaxGroupTest.php`, `TaxTest.php`, `VendorTest.php`.

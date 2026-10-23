@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/products
 confidence: high
 ---
@@ -717,6 +717,8 @@ The plugin registers REST API v1 endpoints under route group prefix `admin/api/v
 ## Tests
 [VERIFIED]
 The `products` plugin contains an extensive, dedicated Pest automated test suite with **16 test files** under `plugins/webkul/products/tests/`:
+
+- **Cross-plugin Playwright coverage**: Product journeys are exercised from sales, purchases, and inventory specs. This is cross-plugin browser coverage rather than a standalone products spec; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas).
 - **API Tests (`tests/Feature/API/V1/`)**:
   - `AttributeOptionTest.php`: Complete CRUD and authorization tests for attribute options.
   - `AttributeTest.php`: Soft delete, restore, force delete, and filtering tests for attributes.

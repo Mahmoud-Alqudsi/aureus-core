@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/blogs
 confidence: high
 ---
@@ -567,7 +567,7 @@ Registered under namespace `blogs` across 5 supported locales (`ar`, `en`, `es`,
 No dedicated backend automated test files were found for this Plugin.
 - `plugins/webkul/blogs/composer.json` declares a development PSR-4 namespace `"Webkul\\Blog\\Tests\\": "tests/"`, but the `plugins/webkul/blogs/tests/` directory does not exist on disk.
 - Root test directories (`tests/Feature/`, `tests/Unit/`) contain zero tests covering `blogs` models, resources, or policies.
-- **End-to-End Browser Tests**: Playwright TypeScript E2E test specs exist at `tests/e2e-pw/tests/06_website/02_websiteBlogs.spec.ts` (verifying category CRUD, post creation, post updating, publishing, frontend visibility, and post drafting).
+- **End-to-End Browser Tests**: Playwright TypeScript E2E coverage exists in [`06_website/02_websiteBlogs.spec.ts`](../../tests/e2e-pw/tests/06_website/02_websiteBlogs.spec.ts) (verifying category CRUD, post creation, post updating, publishing, frontend visibility, and post drafting). See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for its page-object mapping and limits.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/inventories
 confidence: high
 ---
@@ -560,6 +560,8 @@ Contains comprehensive English translations across `enums/`, `filament/`, `model
 ## Tests
 [VERIFIED]
 The `inventories` plugin contains an extensive automated test suite comprising **40 dedicated test files** under `plugins/webkul/inventories/tests/`:
+
+- **Direct Playwright UI coverage**: Five inventory specs cover settings, products, operations, warehouse flows, and configuration journeys. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the complete mapping and explicit limits of browser coverage.
 
 1. **18 API Feature Tests (`tests/Feature/API/V1/`)**:
    - `DeliveryTest.php`, `DropshipTest.php`, `InternalTransferTest.php`, `LocationTest.php`, `LotTest.php`, `MoveTest.php`, `OperationTypeTest.php`, `PackageTest.php`, `PackageTypeTest.php`, `ProductTest.php`, `QuantityTest.php`, `ReceiptTest.php`, `RouteTest.php`, `RuleTest.php`, `ScrapTest.php`, `StorageCategoryTest.php`, `TagTest.php`, `WarehouseTest.php`.

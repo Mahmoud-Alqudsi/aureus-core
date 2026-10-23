@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/purchases
 confidence: high
 ---
@@ -732,6 +732,8 @@ Translation files reside under `resources/lang/` for 5 supported locales: `en`, 
 ## Tests
 [VERIFIED]
 The `purchases` plugin contains comprehensive automated test coverage with **15 test files and 1 test helper** structured under `plugins/webkul/purchases/tests/`:
+
+- **Direct Playwright UI coverage**: Five specs cover vendors, products, RFQs, purchase agreements, and the purchase flow, including inventory integration. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the per-spec page-object mapping and coverage boundary.
 
 1. **API Feature Tests (`tests/Feature/API/V1/`)** (7 files):
    - `PurchaseAgreementLineTest.php`: Tests agreement line listing, retrieval, and company isolation.

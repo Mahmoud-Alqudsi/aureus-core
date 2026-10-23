@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/security
 confidence: high
 ---
@@ -610,6 +610,8 @@ While feature tests in optional domain plugins (such as `accounts`, `purchases`,
 - `AuthController` login/logout API endpoints and Sanctum token generation
 - `AcceptInvitation` Livewire registration flow and signed URL verification
 - Multi-factor authentication contracts and recovery flows
+
+The administrative user journey has browser coverage in [`03_users/01_users.spec.ts`](../../tests/e2e-pw/tests/03_users/01_users.spec.ts), but that spec does not replace direct security-plugin authorization, policy, or authentication tests. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the exact boundary.
 
 ## Runtime dependencies
 [VERIFIED]

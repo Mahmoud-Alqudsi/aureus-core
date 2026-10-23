@@ -71,6 +71,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
+## Knowledge-Base Restructure — Phase 2 Testing Strategy and Playwright Atlas (2026-10-23)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current test tree and workflow configuration on branch `docs/knowledge-base-restructure`.
+- Added [`docs/development/testing-strategy.md`](development/testing-strategy.md) as the canonical source for Pest structure, Playwright execution, shared fixtures, and the 19-spec / 7-page-object atlas.
+- Kept CI matrices, shard execution, report merging, artifacts, and required gates in [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md), replacing its duplicate per-spec inventory with a link to the atlas.
+- Added direct and cross-plugin Playwright coverage references to the affected plugin documents and registered the new strategy in [`docs/README.md`](README.md).
+- Verification: documentation lint, link validation, diff validation, and editor problem checks passed; no application tests were run because this phase changes documentation only.
+
+---
+
 ## Operational Governance Maintenance
 
 ### KB Improvement Audit — 2026-09-27

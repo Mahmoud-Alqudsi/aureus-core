@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/sales
 confidence: high
 ---
@@ -616,6 +616,8 @@ Covers app strings, models (`order`, `team`), enums (`order-state`, `invoice-sta
 ## Tests
 [VERIFIED]
 **Test Coverage Status: Fully Tested**. The `sales` plugin contains a comprehensive test suite of **19 feature test files and 1 shared helper** under `plugins/webkul/sales/tests`:
+
+- **Direct Playwright UI coverage**: Four specs cover customers, products, quotations, and the sales order flow, including inventory integration. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the per-spec page-object mapping and coverage boundary.
 
 ### 1. Workflow & Integration Tests (`tests/Feature/Workflows/`)
 - `OrderPriceListTest.php`: Tests customer price list defaulting, quotation price list inheritance, dynamic line item recalculation upon price list changes, multi-currency conversion, and fallback pricing.

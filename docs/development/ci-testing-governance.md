@@ -331,23 +331,9 @@ The audit revealed variations in how Composer dependencies are installed and cac
   - `retries`: `1` retry enabled in CI (`process.env.CI ? 1 : 0`).
   - `forbidOnly`: `true` in CI (prevents accidental commit of `test.only`).
 
-### Playwright Test Inventory (19 Specs across 7 Modules)
+### Playwright Test Inventory
 
-```
-tests/e2e-pw/tests/
-  ├── 01_plugins/       01_plugins.spec.ts
-  ├── 02_companies/     01_companies.spec.ts
-  ├── 03_users/         01_users.spec.ts
-  ├── 04_sales/         01_salesCustomers.spec.ts, 02_salesProducts.spec.ts,
-  │                     03_salesQuotations.spec.ts, 04_salesFlow.spec.ts
-  ├── 05_inventories/   01_inventorySettings.spec.ts, 03_inventoryProducts.spec.ts,
-  │                     04_inventoryOperations.spec.ts, 05_inventoryFlow.spec.ts,
-  │                     06_inventoryConfigurations.spec.ts
-  ├── 05_purchases/     01_purchaseVendors.spec.ts, 02_purchaseProducts.spec.ts,
-  │                     03_purchaseREQ.spec.ts, 04_purchaseAgreement.spec.ts,
-  │                     05_purchaseFlow.spec.ts
-  └── 06_website/       01_websitePages.spec.ts, 02_websiteBlogs.spec.ts
-```
+The complete spec-to-functional-scope, page-object, and coverage-boundary atlas is maintained in [`testing-strategy.md`](testing-strategy.md). The current source tree contains 19 specs across 7 functional modules. This CI document owns how those specs are installed, sharded, executed, reported, and gated; it does not duplicate the per-spec inventory.
 
 ### Artifact & Failure Diagnostics
 

@@ -479,6 +479,7 @@ The `invoices` module registers the translation namespace `invoices` (`resources
 [VERIFIED]
 - **Test Presence**: The `invoices` plugin **has zero test files** (no `tests/` directory exists).
 - **Testing Rationale**: The `invoices` module is a pure Filament presentation and cluster routing layer over `accounts`. All business logic, tax calculation formulas, move workflow state machines, and payment registration flows are thoroughly tested in `plugins/webkul/accounts/tests/` and downstream integration tests in `plugins/webkul/sales/tests/` and `plugins/webkul/purchases/tests/`.
+- **Cross-plugin Playwright coverage**: Sales and purchase flow specs exercise invoice or bill creation as part of broader journeys. No standalone invoices spec exists; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the integration boundary.
 
 ---
 

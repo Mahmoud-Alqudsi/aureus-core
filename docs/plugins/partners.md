@@ -695,6 +695,8 @@ Dictionary structures:
 [VERIFIED]
 The `partners` plugin contains an active test suite located under `plugins/webkul/partners/tests/`:
 
+- **Cross-plugin Playwright coverage**: Customer and vendor records are exercised inside the sales and purchases browser journeys, including [`04_sales/01_salesCustomers.spec.ts`](../../tests/e2e-pw/tests/04_sales/01_salesCustomers.spec.ts) and [`05_purchases/01_purchaseVendors.spec.ts`](../../tests/e2e-pw/tests/05_purchases/01_purchaseVendors.spec.ts). This is not standalone partner-plugin browser coverage; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the boundary.
+
 1. **Filament Feature Tests**:
    - `PartnerTypeViewsTest.php` (`plugins/webkul/partners/tests/Feature/Filament/PartnerTypeViewsTest.php`): Verifies preset table views (individuals, companies, employees, customers, vendors) on `ListPartners` and partner type ranking filters.
 

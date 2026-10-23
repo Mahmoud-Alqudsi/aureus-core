@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/website
 confidence: high
 ---
@@ -610,7 +610,7 @@ Translation structure:
 ## Tests
 [VERIFIED]
 - **Backend PHP Tests**: **0 test files**. No unit, feature, or integration Pest/PHPUnit test files exist in `plugins/webkul/website/tests/` or in the root `tests/` directory.
-- **Browser E2E Tests**: Playwright TypeScript test specs exist at `tests/e2e-pw/tests/06_website/01_websitePages.spec.ts` and `tests/e2e-pw/tests/06_website/02_websiteBlogs.spec.ts`.
+- **Browser E2E Tests**: Playwright TypeScript coverage exists in [`06_website/01_websitePages.spec.ts`](../../tests/e2e-pw/tests/06_website/01_websitePages.spec.ts) and [`06_website/02_websiteBlogs.spec.ts`](../../tests/e2e-pw/tests/06_website/02_websiteBlogs.spec.ts). See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the page-object mapping and coverage limits.
 
 ## Runtime Dependencies
 [VERIFIED]

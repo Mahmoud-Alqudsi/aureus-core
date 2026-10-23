@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/plugin-manager
 confidence: high
 ---
@@ -346,7 +346,7 @@ No HTTP web or API route files are defined or loaded by `plugin-manager`.
 ## Tests
 [VERIFIED]
 - **Explicit Test Coverage Status**: The `plugin-manager` plugin currently contains **zero PHP test files** (0 unit tests, 0 feature tests under `plugins/webkul/plugin-manager/tests/`). Although `composer.json` declares an `autoload-dev` mapping for `Webkul\PluginManager\Tests\` to `tests/`, no `tests/` directory exists in the plugin.
-- **Root E2E Coverage**: Playwright browser tests exist in `tests/e2e-pw/tests/01_plugins/01_plugins.spec.ts` using page model `tests/e2e-pw/pages/01_pluginManagement.ts` to test admin login, navigation to the Plugins page, tab switching (`Apps`, `Extra`, `Installed`, `Not Installed`), search filtering, and plugin synchronization.
+- **Root E2E Coverage**: Playwright browser tests exist in [`01_plugins/01_plugins.spec.ts`](../../tests/e2e-pw/tests/01_plugins/01_plugins.spec.ts) using [`01_pluginManagement.ts`](../../tests/e2e-pw/pages/01_pluginManagement.ts) to test admin login, navigation to the Plugins page, tab switching (`Apps`, `Extra`, `Installed`, `Not Installed`), search filtering, and plugin synchronization. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the maintained coverage boundary.
 
 ## Runtime dependencies
 [VERIFIED]
