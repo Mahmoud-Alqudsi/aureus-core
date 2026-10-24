@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:43` as `Webkul\Blog\BlogServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `BlogServiceProvider` registers package views, translations, migrations, and panel configuration hooks via `Panel::configureUsing()`, but Filament admin and customer panel resources, pages, and clusters are discovered and registered only when `Package::isPluginInstalled('blogs')` returns `true` (`plugins/webkul/blogs/src/BlogPlugin.php:23-65`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain package without calling `$package->isCore()` (`plugins/webkul/blogs/src/BlogServiceProvider.php:19-47`). Runtime discovery and Filament panel component injection are gated by runtime installation verification via `Package::isPluginInstalled('blogs')` (`plugins/webkul/blogs/src/BlogPlugin.php:23-25`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `BlogServiceProvider` registers package views, translations, migrations, and panel configuration hooks via `Panel::configureUsing()`, but Filament admin and customer panel resources, pages, and clusters are discovered and registered only when `Package::isPluginInstalled('blogs')` returns `true` (`plugins/webkul/blogs/src/BlogPlugin.php:23-65`).
 
 ## Purpose
 [VERIFIED]
@@ -62,7 +60,7 @@ Both `blogs` and `website` operate in the content and web presentation domain, b
 | Dimension | `website` Plugin | `blogs` Plugin |
 | :--- | :--- | :--- |
 | **Primary Architectural Role** | Portal foundation, authentication infrastructure, and static CMS pages. | Dynamic article authoring, content taxonomy, and blog publishing engine. |
-| **Runtime Dependency Direction** | **Standalone** (declares 0 runtime dependencies). | **Downstream Consumer** (declares `hasDependencies(['website'])`). |
+| **Install Plugins Dependency Direction** | **Standalone** (declares no Install Plugins Dependency). | **Downstream Consumer** (declares `hasDependencies(['website'])`). |
 | **Panel Ownership** | Configures customer authentication guard (`customer`), user provider (`customers` / `Partner`), login/register/reset flows, and layout render hooks (`PanelsRenderHook::TOPBAR_END`, `PanelsRenderHook::FOOTER`). | Extends the customer panel by mounting the `/blog` route sub-tree (`CategoryResource`, `PostResource`). |
 | **Data Models Owned** | `Page` (`website_pages`), `Partner` (`partners_partners` auth columns), `ContactSettings` (`settings`). | `Post` (`blogs_posts`), `Category` (`blogs_categories`), `Tag` (`blogs_tags`), `blogs_post_tags`. |
 | **Content Nature** | Static/evergreen CMS web pages (`home`, `about-us`, `terms-and-conditions`) with header/footer visibility toggles. | Time-stamped, categorized, tagged blog articles with author bylines, reading time, visit counters, and draft/published states. |
@@ -91,7 +89,7 @@ Both `blogs` and `website` operate in the content and web presentation domain, b
       6. `2026_08_13_000002_make_blogs_posts_translatable`
       7. `2026_08_19_000001_make_blogs_categories_translatable`
     - Registers empty settings array via `hasSettings([])` and `runsSettings()`.
-    - Declares runtime plugin dependency on `website` (`hasDependencies(['website'])`).
+    - Declares an Install Plugins Dependency on `website` (`hasDependencies(['website'])`).
     - Configures install command: installs dependencies and runs migrations (`hasInstallCommand(...)`).
     - Configures uninstall command stub (`hasUninstallCommand(...)`).
     - Sets package icon to `blog` (`icon('blog')`).
@@ -100,7 +98,7 @@ Both `blogs` and `website` operate in the content and web presentation domain, b
   - `packageRegistered()`:
     - Registers `BlogPlugin::make()` with the Filament Panel builder via `Panel::configureUsing()`.
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Blog\BlogPlugin` (`plugins/webkul/blogs/src/BlogPlugin.php:9`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -133,15 +131,10 @@ From `plugins/webkul/blogs/composer.json`:
   - PSR-4: `Webkul\Blog\Tests\` → `tests/`
 - **Dependencies**: No external third-party Composer packages declared locally (inherits application root dependencies: Filament, Spatie Translatable, Spatie Eloquent Sortable, Tailwind CSS).
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-- **Declared in Service Provider**: `website` (`hasDependencies(['website'])` in `plugins/webkul/blogs/src/BlogServiceProvider.php:37-39`).
-- **Core Dependencies (Inherent)**:
-  - `security`: Authenticated `User` model (`author_id`, `creator_id`, `last_editor_id`), policy evaluation.
-  - `support`: `NavigationGroup::Website`, `ImageService` for responsive thumbnails/banners, Spatie Translatable concerns.
-  - `fields`: Custom field traits (`HasCustomFields`) on `Post`, `Category`, and `Tag`.
-  - `table-views`: Preset tab views (`HasTableViews`, `PresetView`) on `PostResource\Pages\ListPosts`.
-  - `plugin-manager`: Base `PackageServiceProvider` and `Package::isPluginInstalled()` runtime gates.
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`):** `website` (`hasDependencies(['website'])` in `plugins/webkul/blogs/src/BlogServiceProvider.php:37-39`).
+- No other optional plugin is declared through `Package::hasDependencies([...])`; code-level shared-plugin consumption is recorded separately below.
 
 ## Directory Structure
 [VERIFIED]
@@ -385,7 +378,7 @@ The `blogs` module does not contain any database seeder classes.
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### 1. Admin Panel Components (`src/Filament/Admin/`)
@@ -502,7 +495,7 @@ The `blogs` module does not contain any database seeder classes.
 - **`admin` Panel**: Fully integrated. Registers `PostResource` (under `NavigationGroup::Website`), and embeds `CategoryResource` and `TagResource` inside `Webkul\Website\Filament\Admin\Clusters\Configurations`.
 - **`customer` Panel**: Fully integrated. Mounts the public blog catalog and reader under `/blog` via Customer `CategoryResource` and `PostResource`, with public access enabled (`$shouldSkipAuthorization = true`).
 
-## Services
+## Services and Support Classes
 [NOT APPLICABLE]
 The module does not define standalone service container classes; image transformation is delegated to `Webkul\Support\Services\ImageService`, and word count / reading time computation is encapsulated directly within the `Post` model.
 
@@ -518,7 +511,7 @@ No custom Laravel Event Listeners are registered by the module.
 [NOT APPLICABLE]
 No dedicated Eloquent Observer classes exist. Default user assignments (`creator_id`, `author_id`) are populated via Eloquent `boot()` model event callbacks (`Category::boot()`, `Post::boot()`, `Tag::boot()`).
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 All policies reside under `plugins/webkul/blogs/src/Policies/` and integrate with Laravel authorization gates and `filament-shield`:
 
@@ -571,13 +564,16 @@ No dedicated backend automated test files were found for this Plugin.
 
 ---
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-- **`website`**: Mandatory runtime plugin dependency. Provides the base customer panel shell, customer layouts, and administrative `Configurations` cluster (`Webkul\Website\Filament\Admin\Clusters\Configurations`).
-- **`security`**: Provides `User` master and authorization gates.
-- **`support`**: Provides `NavigationGroup::Website`, `ImageService`, and Spatie translatable traits.
-- **`fields`**: Dynamic custom field support via `HasCustomFields`.
-- **`table-views`**: Preset table tab views via `HasTableViews`.
+This section records code-level consumption; the installation-order declaration remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `BlogServiceProvider` and `BlogPlugin` use the shared package lifecycle and plugin-installation gates (`plugins/webkul/blogs/src/BlogServiceProvider.php`, `plugins/webkul/blogs/src/BlogPlugin.php`).
+- **`website`**: Declared Install Plugins Dependency that provides the customer panel shell, customer layouts, and administrative `Configurations` cluster (`plugins/webkul/blogs/src/BlogServiceProvider.php`, `plugins/webkul/website/src/Filament/Admin/Clusters/Configurations.php`).
+- **`security`**: Supplies authenticated `User` relations and policy authorization for posts, categories, and tags (`plugins/webkul/blogs/src/Models/`, `plugins/webkul/blogs/src/Policies/`).
+- **`support`**: Supplies `NavigationGroup::Website`, `ImageService`, and shared translation/Filament concerns (`plugins/webkul/blogs/src/Models/Post.php`, `plugins/webkul/blogs/src/Filament/`).
+- **`fields`**: Supplies dynamic custom fields for `Post`, `Category`, and `Tag` (`plugins/webkul/blogs/src/Models/`, `plugins/webkul/blogs/src/Filament/`).
+- **`table-views`**: Supplies preset table views for post listings (`plugins/webkul/blogs/src/Filament/Admin/Resources/PostResource/Pages/ListPosts.php`).
 
 ---
 
@@ -639,7 +635,7 @@ graph TD
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### 1. Administrative Blog Post Creation & Publishing Pipeline

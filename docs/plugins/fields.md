@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:47` as `Webkul\Field\FieldServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and views (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The custom fields schema, model extensions, and Filament UI components execute unconditionally at boot time once registered in `bootstrap/providers.php`.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `FieldServiceProvider::configureCustomPackage()` (`plugins/webkul/fields/src/FieldServiceProvider.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and views (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The custom fields schema, model extensions, and Filament UI components execute unconditionally at boot time once registered in `bootstrap/providers.php`.
 
 ## Purpose
 [VERIFIED]
@@ -47,7 +45,7 @@ The `fields` plugin provides a metadata-driven runtime attribute customization e
     - Registers custom CSS asset `fields` (`resources/dist/fields.css`) via `FilamentAsset::register()`
     - Binds authorization policy: `Gate::policy(Field::class, FieldPolicy::class)`
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Field\FieldsPlugin` (`plugins/webkul/fields/src/FieldsPlugin.php:8`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -60,7 +58,7 @@ The `fields` plugin provides a metadata-driven runtime attribute customization e
   - Attempts discovery on `src/Filament/Widgets` using `discoverClusters()` [INFERRED: code typo in upstream source calling `discoverClusters` instead of `discoverWidgets`; directory does not exist].
 - **Boot**: `boot(Panel $panel)` is defined as an empty method stub.
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/fields/composer.json`
   - Name: `webkul/fields`
@@ -72,11 +70,11 @@ The `fields` plugin provides a metadata-driven runtime attribute customization e
   - `filament/filament` (`v5.8.1`): Filament resources, forms, tables, infolists, and assets.
   - `illuminate/support` (`v13.31.0`): Laravel schema builder, collections, and model events.
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `FieldServiceProvider::configureCustomPackage()` does not declare any runtime plugin dependencies via `hasDependencies()`.
+None (`—`). `FieldServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/fields/`:
 
@@ -283,7 +281,7 @@ Unlike traditional metadata systems storing dynamic attributes in key-value EAV 
 - `Webkul\Field\Database\Factories\FieldFactory` (`plugins/webkul/fields/database/factories/FieldFactory.php:12`):
   - [WARNING] Contains outdated definition attributes (`label`, `is_required`, `is_unique`, `is_searchable`, `is_filterable`, `is_sortable`, `is_visible`, `model_type`, `creator_id`) that do not match the physical `custom_fields` schema. Calling `FieldFactory::new()->create()` without overriding attributes will trigger database insert exceptions.
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 ### Resources
 - **`Webkul\Field\Filament\Resources\FieldResource`** (`plugins/webkul/fields/src/Filament/Resources/FieldResource.php:20`):
@@ -337,7 +335,7 @@ Unlike traditional metadata systems storing dynamic attributes in key-value EAV 
 - **Admin Panel**: Exclusively registered on the `admin` panel (`app/Providers/Filament/AdminPanelProvider.php`). `FieldsPlugin::register(Panel $panel)` validates `$panel->getId() == 'admin'`.
 - **Customer Panel**: Not registered. `CustomerPanelProvider` (`app/Providers/Filament/CustomerPanelProvider.php`) contains no custom field discovery or management resources.
 
-## Services & Runtime Rendering Engine
+## Services and Support Classes
 [VERIFIED]
 The plugin delivers 5 core runtime rendering and schema management services:
 
@@ -417,7 +415,7 @@ No event listeners are defined in `fields`.
 [NOT APPLICABLE]
 No standalone Eloquent observer classes exist; model cache invalidation is handled directly within `Field::booted()` via model lifecycle callbacks (`saved`, `deleted`, `restored`).
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 - **`Webkul\Field\Policies\FieldPolicy`** (`plugins/webkul/fields/src/Policies/FieldPolicy.php:9`):
   - Implements authorization checks using `$user->can()` for the `Field` model:
@@ -459,11 +457,15 @@ No plugin-specific settings schema exists under `database/settings/`.
 - **Root Test Coverage**: Zero test files in `tests/Feature/` or `tests/Unit/` reference or assert custom field functionality.
 - **E2E Playwright Coverage**: Zero Playwright browser tests exist for custom fields under `tests/e2e-pw/`.
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-None (`—`).
+This section records code-level consumption; any declared Install Plugins Dependency remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
 
-## Cross-plugin relationships
+- **`plugin-manager`**: `FieldServiceProvider` extends `PackageServiceProvider` and participates in the shared package lifecycle (`plugins/webkul/fields/src/FieldServiceProvider.php`).
+- **`support`**: `FieldResource` uses `NavigationGroup::Setting`; the field engine is also consumed by support models listed in [`Cross-Plugin Relationships`](#cross-plugin-relationships) (`plugins/webkul/fields/src/Filament/Resources/FieldResource.php`).
+- **`security`**: `FieldPolicy` resolves the security user model, and `Team` adopts `HasCustomFields` (`plugins/webkul/fields/src/Policies/FieldPolicy.php`, `plugins/webkul/security/src/Models/Team.php`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 1. **Foundation for All Domain Plugins**: At the time of verification, custom fields are consumed across 17 domain plugins, extending 52 Eloquent models and 33 Filament resource schemas.
 2. **Support Plugin**:
@@ -494,7 +496,7 @@ None (`—`).
    - `timesheets`: `TimesheetResource`
    - `website`: `PageResource`
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 ### 1. Custom Field Creation & Physical Table Mutation Flow
 ```mermaid
@@ -553,7 +555,7 @@ sequenceDiagram
     Eloq-->>Panel: Saved Successfully
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Physical Column Co-existence**:
    - Every custom field created in `custom_fields` must exist as a real, physical column on the target model's database table.
@@ -568,13 +570,13 @@ sequenceDiagram
 5. **Static In-Memory Cache Invalidation**:
    - `Field::$customizableCache` caches custom field lookups during the request lifecycle. Any mutation (`saved`, `deleted`, `restored`) automatically flushes the cache.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 1. **`Webkul\Field\Traits\HasCustomFields` (Eloquent)**: Trait applied to any Eloquent model to automatically load custom fields into `$fillable` and `$casts` on model lifecycle events (`retrieved`, `creating`, `updating`, `fill`).
 2. **`Webkul\Field\Filament\Traits\HasCustomFields` (Filament Resource)**: Trait providing helper methods (`mergeCustomFormFields`, `getCustomFormFields`, `mergeCustomTableColumns`, `getCustomTableColumns`, `mergeCustomTableFilters`, `getCustomTableFilters`, `getTableQueryBuilderConstraints`, `mergeCustomInfolistEntries`, `getCustomInfolistEntries`) to dynamically merge custom UI components into Filament resources.
 3. **Dynamic Reflection Validation in `FieldResource::resourceRendersCustomFields`**: Allows any new resource to be automatically discovered by the Custom Field builder UI simply by using `HasCustomFields` and referencing `getCustomFormFields` / `mergeCustomFormFields` in its `form()` method.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 1. **Zero Automated Test Coverage Across Repository**:
    - **Critical Fact**: `plugins/webkul/fields/` contains **0 test files**. Furthermore, no root PHP tests or Playwright E2E tests exist for custom fields anywhere in the repository.
@@ -589,7 +591,7 @@ sequenceDiagram
 5. **Unvalidated Custom Validations and Settings Execution**:
    - `CustomFields::applyValidation` and `applySetting` use `method_exists($component, $rule)` to dynamically invoke methods on Filament components. If an invalid or incompatible method is stored in JSON settings, unexpected behavior or method signature mismatch exceptions can occur.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 - **Architectural Scope**: **High / Cross-Cutting**.
 - **Blast Radius**: Affects 52 Eloquent models and 33 Filament resources across 17 domain plugins (repository snapshot at time of verification).
@@ -598,7 +600,7 @@ sequenceDiagram
 
 ---
 
-## Evidence Index
+## Evidence
 
 | Evidence ID | Source File | Symbol / Method | Purpose / Claim Verified |
 |---|---|---|---|

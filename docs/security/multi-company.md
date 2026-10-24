@@ -16,6 +16,16 @@ This document details the multi-company isolation architecture in Aureus ERP.
 
 Aureus ERP provides opt-in, session-aware company filtering for Eloquent models that use the relevant traits. `CompanyScope` and `CompaniesScope` are global Eloquent scopes once attached to a model; they do not apply to models that do not opt in, raw/query-builder access, or explicit Eloquent scope removal.
 
+## Canonical Ownership Boundary
+[VERIFIED]
+
+This document owns the system-wide multi-company isolation contract: active and allowed company resolution, the scope behavior and bypass conditions, the distinction between single-company and multi-company traits, and cross-company guard requirements.
+
+- The executable shared implementations are owned by the `support` plugin and are documented in [`docs/plugins/support.md`](../plugins/support.md).
+- Domain plugin documents retain their model-level evidence, selected traits, explicit guards, exception paths, and domain-specific cross-company risks. They do not redefine this document's general isolation contract.
+- Inventory transfer boundaries remain domain-specific and are documented here only as the security contract; the detailed inventory workflow remains in [`docs/workflows/inventory.md`](../workflows/inventory.md) and [`docs/plugins/inventories.md`](../plugins/inventories.md).
+- This contract does not claim repository-wide isolation for raw queries, unscoped builders, models without the relevant traits, or explicit scope removal.
+
 ## CompanyContext Service
 [VERIFIED]
 The `Webkul\Support\Services\CompanyContext` class is the source of truth for the current company session.

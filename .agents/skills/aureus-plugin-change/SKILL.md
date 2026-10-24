@@ -1,6 +1,6 @@
 ---
 name: aureus-plugin-change
-description: Plan or implement a change to an Aureus local plugin, including its provider, runtime dependencies, panel participation, and direct cross-plugin coupling. Do not use for root-only application changes or a schema-only task.
+description: Plan or implement a change to an Aureus local plugin, including its provider, Install Plugins Dependency, panel participation, and direct cross-plugin coupling. Do not use for root-only application changes or a schema-only task.
 ---
 
 # Aureus Plugin Change
@@ -18,7 +18,7 @@ Use this skill for work in `plugins/webkul/<plugin>/` that changes plugin behavi
 
 Inspect the plugin `composer.json`, service provider, `Package` configuration, root registration in `bootstrap/providers.php`, nearest tests, and `*Plugin.php` panel registration when present. Search direct references before altering a public symbol, provider hook, event, dynamic relation, or cross-plugin call.
 
-Do not equate Composer requirements, `Package::hasDependencies()`, and PHP-level use of another plugin. They are separate mechanisms.
+Do not equate Composer requirements, the Install Plugins Dependency (`Package::hasDependencies()`), and PHP-level use of another plugin. They are separate mechanisms.
 
 ## Deliver the change safely
 

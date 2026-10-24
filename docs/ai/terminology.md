@@ -124,21 +124,22 @@ When writing code, developing plugins, generating migrations, configuring securi
 
 ### 6. Plugin Dependencies (Three Distinct Concepts)
 
-- **Term / Class**: Plugin Dependencies (Composer Require vs `Package::hasDependencies()` vs Code-Level Consumption)
+- **Term / Class**: Plugin Dependencies (Composer Requirement vs Install Plugins Dependency vs Code-Level Consumption)
 - **What it actually is**: Three completely distinct dependency tiers within the Aureus ERP ecosystem:
-  1. **Composer Dependency** (`require` in `plugins/webkul/<plugin>/composer.json` or root `composer.json`): Governs PHP class autoloading and external package distribution.
-  2. **Runtime / Installation-Order Dependency** (`Package::hasDependencies([...])`): Declared inside a plugin's `*ServiceProvider::configureCustomPackage()`. Consumed exclusively by `InstallCommand` to orchestrate database migration, seed order, and dependency verification.
-  3. **Code-Level Consumption**: Mere PHP imports (`use Webkul\...`) or cross-plugin model references in code without any formal runtime declaration.
-- **Common misconception**: Believing that adding a dependency to `composer.json` establishes Aureus plugin installation ordering, or assuming that importing a class from another plugin automatically makes it a registered runtime plugin dependency.
+  1. **Composer Requirement** (`require` in `plugins/webkul/<plugin>/composer.json` or root `composer.json`): Governs PHP class autoloading and external package distribution.
+  2. **Install Plugins Dependency** (`Package::hasDependencies([...])`): The plugin names that must be installed before this plugin. Declared inside a plugin's `*ServiceProvider::configureCustomPackage()`. `InstallCommand` installs them first when `installDependencies()` is enabled, or offers Install / Skip / Show Dependencies in prompt mode; the plugin-manager `Plugin` model also reads the list to expose a plugin's dependencies and dependents. It is an install-order declaration: it is neither a Composer requirement nor proof that the plugin's code imports the dependency. Do not call this tier a "runtime dependency".
+  3. **Code-Level Consumption**: PHP imports (`use Webkul\...`) or cross-plugin model references in code. Each consumption of an optional plugin is in one of three states: **declared** (the target is in the consuming plugin's Install Plugins Dependency chain), **guarded** (protected at runtime by `Package::isPluginInstalled()`), or **unguarded** (neither; forbidden by [`architecture-rules.md`](architecture-rules.md)).
+- **Common misconception**: Believing that adding a dependency to `composer.json` establishes Aureus plugin installation ordering, assuming that importing a class from another plugin automatically registers an Install Plugins Dependency, or describing `hasDependencies()` as a "runtime dependency" when it only orders installation.
 - **Evidence**:
   - `plugins/webkul/plugin-manager/src/Package.php:111` (`hasDependencies()`)
   - `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`
   - `docs/architecture/plugin-registry.md`
-  - None of the 9 Core Plugins declare runtime plugin dependencies (`hasDependencies()`), yet they consume code across packages.
+  - None of the 9 Core Plugins declare an Install Plugins Dependency (`hasDependencies()`), yet they consume code across packages.
 - **Prescriptive Rule**:
   - A plugin MUST declare Aureus plugin installation-order dependencies exclusively through `Package::hasDependencies([...])`.
-  - A Composer dependency MAY exist when technically required, but `composer.json` MUST NOT be treated as the source of truth for Aureus plugin installation-order dependencies.
-  - Mere code-level consumption MUST NOT be treated as equivalent to a declared runtime plugin installation dependency.
+  - A Composer requirement MAY exist when technically required, but `composer.json` MUST NOT be treated as the source of truth for Aureus plugin installation-order dependencies.
+  - Mere code-level consumption MUST NOT be treated as equivalent to a declared Install Plugins Dependency.
+  - Documentation MUST use the exact term **Install Plugins Dependency** for tier 2; it MUST NOT use "Runtime Dependencies" or "Runtime Plugin Dependencies" for it.
 
 ---
 

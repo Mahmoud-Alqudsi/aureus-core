@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered explicitly in `bootstrap/providers.php:56` as `Webkul\Purchase\PurchaseServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `PurchasePlugin` registers on both the `admin` and `customer` Filament panels only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/purchases/src/PurchasePlugin.php:23-65`). When uninstalled, all Purchase navigation groups, clusters, API endpoints, and portal resources remain dormant.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular procurement, vendor management, and purchase order workflow plugin extending core architecture without calling `$package->isCore()` (`plugins/webkul/purchases/src/PurchaseServiceProvider.php:41-93`). Execution, Filament resource auto-discovery, cluster mounting, and page registration are gated by runtime installation verification via `Package::isPluginInstalled('purchases')` (`plugins/webkul/purchases/src/PurchasePlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `PurchasePlugin` registers on both the `admin` and `customer` Filament panels only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/purchases/src/PurchasePlugin.php:23-65`). When uninstalled, all Purchase navigation groups, clusters, API endpoints, and portal resources remain dormant.
 
 ## Purpose
 [VERIFIED]
@@ -66,7 +64,7 @@ The `purchases` plugin delivers end-to-end procurement lifecycle management for 
     - Registers translations namespace (`hasTranslations()`).
     - Registers 19 database migrations (`hasMigrations([...])`).
     - Registers settings migrations (`hasSettings([...])`): `2025_01_11_094022_create_purchases_order_settings` and `2025_01_11_094022_create_purchases_product_settings`.
-    - Declares runtime plugin dependency on `invoices` (`hasDependencies(['invoices'])`).
+    - Declares an Install Plugins Dependency on `invoices` (`hasDependencies(['invoices'])`).
     - Registers database seeder: `Webkul\Purchase\Database\Seeders\DatabaseSeeder::class`.
     - Configures install command: runs dependency installation, migrations, and seeders.
     - Configures uninstall command: purges chatter audit logs for `Order` and `Requisition` models via `ChatterCleanupService::purgeForModels()`, and purges sequence codes via `SequenceService::purge(['purchases.order'])`.
@@ -85,7 +83,7 @@ The `purchases` plugin delivers end-to-end procurement lifecycle management for 
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Purchase\PurchasePlugin` (`plugins/webkul/purchases/src/PurchasePlugin.php:9`)
 - **Plugin Identifier**: `'purchases'` (`getId(): string`)
@@ -117,12 +115,11 @@ The `purchases` plugin delivers end-to-end procurement lifecycle management for 
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 - **`invoices`**: Declared in `PurchaseServiceProvider::configureCustomPackage()` via `->hasDependencies(['invoices'])` (`plugins/webkul/purchases/src/PurchaseServiceProvider.php:75-77`). Through `invoices`, runtime access to `accounts` and `products` is guaranteed.
-- **Conditional Inter-Plugin Linkages**:
-  - **`inventories`**: When installed, incoming receipts, stock moves, multi-step warehouse transfers, and dropshipping routes are synchronized automatically.
-  - **`website`**: When installed, vendor self-service portal features mount under the `Account` customer cluster.
+
+No other Install Plugins Dependency entries are declared with `hasDependencies()`. The conditional linkages with `inventories` and `website` are code-level integrations and are documented below.
 
 ---
 
@@ -526,7 +523,7 @@ The `purchases` plugin maintains 5 primary physical domain models and 14 domain 
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### Admin Panel
@@ -591,7 +588,7 @@ The `purchases` plugin maintains 5 primary physical domain models and 14 domain 
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 
 1. **`Webkul\Purchase\PurchaseOrder` (Facade: `PurchaseOrder`)**:
@@ -661,7 +658,7 @@ Zero dedicated Eloquent Observer classes exist in `purchases`. Model lifecycle e
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 
 The `purchases` plugin defines 12 authorization policies registered under `plugins/webkul/purchases/src/Policies/`:
@@ -761,7 +758,30 @@ The `purchases` plugin contains comprehensive automated test coverage with **15 
 
 ---
 
-## Data Flow & Lifecycle State Machine
+## Shared Infrastructure Dependencies
+[VERIFIED]
+This section records code-level consumption; only `invoices` is declared as an installation-order dependency.
+
+- **`plugin-manager`**: `PurchaseServiceProvider` extends `PackageServiceProvider` and uses the shared lifecycle (`plugins/webkul/purchases/src/PurchaseServiceProvider.php`).
+- **`invoices`**: Declared Install Plugins Dependency; vendor bills and billing status use the invoice/account move boundary (`plugins/webkul/purchases/src/Services/Biller.php`, `plugins/webkul/purchases/src/Models/Order.php`).
+- **`products`**: Purchase order and requisition lines reference product master data, supplier prices, UOM, and usage protection (`plugins/webkul/purchases/src/Models/`).
+- **`support`**: Sequence generation, currency conversion, UOM, company context, and shared company scope are consumed by purchasing workflows (`plugins/webkul/purchases/src/Models/`, `plugins/webkul/purchases/src/Services/`).
+- **`partners`**: Vendors and requisitions reference partner master data (`plugins/webkul/purchases/src/Models/`).
+- **`security`**: Purchase policies, ownership scope, and authenticated user audit fields use the security boundary (`plugins/webkul/purchases/src/Policies/`, `plugins/webkul/purchases/src/Models/`).
+- **`fields`**: Purchase resources and models consume custom-field support where registered (`plugins/webkul/purchases/src/Filament/`, `plugins/webkul/purchases/src/Models/`).
+- **`chatter`**: Purchase records use shared activity/audit integration and cleanup hooks (`plugins/webkul/purchases/src/Models/`, `plugins/webkul/purchases/src/PurchaseServiceProvider.php`).
+- **`inventories`**: Conditional integration, gated by plugin installation, creates and synchronizes receipts, stock moves, routes, and dropshipping operations (`plugins/webkul/purchases/src/Models/Order.php`, `plugins/webkul/purchases/src/Services/`).
+- **`website`**: Conditional customer-panel integration mounts vendor self-service features under the customer `Account` cluster (`plugins/webkul/purchases/src/`).
+
+## Cross-Plugin Relationships
+[VERIFIED]
+
+- **`invoices` → purchasing**: Purchase orders create and reconcile vendor bills through the invoice/account move boundary; the physical junction and status transitions remain owned by the purchasing workflows.
+- **`products` → purchasing**: Product and supplier-price records drive line pricing, UOM conversion, and product usage protection.
+- **`inventories` ↔ purchasing**: Confirmed purchase orders generate incoming warehouse operations when the optional inventory plugin is installed; this is conditional code coupling, not a declared Install Plugins Dependency.
+- **`website` → purchasing**: The website customer panel contributes optional vendor self-service pages; it does not own purchase-order or vendor master data.
+
+## Data Flow and Workflows
 [VERIFIED]
 
 The purchasing architecture operates a strict multi-stage lifecycle linking requisitions, purchase orders, warehouse operations, and vendor bills:
@@ -831,7 +851,7 @@ stateDiagram-v2
 
 ---
 
-## Business Rules & Logic
+## Business Rules
 [VERIFIED]
 
 1. **Company Scoping & Consistency**:

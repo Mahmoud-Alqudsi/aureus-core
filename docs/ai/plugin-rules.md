@@ -28,7 +28,7 @@ When creating a new plugin in `plugins/webkul/<new-plugin>/`, developers and AI 
 │ 2  │ Service Provider                │ src/<Plugin>ServiceProvider.php extending PackageService │
 │ 3  │ Root Provider Registration      │ Explicit entry added to bootstrap/providers.php           │
 │ 4  │ Core vs Optional Decision       │ Explicit $package->isCore() decision                      │
-│ 5  │ Runtime Dependencies            │ Explicit $package->hasDependencies([...]) declaration     │
+│ 5  │ Install Plugins Dependency      │ Explicit $package->hasDependencies([...]) declaration     │
 │ 6  │ Filament Plugin Class           │ src/<Plugin>Plugin.php implementing Filament Plugin       │
 │ 7  │ Panel Participation             │ Explicit admin vs customer branch in register(Panel)      │
 │ 8  │ Persistence Strategy            │ Owns migrations OR Zero-Table Extension documentation     │
@@ -63,7 +63,7 @@ When creating a new plugin in `plugins/webkul/<new-plugin>/`, developers and AI 
   - Call `$package->isCore()` ONLY if the plugin provides foundational, cross-cutting ERP infrastructure (such as security, company tenancy, audit logging, custom fields, or plugin management) that MUST execute unconditionally without database gating.
   - OMIT `$package->isCore()` if the plugin is a business domain module (e.g., sales, purchases, manufacturing). Optional plugins are gated by runtime database installation state (`Package::isPluginInstalled()`).
 
-### 5. Runtime Dependency Declaration
+### 5. Install Plugins Dependency Declaration
 - Cross-reference: See the **Dependency Rule** in `docs/ai/architecture-rules.md`.
 - A new plugin MUST declare all installation-prerequisite plugins via `$package->hasDependencies(['prerequisite-plugin'])`.
 - Adding dependencies to `composer.json` does NOT establish plugin installation ordering.
@@ -116,7 +116,7 @@ Before modifying, refactoring, or extending an existing plugin in `plugins/webku
 ### 2. Dependency Audit
 - Before consuming models, services, or tables from another plugin:
   - Check whether the target plugin is declared in `hasDependencies()`.
-  - If consuming an optional plugin from another optional plugin, ensure runtime checks (`Package::isPluginInstalled('target')`) protect execution paths, or declare an explicit runtime dependency.
+  - If consuming an optional plugin from another optional plugin, ensure runtime checks (`Package::isPluginInstalled('target')`) protect execution paths, or declare an explicit Install Plugins Dependency.
 
 ### 3. Zero-Table Awareness
 - Check whether the target plugin is one of the 6 zero-table plugins (`accounting`, `barcode`, `contacts`, `full-calendar`, `invoices`, `timesheets`).

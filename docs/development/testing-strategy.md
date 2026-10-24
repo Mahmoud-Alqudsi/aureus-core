@@ -10,6 +10,16 @@ confidence: high
 
 This document is the canonical guide to how Aureus ERP tests are structured, discovered, and run locally. It owns the test strategy and the spec-to-page-object atlas. CI runtime matrices, workflow jobs, merge gates, and artifact retention remain owned by [`ci-testing-governance.md`](ci-testing-governance.md).
 
+## Documentation Ownership Boundary
+[VERIFIED]
+
+This document owns the shared testing vocabulary, Pest discovery model, Playwright runtime/fixture model, and the complete spec-to-page-object coverage atlas.
+
+- Plugin documents retain only direct plugin test paths, direct browser specs, cross-plugin coverage references, and plugin-specific coverage gaps.
+- [`ci-testing-governance.md`](ci-testing-governance.md) owns workflow execution, runtime/database matrices, shards, artifacts, and merge-gate governance.
+- A browser spec or page object proves only the journey and assertions implemented by that test; it does not establish complete backend, security, schema, company-isolation, or workflow coverage.
+- Source test files and workflow configuration remain authoritative when this atlas or a plugin document becomes stale.
+
 ## Source evidence
 
 The strategy is derived from the executable test configuration and current test tree:

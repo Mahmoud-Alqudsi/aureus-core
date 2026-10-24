@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered explicitly in `bootstrap/providers.php:48` as `Webkul\Account\AccountServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `AccountServiceProvider` boots conditionally based on whether the plugin record in the database is marked `installed = true`. If uninstalled, event listeners, dynamic relationship injections, schema contributions, Filament resource registrations, and API routes are suppressed.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/accounts/src/AccountServiceProvider.php:50-152`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('accounts')` (`plugins/webkul/accounts/src/AccountServiceProvider.php:176,185,194,282` and `plugins/webkul/accounts/src/AccountPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `AccountServiceProvider` boots conditionally based on whether the plugin record in the database is marked `installed = true`. If uninstalled, event listeners, dynamic relationship injections, schema contributions, Filament resource registrations, and API routes are suppressed.
 
 ## Purpose
 [VERIFIED]
@@ -150,7 +148,7 @@ The `accounts` module serves as the foundational double-entry financial accounti
       - `2025_12_02_094021_create_accounts_default_accounts_settings`
       - `2025_12_02_094021_create_accounts_taxes_settings`
       - `2025_12_02_094021_create_customer_invoice_settings`
-    - Registers runtime plugin dependency on `products` (`hasDependencies(['products'])`).
+    - Registers an Install Plugins Dependency on `products` (`hasDependencies(['products'])`).
     - Registers database seeder: `Webkul\Account\Database\Seeders\DatabaseSeeder`.
     - Configures install command: runs dependency installation, migrations, and seeders.
     - Configures uninstall command: purges chatter messages for `[Move::class, Payment::class]` and purges document sequences for `[Journal::class]`.
@@ -167,7 +165,7 @@ The `accounts` module serves as the foundational double-entry financial accounti
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Account\AccountPlugin` (`plugins/webkul/accounts/src/AccountPlugin.php:9`)
 - **Plugin Identifier**: `'accounts'` (`getId(): string`)
@@ -192,7 +190,7 @@ The `accounts` module serves as the foundational double-entry financial accounti
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 - **`products`**: Declared in `AccountServiceProvider::configureCustomPackage()` via `->hasDependencies(['products'])`. The `accounts` module requires `products` for product tax configurations (`accounts_product_taxes`, `accounts_product_supplier_taxes`), product income/expense accounts (`ProductCompanyAccount`, `CategoryCompanyAccount`), invoice/bill line item referencing (`MoveLine.product_id`), and `ProductUsageRegistry` registration.
 
@@ -501,7 +499,7 @@ For comprehensive database schema diagrams, physical column definitions, foreign
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 The `accounts` module defines 20 Filament resources under `plugins/webkul/accounts/src/Filament/Resources/`. All base resources configure `protected static bool $shouldRegisterNavigation = false;` because primary navigation is registered and organized via the downstream `invoices` and `accounting` plugins:
 
@@ -630,7 +628,7 @@ Registers on the **`admin`** panel only (`plugins/webkul/accounts/src/AccountPlu
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 The `accounts` module defines 12 domain service classes in `plugins/webkul/accounts/src/Services/` plus 2 manager orchestrators:
 
@@ -716,7 +714,7 @@ The `accounts` module defines 7 event classes under `plugins/webkul/accounts/src
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The `accounts` module defines 18 authorization policy classes in `plugins/webkul/accounts/src/Policies/`. Each policy evaluates Spatie Shield user permissions via `$user->can(...)`:
 
@@ -821,13 +819,17 @@ The `accounts` plugin has a comprehensive suite of **43 test files** (18 API fea
 
 ---
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-1. **`products`**: Declared via `->hasDependencies(['products'])`. Supplies product master data, attributes, categories, and `ProductUsageRegistry`.
-2. **`support`**: Supplies `CompanyContext`, `SequenceService`, `Currency`, `CurrencyRate`, `UOM`, `BelongsToCompany`, and `BelongsToCompanies`.
-3. **`partners`**: Supplies `Partner`, `BankAccount`, and `PartnerSchemaRegistry`.
-4. **`chatter`**: Supplies polymorphic audit logging (`HasChatter`, `Message`, `Attachment`) and `ChatterCleanupService`.
-5. **`fields`**: Supplies dynamic custom field schema injection (`HasCustomFields`).
+This section records code-level consumption; the installation-order declaration remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+1. **`plugin-manager`**: `AccountServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/accounts/src/AccountServiceProvider.php`).
+2. **`products`**: Declared via `->hasDependencies(['products'])`; supplies product master data, attributes, categories, and `ProductUsageRegistry` (`plugins/webkul/accounts/src/AccountServiceProvider.php`).
+3. **`support`**: Supplies `CompanyContext`, `SequenceService`, `Currency`, `CurrencyRate`, `UOM`, `BelongsToCompany`, and `BelongsToCompanies` (`plugins/webkul/accounts/src/Models/`, `plugins/webkul/accounts/src/Services/`).
+4. **`partners`**: Supplies `Partner`, `BankAccount`, and `PartnerSchemaRegistry` (`plugins/webkul/accounts/src/AccountServiceProvider.php`).
+5. **`security`**: Account policies, authenticated users, and permission checks use the security plugin (`plugins/webkul/accounts/config/filament-shield.php`, `plugins/webkul/accounts/src/Policies/`).
+6. **`chatter`**: Supplies polymorphic audit logging (`HasChatter`, `Message`, `Attachment`) and `ChatterCleanupService` (`plugins/webkul/accounts/src/Models/`, `plugins/webkul/accounts/src/AccountServiceProvider.php`).
+7. **`fields`**: Supplies dynamic custom field schema injection through `HasCustomFields` (`plugins/webkul/accounts/src/Models/`, `plugins/webkul/accounts/src/Filament/`).
 
 ---
 
@@ -857,7 +859,7 @@ The `accounts` plugin has a comprehensive suite of **43 test files** (18 API fea
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid

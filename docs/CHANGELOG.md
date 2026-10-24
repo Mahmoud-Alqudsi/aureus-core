@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-10-25
+last_verified: 2026-11-02
 scope: documentation-changelog
 confidence: high
 ---
@@ -25,6 +25,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 1. **Git-Verified History**: Backed directly by immutable Git commit hashes, author timestamps, and repository diffs (`git log -- docs/`).
 2. **Documented Execution History**: Backed by documented phase execution reports, verification matrices, and structured project logs where exact commit hashes were synthesized or consolidated.
 3. **Reconstructed / Active History**: Actively in progress or reconstructed from conversational context; explicitly flagged to prevent false claims of Git verification.
+
+---
+
+## Knowledge-Base Restructure : Plugin Dependency Terminology, Status Consolidation & Linter Enforcement (2026-11-02)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Standardized tier-2 plugin installation-order dependencies (`Package::hasDependencies([...])` in `plugins/webkul/*/src/*ServiceProvider.php`) to the canonical term **Install Plugins Dependency** across AI governance and domain documents ([`docs/ai/terminology.md`](ai/terminology.md), [`docs/ai/plugin-rules.md`](ai/plugin-rules.md), [`docs/ai/coding-rules.md`](ai/coding-rules.md), [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md), [`docs/ai/architecture-rules.md`](ai/architecture-rules.md), [`docs/business-rules/accounting.md`](business-rules/accounting.md), [`docs/business-rules/inventory.md`](business-rules/inventory.md), and [`docs/database/erds/core.md`](database/erds/core.md)), architecture and verification specifications ([`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md), [`docs/architecture/overview.md`](architecture/overview.md), [`docs/architecture/change-impact.md`](architecture/change-impact.md), and [`docs/verification-matrix.md`](verification-matrix.md)), the [`aureus-plugin-change`](../.agents/skills/aureus-plugin-change/SKILL.md) skill, [`docs/plugins/README.md`](plugins/README.md), and all 28 plugin specifications under `docs/plugins/*.md`, while preserving the 3-tier distinction between **Composer Requirement** (`composer.json`), **Install Plugins Dependency** (`Package::hasDependencies()`), and **Code-Level Consumption** (`declared`, `guarded`, `unguarded` PHP imports).
+- Added the derived `Dependents` column to the 28-plugin directory table in [`docs/plugins/README.md`](plugins/README.md) as the exact transpose of `Install Plugins Dependency`.
+- Consolidated all 28 standalone `## Enabled/Disabled` sections into `## Status` across `docs/plugins/*.md`, updated [`docs/development/plugin-documentation-template.md`](development/plugin-documentation-template.md) (and linked it from [`docs/development/ai-skills.md`](development/ai-skills.md)) to remove `## Enabled/Disabled` from the standard 16-section template shape, renamed `## Runtime Plugin Dependencies` to `## Install Plugins Dependency`, and codified the forbidden headings contract (`## Enabled/Disabled`, `## Runtime Plugin Dependencies`, `## Runtime Dependencies`).
+- Extended [`scripts/kb_lint.py`](../scripts/kb_lint.py) with 9 automated checks (`forbidden-headings`, `install-deps-mirror`, `core-install-empty`, `optional-no-core`, `core-set-mirror`, `dependents-mirror`, `plugin-doc-status`, `composer-webkul-empty`, and `consumption-stats`) verifying documentation-to-source alignment across all 28 plugins.
 
 ---
 

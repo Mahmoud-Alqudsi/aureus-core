@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:63` as `Webkul\FullCalendar\FullCalendarServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when registering views and assets (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The FullCalendar widget foundation, JavaScript Alpine bundle, and Filament action integration execute unconditionally at boot time once registered in `bootstrap/providers.php`.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `FullCalendarServiceProvider::configureCustomPackage()` (`plugins/webkul/full-calendar/src/FullCalendarServiceProvider.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when registering views and assets (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The FullCalendar widget foundation, JavaScript Alpine bundle, and Filament action integration execute unconditionally at boot time once registered in `bootstrap/providers.php`.
 
 ## Purpose
 [VERIFIED]
@@ -49,7 +47,7 @@ The `full-calendar` plugin is an abstract UI and Livewire component engine that 
       - `Css::make('full-calendar', resources/dist/app.css)`
       - `AlpineComponent::make('full-calendar', resources/dist/app.js)`
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\FullCalendar\FullCalendarPlugin` (`plugins/webkul/full-calendar/src/FullCalendarPlugin.php:8`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -69,7 +67,7 @@ The `full-calendar` plugin is an abstract UI and Livewire component engine that 
   - `register(Panel $panel)`: Executes resource, page, cluster, and widget auto-discovery under `src/Filament/` for namespace `Webkul\FullCalendar\Filament\*`.
   - `boot(Panel $panel)`: Defined as an empty method stub.
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/full-calendar/composer.json`
   - Name: `webkul/full-calendar`
@@ -84,11 +82,11 @@ The `full-calendar` plugin is an abstract UI and Livewire component engine that 
   - `@fullcalendar/core` (`^6.1.9`), `@fullcalendar/daygrid` (`^6.1.9`), `@fullcalendar/timegrid` (`^6.1.9`), `@fullcalendar/interaction` (`^6.1.9`), `@fullcalendar/list` (`^6.1.9`), `@fullcalendar/multimonth` (`^6.1.9`), `@fullcalendar/moment` (`^6.1.9`), `@fullcalendar/moment-timezone` (`^6.1.9`), `@fullcalendar/resource` (`^6.1.9`), `@fullcalendar/resource-timegrid` (`^6.1.9`), `@fullcalendar/resource-timeline` (`^6.1.9`), `@fullcalendar/scrollgrid` (`^6.1.9`), `@fullcalendar/timeline` (`^6.1.9`), `@fullcalendar/adaptive` (`^6.1.9`), `@fullcalendar/rrule` (`^6.1.9`).
   - `moment` (`^2.29.4`), `moment-timezone` (`^0.5.43`), `rrule` (`^2.7.2`), `esbuild` (`^0.25.9`), `tailwindcss` (`^4.1.12`).
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `FullCalendarServiceProvider::configureCustomPackage()` does not declare any runtime plugin dependencies via `hasDependencies()`.
+None (`—`). `FullCalendarServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/full-calendar/`:
 
@@ -151,7 +149,7 @@ The `full-calendar` plugin defines **zero Eloquent models**. It provides the abs
 [NOT APPLICABLE]
 The `full-calendar` plugin defines **zero database migrations** and owns **zero database tables** (confirmed in `docs/database/erds/core.md#included-core-plugins`). All physical working calendar and schedule tables (`calendars`, `calendar_attendances`, `calendar_leaves`) in Aureus ERP are owned and migrated by the `support` plugin (`plugins/webkul/support/database/migrations/2026_04_02_000001_create_calendars_table.php`).
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 
 ### Resources
@@ -228,7 +226,7 @@ The `full-calendar` plugin defines **zero database migrations** and owns **zero 
 - **Dual Panel Participation**: `FullCalendarServiceProvider` registers `FullCalendarPlugin::make()` via `Panel::configureUsing()`, registering without panel-ID restrictions across both **`admin`** and **`customer`** panels (`app/Providers/Filament/AdminPanelProvider.php`, `app/Providers/Filament/CustomerPanelProvider.php`).
 - **Conflict Prevention**: `FullCalendarServiceProvider::packageRegistered()` validates `! $panel->hasPlugin('full-calendar')` before attaching default instances, allowing panels or domain plugins to register customized plugin instances.
 
-## Services & JavaScript Integration Architecture
+## Services and Support Classes
 [VERIFIED]
 The plugin implements a decoupled architecture connecting FullCalendar v6, Alpine.js, and Livewire:
 
@@ -272,7 +270,7 @@ No Laravel event listeners are defined in `full-calendar`.
 [NOT APPLICABLE]
 No Eloquent model observers are defined in `full-calendar`.
 
-## Policies
+## Policies and Authorization
 [NOT APPLICABLE]
 - No dedicated policy classes exist in `full-calendar` (since the plugin owns no Eloquent models).
 - **Shield Configuration**: `config/filament-shield.php` (`plugins/webkul/full-calendar/config/filament-shield.php:8`) explicitly excludes `FullCalendarWidget::class` from automatic permission generation, as it is an abstract base widget. Child widgets implement their own Shield permissions (e.g. `widget_time_off_calendar_widget`).
@@ -295,11 +293,14 @@ No plugin-specific settings schema exists under `database/settings/`.
 - **Explicit Test Coverage Status**: The `full-calendar` plugin contains **zero test files** (0 unit tests, 0 feature tests under `plugins/webkul/full-calendar/tests/`). Although `composer.json` declares an `autoload-dev` mapping for `Webkul\FullCalendar\Tests\` to `tests/`, no `tests/` directory exists on disk.
 - **Root & E2E Test Coverage**: Zero tests in `tests/Feature/`, `tests/Unit/`, or Playwright browser tests (`tests/e2e-pw/`) test `full-calendar` components or JavaScript rendering.
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-None (`—`).
+This section records code-level consumption; any declared Install Plugins Dependency remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
 
-## Cross-plugin relationships
+- **`plugin-manager`**: `FullCalendarServiceProvider` extends `PackageServiceProvider` and registers the package through the shared lifecycle (`plugins/webkul/full-calendar/src/FullCalendarServiceProvider.php`).
+- **`support`**: The calendar engine is consumed by domain widgets that read support-owned calendar and holiday models; `full-calendar` itself does not own or mutate those tables. See [`Cross-Plugin Relationships`](#cross-plugin-relationships) (`plugins/webkul/support/database/migrations/2026_04_02_000001_create_calendars_table.php`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 `full-calendar` is an abstract foundation consumed by multiple domain plugins and UI features:
 
@@ -345,7 +346,7 @@ None (`—`).
 4. **Shield Integration**:
    - `config/filament-shield.php` excludes `FullCalendarWidget::class` from permission generation.
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### Calendar Event Interaction & Mutation Lifecycle Flow
@@ -393,7 +394,7 @@ sequenceDiagram
     end
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Abstract Framework Pattern**:
    - `FullCalendarWidget` is an abstract base component; it does not persist data directly, relying on child classes to implement `fetchEvents()`, `getFormSchema()`, and assign `$model`.
@@ -406,14 +407,14 @@ sequenceDiagram
 5. **Modal Action Isolation**:
    - Actions invoke `cancelParentActions()` to prevent nested action state corruption when chaining view, edit, and delete modals.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 1. **Subclassing `FullCalendarWidget`**: Any domain plugin can create custom calendar interfaces by extending `Webkul\FullCalendar\Filament\Widgets\FullCalendarWidget` and implementing `fetchEvents()`, `getFormSchema()`, and optional `infolist()`.
 2. **Customizing Calendar Plugins & Views**: Domain plugins can add FullCalendar JS plugins (e.g. `multiMonth`, `resourceTimeline`, `rrule`) via `FullCalendarPlugin::make()->setPlugins([...])` and configure custom views via `config()`.
 3. **JavaScript Lifecycle Callbacks via `InteractsWithRawJS`**: Child widgets can override `eventClassNames()`, `eventContent()`, `eventDidMount()`, and `eventWillUnmount()` to provide custom client-side JavaScript rendering routines.
 4. **Custom Header and Modal Actions**: Widgets can customize header buttons via `headerActions()` (e.g. `HolidayAction`) and view modal footer actions via `modalActions()`.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 1. **Zero Automated Test Coverage Across Entire Repository**:
    - **Critical Fact**: `plugins/webkul/full-calendar/` contains **0 test files**. No Pest tests, PHPUnit tests, or Playwright E2E browser tests exist for calendar components anywhere in the repository.
@@ -428,7 +429,7 @@ sequenceDiagram
 5. **Plugin Registration Order Sensitivity**:
    - Because `FullCalendarServiceProvider` checks `! $panel->hasPlugin('full-calendar')`, domain plugins configuring custom options (like `TimeOffPlugin`) must register their `FullCalendarPlugin` instance during panel building before the fallback provider runs.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 - **Architectural Scope**: **Low Database / Medium UI Layer**.
 - **Blast Radius**: Affects calendar widgets in `time-off` and `maintenance`, and any future domain module subclassing `FullCalendarWidget`.
@@ -437,7 +438,7 @@ sequenceDiagram
 
 ---
 
-## Evidence Index
+## Evidence
 
 | Evidence ID | Source File | Symbol / Method | Purpose / Claim Verified |
 |---|---|---|---|

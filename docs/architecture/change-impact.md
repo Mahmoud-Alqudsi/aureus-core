@@ -118,7 +118,7 @@ Developers and AI agents MUST strictly respect the following ten architectural d
 │ 6  │ Architectural Rationale ≠ Behavior   │ Inferred author intent or historical frequency cannot substitute │
 │    │                                      │ for verified runtime source execution paths.                     │
 ├────┼──────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
-│ 7  │ Composer Dep ≠ Runtime Plugin Dep    │ composer.json manages class autoloading; Package::hasDependencies│
+│ 7  │ Composer Req ≠ Install Plugins Dep   │ composer.json manages class autoloading; Package::hasDependencies│
 │    │ ≠ Code Consumption                   │ governs ERP migration order; code consumption is mere import.    │
 ├────┼──────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
 │ 8  │ Migration File ≠ Executed State      │ A file in database/migrations/ does NOT execute unless registered│
@@ -197,7 +197,7 @@ Developers and AI agents MUST NOT conflate dependency concepts:
 
 ```
 ┌───────────────────────────────┐     ┌────────────────────────────────┐     ┌───────────────────────────────┐
-│     Composer Dependency       │  ≠  │  Plugin Installation Dependency│  ≠  │    Code-Level Consumption     │
+│     Composer Requirement      │  ≠  │  Install Plugins Dependency    │  ≠  │    Code-Level Consumption     │
 ├───────────────────────────────┤     ├────────────────────────────────┤     ├───────────────────────────────┤
 │ • Declared in composer.json   │     │ • Declared in Package provider │     │ • PHP use statements          │
 │ • Governs class autoloading   │     │   via hasDependencies([...])   │     │ • Cross-plugin model calls    │
@@ -206,11 +206,11 @@ Developers and AI agents MUST NOT conflate dependency concepts:
 └───────────────────────────────┘     └────────────────────────────────┘     └───────────────────────────────┘
 ```
 
-1. **Composer Dependency**: Governs PSR-4 class discovery and package merge via `wikimedia/composer-merge-plugin`. Adding a package to `composer.json` does NOT install its database tables or run its seeders.
-2. **Runtime Installation Dependency (`Package::hasDependencies([...])`)**: Declared in `*ServiceProvider::configureCustomPackage()`. Consumed exclusively by `InstallCommand` to enforce database migration order and prerequisite checks.
+1. **Composer Requirement**: Governs PSR-4 class discovery and package merge via `wikimedia/composer-merge-plugin`. Adding a package to `composer.json` does NOT install its database tables or run its seeders.
+2. **Install Plugins Dependency (`Package::hasDependencies([...])`)**: Declared in `*ServiceProvider::configureCustomPackage()`. Consumed by `InstallCommand` to enforce installation order (including database migration order) and prerequisite checks, and read by the plugin-manager `Plugin` model.
 3. **Code-Level Consumption**: Mere PHP `use Webkul\...` imports. If Plugin A imports a model from optional Plugin B without declaring `hasDependencies(['B'])` or checking `Package::isPluginInstalled('B')`, Plugin A will crash at runtime if Plugin B is deactivated.
 
-### 5.3 Verified Runtime Dependency Map
+### 5.3 Verified Install Plugins Dependency Map
 
 The following baseline represents the verified installation-order dependency map:
 
@@ -701,8 +701,8 @@ The following comprehensive matrix details the impact surface, hazard level, man
 | **Security - Dual Panel Auth** | Modifying auth guards in `AdminPanelProvider` or `CustomerPanelProvider` | Admin panel (`web`) vs Customer portal (`customer`) authentication | **CRITICAL** | Customer portal accessing administrative models; admin routes exposed without MFA. | Security Specialist & Lead Arch. | Verify guard bindings: `web` -> `App\Models\User`; `customer` -> `Partner`. | Separate feature tests authenticating through admin and customer panels. | `docs/architecture/filament-architecture.md`, `docs/ai/terminology.md`. |
 | **Security - API Routes** | Modifying `routes/api.php` routes or middleware | Headless REST API endpoints, mobile integrations, external sync | **HIGH** | Unauthenticated endpoints exposing sensitive customer or financial data. | Security Specialist | Verify `auth:sanctum` and policy gate middleware on every declared API endpoint. | Pest API tests verifying HTTP 401 on unauthenticated access. | Owning plugin API docs, `docs/ai/security-rules.md`. |
 | **Plugin - Composer Dep** | Adding or altering dependencies in `composer.json` | Vendor package resolution, autoloading, merge-plugin discovery | **HIGH** | Package version conflicts; failed deployment; autoloader bloat. | Tech Lead | Verify `wikimedia/composer-merge-plugin` handles sub-package requirements. | Run `composer validate` and `composer update --dry-run`. | Root and package `composer.json`, `docs/ai/architecture-rules.md`. |
-| **Plugin - Runtime Dep** | Modifying `$package->hasDependencies([...])` array | Plugin installation ordering, prerequisite validation in CLI | **HIGH** | Plugin fails to install due to missing dependencies; migrations run out of order. | Core Architect | Trace `InstallCommand` dependency resolution DAG. | Test installing plugin on clean system via `php artisan plugin:install`. | `docs/architecture/plugin-registry.md`, `docs/ai/plugin-rules.md`. |
-| **Plugin - Code Consumption** | Importing classes from another plugin (`use Webkul\...`) | Cross-plugin coupling, optional module runtime dependencies | **HIGH** | Unhandled `ClassNotFoundException` if consuming plugin is active but provider inactive. | Architecture Lead | Verify consuming plugin guards execution via `Package::isPluginInstalled()`. | Integration test running consuming plugin with target plugin deactivated. | `docs/ai/architecture-rules.md`, `docs/ai/plugin-rules.md`. |
+| **Plugin - Install Plugins Dependency** | Modifying `$package->hasDependencies([...])` array | Plugin installation ordering, prerequisite validation in CLI | **HIGH** | Plugin fails to install due to missing dependencies; migrations run out of order. | Core Architect | Trace `InstallCommand` dependency resolution DAG. | Test installing plugin on clean system via `php artisan plugin:install`. | `docs/architecture/plugin-registry.md`, `docs/ai/plugin-rules.md`. |
+| **Plugin - Code Consumption** | Importing classes from another plugin (`use Webkul\...`) | Cross-plugin coupling, optional module availability at runtime | **HIGH** | Unhandled `ClassNotFoundException` if consuming plugin is active but provider inactive. | Architecture Lead | Verify consuming plugin guards execution via `Package::isPluginInstalled()`. | Integration test running consuming plugin with target plugin deactivated. | `docs/ai/architecture-rules.md`, `docs/ai/plugin-rules.md`. |
 | **Plugin - ServiceProvider** | Modifying `*ServiceProvider.php` methods (`packageBooted`, etc.) | Service bindings, event registrations, render hooks, routes | **CRITICAL** | Core plugin services fail to bind; listeners not registered; application crash. | Core Architect | Verify `configureCustomPackage()`, `packageRegistered()`, and `packageBooted()`. | Smoke test booting application and resolving registered services. | Owning plugin docs, `docs/architecture/overview.md`. |
 | **Plugin - bootstrap/providers** | Adding, removing, or reordering providers in `bootstrap/providers.php` | Laravel framework package auto-discovery and boot order | **CRITICAL** | Entire plugin ceases to load; classes unresolvable; application boot failure. | Core Architect | Verify all 28 plugin service providers are present in the array. | Run `php artisan package:discover` and verify clean framework boot. | `docs/architecture/plugin-registry.md`, `docs/ai/architecture-rules.md`. |
 | **Plugin - Filament Plugin** | Modifying `*Plugin.php` class implementing `Filament\Contracts\Plugin` | Filament panel resource discovery, panel configuration injection | **HIGH** | Resources, pages, and clusters fail to mount in the target Filament panel. | Presentation Lead | Verify `getId()`, `register()`, and `boot()` implementations. | Test panel loading in browser and verify navigation items render correctly. | `docs/architecture/filament-architecture.md`, owning plugin docs. |

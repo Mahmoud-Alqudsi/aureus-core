@@ -61,7 +61,7 @@ Every pattern documented here has occurred in this repository or in historical a
 
 ---
 
-### 3. Dependency Conflation (Composer ≠ Runtime Dependencies ≠ Code Consumption)
+### 3. Dependency Conflation (Composer Requirement ≠ Install Plugins Dependency ≠ Code Consumption)
 
 - **What it looks like**: Adding a requirement to `composer.json` and assuming it dictates Aureus ERP plugin installation order, or adding `use Webkul\Account\Models\Move;` and assuming the `accounts` plugin is installed in the database.
 - **Why it is tempting**: In standard standalone PHP packages, `composer.json` is the sole dependency mechanism.

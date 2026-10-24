@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered explicitly in `bootstrap/providers.php:54` as `Webkul\Product\ProductServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `ProductServiceProvider` boots conditionally based on whether the plugin record in the database marked `installed = true`. If uninstalled, observers, Filament resource registrations, and API routes are suppressed.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/products/src/ProductServiceProvider.php:24-64`). Execution and asset loading are gated by runtime installation verification via `Package::isPluginInstalled('products')` (`plugins/webkul/products/src/ProductServiceProvider.php:71` and `plugins/webkul/products/src/ProductPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `ProductServiceProvider` boots conditionally based on whether the plugin record in the database marked `installed = true`. If uninstalled, observers, Filament resource registrations, and API routes are suppressed.
 
 ## Purpose
 [VERIFIED]
@@ -102,7 +100,7 @@ The `products` module serves as the foundational product master data, catalog ma
     - Registers `UOM::observe(UOMObserver::class)`.
     - Registers `ProductAttribute::observe(ProductAttributeObserver::class)`.
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Product\ProductPlugin` (`plugins/webkul/products/src/ProductPlugin.php:9`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -118,7 +116,7 @@ The `products` module serves as the foundational product master data, catalog ma
       - Discovers Widgets under `src/Filament/Widgets` in namespace `Webkul\Product\Filament\Widgets` (none directly at root).
 - **Boot**: `boot(Panel $panel)` contains empty method stub.
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/products/composer.json`
   - Name: `webkul/products`
@@ -133,11 +131,11 @@ The `products` module serves as the foundational product master data, catalog ma
   - Extra Laravel Providers:
     - `Webkul\Product\ProductServiceProvider`
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-`products` declares **no runtime plugin dependencies** (`$package->hasDependencies([...])` is omitted in `ProductServiceProvider`). It acts as a foundational domain layer for downstream business modules (`accounts`, `inventories`, `manufacturing`, `purchases`, `sales`).
+`products` declares **no Install Plugins Dependency** (`$package->hasDependencies([...])` is omitted in `ProductServiceProvider`). It acts as a foundational domain layer for downstream business modules (`accounts`, `inventories`, `manufacturing`, `purchases`, `sales`).
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 ```text
 plugins/webkul/products/
@@ -501,7 +499,7 @@ The plugin defines 13 physical database tables (12 owned entity tables + 1 junct
 | `products_product_suppliers` | `ProductSupplier` | `id` | `product_id` -> `products_products`, `partner_id` -> `partners_partners`, `currency_id` -> `currencies`, `company_id` -> `companies`, `creator_id` -> `users`, `uom_id` -> `unit_of_measures` | Optional (`BelongsToCompany`, nullable) | `cascadeOnDelete()` on product/partner, `restrictOnDelete()` on currency, `nullOnDelete()` on company/creator/uom |
 | `products_product_combinations` | `ProductCombination` | `id` | `product_id` -> `products_products`, `product_attribute_value_id` -> `products_product_attribute_values` | Via Product | `cascadeOnDelete()` on product and attribute value |
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 - **Base Resources**:
   1. `ProductResource` (`plugins/webkul/products/src/Filament/Resources/ProductResource.php`):
@@ -550,7 +548,7 @@ The plugin defines 13 physical database tables (12 owned entity tables + 1 junct
 - **Admin Panel (`admin`)**: `ProductPlugin` registers all 5 resources (`ProductResource`, `AttributeResource`, `CategoryResource`, `PackagingResource`, `PriceListResource`) into the `admin` panel when installed (`plugins/webkul/products/src/ProductPlugin.php:28-46`).
 - **Customer Panel (`customer`)**: Products plugin does not register resources directly into the `customer` panel.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 - **`PriceListResolver` (`Webkul\Product\Services\PriceListResolver`)**:
   - Core pricing resolution engine evaluating multi-tier rules and calculating context-specific product prices for quotes, orders, and checkout.
@@ -620,7 +618,7 @@ No custom Laravel Event Listeners are defined in `plugins/webkul/products`.
    - `Packaging::boot()`, `PriceRuleItem::boot()`, `PriceList::boot()`, `Tag::boot()`:
      - `creating`: Stamps `creator_id ??= Auth::id()`.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 6 authorization policies mapped via Filament Shield and registered in `config/filament-shield.php`:
 1. `ProductPolicy` (`plugins/webkul/products/src/Policies/ProductPolicy.php`): Checks permissions `view_any_product_product`, `view_product_product`, `create_product_product`, `update_product_product`, `delete_product_product`, `delete_any_product_product`, `force_delete_product_product`, `force_delete_any_product_product`, `restore_product_product`, `restore_any_product_product`, `reorder_product_product`.
@@ -716,7 +714,7 @@ The plugin registers REST API v1 endpoints under route group prefix `admin/api/v
 
 ## Tests
 [VERIFIED]
-The `products` plugin contains an extensive, dedicated Pest automated test suite with **16 test files** under `plugins/webkul/products/tests/`:
+The `products` plugin contains an extensive, dedicated Pest automated test suite with **19 test files** under `plugins/webkul/products/tests/`:
 
 - **Cross-plugin Playwright coverage**: Product journeys are exercised from sales, purchases, and inventory specs. This is cross-plugin browser coverage rather than a standalone products spec; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas).
 - **API Tests (`tests/Feature/API/V1/`)**:
@@ -738,13 +736,22 @@ The `products` plugin contains an extensive, dedicated Pest automated test suite
   - `AttributeRowDeleteTest.php`: Tests row-level attribute deletion safeguards.
   - `CompanyIsolationTest.php`: Validates multi-tenant query isolation and access boundaries.
   - `CompanyScopingInvariantsTest.php`: Enforces that declared shared models (`Product`, `Packaging`) maintain nullable company columns and do not unexpectedly auto-stamp tenant IDs.
+  - `PriceListResolverTest.php`: Verifies price-list selection and fallback resolution.
+  - `PriceRuleItemScopeTest.php`: Verifies company and applicability scoping for price-rule items.
   - `ProductUsageRegistryTest.php`: Verifies model registration, table existence checks, and multi-company cross-reference detection in `ProductUsageRegistry`.
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-The `products` module declares **no runtime dependencies** (`hasDependencies` is not called). It sits upstream of all transactional operational modules.
+The `products` module declares **no Install Plugins Dependency** (`hasDependencies` is not called). This section records its code-level infrastructure consumption:
 
-## Cross-plugin relationships
+- **`plugin-manager`**: `ProductServiceProvider` extends `PackageServiceProvider` (`plugins/webkul/products/src/ProductServiceProvider.php`).
+- **`support`**: Product models use UOM, company, currency, sequence, and company-isolation infrastructure (`plugins/webkul/products/src/Models/`, `plugins/webkul/products/src/Services/`).
+- **`security`**: Product models record creators and resources use plugin policies (`plugins/webkul/products/src/Models/`, `plugins/webkul/products/src/Policies/`).
+- **`partners`**: Supplier records reference partner master data (`plugins/webkul/products/src/Models/ProductSupplier.php`).
+- **`chatter`**: Product and category models use activity and audit traits and cleanup hooks (`plugins/webkul/products/src/Models/`, `plugins/webkul/products/src/ProductServiceProvider.php`).
+- **`fields`**: Product, category, attribute, packaging, and price-list resources consume custom-field traits (`plugins/webkul/products/src/Models/`, `plugins/webkul/products/src/Filament/`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 1. **`support` [CORE]**:
    - Consumes `UOM` (`Webkul\Support\Models\UOM`) on `products_products.uom_id` and `uom_po_id` and `products_product_suppliers.uom_id`.
@@ -774,7 +781,7 @@ The `products` module declares **no runtime dependencies** (`hasDependencies` is
 10. **`manufacturing` [OPTIONAL]**:
     - Downstream consumer: References products on BOMs (`BillOfMaterial`, `BillOfMaterialLine`, `BillOfMaterialByproduct`) and manufacturing orders (`Order`), registering them with `ProductUsageRegistry`.
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 ```mermaid
 flowchart TD
@@ -804,7 +811,7 @@ flowchart TD
     end
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Variant Generation Strategy (Inline Model Logic)**:
    - Variant generation logic is encapsulated in `Webkul\Product\Models\Product::generateVariants()`.
@@ -826,13 +833,13 @@ flowchart TD
 5. **Vendor Seller Selection Algorithm**:
    - `$product->getSeller(...)` evaluates active date ranges (`starts_at`, `ends_at`), partner matching, minimum quantities (`min_qty`), and converts currency to return the optimal vendor price.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 - **`ProductSchemaRegistry`**: Allows external plugins to register custom tabs, fieldsets, infolist entries, table columns, filter presets, and header actions on `ProductResource`.
 - **`ProductUsageRegistry`**: Downstream modules register models containing `product_id` foreign keys to participate in global in-use deletion protection.
 - **`HasContributedAttributes`**: Enables external packages (such as `accounts`) to contribute dynamic casts (e.g. `CompanyProperty`) and dynamic Eloquent relationships (`supplierTaxes`, `propertyAccountIncome`, `companyProperties`) to `Product` and `Category`.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 1. **Direct Variant Manipulation**:
    - Directly creating or deleting records in `products_products` with a `parent_id` without updating `products_product_combinations` or executing `generateVariants()` will desynchronize the variant matrix from its attribute definitions.
@@ -843,7 +850,7 @@ flowchart TD
 4. **Test Suite Coverage**:
    - Explicit verification: `products` possesses a comprehensive 16-file test suite (`tests/Feature/API/V1`, `tests/Feature/Filament`, `tests/Feature/Workflows`). Running `php artisan test --filter=Product` validates API endpoints, UI actions, company scoping invariants, and safety guards.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 Modifications to `products` have high architectural impact across the entire Aureus ERP suite:
 - Changes to `Product` or `Category` models directly affect `inventories`, `manufacturing`, `sales`, `purchases`, `accounts`, `invoices`, and `website`.

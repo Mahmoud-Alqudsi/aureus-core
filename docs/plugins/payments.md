@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:53` as `Webkul\Payment\PaymentServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `PaymentPlugin` registers conditionally on the `admin` Filament panel only when the plugin is installed in the database (`Package::isPluginInstalled('payments')`) (`plugins/webkul/payments/src/PaymentPlugin.php:23-25`). When uninstalled, the plugin remains dormant.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular external payment gateway, transaction tracking, and tokenization schema layer without calling `$package->isCore()` (`plugins/webkul/payments/src/PaymentServiceProvider.php:15-39`). Gated by runtime installation verification via `Package::isPluginInstalled('payments')` (`plugins/webkul/payments/src/PaymentPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `PaymentPlugin` registers conditionally on the `admin` Filament panel only when the plugin is installed in the database (`Package::isPluginInstalled('payments')`) (`plugins/webkul/payments/src/PaymentPlugin.php:23-25`). When uninstalled, the plugin remains dormant.
 
 ## Purpose
 [VERIFIED]
@@ -51,7 +49,7 @@ The `payments` plugin provides the physical database schemas, tokenization model
       5. `2025_08_08_105243_alter_payments_payment_methods_table`
       6. `2026_02_25_105243_alter_payments_payment_transactions_table`
     - Runs migrations automatically (`runsMigrations()`).
-    - Declares runtime plugin dependency on `accounts` (`hasDependencies(['accounts'])`).
+    - Declares an Install Plugins Dependency on `accounts` (`hasDependencies(['accounts'])`).
     - Registers root seeder: `Webkul\Payment\Database\Seeders\DatabaseSeeder`.
     - Configures install command: runs dependency installation, migrations, and seeders (`$command->installDependencies()->runsMigrations()->runsSeeders()`).
     - Configures uninstall command: empty closure.
@@ -60,7 +58,7 @@ The `payments` plugin provides the physical database schemas, tokenization model
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Payment\PaymentPlugin` (`plugins/webkul/payments/src/PaymentPlugin.php:9`)
 - **Plugin Identifier**: `'payments'` (`getId(): string`)
@@ -85,7 +83,7 @@ The `payments` plugin provides the physical database schemas, tokenization model
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 - **`accounts`**: Declared via `->hasDependencies(['accounts'])` (`plugins/webkul/payments/src/PaymentServiceProvider.php:28-30`). The `payments` plugin binds its transaction records to `accounts_account_moves`, `accounts_journals`, and `accounts_bank_statements`, and alters `accounts_account_payments` with gateway foreign keys.
 
@@ -222,7 +220,7 @@ A critical architectural distinction exists between the two payment method table
 
 ---
 
-## Filament Resources, Pages, Widgets, and Clusters
+## Filament Components
 [NOT APPLICABLE]
 - **Filament Resources**: None (`plugins/webkul/payments/src/Filament/Resources` does not exist).
 - **Filament Pages**: None (`plugins/webkul/payments/src/Filament/Pages` does not exist).
@@ -234,7 +232,7 @@ A critical architectural distinction exists between the two payment method table
 - **Admin Panel (`admin`)**: `PaymentPlugin` is registered with the `admin` panel builder in `PaymentServiceProvider::packageRegistered()` (`plugins/webkul/payments/src/PaymentServiceProvider.php:43-45`) and configured with auto-discovery paths in `PaymentPlugin::register()` (`plugins/webkul/payments/src/PaymentPlugin.php:28-46`). Because no Filament classes currently exist under `src/Filament/`, no UI items are rendered.
 - **Customer Panel (`customer`)**: Not registered (`when($panel->getId() == 'admin', ...)` excludes the customer panel).
 
-## Services
+## Services and Support Classes
 [NOT APPLICABLE]
 No dedicated service classes are defined under `plugins/webkul/payments/src/Services/`.
 
@@ -250,7 +248,7 @@ No Event Listeners are registered or defined within `plugins/webkul/payments/`.
 [NOT APPLICABLE]
 No Model Observers are registered or defined within `plugins/webkul/payments/`.
 
-## Policies
+## Policies and Authorization
 [NOT APPLICABLE]
 No authorization Policy classes are defined within `plugins/webkul/payments/`.
 
@@ -305,6 +303,16 @@ The tokenization schema operates as follows:
   - `currency_id` / `foreign_currency_id` (`currencies`): Multi-currency exchange rate tracking.
   - `accounts_account_payments.payment_transaction_id`: The high-level payment record.
 
+## Shared Infrastructure Dependencies
+[VERIFIED]
+This section records code-level consumption; the installation-order declaration remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `PaymentServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/payments/src/PaymentServiceProvider.php`).
+- **`accounts`**: Declared Install Plugins Dependency; payment transactions extend the accounts payment/ledger schema through `move_id`, `journal_id`, `statement_id`, and payment foreign keys (`plugins/webkul/payments/database/migrations/`, `plugins/webkul/accounts/src/Models/Payment.php`).
+- **`support`**: Payment tokens and transactions use company and currency records (`plugins/webkul/payments/database/migrations/`).
+- **`security`**: Payment methods, tokens, and transactions record user audit references (`plugins/webkul/payments/database/migrations/`).
+- **`partners`**: Payment tokens and transactions reference the payer/customer partner (`plugins/webkul/payments/database/migrations/`).
+
 ---
 
 ## Cross-Plugin Relationships
@@ -358,7 +366,7 @@ graph TD
     AccountPayment -->|payment_transaction_id| PayTx
     AccountPayment -->|payment_method_id| AcctPaymentMethod
 
-    Sales -.->|runtime dependency| Payments
+    Sales -.->|Install Plugins Dependency| Payments
 ```
 
 ### Upstream Dependencies Consumed
@@ -368,7 +376,7 @@ graph TD
 - **`security`**: Provides user references for audit tracking (`users`).
 
 ### Downstream Dependants
-- **`sales`**: Declares a runtime plugin dependency on `payments` (`plugins/webkul/sales/src/SaleServiceProvider.php:82`).
+- **`sales`**: Declares an Install Plugins Dependency on `payments` (`plugins/webkul/sales/src/SaleServiceProvider.php:82`).
 
 ---
 
@@ -414,7 +422,7 @@ graph TD
    - `payments_payment_methods` and `payments_payment_transactions` were migrated to `creator_id`.
    - `payments_payment_tokens` retains `created_by`.
 5. **No Concrete Payment Gateway Drivers**:
-   - While `sales` declares a runtime dependency on `payments`, there is no operational gateway execution logic; calling online payment checkout without implementing drivers will have no executable provider backend.
+   - While `sales` declares an Install Plugins Dependency on `payments`, there is no operational gateway execution logic; calling online payment checkout without implementing drivers will have no executable provider backend.
 
 ---
 
@@ -432,7 +440,7 @@ graph TD
 | Item / Claim | Source Code Reference | Status |
 |---|---|---|
 | Provider Registration | `bootstrap/providers.php:53` | [VERIFIED] |
-| Plugin Name & Runtime Dependencies | `plugins/webkul/payments/src/PaymentServiceProvider.php:13,28-30` | [VERIFIED] |
+| Plugin Name & Install Plugins Dependency | `plugins/webkul/payments/src/PaymentServiceProvider.php:13,28-30` | [VERIFIED] |
 | Migrations List | `plugins/webkul/payments/src/PaymentServiceProvider.php:20-25` | [VERIFIED] |
 | Filament Plugin Discovery Config | `plugins/webkul/payments/src/PaymentPlugin.php:9-47` | [VERIFIED] |
 | `payments_payment_methods` Schema | `plugins/webkul/payments/database/migrations/2025_02_10_131418_create_payments_payment_methods_table.php:14-28`<br>`plugins/webkul/payments/database/migrations/2025_08_08_105243_alter_payments_payment_methods_table.php:11-20` | [VERIFIED] |

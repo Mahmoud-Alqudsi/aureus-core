@@ -350,7 +350,7 @@ All quantity equality checks evaluate through `float_is_zero($qty, precisionRoun
 
 ### Dependency Analysis
 1. **`inventories` $\to$ `products` (Core Master Dependency)**:
-   - `inventories` declares runtime dependency on `products` (`hasDependencies(['products'])`).
+   - `inventories` declares an Install Plugins Dependency on `products` (`hasDependencies(['products'])`).
    - Gated behavior: Only products with `type = ProductType::GOODS` and `is_storable = true` generate stock moves or quant records.
 2. **`sales` $\to$ `inventories` (Fulfillment)**:
    - `sales` listens to `OperationDone` via `ComputeSaleOrderListener`. When delivery validation completes, `qty_delivered` is updated on sales order lines.

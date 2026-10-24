@@ -8,6 +8,16 @@ confidence: high
 
 # Aureus ERP — Plugin Registry
 
+## Documentation Ownership Boundary
+[VERIFIED]
+
+This document owns the cross-plugin registry contract: provider registration, package core state, installed state, Install Plugins Dependency semantics, installation ordering, and the distinction between Composer requirements, the Install Plugins Dependency, and code-level consumption.
+
+- Each plugin document owns its verified provider facts, core/optional classification, declared `hasDependencies()` names, panel participation, and the plugin-specific reason for each dependency.
+- [`docs/ai/plugin-rules.md`](../ai/plugin-rules.md) owns prescriptive rules for creating or modifying plugins; this document owns the descriptive registry and lifecycle model.
+- [`docs/plugins/README.md`](../plugins/README.md) is the navigation index and summary table, not an independent authority over provider behavior.
+- Source providers, `bootstrap/providers.php`, `Package`, and the installation command remain authoritative when a registry table or plugin document disagrees with executable behavior.
+
 ## Registration model
 
 The repository contains 28 directories immediately below `plugins/webkul/`, and `bootstrap/providers.php` explicitly imports and returns a corresponding provider for each one. Providers are registered whether their package is core or optional; core/installed checks occur later in the package and Filament-plugin lifecycle.
@@ -15,7 +25,7 @@ The repository contains 28 directories immediately below `plugins/webkul/`, and 
 [VERIFIED]
 Evidence: `plugins/webkul/`; `bootstrap/providers.php`; `plugins/webkul/plugin-manager/src/PackageServiceProvider.php`
 
-Each provider configures a `Webkul\PluginManager\Package`. `Package::isCore()` sets the core flag. `Package::hasDependencies()` records runtime plugin names. The base provider gates routes and console-time migration loading on core status or `Package::isInstalled()`, while many optional local Filament plugins independently return early unless `Package::isPluginInstalled($this->getId())` is true.
+Each provider configures a `Webkul\PluginManager\Package`. `Package::isCore()` sets the core flag. `Package::hasDependencies()` records the Install Plugins Dependency names. The base provider gates routes and console-time migration loading on core status or `Package::isInstalled()`, while many optional local Filament plugins independently return early unless `Package::isPluginInstalled($this->getId())` is true.
 
 [VERIFIED]
 Evidence: `plugins/webkul/plugin-manager/src/Package.php`; `plugins/webkul/plugin-manager/src/PackageServiceProvider.php`; `plugins/webkul/accounts/src/AccountPlugin.php` → `AccountPlugin::register()`
@@ -28,7 +38,7 @@ Evidence: `plugins/webkul/plugin-manager/src/Package.php`; `plugins/webkul/plugi
 | Laravel provider registration | `bootstrap/providers.php` | Explicit application registration of all local plugin service providers. Plugin Composer files also declare provider metadata. |
 | Installed state | `Package::isPluginInstalled()` | Reads the `plugins` table's `is_installed` state; unavailable database/schema produces `false`. |
 | Core state | `Package::isCore()` | Allows core packages through the base provider's route/migration gates without the installed-state check. |
-| Runtime plugin dependencies and install order | `Package::hasDependencies()` and `InstallCommand` | The install command may install named dependencies first and persists dependency rows; it is not Composer resolution. |
+| Install Plugins Dependency and install order | `Package::hasDependencies()` and `InstallCommand` | The install command may install named dependencies first and persists dependency rows; it is not Composer resolution. |
 | Filament contribution | `Panel::configureUsing()` plus local `*Plugin.php::register()` | Adds Filament plugin instances; each class determines its panel-specific discovery/configuration and may enforce installed-state checks. |
 
 [VERIFIED]
@@ -36,9 +46,9 @@ Evidence: `composer.json` → `extra.merge-plugin`; `bootstrap/providers.php`; `
 
 ## Verified registry
 
-All entries below are registered in `bootstrap/providers.php`. “Runtime dependencies” lists only names passed to `hasDependencies()`; an em dash means no call was found in that provider. This table does not claim the plugin is installed in any particular database.
+All entries below are registered in `bootstrap/providers.php`. “Install Plugins Dependency” lists only names passed to `hasDependencies()`; an em dash means no call was found in that provider. This table does not claim the plugin is installed in any particular database.
 
-| Plugin | Provider | Core state | Runtime dependencies |
+| Plugin | Provider | Core state | Install Plugins Dependency |
 | --- | --- | --- | --- |
 | `accounting` | `Webkul\Accounting\AccountingServiceProvider` | Optional | `accounts` |
 | `accounts` | `Webkul\Account\AccountServiceProvider` | Optional | `products` |

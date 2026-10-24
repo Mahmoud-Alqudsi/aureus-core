@@ -152,7 +152,7 @@ Filament architecture across Aureus ERP is governed by the comprehensive analysi
 
 ---
 
-## 5. Code-Level Consumption vs. Runtime Dependencies
+## 5. Code-Level Consumption vs. Install Plugins Dependency
 
 Cross-reference: See Section 3 of `docs/ai/architecture-rules.md`.
 
@@ -160,5 +160,5 @@ Cross-reference: See Section 3 of `docs/ai/architecture-rules.md`.
 - Merely adding a PHP `use Webkul\<Plugin>\Models\<Model>;` statement in code is **code-level consumption**.
 - Code-level consumption does NOT guarantee that the target plugin is installed in the database, that its migrations have run, or that its settings exist.
 - When an optional plugin consumes another optional plugin:
-  - The calling plugin MUST declare the runtime installation dependency via `$package->hasDependencies(['target-plugin'])`, OR
+  - The calling plugin MUST declare the Install Plugins Dependency via `$package->hasDependencies(['target-plugin'])`, OR
   - The calling code MUST verify runtime availability via `Package::isPluginInstalled('target-plugin')` before executing operations.

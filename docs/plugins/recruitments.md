@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/recruitments
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:57` as `Webkul\Recruitment\RecruitmentServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `RecruitmentServiceProvider` registers package migrations, seeders, views, and translations, but Filament admin panel resources, clusters, pages, and widgets are discovered and registered only when `Package::isPluginInstalled('recruitments')` returns true (`plugins/webkul/recruitments/src/RecruitmentPlugin.php:23-47`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without calling `$package->isCore()` (`plugins/webkul/recruitments/src/RecruitmentServiceProvider.php:20-58`). Execution and Filament UI registration are gated by runtime installation verification via `Package::isPluginInstalled('recruitments')` (`plugins/webkul/recruitments/src/RecruitmentPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `RecruitmentServiceProvider` registers package migrations, seeders, views, and translations, but Filament admin panel resources, clusters, pages, and widgets are discovered and registered only when `Package::isPluginInstalled('recruitments')` returns true (`plugins/webkul/recruitments/src/RecruitmentPlugin.php:23-47`).
 
 ## Purpose
 [VERIFIED]
@@ -90,7 +88,7 @@ The `recruitments` module provides complete applicant tracking (ATS), recruitmen
       12. `2025_01_14_080159_add_is_default_column_stages_table`
       13. `2025_01_14_143102_add_columns_to_employees_job_positions_table`
       14. `2025_01_16_081327_create_recruitments_job_position_interviewers_table`
-    - Registers runtime plugin dependencies: `employees` (`hasDependencies(['employees'])`).
+    - Registers an Install Plugins Dependency: `employees` (`hasDependencies(['employees'])`).
     - Registers database seeder: `Webkul\Recruitment\Database\Seeders\DatabaseSeeder` (`hasSeeder(...)`).
     - Configures install command: installs dependencies, runs migrations, and executes seeders (`hasInstallCommand(...)`).
     - Configures uninstall command: purges Chatter audit logs for `[Applicant::class, Candidate::class]` via `ChatterCleanupService::purgeForModels(...)` (`hasUninstallCommand(...)`).
@@ -100,7 +98,7 @@ The `recruitments` module provides complete applicant tracking (ATS), recruitmen
   - `packageBooted()`:
     - Empty implementation (`//`).
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Recruitment\RecruitmentPlugin` (`plugins/webkul/recruitments/src/RecruitmentPlugin.php:9`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -125,9 +123,10 @@ Defined in `plugins/webkul/recruitments/composer.json`:
 - **Autoload-dev PSR-4**:
   - `Webkul\Recruitment\Tests\`: `tests/`
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 - **`employees`**: Declared via `$package->hasDependencies(['employees'])` in `plugins/webkul/recruitments/src/RecruitmentServiceProvider.php:42-44`. Provides the base job positions, departments, employees, skill classifications, and work calendar schedules.
+- No other optional plugin is declared through `Package::hasDependencies([...])`; code-level shared-plugin consumption is recorded separately below.
 
 ## Directory Structure
 [VERIFIED]
@@ -517,7 +516,7 @@ recruitments_job_position_interviewers (Pivot)
 - `DegreeSeeder`: Seeds standard degree levels (*Graduate*, *Master*, *Bachelor*, *Doctoral Degree*).
 - `ApplicantCategorySeeder`: Seeds initial color tags (*Sales* `#FF0000`, *Manager* `#00FF00`, *IT* `#0000FF`, *Reserve* `#FFFF00`).
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### Navigation & Clusters
@@ -591,7 +590,7 @@ recruitments_job_position_interviewers (Pivot)
 - **`admin`**: Full recruitment suite registered (Applications cluster, Configurations cluster, Recruitments dashboard page, widgets).
 - **`customer`**: No recruitment resources or pages registered.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 - **`Webkul\Support\Services\EmailService`**: Consumed to dispatch asynchronous-styled transactional emails (`ApplicantRefuseMail`, `ApplicationConfirmMail`, `InterviewerAssignedMail`) using blade views and dynamic payloads.
 - **`Webkul\Chatter\Services\ChatterCleanupService`**: Consumed in `RecruitmentServiceProvider::hasUninstallCommand()` to purge audit trail records for `Applicant` and `Candidate` models on module uninstallation.
@@ -603,7 +602,7 @@ recruitments_job_position_interviewers (Pivot)
   - `ApplicationConfirmMail` (`Webkul\Recruitment\Mail\ApplicationConfirmMail`): Sent to candidate upon application receipt (`recruitments::mails.application-confirm`).
   - `InterviewerAssignedMail` (`Webkul\Recruitment\Mail\InterviewerAssignedMail`): Sent to newly assigned interview users with record link (`recruitments::mails.interviewer-assigned`).
 
-## Policies & Authorization
+## Policies and Authorization
 [VERIFIED]
 
 Configured in `plugins/webkul/recruitments/config/filament-shield.php`:
@@ -644,6 +643,20 @@ Translation namespace: `recruitments` located at `plugins/webkul/recruitments/re
 ## Tests
 [VERIFIED]
 **ZERO Automated Tests**. The plugin contains no test files (no `plugins/webkul/recruitments/tests/` directory and no feature or unit test files referencing `Webkul\Recruitment`).
+
+## Shared Infrastructure Dependencies
+[VERIFIED]
+
+This section records code-level consumption; the installation-order declaration remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `RecruitmentServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/recruitments/src/RecruitmentServiceProvider.php`).
+- **`employees`**: Supplies job positions, departments, employees, skill classifications, and work-calendar schedules; it is also the declared Install Plugins Dependency (`plugins/webkul/recruitments/src/RecruitmentServiceProvider.php`, `plugins/webkul/recruitments/src/Models/`).
+- **`partners`**: Candidate records reference partner master data (`plugins/webkul/recruitments/src/Models/Candidate.php`).
+- **`support`**: Candidate and applicant records use company scope, shared email services, navigation, and support relationship infrastructure (`plugins/webkul/recruitments/src/Models/`, `plugins/webkul/recruitments/src/Filament/`).
+- **`security`**: Applicants use authenticated users for recruiter/interviewer assignments and policy authorization (`plugins/webkul/recruitments/src/Models/`, `plugins/webkul/recruitments/src/Filament/`, `plugins/webkul/recruitments/config/filament-shield.php`).
+- **`chatter`**: Candidate and applicant records expose shared chatter activity and audit logging (`plugins/webkul/recruitments/src/Models/`, `plugins/webkul/recruitments/src/Filament/`, `plugins/webkul/recruitments/src/RecruitmentServiceProvider.php`).
+- **`fields`**: Candidate and applicant resources/models consume dynamic custom fields (`plugins/webkul/recruitments/src/Models/`, `plugins/webkul/recruitments/src/Filament/`).
+- **`table-views`**: Candidate and applicant list pages use preset table views (`plugins/webkul/recruitments/src/Filament/`).
 
 ## Cross-Plugin Relationships
 [VERIFIED]
@@ -712,7 +725,7 @@ graph TD
 7. **`table-views`**:
    - `ListApplicants` integrates `HasTableViews` with 10 pre-configured favorite filters.
 
-## Data Flow & Workflows
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid

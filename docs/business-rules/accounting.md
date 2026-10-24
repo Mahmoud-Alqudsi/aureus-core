@@ -468,10 +468,10 @@ When `tax_calculation_rounding_method` is configured:
 ```
 
 ### Dependency Classification
-1. **Runtime Plugin Dependency (`Package::hasDependencies`)**:
-   - `accounts` declares runtime dependency on `products` (`AccountServiceProvider::configureCustomPackage`). Required for tax association tables (`accounts_product_taxes`), category account resolution, and `ProductUsageRegistry`.
-   - `accounting` declares runtime dependency on `accounts` (`AccountingServiceProvider::configureCustomPackage`). Required for reporting and navigation.
-   - `payments` declares runtime dependency on `accounts`.
+1. **Install Plugins Dependency (`Package::hasDependencies`)**:
+   - `accounts` declares an Install Plugins Dependency on `products` (`AccountServiceProvider::configureCustomPackage`). Required for tax association tables (`accounts_product_taxes`), category account resolution, and `ProductUsageRegistry`.
+   - `accounting` declares an Install Plugins Dependency on `accounts` (`AccountingServiceProvider::configureCustomPackage`). Required for reporting and navigation.
+   - `payments` declares an Install Plugins Dependency on `accounts`.
 2. **Code-Level Dependency**:
    - `accounts` directly consumes models and traits from `support` (`Company`, `Currency`, `CurrencyRate`, `Sequence`, `BelongsToCompany`).
    - `accounts` dynamically injects relationships into `Partner` (`partners_partner_company_properties`) and `Product` (`products_product_company_accounts`) via `resolveRelationUsing` during `packageBooted()`.

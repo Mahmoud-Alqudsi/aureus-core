@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered explicitly in `bootstrap/providers.php:39` as `Webkul\Accounting\AccountingServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `AccountingPlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/accounting/src/AccountingPlugin.php:23-25`). When uninstalled, the entire accounting navigation cluster, reporting suite, journal chart dashboard widgets, and settings screens remain dormant without registering UI components.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular business domain presentation and reporting plugin without calling `$package->isCore()` (`plugins/webkul/accounting/src/AccountingServiceProvider.php:22-35`). Execution, Filament resource auto-discovery, cluster mounting, and page registration are gated by runtime installation verification via `Package::isPluginInstalled('accounting')` (`plugins/webkul/accounting/src/AccountingPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `AccountingPlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/accounting/src/AccountingPlugin.php:23-25`). When uninstalled, the entire accounting navigation cluster, reporting suite, journal chart dashboard widgets, and settings screens remain dormant without registering UI components.
 
 ## Purpose
 [VERIFIED]
@@ -66,7 +64,7 @@ The `accounting` module serves as the primary visual user interface, financial r
     - Sets view namespace to `accounting` (`$viewNamespace = 'accounting'`).
     - Registers view namespace (`hasViews()`).
     - Registers translation namespace (`hasTranslations()`).
-    - Declares runtime plugin dependency on `accounts` (`hasDependencies(['accounts'])`).
+    - Declares an Install Plugins Dependency on `accounts` (`hasDependencies(['accounts'])`).
     - Configures plugin icon: `accounting`.
     - Configures install command: runs dependency installation (`$command->installDependencies()`).
     - Configures uninstall command: empty closure.
@@ -80,7 +78,7 @@ The `accounting` module serves as the primary visual user interface, financial r
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Accounting\AccountingPlugin` (`plugins/webkul/accounting/src/AccountingPlugin.php:9`)
 - **Plugin Identifier**: `'accounting'` (`getId(): string`)
@@ -106,7 +104,7 @@ The `accounting` module serves as the primary visual user interface, financial r
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 - **`accounts`**: Declared in `AccountingServiceProvider::configureCustomPackage()` via `->hasDependencies(['accounts'])` (`plugins/webkul/accounting/src/AccountingServiceProvider.php:27-29`). The `accounting` plugin cannot function without `accounts`, as it owns no physical tables and derives its entire data model, calculations, transactions, and settings from `accounts`.
 
@@ -311,7 +309,7 @@ For comprehensive database schema diagrams, column definitions, foreign keys, in
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 The `accounting` plugin defines 5 clusters, 1 overview dashboard page, 2 dashboard widgets, 7 financial report pages with 7 Excel exporters and 7 PDF templates, 20+ cluster-routed resources, and 4 settings pages:
 
@@ -412,7 +410,7 @@ Registers on the **`admin`** panel only (`plugins/webkul/accounting/src/Accounti
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 The `accounting` module defines 1 support service class:
 
@@ -442,7 +440,7 @@ The `accounting` plugin defines **zero model observers**.
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The `accounting` module registers 22 authorization policies under `plugins/webkul/accounting/src/Policies/`. Each policy enforces granular Filament Shield permissions prefixed with `..._accounting_...`:
 
@@ -519,9 +517,17 @@ The `accounting` module registers the translation namespace `accounting` (`resou
 
 ---
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-- **`accounts`**: Required runtime dependency. Provides all database tables, Eloquent models, calculation managers (`TaxManager`, `AccountManager`), workflow engines (`MoveWorkflow`), and base Filament schemas.
+This section records code-level consumption; the installation-order declaration remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `AccountingServiceProvider` extends `PackageServiceProvider` (`plugins/webkul/accounting/src/AccountingServiceProvider.php`).
+- **`accounts`**: Declared Install Plugins Dependency. Provides all database tables, Eloquent models, calculation managers (`TaxManager`, `AccountManager`), workflow engines (`MoveWorkflow`), and base Filament schemas (`plugins/webkul/accounting/src/`).
+- **`products`**: Accounting reports and resources resolve product/category records and product accounting configuration (`plugins/webkul/accounting/src/Filament/`).
+- **`partners`**: Partner and bank-account relations support subledgers and aged-balance reports (`plugins/webkul/accounting/src/Models/`, `plugins/webkul/accounting/src/Filament/`).
+- **`support`**: `CompanyContext`, `Company`, `Currency`, and navigation infrastructure support tenant resolution and reporting (`plugins/webkul/accounting/src/`).
+- **`security`**: User references and Shield/Bouncer policy integration authorize accounting resources (`plugins/webkul/accounting/config/filament-shield.php`, `plugins/webkul/accounting/src/Policies/`).
+- **`chatter`**: Accounting category activity uses `HasChatter` and the shared activity/audit infrastructure (`plugins/webkul/accounting/src/Models/Category.php`).
 
 ---
 
@@ -536,7 +542,7 @@ The `accounting` module registers the translation namespace `accounting` (`resou
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid

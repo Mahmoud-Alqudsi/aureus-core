@@ -16,6 +16,15 @@ This document details how Aureus ERP restricts data visibility based on user own
 
 Unlike `CompanyScope` which filters data based on the business entity (tenant), `OwnershipScope` filters data based on the user's position within the organizational hierarchy (e.g., individual, team, or global).
 
+## Canonical Ownership Boundary
+[VERIFIED]
+
+This document owns the cross-plugin ownership-scope contract: `HasOwnershipScope`, `OwnershipScope`, `OwnerSource` resolution kinds, supported ownership paths, and their documented bypass conditions.
+
+- The `security` plugin document owns the implementation and registration inventory for these classes and the surrounding identity/RBAC system: [`docs/plugins/security.md`](../plugins/security.md).
+- Consumer plugin documents retain the actual `ownershipSources()` configuration, policy mapping, and model-specific enforcement path. They must not copy the complete `OwnerSource` algorithm into every plugin document.
+- Company-based filtering is a separate contract owned by [`docs/security/multi-company.md`](multi-company.md) and implemented by [`docs/plugins/support.md`](../plugins/support.md).
+
 ## HasOwnershipScope Trait
 [VERIFIED]
 Models opt into ownership filtering by applying the `Webkul\Security\Traits\HasOwnershipScope` trait.

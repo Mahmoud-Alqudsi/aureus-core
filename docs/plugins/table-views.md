@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:67` as `Webkul\TableViews\TableViewsServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when registering views, migrations, and assets (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The render hooks and asset registrations execute unconditionally at boot time once registered in `bootstrap/providers.php`.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `TableViewsServiceProvider::configureCustomPackage()` (`plugins/webkul/table-views/src/TableViewsServiceProvider.php:22`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when registering views, migrations, and assets (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The render hooks and asset registrations execute unconditionally at boot time once registered in `bootstrap/providers.php`.
 
 ## Purpose
 [VERIFIED]
@@ -50,12 +48,12 @@ The `table-views` plugin provides a centralized Filament table personalization a
     - Invokes `registerCustomCss()` (`plugins/webkul/table-views/src/TableViewsServiceProvider.php:32-35, 50-55`).
     - Registers compiled stylesheet via `FilamentAsset::register([Css::make('table-views', __DIR__.'/../resources/dist/table-views.css')], 'table-views')`.
 
-## Filament Plugin class
+## Filament Integration
 [NOT APPLICABLE]
 - **Confirmed Exception**: The `table-views` plugin does **not** define a `*Plugin.php` class (e.g. `TableViewsPlugin`).
 - Instead of using a Filament Plugin contract, render hooks and asset registrations are wired directly through Laravel service provider lifecycle methods (`TableViewsServiceProvider::packageRegistered()` and `TableViewsServiceProvider::packageBooted()`). This architecture allows table view tabs to automatically attach to any Filament panel (`admin` or `customer`) and any page consuming the `HasTableViews` concern without explicit panel-level plugin registration.
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/table-views/composer.json`
   - Name: `webkul/table-views`
@@ -69,11 +67,11 @@ The `table-views` plugin provides a centralized Filament table personalization a
 - **Frontend Dependencies (`package.json`)**:
   - `tailwindcss` (`^3.4.15`), `postcss` (`^8.4.49`), `autoprefixer` (`^10.4.20`).
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `TableViewsServiceProvider::configureCustomPackage()` does not declare any runtime plugin dependencies via `hasDependencies()`.
+None (`—`). `TableViewsServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/table-views/`:
 
@@ -216,7 +214,7 @@ plugins/webkul/table-views/
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 
 ### Resources
@@ -298,7 +296,7 @@ plugins/webkul/table-views/
 [VERIFIED]
 - **Universal Panel Participation**: `table-views` does not bind to specific panel IDs. Because render hooks are registered globally via `FilamentView::registerRenderHook()`, table views seamlessly execute in both **`admin`** and **`customer`** panels (`app/Providers/Filament/AdminPanelProvider.php`, `app/Providers/Filament/CustomerPanelProvider.php`) on any page incorporating the `HasTableViews` trait.
 
-## Services (Render Hook Mechanism & View State Management)
+## Services and Support Classes
 [VERIFIED]
 
 ### Render Hook Architecture
@@ -360,7 +358,7 @@ No Laravel event listeners are defined in `table-views`.
 [NOT APPLICABLE]
 No Eloquent model observers are defined in `table-views`.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 
 ### 1. `Webkul\TableViews\Policies\TableViewPolicy`
@@ -403,11 +401,14 @@ No plugin-specific settings schema exists under `database/settings/`.
 - **Repository Integration Test Coverage**: Only 1 test in the entire repository references table-view methods:
   - `plugins/webkul/inventories/tests/Feature/Filament/QuantityResourceTest.php:82-97` asserts that `ManageQuantities::getPresetTableViews()` returns expected preset keys (`internal_locations`, `transit_locations`, `on_hand`, `to_count`, `to_apply`).
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-None (`—`).
+This section records code-level consumption; any declared Install Plugins Dependency remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
 
-## Cross-plugin relationships
+- **`plugin-manager`**: `TableViewsServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/table-views/src/TableViewsServiceProvider.php`).
+- **`security`**: `TableView` and `TableViewFavorite` relate saved views to `Webkul\Security\Models\User` through `user_id` (`plugins/webkul/table-views/src/Models/TableView.php`, `plugins/webkul/table-views/src/Models/TableViewFavorite.php`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 
 The `table-views` plugin is consumed across **18 distinct domain plugins** in Aureus ERP. It powers list filtering across core and optional business modules:
@@ -463,7 +464,7 @@ At the time of verification, 18 plugins consume `HasTableViews` across their adm
 ### Non-Consuming Plugins
 The following 10 plugins do not consume `HasTableViews`: `analytics` (dashboard widgets), `chatter` (collaboration panel), `fields` (custom fields schema), `full-calendar` (calendar views), `plugin-manager` (console management), `security` (user/role tables use standard Filament views), `barcode` (scanner overlay), `contacts` (lightweight partner alias), `payments` (backend payment drivers).
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### Saved View Creation & Persistence Flow
@@ -513,7 +514,7 @@ sequenceDiagram
     Table-->>User: Renders Filtered Table Records
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Polymorphic Model Target Binding**:
    - `filterable_type` stores the fully qualified class name of the target page (e.g. `Webkul\Partner\Filament\Resources\PartnerResource\Pages\ListPartners`).
@@ -534,7 +535,7 @@ sequenceDiagram
 6. **Livewire Filter Serialization**:
    - Saved views snapshot six distinct table state properties: `tableFilters`, `tableGrouping`, `tableSearch`, `tableColumnSearches`, `tableSort`, and `tableRecordsPerPage`.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 1. **Adopting Table Views in Custom Pages**:
    - Any Filament `ListRecords` or `ManageRelatedRecords` page can enable table view personalization by adding `use HasTableViews;`.
@@ -545,7 +546,7 @@ sequenceDiagram
 4. **Customizing Views Dropdown Dimensions**:
    - Page classes can customize the dropdown popup dimensions via `setTableViewsFormMaxHeight('600px')` and `setTableViewsFormWidth(Width::Medium)`.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 1. **Zero Automated Test Coverage**:
    - **Critical Fact**: `plugins/webkul/table-views/` contains **0 test files**. No unit tests or feature tests exist for `HasTableViews`, `CreateViewAction`, `EditViewAction`, `PresetView`, `SavedView`, or filter serialization/deserialization.
@@ -564,7 +565,7 @@ sequenceDiagram
    - Filter state is stored as a raw associative array snapshot of Livewire component properties (`tableFilters`, `tableColumnSearches`, `tableSort`).
    - If a domain resource removes, renames, or modifies a table filter component, restoring legacy saved views may cause unexpected Livewire errors or corrupt table query state.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 - **Architectural Scope**: **High UI Impact / Medium Database Layer**.
 - **Blast Radius**: Affects **18 domain plugins** and dozens of `ListRecords` / `ManageRelatedRecords` pages across the entire ERP platform.
@@ -573,7 +574,7 @@ sequenceDiagram
 
 ---
 
-## Evidence Index
+## Evidence
 
 | Evidence ID | Source File | Symbol / Method | Purpose / Claim Verified |
 |---|---|---|---|

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/time-off
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:62` as `Webkul\TimeOff\TimeOffServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `TimeOffServiceProvider` registers package migrations, translations, seeders, and Chatter cleanup handlers. Filament admin panel resources, clusters, pages, and widgets are discovered and registered only when `Package::isPluginInstalled('time-off')` returns true (`plugins/webkul/time-off/src/TimeOffPlugin.php:24-47`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without calling `$package->isCore()` (`plugins/webkul/time-off/src/TimeOffServiceProvider.php:20-52`). Execution and Filament UI component discovery are gated by runtime installation checks via `Package::isPluginInstalled('time-off')` (`plugins/webkul/time-off/src/TimeOffPlugin.php:24`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `TimeOffServiceProvider` registers package migrations, translations, seeders, and Chatter cleanup handlers. Filament admin panel resources, clusters, pages, and widgets are discovered and registered only when `Package::isPluginInstalled('time-off')` returns true (`plugins/webkul/time-off/src/TimeOffPlugin.php:24-47`).
 
 ## Purpose
 [VERIFIED]
@@ -76,7 +74,7 @@ The `time-off` module provides comprehensive employee leave and absence lifecycl
       7. `2025_01_22_101656_create_time_off_leave_allocations_table`
       8. `2025_08_13_120000_alter_private_name_column_in_time_off_leaves_table`
       9. `2026_07_22_120000_add_company_id_to_time_off_leave_allocations_table`
-    - Registers runtime plugin dependencies: `employees` (`hasDependencies(['employees'])`).
+    - Registers an Install Plugins Dependency: `employees` (`hasDependencies(['employees'])`).
     - Registers database seeder: `Webkul\TimeOff\Database\Seeders\DatabaseSeeder` (`hasSeeder(...)`).
     - Configures install command: installs dependencies, runs migrations, and executes seeders (`hasInstallCommand(...)`).
     - Configures uninstall command: purges Chatter audit trail for `[Leave::class, LeaveAllocation::class]` via `ChatterCleanupService::purgeForModels(...)` (`hasUninstallCommand(...)`).
@@ -84,7 +82,7 @@ The `time-off` module provides comprehensive employee leave and absence lifecycl
   - `packageRegistered()`:
     - Registers `TimeOffPlugin::make()` with the Filament Panel builder via `Panel::configureUsing()`.
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\TimeOff\TimeOffPlugin` (`plugins/webkul/time-off/src/TimeOffPlugin.php:10`)
 - **Plugin ID**: `time-off` (`getId(): string`)
@@ -110,10 +108,10 @@ From `plugins/webkul/time-off/composer.json`:
   - PSR-4: `Webkul\TimeOff\Tests\` → `tests/`
 - **Dependencies**: No external package dependencies declared in local `composer.json`.
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-- **Declared in Service Provider**: `employees` (`hasDependencies(['employees'])` in `plugins/webkul/time-off/src/TimeOffServiceProvider.php:35-37`).
-- **Core Dependencies (Inherent)**: `security` (`User`), `support` (`Company`, `Calendar`, `CalendarLeave`, `ActivityType`, `CompanyScope`), `chatter` (`HasChatter`, `HasLogActivity`), `fields` (`HasCustomFields`), `full-calendar` (`FullCalendarPlugin`, `FullCalendarWidget`).
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`):** `employees` (`hasDependencies(['employees'])` in `plugins/webkul/time-off/src/TimeOffServiceProvider.php:35-37`).
+- Other code-level plugin consumption is recorded separately in [`Shared Infrastructure Dependencies`](#shared-infrastructure-dependencies).
 
 ## Directory Structure
 [VERIFIED]
@@ -422,7 +420,7 @@ plugins/webkul/time-off/
 - `LeaveAllocationFactory`: Generates `LeaveAllocation` instances with states (`accrual()`, `validated()`, `withDepartment()`).
 - `LeaveTypeFactory`, `LeaveAccrualPlanFactory`, `LeaveAccrualLevelFactory`, `LeaveMandatoryDayFactory`, `UserLeaveTypeFactory`.
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### Clusters (`Webkul\TimeOff\Filament\Clusters`)
@@ -475,7 +473,7 @@ plugins/webkul/time-off/
 - **Admin Panel (`admin`)**: All resources, clusters, pages, and widgets are discovered and registered exclusively on the `admin` panel (`plugins/webkul/time-off/src/TimeOffPlugin.php:29-47`).
 - **Customer Panel (`customer`)**: `[NOT APPLICABLE]`. `time-off` does not register any resources, clusters, pages, or routes on the customer portal panel.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 `[NOT APPLICABLE]`. The module does not declare standalone dedicated service container classes; business logic for day calculations, collision detection, and allocation verification is encapsulated inside traits (`TimeOffHelper`, `LeaveAccrualPlan`) and model lifecycle hooks.
 
@@ -491,7 +489,7 @@ plugins/webkul/time-off/
 [VERIFIED]
 `[NOT APPLICABLE]`. No dedicated Eloquent Observer classes exist. Default model attributes (`creator_id`, `company_id`, `employee_company_id`) are populated via Eloquent `boot()` model events (`Leave::boot()`, `LeaveAllocation::boot()`, `LeaveAccrualPlan::boot()`, `LeaveAccrualLevel::boot()`, `LeaveMandatoryDay::boot()`, `LeaveType::boot()`).
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 All policies reside under `plugins/webkul/time-off/src/Policies/` and integrate with `Webkul\Security\Bouncer` and `filament-shield`:
 
@@ -534,8 +532,9 @@ No dedicated automated test files were found for this Plugin.
 - `plugins/webkul/time-off/composer.json` declares a development PSR-4 namespace `"Webkul\\TimeOff\\Tests\\": "tests/"`, but the `plugins/webkul/time-off/tests/` directory does not exist on disk.
 - Root test directories (`tests/Feature/`, `tests/Unit/`) contain zero tests covering `time-off` models, traits, or Filament workflows.
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
+- **`plugin-manager`**: `TimeOffServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/time-off/src/TimeOffServiceProvider.php`).
 - **`employees`**: Required for employee identity resolution, supervisor hierarchy (`manager_id`, `first_approver_id`, `second_approver_id`), and department linkage.
 - **`support`**: Provides multi-company context (`BelongsToCompany`, `CompanyScope`, `current_company_id()`), `Company`, `Calendar` (working schedules), `CalendarLeave` (public holidays), and `ActivityType`.
 - **`security`**: Provides `User` master and policy authorization (`HasScopedPermissions`).
@@ -583,7 +582,7 @@ graph TD
     Leave -->|Rendered in| FullCalendar
 ```
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### 1. Leave Request Submission & Allocation Validation
@@ -706,7 +705,7 @@ Suppose an organization defines a *Standard Vacation Plan*:
 
 ## Evidence
 [VERIFIED]
-- `plugins/webkul/time-off/src/TimeOffServiceProvider.php:14-61`: Provider definition, migrations list, runtime dependency on `employees`, Chatter purge hooks.
+- `plugins/webkul/time-off/src/TimeOffServiceProvider.php:14-61`: Provider definition, migrations list, Install Plugins Dependency on `employees`, Chatter purge hooks.
 - `plugins/webkul/time-off/src/TimeOffPlugin.php:10-61`: Plugin registration, admin-only panel gating, FullCalendar integration.
 - `plugins/webkul/time-off/src/Traits/TimeOffHelper.php:27-463`: Business days calculation, overlap detection, and balance validation rules.
 - `plugins/webkul/time-off/src/Traits/LeaveAccrualPlan.php:42-438`: Accrual plan and milestone form/table/infolist definitions.

@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:57` as `Webkul\Sale\SaleServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `SalePlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/sales/src/SalePlugin.php:23-28`). When uninstalled, all Sales navigation groups, clusters, API endpoints, and configuration screens remain dormant without registering UI components.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular customer quotation, sales order fulfillment, delivery tracking, and commercial billing plugin extending the core architecture without calling `$package->isCore()` (`plugins/webkul/sales/src/SaleServiceProvider.php:33-99`). Execution, Filament resource auto-discovery, cluster mounting, and page registration are gated by runtime installation verification via `Package::isPluginInstalled('sales')` (`plugins/webkul/sales/src/SalePlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `SalePlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/sales/src/SalePlugin.php:23-28`). When uninstalled, all Sales navigation groups, clusters, API endpoints, and configuration screens remain dormant without registering UI components.
 
 ## Purpose
 [VERIFIED]
@@ -78,7 +76,7 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
     - Runs migrations automatically (`runsMigrations()`).
     - Registers 4 settings migrations (`hasSettings([...])`): `sales_product_settings`, `sales_price_settings`, `sales_invoice_settings`, and `sales_quotation_and_order_settings`.
     - Runs settings migrations automatically (`runsSettings()`).
-    - Declares runtime plugin dependencies on `invoices` and `payments` (`hasDependencies(['invoices', 'payments'])`).
+    - Declares an Install Plugins Dependency on `invoices` and `payments` (`hasDependencies(['invoices', 'payments'])`).
     - Registers database seeder: `Webkul\Sale\Database\Seeders\DatabaseSeeder::class`.
     - Configures install command: runs dependency installation, migrations, and seeders (`$command->installDependencies()->runsMigrations()->runsSeeders()`).
     - Configures uninstall command: purges chatter audit logs for `Order` and `Team` models via `ChatterCleanupService::purgeForModels([Order::class, Team::class])`, and purges sequence codes via `SequenceService::purge(['sales.order'])`.
@@ -97,7 +95,7 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Sale\SalePlugin` (`plugins/webkul/sales/src/SalePlugin.php:9`)
 - **Plugin Identifier**: `'sales'` (`getId(): string`)
@@ -123,11 +121,11 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 Declared in `SaleServiceProvider::configureCustomPackage()` via `hasDependencies(['invoices', 'payments'])`:
-1. **`invoices`**: Required runtime dependency. Provides customer invoice presentation (`Invoice`), invoice lines (`InvoiceLine`), invoice policies (`InvoicePolicy`), and billing lifecycle synchronization.
-2. **`payments`**: Required runtime dependency. Provides electronic payment processing schemas, payment tokenization, and gateway transaction linking for settled invoices.
+1. **`invoices`**: Declared Install Plugins Dependency. Provides customer invoice presentation (`Invoice`), invoice lines (`InvoiceLine`), invoice policies (`InvoicePolicy`), and billing lifecycle synchronization.
+2. **`payments`**: Declared Install Plugins Dependency. Provides electronic payment processing schemas, payment tokenization, and gateway transaction linking for settled invoices.
 
 ---
 
@@ -434,7 +432,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### Admin Panel Clusters
@@ -476,7 +474,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 
 1. **`SaleManager` (`Webkul\Sale\SaleManager`)**:
@@ -542,7 +540,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The plugin implements 19 authorization policies under `plugins/webkul/sales/src/Policies`:
 1. `OrderPolicy`
@@ -650,7 +648,22 @@ Covers app strings, models (`order`, `team`), enums (`order-state`, `invoice-sta
 
 ---
 
-## Runtime Dependencies & Cross-Plugin Relationships
+## Shared Infrastructure Dependencies
+[VERIFIED]
+
+This section records code-level consumption; the installation-order declarations remain owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `SaleServiceProvider` extends `PackageServiceProvider` (`plugins/webkul/sales/src/SaleServiceProvider.php`).
+- **`invoices`** and **`payments`**: Declared Install Plugins Dependency entries; sales order invoicing and electronic payment flows use both boundaries (`plugins/webkul/sales/src/SaleServiceProvider.php`, `plugins/webkul/sales/src/Services/`).
+- **`accounts`**: Sales order lines and invoice links use account move and tax models through the invoice integration (`plugins/webkul/sales/src/Models/`, `plugins/webkul/sales/database/migrations/`).
+- **`inventories`**: Confirmation and delivery workflows create or consume procurement groups, operations, and stock moves when inventory is installed (`plugins/webkul/sales/src/Services/`, `plugins/webkul/sales/src/Listeners/`).
+- **`products`**: Order lines, options, and templates resolve products and register usage protection (`plugins/webkul/sales/src/Models/`).
+- **`partners`**: Customer profiles and addresses are referenced by orders (`plugins/webkul/sales/src/Models/`).
+- **`support`**: Sequence generation, UOM, currency, and company isolation are consumed by sales workflows (`plugins/webkul/sales/src/Models/`, `plugins/webkul/sales/src/Services/`).
+- **`security`**: Ownership scope, policies, and authenticated user permissions govern sales records (`plugins/webkul/sales/src/Policies/`, `plugins/webkul/sales/src/Models/`).
+- **`chatter`**, **`fields`**, and **`table-views`**: Orders/resources consume shared audit, custom-field, and list-view infrastructure (`plugins/webkul/sales/src/Models/`, `plugins/webkul/sales/src/Filament/`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 
 ```mermaid
@@ -688,16 +701,15 @@ graph TD
   - `OrderLine`, `OrderOption`, and `OrderTemplateProduct` register with `ProductUsageRegistry` to enforce referential integrity.
 - **`support`**:
   - Number generation uses `SequenceService::next('sales.order')`.
-  - Multi-tenant isolation uses `BelongsToCompany` and `CompanyContext`.
+  - `Order` opts into company isolation through `BelongsToCompany`; the shared context, scope, and consistency contract is owned by [`support.md`](support.md) and [`multi-company.md`](../security/multi-company.md).
 - **`security`**:
-  - Salesperson ownership scoping uses `HasOwnershipScope`.
-  - Permissions evaluated via local `Bouncer`.
+  - Salesperson visibility uses `HasOwnershipScope`, while `OrderPolicy` combines permission abilities with `HasScopedPermissions`; shared ownership and authorization semantics are owned by [`security.md`](security.md), [`authorization.md`](../security/authorization.md), and [`ownership-scopes.md`](../security/ownership-scopes.md).
 - **`chatter`**:
   - `Order` and `Team` use `HasChatter` and `HasLogActivity` for audit feeds.
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid

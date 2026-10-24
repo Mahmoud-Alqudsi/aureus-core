@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:49` as `Webkul\Project\ProjectServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `ProjectServiceProvider` registers package capabilities, migrations, settings, routes, and translations, but Filament admin panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('projects')` returns true (`plugins/webkul/projects/src/ProjectPlugin.php:23-46`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without calling `$package->isCore()` (`plugins/webkul/projects/src/ProjectServiceProvider.php:14-55`). Execution and Filament UI registration are gated by runtime installation verification via `Package::isPluginInstalled('projects')` (`plugins/webkul/projects/src/ProjectPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `ProjectServiceProvider` registers package capabilities, migrations, settings, routes, and translations, but Filament admin panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('projects')` returns true (`plugins/webkul/projects/src/ProjectPlugin.php:23-46`).
 
 ## Purpose
 [VERIFIED]
@@ -92,7 +90,7 @@ The `projects` module provides full-lifecycle project management, task execution
   - `packageBooted()`:
     - Empty implementation (`//`).
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Project\ProjectPlugin` (`plugins/webkul/projects/src/ProjectPlugin.php:9`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -118,7 +116,7 @@ Defined in `plugins/webkul/projects/composer.json`:
   - `Webkul\Project\Tests\`: `tests/`
 - **Laravel Package Discovery**: Registers `Webkul\Project\ProjectServiceProvider`
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 **None (`—`)**. `ProjectServiceProvider` does not invoke `Package::hasDependencies([...])`. It is an independent optional plugin that interacts with foundational Core packages (`support`, `security`, `partner`, `chatter`, `fields`, `analytics`, `table-views`).
 
@@ -362,7 +360,7 @@ plugins/webkul/projects/
   - `task_id` (foreignId nullable → `projects_tasks.id` `nullOnDelete`).
 - **Purpose**: Establishes the physical relational bridge between project work breakdowns and the universal financial analytic ledger (`Webkul\Analytic\Models\Record`).
 
-## Filament UI Architecture
+## Filament Components
 [VERIFIED]
 
 ### Primary Resources
@@ -417,12 +415,12 @@ plugins/webkul/projects/
 - **Admin Panel (`admin`)**: Fully registered with resources, pages, clusters, and widgets.
 - **Customer Panel (`customer`)**: Not registered (verified from `ProjectPlugin::register()` which contains only `$panel->when($panel->getId() == 'admin', ...)`).
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 - **`TaskSettings` / `TimeSettings`**: Spatie Laravel Settings classes providing reactive configuration for feature flags.
 - **`ChatterCleanupService`**: Invoked on plugin uninstall command to purge audit history and activities for `[Project::class, Task::class]`.
 
-## Events, Listeners, Observers
+## Events, Listeners, and Observers
 [VERIFIED]
 - **No standalone Event/Listener/Observer classes**: Lifecycle automation is implemented directly via Eloquent model lifecycle hooks in `boot()` methods:
   - `Project::creating`: Automatically populates `creator_id ??= Auth::id()`.
@@ -431,7 +429,7 @@ plugins/webkul/projects/
   - `Timesheet::created` / `updated` / `deleted`: Automatically invokes `$timesheet->updateTaskTimes()` to recompute task time totals and bubble updates to parent tasks.
   - `ProjectStage::creating` / `TaskStage::creating` / `Milestone::creating` / `Tag::creating`: Automatically stamps `creator_id ??= Auth::id()`.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 All policies reside in `Webkul\Project\Policies` and integrate with Bouncer permissions:
 
@@ -484,14 +482,23 @@ Translation files are organized under `plugins/webkul/projects/resources/lang/` 
 - `Feature/Workflows/CompanyIsolationTest.php` (Cross-company stage and project visibility isolation).
 - `Feature/Workflows/CompanyScopingInvariantsTest.php` (Automated verification of company scoping invariants).
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-**None (`—`)**. Declares zero prerequisite optional plugins in `hasDependencies()`.
+The plugin declares zero prerequisite optional plugins in `hasDependencies()`. This section records code-level consumption:
+
+- **`plugin-manager`**: `ProjectServiceProvider` extends `PackageServiceProvider` (`plugins/webkul/projects/src/ProjectServiceProvider.php`).
+- **`analytics`**: Project migrations add `project_id` and `task_id` to `analytic_records`, and the project `Timesheet` extends the analytic `Record` model (`plugins/webkul/projects/database/migrations/2024_12_18_145142_add_columns_to_analytic_records_table.php`, `plugins/webkul/projects/src/Models/Timesheet.php`).
+- **`support`**: Projects and tasks use company isolation, company context, and activity-plan infrastructure (`plugins/webkul/projects/src/Models/`, `plugins/webkul/projects/src/Services/`).
+- **`security`**: Users, ownership, policies, and invitation access are handled through the security boundary (`plugins/webkul/projects/src/Models/`, `plugins/webkul/projects/src/Policies/`).
+- **`partners`**: Projects and tasks reference client partners (`plugins/webkul/projects/src/Models/Project.php`, `plugins/webkul/projects/src/Models/Task.php`).
+- **`chatter`**: Projects and tasks use shared activity and audit feeds (`plugins/webkul/projects/src/Models/`).
+- **`fields`**: Project, task, stage, milestone, and tag models consume custom fields (`plugins/webkul/projects/src/Models/`, `plugins/webkul/projects/src/Filament/`).
+- **`table-views`**: Project and task list pages use preset table views (`plugins/webkul/projects/src/Filament/`).
 
 ## Cross-Plugin Relationships
 [VERIFIED]
 - **`analytics` [CORE]**: Schema mutation adds `project_id` and `task_id` foreign keys to `analytic_records`. `Webkul\Project\Models\Timesheet` extends `Webkul\Analytic\Models\Record` directly, storing time tracking entries in the unified analytic ledger without creating redundant physical tables.
-- **`timesheets` [OPTIONAL]**: The downstream `timesheets` module subclasses `Webkul\Project\Models\Timesheet` (`Webkul\Timesheet\Models\Timesheet extends BaseTimesheet`) and declares a formal runtime dependency on `projects` (`hasDependencies(['projects'])`).
+- **`timesheets` [OPTIONAL]**: The downstream `timesheets` module subclasses `Webkul\Project\Models\Timesheet` (`Webkul\Timesheet\Models\Timesheet extends BaseTimesheet`) and declares an Install Plugins Dependency on `projects` (`hasDependencies(['projects'])`).
 - **`partners` [CORE]**: Projects and tasks link to client accounts via `partner_id` (`partners_partners`).
 - **`security` [CORE]**: Multi-assignee task distribution maps `users.id` via `projects_task_users`, project favorite pinning maps `users.id` via `projects_user_project_favorites`, and ownership/manager tracking links to `users` (`user_id`, `creator_id`).
 - **`support` [CORE]**: Provides company multi-tenancy (`BelongsToCompany`, `CompanyScope`) and base activity plan workflows (`ActivityPlan`).
@@ -499,7 +506,7 @@ Translation files are organized under `plugins/webkul/projects/resources/lang/` 
 - **`fields` [CORE]**: Dynamic custom fields injected into `Project`, `Task`, `ProjectStage`, `TaskStage`, `Milestone`, and `Tag`.
 - **`table-views` [CORE]**: Custom filter preset tabs on `ListProjects`, `ListTasks`, and `ManageTasks`.
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid
@@ -574,7 +581,7 @@ Modifications to `projects` schema or models directly impact downstream operatio
 - Column drops or renaming on `analytic_records` break cross-module financial and project time accounting.
 - Changes to `TaskState` enum affect status filtering and chart widgets on the Project Dashboard.
 
-## Evidence Index
+## Evidence
 [VERIFIED]
 
 | ID | Evidence File | Symbol / Definition | Supports |
@@ -592,5 +599,5 @@ Modifications to `projects` schema or models directly impact downstream operatio
 | E-PRJ-011 | `plugins/webkul/projects/routes/api.php` | `Route::prefix('admin/api/v1/projects')` | REST API routes for projects, tasks, stages, milestones, tags |
 | E-PRJ-012 | `plugins/webkul/projects/tests/Feature/API/V1/ProjectTest.php` | `it('lists projects for authorized users')` | Verified test suite for project API operations |
 | E-PRJ-013 | `plugins/webkul/projects/tests/Feature/Workflows/CompanyIsolationTest.php` | `it('hides project stages owned by another company')` | Verified multi-company isolation test suite |
-| E-PRJ-014 | `plugins/webkul/timesheets/src/TimesheetServiceProvider.php` | `Package::hasDependencies(['projects'])` | Verification of downstream timesheets runtime dependency |
+| E-PRJ-014 | `plugins/webkul/timesheets/src/TimesheetServiceProvider.php` | `Package::hasDependencies(['projects'])` | Verification of downstream timesheets Install Plugins Dependency |
 | E-PRJ-015 | `plugins/webkul/timesheets/src/Models/Timesheet.php` | `class Timesheet extends BaseTimesheet` | Verification of downstream timesheets model subclassing |

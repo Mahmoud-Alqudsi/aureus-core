@@ -24,7 +24,7 @@ The skills are versioned under `.agents/skills/` at the repository root. AI codi
 | `aureus-api-change` | API routes, actions, validation, authorization, or API contracts | Reading-order API route, application/architecture/security documentation |
 | `aureus-schema-change` | Migrations, persistence, models, relationships, and data backfills | Database rules, company isolation, schema conventions, change impact |
 | `aureus-test-and-ci-change` | Pest, Playwright, translation, helpers, or GitHub Actions validation work | Testing rules, CI governance, upstream workflow review |
-| `aureus-documentation-change` | Material documentation, AI guidance, runbook, or PR-template work | Change-management policy and direct repository evidence |
+| `aureus-documentation-change` | Material documentation, AI guidance, runbook, or PR-template work | Change-management policy, [`plugin-documentation-template.md`](plugin-documentation-template.md), and direct repository evidence |
 | `aureus-upstream-sync` | Approved upstream audit, integration, recovery, or promotion work | Git workflow, GitHub governance, upstream runbook |
 
 Use a skill only when its task description matches. It supplements the baseline reading in `AGENTS.md`; it does not replace it. When two skills appear relevant, begin with the one covering the highest-risk boundary and load the other only if the work reaches its scope.

@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered explicitly in `bootstrap/providers.php:48` as `Webkul\Inventory\InventoryServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `InventoryServiceProvider` boots conditionally based on whether the plugin record in the database is marked `installed = true`. If uninstalled, event observers (`CompanyObserver`, `ProductObserver`, `UOMObserver`), schema mutations into `products`, livewire components, and REST API routes are suppressed.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/inventories/src/InventoryServiceProvider.php:48-162`). Execution, dynamic schema contribution, and asset registration are gated by runtime installation verification via `Package::isPluginInstalled('inventories')` (`plugins/webkul/inventories/src/InventoryServiceProvider.php:177,197,210` and `plugins/webkul/inventories/src/InventoryPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `InventoryServiceProvider` boots conditionally based on whether the plugin record in the database is marked `installed = true`. If uninstalled, event observers (`CompanyObserver`, `ProductObserver`, `UOMObserver`), schema mutations into `products`, livewire components, and REST API routes are suppressed.
 
 ## Purpose
 [VERIFIED]
@@ -144,7 +142,7 @@ The `inventories` module serves as the comprehensive double-entry inventory ledg
       - `2025_01_17_094024_create_inventories_warehouse_settings`
       - `2025_01_17_094051_create_inventories_logistic_settings`
     - Registers database seeder: `Webkul\Inventory\Database\Seeders\DatabaseSeeder`.
-    - Declares runtime plugin dependency: `products` (`hasDependencies(['products'])`).
+    - Declares an Install Plugins Dependency: `products` (`hasDependencies(['products'])`).
     - Configures install and uninstall lifecycle hooks:
       - `InstallCommand`: installs dependencies, runs migrations, and runs seeders.
       - `UninstallCommand`: truncates 10 inventory tables, purges polymorphic chatter records for `Operation` and `Scrap` via `ChatterCleanupService`, and purges sequence definitions (`inventories.scrap` and `OperationType`) via `SequenceService::purge()`.
@@ -163,7 +161,7 @@ The `inventories` module serves as the comprehensive double-entry inventory ledg
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Inventory\InventoryPlugin` (`plugins/webkul/inventories/src/InventoryPlugin.php:9`)
 - **Plugin ID**: `inventories`
@@ -192,7 +190,7 @@ Inspected directly from `plugins/webkul/inventories/composer.json`:
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 Inspected from `InventoryServiceProvider::configureCustomPackage()`:
 - `products`: Declared via `$package->hasDependencies(['products'])` (`plugins/webkul/inventories/src/InventoryServiceProvider.php:123`).
@@ -367,7 +365,7 @@ When a stock move is processed via `InventoryManager::completeTransfer()`:
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 All UI components register under the `admin` panel within `NavigationGroup::Inventory`.
 
@@ -425,7 +423,7 @@ All UI components register under the `admin` panel within `NavigationGroup::Inve
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 The `inventories` domain logic is driven by 16 specialized service classes orchestrated by `InventoryManager`:
 
@@ -449,7 +447,7 @@ The `inventories` domain logic is driven by 16 specialized service classes orche
 
 ---
 
-## Events, Listeners & Observers
+## Events, Listeners, and Observers
 [VERIFIED]
 
 ### Domain Events (`plugins/webkul/inventories/src/Events/`)
@@ -467,7 +465,7 @@ The `inventories` domain logic is driven by 16 specialized service classes orche
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 Authorization is managed across 24 dedicated policy classes using the custom `Webkul\Security\Bouncer` and Filament Shield permissions:
 
@@ -572,6 +570,18 @@ The `inventories` plugin contains an extensive automated test suite comprising *
 
 ---
 
+## Shared Infrastructure Dependencies
+[VERIFIED]
+This section records code-level consumption; `products` is the only declared Install Plugins Dependency.
+
+- **`plugin-manager`**: `InventoryServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/inventories/src/InventoryServiceProvider.php`).
+- **`products`**: Declared Install Plugins Dependency; stock models resolve products, variants, packaging, UOM, and product usage protection (`plugins/webkul/inventories/src/InventoryServiceProvider.php`, `plugins/webkul/inventories/src/Models/`).
+- **`support`**: Inventory operations use company isolation, `SequenceService`, UOM, and company context (`plugins/webkul/inventories/src/Models/`, `plugins/webkul/inventories/src/Services/`).
+- **`security`**: Operations use ownership scopes and inventory policies use the security permission boundary (`plugins/webkul/inventories/src/Models/`, `plugins/webkul/inventories/src/Policies/`).
+- **`chatter`**: Operations, scraps, lots, and warehouses consume shared activity and audit behavior (`plugins/webkul/inventories/src/Models/`).
+- **`fields`**: Warehouse, location, operation, and scrap resources consume custom-field injection (`plugins/webkul/inventories/src/Filament/`).
+- **`table-views`**: Inventory list pages define preset table views through the shared table-view components (`plugins/webkul/inventories/src/Filament/`).
+
 ## Cross-Plugin Relationships
 [VERIFIED]
 
@@ -592,8 +602,8 @@ graph TD
 
 1. **Upstream Integrations**:
    - `products`: Base catalog model, variant attribute values, and packaging definitions.
-   - `support`: Tenant company context (`CompanyContext`, `BelongsToCompany`), document sequence generation (`SequenceService`), measurement units (`UOM`).
-   - `security`: Authenticated creators/assignees and policy gates (`User`, custom `Bouncer`).
+   - `support`: Inventory models use `BelongsToCompany`, while operations consume `SequenceService` and `UOM`; the shared company-context and scope contract is owned by [`support.md`](support.md) and [`multi-company.md`](../security/multi-company.md).
+   - `security`: `Operation` uses `HasOwnershipScope`, while inventory policies use the shared `HasScopedPermissions` contract; shared ownership semantics are owned by [`security.md`](security.md), [`authorization.md`](../security/authorization.md), and [`ownership-scopes.md`](../security/ownership-scopes.md).
    - `chatter`: Social activity feed and communication stream on `Operation`, `Scrap`, `Lot`, `Warehouse`.
    - `fields`: Custom field injection into `Warehouse`, `Location`, `Operation`, `Scrap`.
 2. **Downstream Integrations**:
@@ -604,7 +614,7 @@ graph TD
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### 1. Inbound Receipt Flow (1-Step, 2-Step, 3-Step)
