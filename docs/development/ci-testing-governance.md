@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-19
+last_verified: 2026-10-25
 scope: ci-testing-governance
 confidence: high
 ---
@@ -12,67 +12,20 @@ This document defines the canonical Continuous Integration (CI) and automated te
 
 ---
 
-## 1. Purpose
+## 1. Purpose & Ownership Boundary
 
-The purpose of this document is to define the technical verification and testing layer that validates contributions to Aureus ERP. While the Git Operating Model ([`docs/development/git-workflow.md`](git-workflow.md)) establishes local branching and commit protocols, and GitHub Governance ([`docs/development/github-governance.md`](github-governance.md)) defines repository-level administrative controls, this document governs how automated pipelines inspect, test, and validate changes before integration into `develop`.
+While [`docs/development/git-workflow.md`](git-workflow.md) defines local branching, commit conventions, and merge strategies, and [`docs/development/github-governance.md`](github-governance.md) defines server-side GitHub repository rulesets (`23566563` and `23566566`), this document exclusively owns the **Continuous Integration and automated verification layer**:
 
-### Governance Hierarchy
+- **GitHub Actions Workflows**: All workflow definitions under [`.github/workflows/`](../../.github/workflows/), their event triggers, path-filtering fast-tracks, concurrency groups, and token permissions.
+- **Runtime & Database Matrices**: PHP, Node.js, MySQL 8.0, and PostgreSQL 16 service container configurations.
+- **Test Execution Architecture**: Pest v4 backend suites (`phpunit.xml`, `tests/Pest.php`, `TestBootstrapHelper`), Playwright E2E browser sharding and report merging, `translations:check`, and local pre-commit linting (`scripts/kb_lint.py`).
+- **Status Check Contexts**: The 18 CI job contexts emitted by the workflows and the 4 stable contexts required for Pull Request merges.
 
-```
-+-------------------------------------------------------------------+
-|                    GitHub Governance (Operational Stage O5)       |
-|   Default branch, PR controls, rulesets, merge rules, permissions |
-+-------------------------------------------------------------------+
-                                  │
-                                  ▼
-+-------------------------------------------------------------------+
-|                  Git Operating Model (Operational Stage O4)       |
-|   Branch hierarchy, commit convention, topology, merge semantics  |
-+-------------------------------------------------------------------+
-                                  │
-                                  ▼
-+-------------------------------------------------------------------+
-|               Continuous Integration & Testing (Operational O6)   |
-|      Workflow definitions, test suites, required status checks    |
-+-------------------------------------------------------------------+
-                                  │
-                                  ▼
-+-------------------------------------------------------------------+
-|                  Upstream Integration (Operational Stage O7)      |
-|     Lineage synchronization, upstream tracking, conflict protocols|
-+-------------------------------------------------------------------+
-```
+Modifying `.github/workflows/*.yml`, `phpunit.xml`, or GitHub required status check settings requires explicit human approval under [`AGENTS.md`](../../AGENTS.md).
 
 ---
 
-## 2. Scope & Boundaries
-
-### In-Scope Domains
-
-- **GitHub Actions Workflows**: Complete audit of all workflows located in [`.github/workflows/`](../../.github/workflows/).
-- **Workflow Triggers & Concurrency**: Inspection of push, pull request, merge group, and manual dispatch triggers, path filters, and cancellation rules.
-- **PHP / Pest Testing Architecture**: Inspection of Pest v4 configuration, PHPUnit test suites, test directory structure across all plugins, test base classes, and database bootstrapping.
-- **Frontend / Playwright Testing**: Audit of end-to-end browser testing, sharding, browser installations, test server lifecycle, and report merging.
-- **Translation Parity Testing**: Audit of the custom `translations:check` CLI command, supported locales, and failure semantics.
-- **Runtime & Database Matrices**: Verification of PHP versions, Node.js versions, MySQL 8.0, and PostgreSQL 16 container configurations and service healthchecks.
-- **Dependency Management & Caching**: Audit of `composer install` invocations, `npm ci`, Composer cache, NPM cache, and Playwright browser caching.
-- **Static Analysis & Code Style**: Audit of Pint, PHPStan, ESLint, and architectural test gates.
-- **Coverage Governance**: Verification of coverage drivers, thresholds, and reporting services.
-- **Permissions & Supply Chain Security**: Audit of GitHub token permissions (`GITHUB_TOKEN`), referenced GitHub Actions, and container image publishing.
-- **GitHub Status Check Governance**: Explicit reconciliation distinguishing workflow execution from GitHub server-side required status check gating.
-- **Governance Findings & Evidence Matrix**: Comprehensive catalog of evidence-backed findings and control classifications.
-
-### Out-of-Scope (Operational Stage Boundaries)
-
-- **Workflow File Modification**: Modifying YAML workflows in `.github/workflows/` is prohibited during Operational Stage O6 baseline auditing. Remediations are documented as governance findings.
-- **Automated Test Code Modification**: Fixing failing tests, refactoring test helpers, or modifying test suites in `tests/` or `plugins/webkul/*/tests/` belongs to future development phases.
-- **Application Code & Migrations**: Modifying domain code in `app/`, `plugins/`, `database/`, or `config/` is strictly prohibited.
-- **GitHub Platform Mutations**: Modifying repository settings, rulesets, or branch protection rules on GitHub is prohibited without explicit authorization.
-- **Upstream Synchronization Execution**: Operational merge procedures and synchronization runbooks are canonically documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
-
----
-
-## 3. CI Architecture Overview
+## 2. CI Architecture Overview
 
 Aureus ERP automates continuous integration via GitHub Actions. The pipeline consists of 4 distinct workflow files:
 
@@ -188,37 +141,15 @@ The root configuration file [`phpunit.xml`](../../phpunit.xml) defines 11 discre
 </testsuites>
 ```
 
-### Domain Test Distribution
+### Domain Test Distribution & Architecture Observations
 
-A comprehensive audit of `plugins/webkul/` reveals **175 test files** (`*Test.php`), distributed across the 11 suites:
-
-```
-Test Files Distribution:
-  41  accounts       (Refund, Invoice, Bill, Tax, CashRounding, CompanyIsolation, Scoping, Currency)
-  40  inventories    (Operations, Moves, Quantities, Warehouses, Locations, Scrap)
-  16  sales          (Quotations, Orders, Customers, Invoicing, Pricing)
-  16  products       (Categories, Variants, Attributes, Barcodes, Inventory)
-  14  purchases      (Requisitions, Purchase Orders, Vendor Agreements, Approvals)
-  12  support        (Test helpers, system utilities, settings, base components)
-   9  partners       (Contacts, Addresses, Customers, Vendors)
-   8  projects       (Tasks, Stages, Milestones, Project Management)
-   8  accounting     (Journal Entries, Fiscal Years, Ledgers, Reports)
-   7  manufacturing  (Work Orders, Bills of Materials, Production, Routings)
-   4  employees      (Departments, Positions, Employees, Contracts)
- ---
- 175  Total PHP Feature Test Files
-```
-
-### Critical Architecture Observations
-
-1. **Feature Test Concentration**:
-   - An exhaustive filesystem search confirms that **zero `Unit/` test directories exist** in the repository.
-   - All 175 test files reside under `tests/Feature` within plugin directories.
-2. **Zero Pest Architecture Tests**:
-   - A codebase-wide grep confirms that Pest architecture testing (`arch()`) is **not configured**. Architectural boundaries and layering invariants are not evaluated via automated tests.
-3. **Plugin Test Coverage Distribution**:
-   - Automated PHP test coverage is currently concentrated in 11 of the 28 plugin packages located in `plugins/webkul/`.
-   - 17 plugins do not currently have corresponding PHP feature test suites: `analytics`, `barcode`, `blogs`, `chatter`, `contacts`, `fields`, `full-calendar`, `invoices`, `maintenance`, `payments`, `plugin-manager`, `recruitments`, `security`, `table-views`, `time-off`, `timesheets`, `website`. (Some, such as `website`, are partially covered by Playwright).
+1. **Canonical Per-Plugin Test Coverage Audit**:
+   - Automated PHP test coverage exists in **11 of the 28** plugin packages under `plugins/webkul/`, while **17 plugins** currently have no `tests/` directory (some, such as `website`, are partially exercised by Playwright E2E specs).
+   - The authoritative per-plugin test file breakdown is maintained solely in [`docs/ai/testing-rules.md`](../ai/testing-rules.md#2-fresh-repository-test-coverage-audit). Do not maintain a duplicate per-plugin count list in this document.
+2. **Feature Test Concentration**:
+   - **Zero `Unit/` test directories exist** in the repository; all plugin tests reside under `tests/Feature` (with shared helpers/fakes under `tests/Helpers` or `tests/Fakes`).
+3. **Zero Pest Architecture Tests**:
+   - Pest architecture testing (`arch()`) is **not configured**. Architectural boundaries and layering invariants are enforced via code review and `scripts/kb_lint.py` rather than `arch()` test suites.
 
 ### Test Bootstrapping & Database Isolation
 
@@ -626,7 +557,7 @@ concurrency:
 
 ### The Fundamental Governance Distinction
 
-A central mandate of Operational Stage O6 is to strictly maintain the architectural boundary defined in Operational Stage O5:
+A central architectural invariant is the strict separation between workflow definitions and server-side merge gating:
 
 ```
 Workflow Exists in Repository (.github/workflows/)
@@ -640,244 +571,40 @@ GitHub Ruleset Requires Check Before Merge
 GitHub Blocks PR Merge When Check Fails
 ```
 
-1. **Workflow Execution**: Proven by YAML configuration and GitHub Actions runner dispatch.
-2. **GitHub Merge Enforcement**: Governed strictly by GitHub server-side Branch Protection Rules or Repository Rulesets targeting `develop`.
-3. **Current Repository Reality**:
-   - Workflows execute on Pull Requests targeting `develop` and `master` (**`VERIFIED`**).
-   - Active GitHub rulesets `protect-develop` (`23566563`) and `protect-release-master` (`23566566`) require the four contexts listed below, use strict required-status-check policy, and have no bypass actors (**`VERIFIED`**, GitHub API inspection on 2026-09-19).
-   - Pull Request #12 validated the aggregate Playwright gate and entered `develop` as merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07` after all required checks succeeded (**`VERIFIED`**).
+1. **Workflow Execution**: Governed by `.github/workflows/*.yml` and GitHub Actions runner dispatch.
+2. **GitHub Merge Enforcement**: Governed by server-side GitHub Repository Rulesets `protect-develop` (`23566563`) and `protect-release-master` (`23566566`), documented in [`docs/development/github-governance.md`](github-governance.md#4-active-github-rulesets--merge-settings).
+3. **Current Verified State (`[VERIFIED]`)**:
+   - Workflows execute on Pull Requests targeting `develop` and `master`.
+   - Active GitHub rulesets `23566563` and `23566566` strictly require the four contexts listed below from GitHub Actions integration `15368`, with no bypass actors.
+   - Documentation-only Pull Requests (`docs/**`, `*.md`, `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md`) use path-filtering detection steps across `pest_tests.yml`, `translations_check.yml`, and `playwright_tests.yml` to bypass heavy matrix execution while still reporting passing results to all four required status check contexts.
 
 ### Evaluated Status Check Contexts
 
-The current workflow configuration produces 18 distinct CI check contexts when evaluated across all matrix dimensions and shards. GitHub rulesets require the two Pest contexts, the translation context, and the stable Playwright aggregate context; the remaining contexts execute as diagnostic detail and are not individually required:
+The workflow configuration emits 18 distinct CI check contexts across all matrix dimensions and shards. Only the 4 stable contexts marked below are required by the active GitHub rulesets; the remaining 14 shard and report contexts execute as diagnostic detail:
 
-```
-Pest Tests Workflow (2 checks):
-  - PHP 8.3 | MySQL test on ubuntu-latest
-  - PHP 8.3 | PostgreSQL test on ubuntu-latest
-
-Playwright Tests Workflow (15 checks):
-  - MySQL | Shard 1 of 6
-  - MySQL | Shard 2 of 6
-  - MySQL | Shard 3 of 6
-  - MySQL | Shard 4 of 6
-  - MySQL | Shard 5 of 6
-  - MySQL | Shard 6 of 6
-  - PostgreSQL | Shard 1 of 6
-  - PostgreSQL | Shard 2 of 6
-  - PostgreSQL | Shard 3 of 6
-  - PostgreSQL | Shard 4 of 6
-  - PostgreSQL | Shard 5 of 6
-  - PostgreSQL | Shard 6 of 6
-  - report (mysql)
-  - report (pgsql)
-  - Playwright E2E Gate
-
-Translations Check Workflow (1 check):
-  - Check translation files consistency
-```
-
-### Shard Fragility in GitHub Rulesets
-
-- Direct enforcement of individual shard check names (e.g., `MySQL | Shard 1 of 6`) creates ruleset brittleness.
-- If the shard total is adjusted (e.g., from 6 to 8 shards), GitHub rulesets configured with old names would block PRs.
-- **Implemented Solution**: `playwright_e2e_gate` exposes the stable `Playwright E2E Gate` context. It runs after the matrix test and report jobs and fails unless both aggregate `needs` results are `success` (`.github/workflows/playwright_tests.yml`, lines 257–272). GitHub rulesets require this context rather than individual shards (**`VERIFIED`**).
-
----
-
-## 19. Required Check Candidates
-
-Based on workflow reliability, execution cost, and regression impact, candidate status checks for `develop` are classified as follows:
-
-| Status Check Name | Workflow Origin | Classification | Governance Rationale |
+| Status Check Context | Workflow File | Server-Side Ruleset Status | Purpose |
 | :--- | :--- | :--- | :--- |
-| `PHP 8.3 \| MySQL test on ubuntu-latest` | `pest_tests.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; core backend verification against the default database engine. |
-| `PHP 8.3 \| PostgreSQL test on ubuntu-latest`| `pest_tests.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; backend verification against the supported enterprise database engine. |
-| `Check translation files consistency` | `translations_check.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; fast parity check preventing multilingual dictionary corruption. |
-| `Playwright E2E Gate` (Aggregate Job) | `playwright_tests.yml` | **REQUIRED / VERIFIED** | Required by both active rulesets; succeeds only after the aggregate test-shard and report results both succeed. |
-| Individual Shard Checks (`Shard 1..6`) | `playwright_tests.yml` | **NOT RECOMMENDED** | Highly brittle in branch protection rulesets upon shard scaling. |
-| `Laravel Pint Code Style` | New Workflow | **CANDIDATE** | Fast style linter to enforce `pint.json` formatting before merge. |
-| `docker_publish.yml` Jobs | `docker_publish.yml` | **NOT REQUIRED** | Release deployment workflow; does not execute on PRs. |
+| `PHP 8.3 \| MySQL test on ubuntu-latest` | `pest_tests.yml` | **Required (`23566563`, `23566566`)** | Core backend Pest verification against MySQL 8.0. |
+| `PHP 8.3 \| PostgreSQL test on ubuntu-latest` | `pest_tests.yml` | **Required (`23566563`, `23566566`)** | Backend Pest verification against PostgreSQL 16. |
+| `Check translation files consistency` | `translations_check.yml` | **Required (`23566563`, `23566566`)** | Fast dictionary parity check against the `en` baseline. |
+| `Playwright E2E Gate` | `playwright_tests.yml` | **Required (`23566563`, `23566566`)** | Stable aggregate gate (`playwright_e2e_gate`, lines 257–272); succeeds only when all 12 browser shards (`MySQL/PostgreSQL \| Shard 1..6 of 6`) and both `report (mysql/pgsql)` jobs succeed. |
+| `MySQL \| Shard 1..6 of 6`, `PostgreSQL \| Shard 1..6 of 6`, `report (mysql/pgsql)` | `playwright_tests.yml` | Diagnostic only (covered by `Playwright E2E Gate`) | Individual shard and report jobs; not bound directly in rulesets to avoid shard-count fragility. |
+| `docker_publish.yml` job | `docker_publish.yml` | Not a PR check | Release deployment workflow triggered only on `v*` tags or manual dispatch. |
 
 ---
 
-## 20. Merge Queue / `merge_group`
+## 19. Active Controls vs. Current Technical Constraints & Optional Future Enhancements
 
-### Analysis of Merge Queue Compatibility
+The table below summarizes active CI controls alongside current technical constraints and optional future enhancements:
 
-GitHub Merge Queues allow automated, serialized merging of pull requests. A merge queue triggers the `merge_group` event instead of standard `pull_request` events.
-
-- **Current State**:
-  - `playwright_tests.yml` includes `merge_group:`.
-  - `pest_tests.yml` **omits** `merge_group:`.
-  - `translations_check.yml` **omits** `merge_group:`.
-- **Governance Implication**:
-  - The current trigger configuration is asymmetric. If GitHub Merge Queue is enabled for protected branches, Pest and translation validation would not execute through `merge_group` unless explicitly configured.
-  - If GitHub rulesets were to require Pest tests to pass before merge in a merge queue, the merge queue could not proceed because the required check would not trigger.
-  - **Remediation**: Before enabling GitHub Merge Queues, all PR gating workflows should align triggers to include `merge_group:` if queue validation is adopted.
-
----
-
-## 21. Docker CI Boundary
-
-[`docker_publish.yml`](../../.github/workflows/docker_publish.yml) operates strictly outside the continuous integration testing boundary:
-
-- **Trigger Scope**:
-  - `push` on tags matching `v*` (versioned release tags).
-  - Manual execution via `workflow_dispatch` with input parameters `app_ref` and `image_tag`.
-- **Function**: Builds production container images for `linux/amd64` and `linux/arm64` using QEMU and Buildx, publishing to Docker Hub (`webkul/aureuserp`).
-- **Separation of Concerns**: Docker publishing is release and deployment automation. It performs no automated software testing and does not participate in PR gating.
-
----
-
-## 22. Governance Classification
-
-Every governance control and observation in this document is classified according to the canonical project taxonomy:
-
-- **`VERIFIED`**: Direct repository configuration or executed workflow independently confirms the state.
-- **`POLICY`**: Explicitly adopted in project documentation, but technical enforcement is unverified.
-- **`HISTORICAL PRACTICE`**: Observable in commit history or existing workflow structure.
-- **`RECOMMENDED`**: A verified technical improvement identified by audit.
-- **`PENDING DECISION`**: A technical question requiring maintainer resolution.
-- **`PENDING AUTHORIZATION`**: A desired configuration requiring administrative authorization prior to change.
-- **`DEFERRED`**: Technical responsibility formally assigned to a subsequent roadmap phase.
-- **`NOT CONFIGURED`**: The mechanism was audited and does not exist in the repository.
-- **`NOT VERIFIED`**: Remote GitHub platform configuration could not be independently inspected via API.
-- **`GAP`**: A material discrepancy between an authoritative requirement or intended architecture and executable configuration.
-
----
-
-## 23. CI Governance Findings
-
-The audit identified the following evidence-based CI governance findings:
-
-### CI-001: Server-Side Required Status Check Enforcement
-- **Classification**: **`VERIFIED`** / **`IMPLEMENTED`**
-- **Evidence**: GitHub API inspection on 2026-09-19 confirms that active rulesets `23566563` (`develop`) and `23566566` (`master`) strictly require the two Pest contexts, the translation context, and `Playwright E2E Gate`, each bound to GitHub Actions integration `15368`. PR #12 ran all four successfully before its merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07`.
-- **Impact**: The selected CI contexts are now GitHub merge requirements on both protected branches.
-- **Residual Boundary**: This records configured required-check enforcement. It does not claim that every possible workflow, code-style check, coverage threshold, or future workflow context is required.
-- **Owning Operational Stage**: O5 / O6 (**complete for the selected gate set**).
-
-### CI-002: `merge_group` Trigger Asymmetry Across Core Workflows
-- **Classification**: **`RECOMMENDED`** (Conditional on Merge Queue adoption)
-- **Evidence**: `playwright_tests.yml` line 8 includes `merge_group:`, while `pest_tests.yml` and `translations_check.yml` omit it.
-- **Impact**: The current trigger configuration is asymmetric. If GitHub Merge Queue is enabled for protected branches, Pest and translation validation would not execute through `merge_group` unless explicitly configured.
-- **Recommendation**: Align `merge_group:` triggers across `pest_tests.yml` and `translations_check.yml` if GitHub Merge Queue functionality is adopted.
-- **Owning Operational Stage**: O6 (`RECOMMENDED`).
-
-### CI-003: Inconsistent Composer Installation Invocations and Caching
-- **Classification**: **`RECOMMENDED`**
-- **Evidence**: `pest_tests.yml` line 73 invokes bare `composer install` without caching, while `playwright_tests.yml` caches `~/.composer/cache` and `vendor` and uses `--no-scripts --no-interaction --prefer-dist --optimize-autoloader`.
-- **Impact**: Different Composer installation strategies were observed across workflows. Standardizing dependency installation and caching may improve consistency and CI performance.
-- **Recommendation**: Standardize Composer installation and caching across all workflows using `actions/cache@v4`.
-- **Owning Operational Stage**: O6 (`RECOMMENDED`).
-
-### CI-004: Code Style & Static Analysis (`laravel/pint`) Configured Locally But Omitted in CI
-- **Classification**: **`RECOMMENDED`**
-- **Evidence**: `laravel/pint` is in `require-dev` and [`pint.json`](../../pint.json) exists, but no workflow executes `pint --test`.
-- **Impact**: Laravel Pint is configured for local development but is not currently executed as part of CI validation. Adding a CI style-check step is recommended if project governance requires automated style enforcement.
-- **Recommendation**: Introduce a dedicated, fast code-quality workflow running `vendor/bin/pint --test` on pull requests.
-- **Owning Operational Stage**: O6 (`RECOMMENDED`).
-
-### CI-005: Code Coverage Untracked and Coverage Scope Misconfigured
-- **Classification**: **`NOT CONFIGURED`**
-- **Evidence**: No coverage driver (`pcov`/`xdebug`) is installed in CI; `phpunit.xml` line 44 restricts `<source>` exclusively to `app`, excluding `plugins/webkul/`.
-- **Impact**: Complete lack of visibility into test coverage metrics across the domain plugin codebase.
-- **Recommendation**: Update `phpunit.xml` `<source>` to include `plugins/webkul/*/src` and establish coverage reporting in a future phase.
-- **Owning Operational Stage**: O6 (`DEFERRED`).
-
-### CI-006: Missing Diagnostic Artifacts in Backend Pest Workflow
-- **Classification**: **`RECOMMENDED`**
-- **Evidence**: `pest_tests.yml` configures no `actions/upload-artifact@v4` steps.
-- **Impact**: Backend CI currently does not publish dedicated failure diagnostics such as JUnit reports or Laravel logs. Uploading such artifacts on failure could improve troubleshooting.
-- **Recommendation**: Add artifact upload steps for `storage/logs/laravel.log` and JUnit test reports on failure.
-- **Owning Operational Stage**: O6 (`RECOMMENDED`).
-
-### CI-007: PHP Runtime Discrepancy Between CI Matrix and Production Container
-- **Classification**: **`GAP`** / **`PENDING DECISION`**
-- **Evidence**: `pest_tests.yml` and `playwright_tests.yml` test exclusively on PHP `8.3`, while [`docker/production/Dockerfile`](../../docker/production/Dockerfile#L4) builds on PHP `8.4`.
-- **Impact**: The current CI runtime matrix validates PHP 8.3, while the production Dockerfile builds PHP 8.4. PHP 8.4 production behavior is therefore not validated by the current CI runtime matrix.
-- **Recommendation**: Align the production Dockerfile with the CI-validated version (PHP 8.3), or add PHP 8.4 to the CI test matrix.
-- **Owning Operational Stage**: O6 (`PENDING DECISION`).
-
-### CI-008: Stable Playwright Aggregate Status Check
-- **Classification**: **`VERIFIED`** / **`IMPLEMENTED`**
-- **Evidence**: `playwright_e2e_gate` in `.github/workflows/playwright_tests.yml` depends on the aggregate Playwright test and report jobs and exposes `Playwright E2E Gate`. PR #12 executed it successfully, and both rulesets require that context.
-- **Impact**: Changes to the shard count do not require changing a ruleset context, provided the aggregate job name remains stable.
-- **Residual Boundary**: Pest remains represented by its two stable matrix contexts; no broader synthetic `ci-gate` is configured.
-- **Owning Operational Stage**: O6 (**complete for Playwright aggregate gating**).
-
-### CI-009: Floating Action Version References vs. Immutable SHA Pinning
-- **Classification**: **`RECOMMENDED`**
-- **Evidence**: All 10 referenced GitHub Actions use major version tags (`@v4`, `@v2`, `@v3`, `@v6`) rather than full commit SHAs.
-- **Impact**: Theoretical vulnerability to modified upstream action tags.
-- **Recommendation**: Evaluate pinning referenced GitHub Actions to immutable commit SHAs with automated Dependabot updates.
-- **Owning Operational Stage**: O6 (`RECOMMENDED`).
-
-### CI-010: Absence of Path Filtering on Heavy Validation Workflows
-- **Classification**: **`VERIFIED / IMPLEMENTED`**
-- **Evidence**: Added change path filtering in `.github/workflows/pest_tests.yml`, `.github/workflows/translations_check.yml`, and `.github/workflows/playwright_tests.yml`.
-- **Impact**: Documentation-only pull requests detect change paths and immediately exit with successful passes across all required status checks (`Pest`, `Playwright E2E Gate`, `Translations check`), bypassing heavy matrix execution while preserving full branch protection rules.
-- **Owning Operational Stage**: O6 (`VERIFIED / IMPLEMENTED`).
-
-### CI-011: Concentration of PHP Feature Test Coverage Across Domain Plugins
-- **Classification**: **`HISTORICAL PRACTICE`** / **`RECOMMENDED`**
-- **Evidence**: 11 of 28 plugins under `plugins/webkul/` have automated test suites (175 test files); 17 plugins contain no PHP feature tests.
-- **Impact**: Automated PHP test coverage is currently concentrated in a subset of domain plugins. Progressive expansion of automated coverage is recommended as part of future testing maturity.
-- **Recommendation**: Progressively expand automated test coverage across additional domain plugin packages.
-- **Owning Phase**: Quality & Testing Engineering (`DEFERRED`).
-
----
-
-## 24. Deferred Areas
-
-To maintain strict boundaries across roadmap phases, the following testing and CI areas are formally deferred:
-
-| Deferred Control Area | Owning Operational Stage / Domain | Scope and Governance Responsibilities |
+| Area | Current Active Reality (`[VERIFIED]`) | Optional Future Enhancement |
 | :--- | :--- | :--- |
-| **Workflow YAML Modifications** | **Future Implementation — Requires Explicit Authorization** | Modifying `.github/workflows/*.yml` to implement findings (caching, `merge_group`, synthetic gates). |
-| **Pest Test Suite Fixes / Refactoring** | **Domain Testing Maintenance** | Correcting flaky tests, expanding assertions, or refactoring plugin tests. |
-| **Untested Plugin Test Creation** | **Domain Testing Maintenance** | Writing new feature tests for the 17 untested plugins in `plugins/webkul/`. |
-| **Coverage Driver & Thresholds** | **Quality Engineering** | Configuring PCOV, Codecov, and minimum coverage thresholds. |
-| **Expansion of Required Checks** | **O5 / O6 follow-up** | Evaluating additional stable contexts such as Pint only after a workflow exists and succeeds; the current four required contexts are already enforced. |
-| **Upstream CI Alignment** | **O7 — Upstream Integration** | Aligning CI test workflows with upstream Webkul updates and tracking changes. |
-
----
-
-## 25. Evidence Matrix
-
-| Area | Expected State | Actual State | Classification | Evidence Source | Operational Stage |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Workflow Inventory** | 4 active workflows | 4 active workflows (`pest`, `playwright`, `translations`, `docker`) | **VERIFIED** | Directory inspection `.github/workflows/` | O6 |
-| **PR Validation Triggers** | `develop`, `master` | `develop`, `master` in all 3 test workflows | **VERIFIED** | Workflows line inspection | O6 |
-| **Merge Queue Compatibility** | All PR tests run on `merge_group` | Present in `playwright_tests.yml`; absent in `pest` & `translations` | **RECOMMENDED** | Inspection of `on:` in workflow files | O6 |
-| **PHP Runtime (CI)** | PHP 8.3 tested | Tested exclusively on PHP 8.3 | **VERIFIED** | `pest_tests.yml`, `playwright_tests.yml` | O6 |
-| **PHP Runtime (Docker)** | Matches CI runtime | Builds on PHP 8.4 (`ARG PHP_VERSION=8.4`) | **GAP** | `docker/production/Dockerfile` line 4 | O6 |
-| **Database Engines** | Dual MySQL & PostgreSQL | MySQL 8.0 & PostgreSQL 16 tested in Pest & Playwright | **VERIFIED** | Services configuration in workflows | O6 |
-| **Pest Framework Version** | Pest v4 | Pest `v4.7.5` on PHPUnit `12.5.30` | **VERIFIED** | `composer.lock` package inspection | O6 |
-| **Unit Tests** | Present in unit directory | Zero Unit test directories; 100% Feature tests | **HISTORICAL PRACTICE** | Filesystem inspection across `plugins/` | O6 |
-| **Architecture Tests** | Pest `arch()` tests active | Zero architecture tests present | **NOT CONFIGURED** | Codebase grep `arch()` | O6 |
-| **Plugin PHP Test Coverage** | All plugins tested | 11 of 28 plugins tested (175 test files) | **HISTORICAL PRACTICE / RECOMMENDED** | Filesystem inspection `plugins/webkul/` | O6 |
-| **Playwright Sharding** | Parallel execution | 6 shards per DB engine (12 matrix jobs total) | **VERIFIED** | `playwright_tests.yml` matrix config | O6 |
-| **Playwright Report Merge** | Consolidated HTML report | `merge_playwright_reports` merges blob reports | **VERIFIED** | `playwright_tests.yml` lines 211-256 | O6 |
-| **Translation Parity Check** | Automated dictionary audit | `php artisan translations:check --details` | **VERIFIED** | `translations_check.yml`, command code | O6 |
-| **Code Style in CI (Pint)** | Enforced via CI | `pint.json` exists; omitted from CI workflows | **RECOMMENDED** | Root `pint.json`, workflows audit | O6 |
-| **Code Coverage Driver** | Active coverage tracking | Driver absent; `<source>` omits `plugins/webkul/` | **NOT CONFIGURED** | `phpunit.xml`, `pest_tests.yml` | O6 |
-| **Workflow Permissions** | Least privilege | `contents: read` explicitly declared on all workflows | **VERIFIED** | Top-level permissions in YAML | O6 |
-| **Referenced Actions Pinning**| Immutable SHA pinning | Floating major version tags (`@v4`, `@v2`, etc.) | **RECOMMENDED** | `uses:` lines across workflows | O6 |
-| **Concurrency Controls** | Cancel obsolete runs | `${{ github.workflow }}-${{ github.ref }}` with `cancel-in-progress: true` | **VERIFIED** | Concurrency blocks in test workflows | O6 |
-| **Pest Failure Diagnostics** | Logs and artifacts saved | Zero artifacts uploaded on Pest failure | **RECOMMENDED** | `pest_tests.yml` step audit | O6 |
-| **GitHub Status Check Gating**| Server-side enforcement | Both active rulesets strictly require two Pest contexts, translation consistency, and `Playwright E2E Gate` | **VERIFIED / IMPLEMENTED** | GitHub rulesets `23566563`, `23566566`; GitHub API inspection 2026-09-19; PR #12 | O5 / O6 |
-| **Docker Workflow Role** | CI test gate | Release deployment automation only (tags `v*`) | **VERIFIED** | `docker_publish.yml` triggers | O6 |
-
----
-
-## 26. Verification Metadata
-
-This Continuous Integration and Testing governance specification is verified against active workflow YAML definitions, test suite sources, Composer manifests, and runtime environments.
-
-- **Status**: `verified`
-- **Source of Truth**: `repository-configuration`
-- **Last Verified**: `2026-09-15`
-- **Scope**: `ci-testing-governance`
-- **Confidence**: `high`
+| **Required PR Status Checks (`CI-001`, `CI-008`)** | 4 contexts (`MySQL Pest`, `PostgreSQL Pest`, `Translations`, `Playwright E2E Gate`) are strictly enforced on `develop` and `master`. | Add a dedicated `Laravel Pint` or `kb_lint.py` CI job before binding any additional required check context. |
+| **Documentation Fast-Track (`CI-010`)** | Path filtering in `pest_tests.yml`, `translations_check.yml`, and `playwright_tests.yml` skips heavy test runs on docs-only PRs while satisfying required status checks. | Keep path-filter patterns synchronized if new documentation-only root files are introduced. |
+| **Merge Queue (`merge_group`, `CI-002`)** | `playwright_tests.yml` declares `merge_group:`; `pest_tests.yml` and `translations_check.yml` omit `merge_group:` and `workflow_dispatch:`. | Add `merge_group:` and `workflow_dispatch:` to `pest_tests.yml` and `translations_check.yml` before enabling GitHub Merge Queue. |
+| **Composer Caching (`CI-003`)** | `playwright_tests.yml` and `translations_check.yml` use `actions/cache@v4`; `pest_tests.yml` runs bare `composer install` without cache. | Standardize `composer install --no-interaction --prefer-dist` and `actions/cache@v4` in `pest_tests.yml`. |
+| **Code Style (`laravel/pint`, `CI-004`)** | Configured via `pint.json` and run locally; not executed in `.github/workflows/`. | Add a `vendor/bin/pint --test` step or workflow in CI if server-side style enforcement is desired. |
+| **Code Coverage (`CI-005`)** | No coverage driver (`pcov`/`xdebug`) in CI; `phpunit.xml` `<source>` includes only `app/` and omits `plugins/webkul/*/src`. | Expand `phpunit.xml` `<source>` to include `plugins/webkul/*/src` and configure `pcov` if coverage thresholds are adopted. |
+| **Pest Failure Artifacts (`CI-006`)** | `playwright_tests.yml` uploads screenshots, traces, videos, and `laravel.log` on failure; `pest_tests.yml` uploads no artifacts. | Upload `storage/logs/laravel.log` and JUnit XML reports on failure in `pest_tests.yml`. |
+| **PHP Runtime Alignment (`CI-007`)** | CI workflows test on PHP `8.3` (`composer.json` constraint `^8.3`), while `docker/production/Dockerfile` (`line 4`) defaults to `ARG PHP_VERSION=8.4`. | Align `docker/production/Dockerfile` with PHP `8.3` or add PHP `8.4` to the CI test matrix. |
+| **GitHub Action Pinning (`CI-009`)** | All 10 referenced GitHub Actions use major version tags (`@v4`, `@v2`, `@v3`, `@v6`) with `contents: read` permissions and no `pull_request_target`. | Pin third-party actions (such as `shivammathur/setup-php`) to full commit SHAs with Dependabot updates. |

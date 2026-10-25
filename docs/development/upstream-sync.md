@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-17
+last_verified: 2026-10-25
 scope: upstream-synchronization
 confidence: high
 ---
@@ -213,7 +213,7 @@ Treat every incoming `.github/workflows/` change as a security-sensitive downstr
 1. Inspect triggers, token permissions, secrets, artifact handling, and every remote write or deployment action.
 2. Do not accept a workflow merely because it originated upstream or because its file name resembles an existing workflow.
 3. A workflow using `workflow_run`, `contents: write`, `pull-requests: write`, Pages publication, or a force push requires explicit human review before it enters `develop`.
-4. Record accepted CI changes for the post-sync O6 reconciliation; do not alter protected-branch status checks until their new workflow runs have succeeded.
+4. Record accepted CI changes in [`docs/development/ci-testing-governance.md`](ci-testing-governance.md); do not alter protected-branch status checks until their new workflow runs have succeeded.
 
 ---
 
@@ -315,7 +315,7 @@ git log -n 1 --format="%H %P" origin/develop
 ```
 
 > [!NOTE]
-> **Completion Boundary**: Upstream synchronization terminates upon integration into `develop`. Release promotion from `develop` to `master` is a distinct software release activity governed independently by [`git-workflow.md`](git-workflow.md#release-and-version-tag-policy).
+> **Synchronization Scope Boundary**: Upstream synchronization terminates upon integration into `develop`. Release promotion from `develop` to `master` is a distinct software release activity governed independently by [`git-workflow.md`](git-workflow.md#release-and-version-tag-policy).
 
 ---
 
@@ -430,9 +430,9 @@ Following successful integration into `develop`:
 
 ---
 
-## 15. R8 — Post-Merge Cleanup
+## 15. Post-Merge Cleanup
 
-This stage prevents completed synchronization branches and their temporary worktrees from accumulating, while preserving recovery evidence. It applies only after the protected-branch Pull Request is merged and its verification record is complete. It does **not** authorize deletion by itself.
+This procedure prevents completed synchronization branches and their temporary worktrees from accumulating, while preserving recovery evidence. It applies only after the protected-branch Pull Request is merged and its verification record is complete. It does **not** authorize deletion by itself.
 
 ### Candidate Audit — Read-Only Required
 
@@ -453,11 +453,7 @@ Only after explicit human approval of the audited candidate list:
 3. Delete the matching remote topic branch with `git push origin --delete <exact-branch>` only when it is confirmed merged and no longer needed for collaboration.
 4. Run `git worktree prune`, then re-check `git worktree list --porcelain`, `git branch -vv`, and `git status --short`.
 
-Keep pre-sync checkpoints and recovery references until a separately authorized retention decision. Do not use `rm -rf`, `git branch -D`, `git worktree remove --force`, `git push --force`, or wildcard deletion commands in this stage. If a candidate has uncommitted changes, unexpected upstream divergence, or an unclear owner, stop and leave it intact.
-
-### Current Post-Synchronization Candidates
-
-As of the 2026-09-18 synchronization, the merged PR #10 branch `chore/upstream-sync-20260918-c2b4ddaa2` and its temporary linked worktree are candidates only after the audit above. The merged PR #9 branch `refactor/ai-knowledge-architecture` is also a branch-cleanup candidate; it contains the R6 entry-point updates now reachable from `develop`. Checkpoint branches and all other worktrees remain explicitly excluded unless separately audited.
+Keep pre-sync checkpoints and recovery references until a separately authorized retention decision. Do not use `rm -rf`, `git branch -D`, `git worktree remove --force`, `git push --force`, or wildcard deletion commands in this procedure. If a candidate has uncommitted changes, unexpected upstream divergence, or an unclear owner, stop and leave it intact.
 
 ---
 

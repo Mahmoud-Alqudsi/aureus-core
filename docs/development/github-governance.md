@@ -1,459 +1,130 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-19
+last_verified: 2026-10-25
 scope: repository-governance
 confidence: high
 ---
 
 # GitHub Governance
 
-This document defines the canonical GitHub-level repository governance policy, controls, and administrative reconciliation for Aureus ERP. It establishes how development and collaboration are governed on GitHub, reconciling the Operational Stage O4 Git Operating Model with repository reality and verifiable remote settings.
+This document defines the canonical GitHub-level repository governance policy, server-side rulesets, Pull Request controls, and issue-template conventions for Aureus ERP.
 
 ---
 
-## 1. Purpose
+## 1. Purpose & Ownership Boundary
 
-The purpose of this document is to define the GitHub governance layer that operates above the repository's Git operating model. While the Git operating model ([`docs/development/git-workflow.md`](git-workflow.md)) defines how human engineers and autonomous AI agents branch, commit, and merge locally, this governance document defines how the GitHub repository environment governs, validates, and controls those interactions.
+While [`docs/development/git-workflow.md`](git-workflow.md) owns local branch hierarchy, naming conventions, commit formatting, and merge/release lifecycles, and [`docs/development/ci-testing-governance.md`](ci-testing-governance.md) owns GitHub Actions workflows and test matrices, this document owns the **GitHub platform administration layer**:
 
-### Governance Hierarchy
+- **Default Branch Configuration**: Server-side default branch (`develop`) vs. release branch (`master`).
+- **Repository Rulesets & Branch Protection**: Server-side rulesets (`23566563` and `23566566`), direct-push/force-push/deletion blocks, and required status check bindings.
+- **Repository Merge Button Settings**: Allowed merge methods on GitHub (`Squash Merge` and `Merge Commits` enabled; `Rebase Merge` disabled).
+- **Pull Request & Review Governance**: Solo-maintainer review rules, conversation-resolution requirements, and [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md).
+- **Issue Templates & `CODEOWNERS`**: Structured forms in [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/) and repository code-ownership configuration.
 
-```
-+-------------------------------------------------------------------+
-|                    GitHub Governance (Operational Stage O5)       |
-|   Default branch, PR controls, rulesets, merge rules, permissions |
-+-------------------------------------------------------------------+
-                                  │
-                                  ▼
-+-------------------------------------------------------------------+
-|                  Git Operating Model (Operational Stage O4)       |
-|   Branch hierarchy, commit convention, topology, merge semantics  |
-+-------------------------------------------------------------------+
-                                  │
-                                  ▼
-+-------------------------------------------------------------------+
-|               Continuous Integration & Testing (Operational O6)   |
-|      Workflow definitions, test suites, required status checks    |
-+-------------------------------------------------------------------+
-                                  │
-                                  ▼
-+-------------------------------------------------------------------+
-|                  Upstream Integration (Operational Stage O7)      |
-|     Lineage synchronization, upstream tracking, conflict protocols|
-+-------------------------------------------------------------------+
-```
+Modifying GitHub server-side repository settings, branch protection rules, or rulesets without explicit human authorization is strictly prohibited.
 
 ---
 
-## 2. Repository Governance Context
+## 2. Default Branch & Remote Governance
 
-### Scope and In-Scope Domains
+The dual-remote topology (`origin` at `Mahmoud-Alqudsi/aureus-core` and `upstream` at `Mahmoud-Alqudsi/aureuserp`) and branch roles (`develop`, `master`, and topic branches) are canonically defined in [`docs/development/git-workflow.md`](git-workflow.md#1-repository-topology).
 
-- **Default Branch Governance**: Verification, role definition, and alignment of GitHub's default branch.
-- **Branch Governance**: Reconciling integration, baseline, and topic branch rules with platform controls.
-- **Pull Request Governance**: PR submission expectations, base branch targeting, description requirements, and templates.
-- **Branch Protection & Rulesets**: Audit of server-side protection mechanisms, policy restrictions on direct pushes, force pushes, and branch deletions.
-- **Review Governance**: Peer review expectations, author responsibilities, and code ownership status.
-- **Merge Governance**: Reconciliation of Squash Merging for topic branches and Merge Commits for upstream integration.
-- **Workflow & Status Check Governance**: Audit of active GitHub Actions workflows and identification of status check gating boundaries.
-- **CODEOWNERS**: Audit and classification of repository code ownership mechanisms.
-- **Issue Governance**: GitHub Issue templates/forms, issue-to-PR traceability, and the boundary between tracked work and implementation. The workflow itself is canonical in [`docs/development/git-workflow.md`](git-workflow.md).
-- **Governance Findings & Evidence Matrix**: Comprehensive audit ledger mapping controls to verified repository evidence.
-
-### Out-of-Scope (Operational Stage Boundaries)
-
-- **CI / Test Suite Implementation**: Workflow implementation, test matrix design, and automated test fixes belong strictly to **Operational Stage O6 (CI / Testing)**.
-- **Upstream Synchronization Execution**: Operational merge procedures, automated sync scripts, and conflict resolution belong strictly to **Operational Stage O7 (Upstream Integration)**.
-- **Upstream Knowledge Synchronization**: Reconciling upstream documentation changes into the living knowledge base belongs strictly to **Operational Stage O8 (Change Management & Knowledge Maintenance)**.
-- **Application Code & Infrastructure**: Modifying Laravel/Filament application code, database migrations, package dependencies, or environment configurations is prohibited during governance phases.
-- **Unauthorized GitHub Mutations**: Modifying GitHub server-side repository settings, branch protection rules, or rulesets without explicit human authorization is strictly prohibited.
-
----
-
-## 3. Repository / Remote Topology
-
-Aureus ERP operates a dual-remote topology separating upstream open-source development from downstream public enterprise development:
-
-```
-+-------------------------------------------------------------+
-|                          upstream                           |
-|       (git@github.com:Mahmoud-Alqudsi/aureuserp.git)        |
-|               Tracks upstream Webkul / Aureus               |
-+-------------------------------------------------------------+
-                               │
-                               │ periodic synchronization (Operational Stage O7)
-                               ▼
-+-------------------------------------------------------------+
-|                           origin                            |
-|        (git@github.com:Mahmoud-Alqudsi/aureus-core.git)     |
-|               Primary development repository                |
-+-------------------------------------------------------------+
-```
-
-### Remote and Branch Roles
-
-1. **`upstream` (`Mahmoud-Alqudsi/aureuserp`)**:
-   - Represents the public upstream fork tracking vendor updates.
-   - Synchronized periodically into `origin/develop` through the O7 runbook.
-2. **`origin` (`Mahmoud-Alqudsi/aureus-core`)**:
-   - Represents the public development and integration repository.
-   - Hosts all daily development, feature branches, pull requests, and automated testing pipelines.
-3. **`master` Branch Role**:
-   - **Stable Release Branch**.
-   - Receives verified release promotions from `develop` and is the sole source of downstream `v*` release tags.
-   - `master` is **NOT** the default branch.
-   - Direct pushes and general topic branch merges into `master` are prohibited by project policy.
-4. **`develop` Branch Role**:
-   - **Primary Development / Integration Branch**.
-   - Serves as the GitHub Default Branch and target base for all internal topic branch Pull Requests (`feature/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`).
-   - Direct pushes to `develop` are prohibited by project policy.
-
-> [!NOTE]
-> For comprehensive topology, branch naming, and branch lifetime rules, refer directly to [`docs/development/git-workflow.md`](git-workflow.md).
-
----
-
-## 4. Default Branch
-
-### Governance Decision and Verification
-
-A formal governance decision has been enacted establishing `develop` as the canonical GitHub default branch of the public `origin` repository:
+On the `origin` GitHub repository:
 
 ```
 Canonical Default Branch: develop
-Stable Release Branch: master
+Stable Release Branch:    master
 ```
-
-### Direct Evidence
-
-The default branch configuration was directly audited and verified across both GitHub remote metadata and local tracking references:
 
 | Inspection Level | Verified State | Direct Evidence | Status |
 | :--- | :--- | :--- | :--- |
-| **GitHub Server-Side Default Branch** | `develop` | `git ls-remote --symref origin HEAD` output: `ref: refs/heads/develop HEAD` (`76aa5f9a644390e2f6a87fea3e841169ae036cfd`) | **VERIFIED** |
-| **Local Remote Tracking HEAD** | `refs/remotes/origin/develop` | `git symbolic-ref refs/remotes/origin/HEAD` points to `refs/remotes/origin/develop` (synchronized via `git remote set-head origin -a`) | **VERIFIED** |
-| **Active Working Branch** | `refactor/ai-knowledge-architecture` | `git branch --show-current` | **VERIFIED** |
+| **GitHub Server-Side Default Branch** | `develop` | `git ls-remote --symref origin HEAD` → `ref: refs/heads/develop HEAD` | `[VERIFIED]` |
+| **Local Remote Tracking HEAD** | `refs/remotes/origin/develop` | `git symbolic-ref refs/remotes/origin/HEAD` → `refs/remotes/origin/develop` | `[VERIFIED]` |
 
-### Distinction Between Remote and Local States
-
-- **GitHub Default Branch**: The server-side default branch on `origin` is confirmed as `develop`. All new Pull Requests created on GitHub without an explicit base parameter automatically default to `develop`.
-- **Stable Release Branch**: `master` receives only verified release promotions from `develop`; upstream integration occurs first on `develop`.
-- **Classification**: **`VERIFIED`**.
+All new Pull Requests created on GitHub without an explicit base parameter automatically target `develop`. `master` receives only verified release promotions from `develop`.
 
 ---
 
-## 5. Branch Governance
+## 3. Pull Request & Review Governance
 
-### Reconciliation with Operational Stage O4 Git Operating Model
+### Pull Request Entry & Targeting
 
-The repository's branch governance directly reconciles the Operational Stage O4 Git operating model with platform-level controls:
-
-```
-develop (GitHub Default & Primary Integration Branch)
-   │
-   ├── feature/*  ──► Target: develop (Squash Merge)
-   ├── fix/*      ──► Target: develop (Squash Merge)
-   ├── refactor/* ──► Target: develop (Squash Merge)
-   ├── docs/*     ──► Target: develop (Squash Merge)
-   └── chore/*    ──► Target: develop (Squash Merge)
-```
-
-### Branch Rules and Constraints
-
-1. **Branch Source**: All normal topic branches must branch from the latest `develop`.
-2. **Branch Target**: All normal topic branches must target `develop` as their Pull Request base.
-3. **Branch Naming**: Must adhere to `<type>/<description>` using kebab-case and lowercase characters. Allowed types: `feature`, `fix`, `refactor`, `docs`, `chore`. Generic branch names (`temp`, `test`, `wip`, `patch`) are forbidden.
-4. **Upstream Synchronization Pull Request**: `chore/upstream-sync-<date>` is created from the latest `develop` and opened as a Pull Request to `develop` with a Merge Commit to preserve upstream lineage. A history-preserving recovery uses `chore/upstream-sync-rollback-<date>` from its protected target.
-5. **Release Pull Request**: The sole normal source permitted to target `master` is `develop`, through an authorized, self-reviewed release Pull Request using a Merge Commit. Emergency upstream security fixes and history-preserving recoveries are exceptional and must be promoted back to `develop` after merging.
-6. **Direct Push Prohibition**:
-   - Direct pushes to `develop` are prohibited by project policy (`POLICY`).
-   - Direct pushes to `master` are prohibited by project policy (`POLICY`).
-   - All code, documentation, configuration, and upstream synchronization changes must arrive via a self-reviewed Pull Request with recorded verification.
-6. **Enforcement Distinction**: Server-side protection is **`VERIFIED`**: active repository rulesets require Pull Requests for both protected branches, block deletion and force pushes, and strictly require the four selected O6 status checks.
-
----
-
-## 6. Pull Request Governance
-
-### PR Expectations and Workflow
-
-- **Mandatory PR Entry**: Every change entering `develop` or `master` must arrive via Pull Request.
-- **Target Branch**: Normal topic and upstream-synchronization Pull Requests target `develop`. A verified release Pull Request targets `master` from `develop`. Only explicitly authorized emergency upstream security fixes or history-preserving recoveries may use another source for `master`.
+- **Mandatory PR Entry**: Every change entering `develop` or `master` must arrive via Pull Request. Direct pushes to `develop` or `master` are blocked by active server-side rulesets (`[VERIFIED]`).
+- **Target Branch Rules**: Normal topic branches and `chore/upstream-sync-<date>` synchronization branches target `develop`. Verified release promotions target `master` from `develop`. Full branch source/target rules and merge semantics are defined in [`docs/development/git-workflow.md`](git-workflow.md#4-branch-source-and-target-rules).
 
 ### Pull Request Template
 
-The repository provides a standardized Pull Request template located at [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md) (42 lines):
+Every Pull Request must populate all sections of [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md):
 - **Description**: Clear explanation of change context and purpose.
-- **Related Issue**: Traceability link (`Closes #`).
+- **Related Issue**: Traceability link (`Closes #123`, `Fixes #123`, or `Resolves #123` when completing an Issue, or a non-closing reference for partial work, per [`git-workflow.md`](git-workflow.md#3-work-item-branch--pull-request-lifecycle)).
 - **Type of Change**: Categorization (`Bug fix`, `New feature`, `Breaking change`, `Documentation update`, `Refactor`, `Tests`).
-- **Self-Review Checklist**: Code standards, comments, documentation, test coverage, local test execution.
-- **Testing Details & Screenshots**: Empirical proof of correctness.
+- **Self-Review & Pre-Merge Checklist**: Coding standards, self-review, documentation updates, and local test execution.
+- **Testing Details & Documentation Impact**: Empirical verification evidence and explicit list of updated documents (or justification when no maintained document is affected).
 
-### Issue Traceability
+### Solo-Maintainer Review Policy
 
-- GitHub Issues are the tracked work-item layer when the Aureus workflow requires an Issue; the lifecycle and requirement criteria are defined in [`docs/development/git-workflow.md`](git-workflow.md#3-work-item-branch--pull-request-lifecycle).
-- The Pull Request should reference the relevant Issue explicitly. When the PR completes the tracked work, use a closing keyword such as `Closes #123`, `Fixes #123`, or `Resolves #123`.
-- A reference without a closing keyword is appropriate when the PR addresses only part of an Issue.
-- The existence of an Issue does not authorize implementation, merging, or GitHub configuration changes. Branch, PR, CI, and authorization rules remain independently applicable.
-
-### PR Review Governance
-
-- **Solo-Maintainer Review Policy**: The Pull Request author must complete the template self-review and record proportionate verification before merging into `develop` or `master`. The active rulesets require **zero** approving reviews, so an independent approval is not a merge prerequisite. Independent review remains required whenever another repository control or the change risk requires it.
-- **GitHub Server-Side Review Enforcement**: **`VERIFIED`** by GitHub API: both protected branches require a Pull Request and conversation resolution, require zero approvals, and do not require approval from someone other than the latest pusher. Stale-review dismissal remains configured; with zero required approvals it is not a merge gate.
-- **CI Workflow Execution vs. Merge Gating**:
-  - Automated CI workflows (`pest_tests.yml`, `playwright_tests.yml`, `translations_check.yml`) execute on Pull Requests targeting `develop` and `master` (**`VERIFIED`**).
-  - Active rulesets `23566563` and `23566566` now strictly require the two Pest contexts, `Check translation files consistency`, and `Playwright E2E Gate` (**`VERIFIED`** by GitHub API on 2026-09-19). PR #12 exercised all four successfully before its merge into `develop`.
-  - The selected required checks are O6 enforcement; workflow coverage expansion and further quality gates remain separate decisions.
-- **Template and Operational Reality**:
-  - The existence of [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUEST_TEMPLATE.md) is **`VERIFIED`**.
-  - Historical Pull Request usage is documented in Git history (e.g., PR #8 squash merge commit `76aa5f9a6`), but historical PR usage does not prove active GitHub server-side PR enforcement.
+- **Author Self-Review**: The Pull Request author must complete the template self-review and record proportionate verification before merging into `develop` or `master`.
+- **Server-Side Review Configuration (`[VERIFIED]`)**: Both active rulesets require a Pull Request and conversation resolution (`required_review_thread_resolution`), set required approving reviews to **zero** (`required_approving_review_count: 0`), and disable `require_last_push_approval`. This allows the solo maintainer to merge verified Pull Requests without a second GitHub account while still blocking direct pushes, force pushes, branch deletion, and unresolved review threads. Independent review remains mandatory whenever another repository control or change risk requires it.
 
 ---
 
-## 7. Branch Protection / Rulesets
+## 4. Active GitHub Rulesets & Merge Settings
 
-### Audited Configuration
+Inspection of `.github/` confirms that rulesets are configured server-side on GitHub rather than via declarative files in the repository. Both active rulesets have **zero bypass actors**:
 
-| Mechanism | Target Branches | Documented Policy | GitHub-Side Enforcement |
-| :--- | :--- | :--- | :--- |
-| **Direct Push Block** | `develop`, `master` | Prohibited by project policy | **VERIFIED** (`pull_request` rules) |
-| **Force-Push Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`non_fast_forward` rules) |
-| **Branch Deletion Restriction** | `develop`, `master` | Prohibited on shared branches | **VERIFIED** (`deletion` rules) |
-| **Required Approving Reviews** | `develop`, `master` | Self-review and recorded verification required; no independent approval gate | **VERIFIED** (zero required approvals; latest-push approval disabled) |
-| **Required Status Checks** | `develop`, `master` | Strictly require Pest (MySQL/PostgreSQL), translation consistency, and `Playwright E2E Gate` | **VERIFIED / IMPLEMENTED** |
-| **Conversation Resolution** | `develop`, `master` | Required before merge | **VERIFIED** |
-| **Merge Strategy Controls** | Repository-wide | Squash and merge commits enabled; rebase disabled | **VERIFIED** (source-specific choice remains review-governed) |
-
-### Declarative Rulesets
-
-Inspection of `.github/` confirms that **no declarative ruleset files exist** in the repository; rulesets are GitHub server-side configuration. Their active state and effective branch rules were verified through the GitHub API on 2026-09-17.
-
-### Approved Platform Configuration Contract
-
-The following rulesets are the approved O5 enforcement target. They are deliberately split so that daily integration and stable releases can be audited independently.
-
-| Ruleset | Target | Required controls | Explicit exclusions / rationale |
-| :--- | :--- | :--- | :--- |
-| `protect-develop` | `refs/heads/develop` | Require a Pull Request; zero approving reviews; stale-review dismissal; conversation resolution; deletion and force-push blocks; four strict O6 status checks. | Normal topics use Squash Merge; authorized upstream synchronization uses a Merge Commit. |
-| `protect-release-master` | `refs/heads/master` | Require a Pull Request; zero approving reviews; stale-review dismissal; conversation resolution; deletion and force-push blocks; four strict O6 status checks. | The normal source is the verified `develop` release promotion using a Merge Commit. |
-
-Both rulesets must have no standing bypass actor. An exceptional change requires explicit human authorization, a recorded reason, and a deliberate temporary ruleset change; it must not be disguised as a normal direct push.
-
-### Repository Merge Settings Contract
-
-Repository merge settings must enable **Squash Merge** and **Merge Commits**, and disable **Rebase Merge**. GitHub cannot distinguish normal topic Pull Requests from upstream-synchronization Pull Requests when both target `develop`; the maintainer therefore enforces Squash Merge for normal topics and Merge Commits for upstream synchronization and release promotions. Merge Queue remains disabled until O6 makes every required validation workflow compatible with the `merge_group` event.
-
-### Application and Verification Procedure
-
-The base branch protections were applied and verified on 2026-09-17. Required status checks were added and verified by direct GitHub API inspection on 2026-09-19:
-
-| Ruleset | Identifier | Target | Enforcement | Verified controls |
+| Ruleset Name | Ruleset ID | Target Ref | Enforcement | Enforced Server-Side Controls (`[VERIFIED]`) |
 | :--- | :--- | :--- | :--- | :--- |
-| `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion/force-push blocks, no bypass actors, four strict O6 status checks |
-| `protect-release-master` | `23566566` | `refs/heads/master` | `active` | Pull Request, zero required approvals, stale-review dismissal, conversation resolution, deletion/force-push blocks, no bypass actors, four strict O6 status checks |
+| `protect-develop` | `23566563` | `refs/heads/develop` | `active` | Require Pull Request; `0` required approvals; dismiss stale reviews; require conversation resolution; block branch deletion (`deletion`); block force pushes (`non_fast_forward`); no bypass actors; strictly require the 4 CI status checks below. |
+| `protect-release-master` | `23566566` | `refs/heads/master` | `active` | Require Pull Request; `0` required approvals; dismiss stale reviews; require conversation resolution; block branch deletion (`deletion`); block force pushes (`non_fast_forward`); no bypass actors; strictly require the 4 CI status checks below. |
 
-The effective rules confirm that each target receives `pull_request`, `deletion`, `non_fast_forward`, and `required_status_checks` rules. The latter strictly require `PHP 8.3 | MySQL test on ubuntu-latest`, `PHP 8.3 | PostgreSQL test on ubuntu-latest`, `Check translation files consistency`, and `Playwright E2E Gate` from GitHub Actions integration `15368`. Repository merge settings remain Squash Merge enabled, Merge Commits enabled, and Rebase Merge disabled.
+### Required Status Checks Bound in Both Rulesets
 
----
+Both rulesets (`23566563` and `23566566`) strictly require the following 4 status check contexts from GitHub Actions integration `15368`:
 
-## 8. Merge Governance
+1. `PHP 8.3 | MySQL test on ubuntu-latest`
+2. `PHP 8.3 | PostgreSQL test on ubuntu-latest`
+3. `Check translation files consistency`
+4. `Playwright E2E Gate`
 
-### Canonical Merge Strategies
+Detailed workflow specifications, trigger matrices, and status-check architecture are maintained exclusively in [`docs/development/ci-testing-governance.md`](ci-testing-governance.md#18-github-status-check-governance).
 
-| Operation / Path | Canonical Strategy | Policy Authority | Historical Practice | GitHub Setting Enforcement |
-| :--- | :--- | :--- | :--- | :--- |
-| **Topic Branches $\to$ `develop`** | **Squash Merge** | Project Policy (`docs/development/git-workflow.md` Section 8) | Observed in PR #8 commit `76aa5f9a6` | **NOT VERIFIED** |
-| **`upstream/master` $\to$ `develop`** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 8 & 10) | Historical upstream merge in commit `49e330b5e` used the previous topology | **POLICY** |
-| **`develop` $\to$ `master` release** | **Merge Commit (`--no-ff`)** | Project Policy (`docs/development/git-workflow.md` Section 8 & 9) | First promotion pending | **POLICY** |
+### Repository Merge Button Settings
 
-### Strategic Principles and Operational Boundaries
-
-1. **Normal Pull Requests entering `develop`**:
-   - Canonical strategy: **Squash Merge**.
-   - Maintains an atomic, linear commit history on `develop`.
-   - Each Pull Request condenses into exactly one descriptive Conventional Commit.
-   - **No Commit Thresholds**: Squash merging applies universally, regardless of topic branch commit count.
-2. **Upstream Synchronization**:
-   - Upstream synchronization is a separate Git operation canonically documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
-   - Preserves complete upstream vendor commit lineage and author attribution via Merge Commits (`--no-ff`).
-   - Detailed operational merge procedures, conflict handling, safety checkpoints, and validation steps belong to that runbook.
-3. **GitHub Repository Merge Settings Consideration**:
-   - Repository settings in GitHub govern PR merges via the GitHub UI.
-   - Any recommended configuration of GitHub PR merge options (such as defaulting to Squash Merge for topic branches) must **not** restrict or conflict with upstream synchronization procedures that require Merge Commits (`--no-ff`), noting that upstream synchronization procedures may execute via command line or separate integration workflows outside general UI PR restrictions.
-4. **No Rebase on Shared Branches**:
-   - Rebasing, resetting, or history rewriting on `develop` or `master` is strictly prohibited by policy.
+- **Enabled on GitHub (`[VERIFIED]`)**: **Squash Merge** and **Merge Commits**.
+- **Disabled on GitHub (`[VERIFIED]`)**: **Rebase Merge**.
+- **Maintainer Selection Rule**: Because GitHub repository settings apply per repository rather than per source-branch pattern, the maintainer selects **Squash Merge** for normal topic branches (`feature/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`) and **Merge Commit** for `chore/upstream-sync-*` and `develop`-to-`master` release promotions, as specified in [`docs/development/git-workflow.md`](git-workflow.md#8-merge-strategy).
 
 ---
 
-## 9. CODEOWNERS
-
-### Audit Finding
-
-A comprehensive search across the repository confirms that **no CODEOWNERS file exists**:
-- Inspected `.github/CODEOWNERS`: Absent.
-- Inspected `CODEOWNERS` (root): Absent.
-- Inspected `docs/CODEOWNERS`: Absent.
-
-### Assessment
-
-- **Classification**: **`NOT CONFIGURED`**.
-- **Assessment**: No CODEOWNERS mechanism is currently configured. The project does not currently define path-based ownership through CODEOWNERS. At current contributor scale, introducing mandatory path-based CODEOWNERS approvals would create unnecessary administrative overhead.
-- **Roadmap**: Introducing modular code ownership (e.g., mapping `plugins/webkul/accounts` or `plugins/webkul/security` to dedicated maintainers) is classified as **`RECOMMENDED`** for future scaling phases.
-
----
-
-## 10. Issue Templates
+## 5. Issue Templates & `CODEOWNERS`
 
 ### Audited Issue Templates
 
-Inspection of [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/) confirms the presence of 3 templates:
+Inspection of [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/) confirms 3 template files:
 
-| Template File | Format | Issue Type | Governance Attributes |
+| Template File | Format | Issue Type | Governance Role |
 | :--- | :--- | :--- | :--- |
-| [`bug.yml`](../../.github/ISSUE_TEMPLATE/bug.yml) | GitHub Issue Form (YAML) | Bug Report (`labels: ["Bug"]`) | Prerequisites validation, affected version, environment preconditions (PHP, MySQL, OS, browser), reproduction steps, actual vs expected behavior, screenshots, context |
-| [`bug_report.md`](../../.github/ISSUE_TEMPLATE/bug_report.md) | Legacy Markdown Template | Bug Report (`labels: bug`) | Freeform markdown bug report covering similar fields |
-| [`feature_request.yml`](../../.github/ISSUE_TEMPLATE/feature_request.yml) | GitHub Issue Form (YAML) | Feature Request (`labels: ['Feature Request']`) | Problem description, proposed solution, alternatives considered, additional context |
+| [`bug.yml`](../../.github/ISSUE_TEMPLATE/bug.yml) | GitHub Issue Form (YAML) | Bug Report (`labels: ["Bug"]`) | Canonical structured defect form (environment, preconditions, reproduction steps, expected vs. actual behavior). Required for AI agents per `AGENTS.md`. |
+| [`feature_request.yml`](../../.github/ISSUE_TEMPLATE/feature_request.yml) | GitHub Issue Form (YAML) | Feature Request (`labels: ['Feature Request']`) | Canonical structured proposal form (problem statement, proposed solution, alternatives considered, context). Required for AI agents per `AGENTS.md`. |
+| [`bug_report.md`](../../.github/ISSUE_TEMPLATE/bug_report.md) | Legacy Markdown Template | Bug Report (`labels: bug`) | Legacy freeform markdown template retained in `.github/ISSUE_TEMPLATE/`. |
 
-### Observations and Recommendations
+### `CODEOWNERS` Status
 
-1. **Template Redundancy**: Having both `bug.yml` (modern form) and `bug_report.md` (legacy template) active causes duplicate bug reporting options in GitHub's issue chooser UI.
-2. **Missing Structured Categories**: Structured issue forms do not yet exist for documentation updates, refactorings, or upstream synchronization tasks.
-3. **Recommendation**: In a future governance maintenance phase, consolidate bug reporting by deprecating `bug_report.md` in favor of `bug.yml`, and consider structured forms for `docs.yml` and `refactor.yml`.
-4. **Implementation Boundary**: This finding is a **governance recommendation only** (**`RECOMMENDED`**). No files in `.github/ISSUE_TEMPLATE/` are created, renamed, or deleted during Operational Stage O5.
+- Inspected `.github/CODEOWNERS`, `CODEOWNERS`, and `docs/CODEOWNERS`: **Absent** (`[VERIFIED]`).
+- Under the current solo-maintainer operating model, path-based `CODEOWNERS` review gates are intentionally not configured.
 
 ---
 
-## 11. GitHub Actions Governance
+## 6. Active Controls vs. Optional Future Governance Enhancements
 
-### Verified Workflow Files
+To distinguish between controls that are active and enforced today versus optional enhancements that may be adopted if the contributor model scales:
 
-Inspection of [`.github/workflows/`](../../.github/workflows/) confirms 4 active workflows:
-
-| Workflow File | Triggers (`on:`) | Target Branches | Permissions | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| [`pest_tests.yml`](../../.github/workflows/pest_tests.yml) | `push`, `pull_request` | `master`, `develop` | `contents: read` | Automated Pest v4 unit/feature tests across MySQL 8.0 & PostgreSQL 16 on PHP 8.3 |
-| [`playwright_tests.yml`](../../.github/workflows/playwright_tests.yml) | `push`, `pull_request`, `merge_group`, `workflow_dispatch` | `master`, `develop` | `contents: read` | End-to-end browser testing with Playwright (6 shards) on MySQL & PostgreSQL |
-| [`translations_check.yml`](../../.github/workflows/translations_check.yml) | `push`, `pull_request` | `master`, `develop` | `contents: read` | Translation consistency checks (`php artisan translations:check --details`) |
-| [`docker_publish.yml`](../../.github/workflows/docker_publish.yml) | `push` (tags `v*`), `workflow_dispatch` | Tags matching `v*` | `contents: read` | Multi-architecture production Docker image build and publish to Docker Hub |
-
-### Governance Analysis and CI Boundary
-
-- **Concurrency Controls**: `pest_tests.yml`, `playwright_tests.yml`, and `translations_check.yml` configure `${{ github.workflow }}-${{ github.ref }}` concurrency groups with `cancel-in-progress: true` to conserve CI runner resources.
-- **Least-Privilege Permissions**: All 4 workflows explicitly declare `contents: read`. This least-privilege permission is verified for these specific workflow files; it does not constitute an audit of the overall repository token settings.
-- **Required Status Checks**: Both rulesets strictly require the two Pest contexts, translation consistency, and `Playwright E2E Gate` (**`VERIFIED`**, GitHub API inspection 2026-09-19).
-- **Operational Stage Boundary Notice**: Selected O6 CI gating is implemented; test-matrix reliability and any additional quality gates remain separate work.
-
----
-
-## 12. Governance Classification
-
-Every governance control and observation in this document is classified according to the following taxonomy:
-
-- **`VERIFIED`**: Direct repository or GitHub evidence independently confirms the state.
-- **`POLICY`**: The project has explicitly adopted the rule in canonical documentation, but technical server-side enforcement is unverified.
-- **`HISTORICAL PRACTICE`**: Observable in Git commit history or past contributions; indicates historical execution, but does not by itself prove platform enforcement or future policy.
-- **`RECOMMENDED`**: A reasonable governance improvement identified by audit, not yet adopted.
-- **`PENDING DECISION`**: A governance question requiring project stakeholder resolution.
-- **`PENDING AUTHORIZATION`**: A desired control is identified but requires explicit administrative authorization prior to mutation.
-- **`DEFERRED`**: Governance responsibility formally assigned to a subsequent roadmap phase.
-- **`NOT CONFIGURED`**: The relevant governance mechanism was audited and does not exist.
-- **`NOT VERIFIED`**: The remote configuration could not be independently inspected.
-
-### Special Constraints
-
-1. **Autonomous AI Agents**: "Autonomous AI Agent" is **NOT** a native GitHub permission role. AI coding agents operate strictly through the identity, credentials, SSH keys, or tokens under which they are executed. AI operating rules belong to [`AGENTS.md`](../../AGENTS.md) and [`docs/ai/`](../ai/).
-2. **Urgent Fix & Release Branches**: The project intentionally has no `hotfix/*` or `release/*` branches. Urgent defects use the normal reviewed `fix/*` lifecycle from `develop`; releases are promoted to `master` from verified `develop` commits and tagged there. See [`git-workflow.md`](git-workflow.md#9-protected-branch-policy).
-
----
-
-## 13. Governance Findings
-
-The audit identified the following genuine, evidence-based governance findings:
-
-### GOV-001: Direct Push Restriction on `develop` and `master`
-- **Classification**: **`VERIFIED`**
-- **Evidence**: Active GitHub rulesets `23566563` and `23566566` apply `pull_request` rules to `develop` and `master`; the effective-rules endpoint confirms both applications.
-- **Impact**: Direct updates to either protected branch must use a Pull Request.
-- **Recommended Action**: Re-verify ruleset state after any repository-administration change.
-- **Owning Operational Stage**: O5 (`COMPLETE`).
-
-### GOV-002: Solo-Maintainer PR Integrity Enforcement
-- **Classification**: **`VERIFIED`**
-- **Evidence**: Both active rulesets require a Pull Request and resolution of review threads, set required approving reviews to zero, disable latest-pusher approval, retain stale-review dismissal, and have no bypass actors.
-- **Impact**: A solo maintainer can merge a self-reviewed, verified Pull Request without a second account, while direct pushes, branch deletion, force pushes, and unresolved conversations remain blocked.
-- **Recommended Action**: Complete the template self-review and record verification for every Pull Request; obtain independent review when a higher-risk repository control requires it.
-- **Owning Operational Stage**: O5 (`COMPLETE`).
-
-### GOV-003: GitHub Repository Merge Button Configuration
-- **Classification**: **`VERIFIED`** (repository settings) / **`POLICY`** (source-specific method selection)
-- **Evidence**: GitHub API confirms Squash Merge and Merge Commits enabled, with Rebase Merge disabled. The distinction between a normal topic Pull Request and upstream synchronization remains a maintainer-enforced policy because both target `develop`.
-- **Impact**: Rebase Merge cannot be selected; maintainers must select Squash Merge for normal topics and Merge Commits for upstream synchronization and release promotion.
-- **Recommended Action**: Re-verify merge settings after repository-administration changes.
-- **Owning Operational Stage**: O5 (`COMPLETE`).
-
-### GOV-004: Issue Template Redundancy
-- **Classification**: **`RECOMMENDED`**
-- **Evidence**: `.github/ISSUE_TEMPLATE/` contains both `bug.yml` (YAML form) and `bug_report.md` (legacy Markdown).
-- **Impact**: Causes duplicate bug report options in the GitHub issue chooser UI.
-- **Recommended Action**: In a future governance maintenance stage, deprecate and remove legacy `bug_report.md` in favor of `bug.yml`. This remains a recommendation only; no template files are modified in Operational Stage O5.
-- **Owning Operational Stage**: O5 (`PENDING AUTHORIZATION`).
-
-### GOV-005: CODEOWNERS Configuration
-- **Classification**: **`NOT CONFIGURED`**
-- **Evidence**: No `CODEOWNERS` file exists in `.github/`, root, or `docs/`.
-- **Impact**: Reviewers must be manually assigned on all Pull Requests.
-- **Recommended Action**: Retain current unconfigured status for centralized maintainer model; plan modular ownership if team expands.
-- **Owning Operational Stage**: O5 (`RECOMMENDED`).
-
-### GOV-006: Automated CI Status Checks Gating
-- **Classification**: **`VERIFIED`** / **`IMPLEMENTED`**
-- **Evidence**: Active GitHub rulesets `23566563` and `23566566` require the two Pest contexts, translation consistency, and `Playwright E2E Gate`; PR #12 executed all four successfully before merge commit `439950402663107c42ffd7d7d3570c3d2e4ccc07`.
-- **Impact**: The selected checks are now required for Pull Requests into both protected branches.
-- **Residual Boundary**: This does not make all workflow jobs or future quality gates required.
-- **Owning Operational Stage**: O5 / O6 (**complete for the selected gate set**).
-
----
-
-## 14. Deferred Governance
-
-To preserve strict architectural boundaries across roadmap phases, the following governance areas are formally deferred:
-
-| Deferred Control Area | Owning Operational Stage | Scope and Governance Responsibilities |
+| Governance Area | Current Active State (`[VERIFIED]`) | Optional Future Enhancement |
 | :--- | :--- | :--- |
-| **Additional CI Maturity Controls** | **O6 follow-up** | Evaluating workflow coverage, diagnostics, failure notifications, and coverage thresholds; the selected required checks are already codified. |
-| **Upstream Synchronization Procedures** | **O7 — Upstream Integration** | Defining operational sync commands; vendor conflict resolution protocols; verification procedures for vendor alignment; tag synchronization. |
-| **Living Knowledge Synchronization** | **O8 — Change Management & Knowledge Maintenance** | Reconciling upstream schema and feature modifications against the living documentation suite (`docs/`); updating architecture specs and ERDs. |
-
----
-
-## 15. Evidence Matrix
-
-| Area | Expected State | Actual State | Classification | Evidence Source | Operational Stage |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Default Branch** | `develop` | `develop` | **VERIFIED** | `git ls-remote --symref origin HEAD`, `git symbolic-ref refs/remotes/origin/HEAD` | O5 |
-| **Branch Role: develop** | Primary integration branch | Primary integration branch | **VERIFIED** | `git ls-remote --symref origin HEAD`, `docs/development/git-workflow.md` | O5 |
-| **Branch Role: master** | Stable release branch | Stable release branch; first release promotion pending | **POLICY** | `docs/development/git-workflow.md`, transition record | O4 / O5 |
-| **Direct Push Restriction on develop & master** | Prohibited on `develop` & `master` | Active Pull Request rules block direct updates | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
-| **Pull Request Template** | Present | Present at `.github/PULL_REQUEST_TEMPLATE.md` | **VERIFIED** | File inspection `.github/PULL_REQUEST_TEMPLATE.md` | O5 |
-| **Pull Request Requirement for protected branches** | Mandatory for `develop` and `master` | Active rulesets require Pull Requests | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
-| **Pull Request Review Requirement** | Self-review and recorded verification; no independent approval gate | Active rulesets require zero approvals, disable latest-push approval, and require conversation resolution | **VERIFIED** | GitHub rulesets `23566563`, `23566566` | O5 |
-| **Topic Branch Merge Strategy** | Squash Merge | Established by policy; Squash Merge enabled and Rebase Merge disabled | **POLICY** | `docs/development/git-workflow.md`; GitHub repository settings | O5 |
-| **Upstream Integration Merge Strategy** | Merge Commit (`--no-ff`) | Established by policy; observed in history | **POLICY** | `docs/development/git-workflow.md` Section 8 & 10, commits `15a76bf09`, `49e330b5e` | O5 / O7 |
-| **Branch Protection / Rulesets** | Configured on GitHub | Two active repository rulesets protect `develop` and `master` | **VERIFIED** | GitHub rulesets `23566563`, `23566566`; effective-rules API | O5 |
-| **CODEOWNERS** | Configured if needed | Absent across repository | **NOT CONFIGURED** | Inspected `.github/CODEOWNERS`, `CODEOWNERS`, `docs/CODEOWNERS` | O5 |
-| **Issue Templates** | Form-based templates | `bug.yml`, `bug_report.md`, `feature_request.yml` present | **VERIFIED** | Inspected `.github/ISSUE_TEMPLATE/` directory | O5 |
-| **GitHub Actions Workflows** | Active on PRs | 4 workflows active; permissions `contents: read` | **VERIFIED** | Inspected `.github/workflows/` directory | O5 |
-| **Required Status Checks Gating** | Enforced gating | Both active rulesets strictly require Pest (MySQL/PostgreSQL), translation consistency, and `Playwright E2E Gate` | **VERIFIED / IMPLEMENTED** | GitHub rulesets `23566563`, `23566566`; GitHub API inspection 2026-09-19; PR #12 | O5 / O6 |
-| **Upstream Sync Procedure** | Documented procedure | Dual-remote topology active; execution deferred | **DEFERRED** | O4 docs, git remotes | O7 |
-
----
-
-## 16. Verification Metadata
-
-This governance specification is verified against active repository configuration, commit history, and remote tracking state.
-
-- **Status**: `verified`
-- **Source of Truth**: `repository-configuration`
-- **Last Verified**: `2026-09-17`
-- **Scope**: `repository-governance`
-- **Confidence**: `high`
+| **Protected Branches (`develop`, `master`)** | Enforced via active rulesets `23566563` and `23566566` (PR required, deletion/force-push blocked, no bypass actors). | Require `>=1` independent approving review if the project transitions from a solo maintainer to a multi-maintainer team. |
+| **Required CI Status Checks** | 4 status checks (`MySQL Pest`, `PostgreSQL Pest`, `Translations`, `Playwright E2E Gate`) strictly enforced on `develop` and `master`. | Add a dedicated `Laravel Pint` or `kb_lint.py` status check context if server-side style/documentation gating is desired in CI. |
+| **Merge Queue** | Disabled (`merge_group` is present only in `playwright_tests.yml`). | Enable GitHub Merge Queue only after adding `merge_group` triggers to `pest_tests.yml` and `translations_check.yml`. |
+| **Code Ownership (`CODEOWNERS`)** | Not configured; all PRs are reviewed by the solo maintainer. | Introduce `.github/CODEOWNERS` mapping domain plugins (e.g. `accounts`, `security`) to domain owners if team size expands. |
+| **Issue Templates** | `bug.yml`, `feature_request.yml`, and legacy `bug_report.md` present; `AGENTS.md` mandates `bug.yml` and `feature_request.yml`. | Optionally retire `bug_report.md` or add dedicated `docs.yml` / `refactor.yml` issue forms in a future template cleanup. |
+| **AI Agent Identity** | AI agents operate strictly under the human maintainer's credentials and the constraints in `AGENTS.md` (not a native GitHub role). | If dedicated bot accounts or GitHub Apps are introduced, scope their token permissions to least privilege without ruleset bypass rights. |

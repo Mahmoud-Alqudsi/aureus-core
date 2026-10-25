@@ -1,7 +1,7 @@
 ---
 status: policy
 source_of_truth: repository-governance-and-codex-skill-format
-last_verified: 2026-09-17
+last_verified: 2026-10-25
 scope: repository-scoped-ai-skills
 confidence: high
 ---
@@ -16,7 +16,7 @@ The canonical rules remain `AGENTS.md` and the referenced documents under `docs/
 
 ## Location and Discovery
 
-The skills are versioned under `.agents/skills/` at the repository root. Codex discovers repository skills from that path, so the skills apply to this repository without becoming global user rules. The root `.gitignore` excludes other `.agents` content while explicitly retaining this reviewed skill subtree. Each skill is intentionally instruction-only: no skill includes scripts, credentials, or automatic remote mutation.
+The skills are versioned under `.agents/skills/` at the repository root. AI coding assistants discover repository skills from that path, so the skills apply to this repository without becoming global user rules. The root `.gitignore` excludes other `.agents` content while explicitly retaining this reviewed skill subtree. Each skill is intentionally instruction-only: no skill includes credentials or automatic remote mutation.
 
 | Skill | Use for | Canonical controls |
 | --- | --- | --- |
@@ -31,9 +31,9 @@ Use a skill only when its task description matches. It supplements the baseline 
 
 ## Automation Boundary
 
-O9 deliberately adds no executable automation. The repository has no established safe wrapper that can decide test scope, resolve an upstream conflict, alter a schema, or mutate GitHub settings without task-specific evidence and authorization. Preserving these human gates is more important than automating their commands.
+Skills remain instruction-only and do not embed unreviewed mutation scripts. The repository does not delegate test-scope selection, upstream conflict resolution, schema changes, or GitHub settings mutations to autonomous wrappers without task-specific evidence and human authorization. Deterministic validation scripts (such as [`scripts/kb_lint.py`](../../scripts/kb_lint.py) and [`scripts/hooks/pre-commit`](../../scripts/hooks/pre-commit)) operate strictly as read-only verification gates.
 
-Reusable scripts may be proposed later only when all of the following are true:
+Additional reusable scripts may be introduced only when all of the following are true:
 
 1. the task is deterministic and repeated;
 2. inputs, outputs, and failure behavior are verified;
@@ -44,8 +44,4 @@ Reusable scripts may be proposed later only when all of the following are true:
 
 Changes to a repository skill follow [`change-management.md`](change-management.md). Keep each skill focused on one job, link rather than duplicate canonical rules, and update this index when a skill is added, removed, renamed, or materially retargeted.
 
-Validate a changed skill with the Codex Skill Creator validator available in the current environment, inspect its rendered `SKILL.md`, and confirm that its description is specific enough to avoid unrelated implicit activation. Validate all corresponding documentation links and record material changes in [`docs/CHANGELOG.md`](../CHANGELOG.md).
-
-## Completion Boundary
-
-O9 is complete on this branch when the repository contains discoverable, narrow skills for the established high-risk workflows and a maintained index that makes their authority boundaries explicit. It does not prove automation of those workflows or replace the O10 scenario-based readiness audit.
+Validate a changed skill with [`scripts/kb_lint.py`](../../scripts/kb_lint.py), inspect its rendered `SKILL.md`, and confirm that its description is specific enough to avoid unrelated implicit activation. Validate all corresponding documentation links and record material changes in [`docs/CHANGELOG.md`](../CHANGELOG.md).

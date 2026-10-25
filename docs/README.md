@@ -146,7 +146,7 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **80 verified files** organized into 10 functional domains:
+The repository documentation consists of **79 verified files** organized into 10 functional domains:
 
 ```
 docs/
@@ -157,7 +157,7 @@ docs/
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (5 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
-├── development/                              # Development workflow, Git operations, maintenance, AI skills & readiness (7 files)
+├── development/                              # Development workflow, Git operations, maintenance & AI skills (6 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -253,11 +253,10 @@ Repository topology, branch hierarchy, commit conventions, merge strategy, GitHu
 | :--- | :--- |
 | [`docs/development/git-workflow.md`](development/git-workflow.md) | Git branching, commits, merge strategy, and high-level upstream relationship |
 | [`docs/development/github-governance.md`](development/github-governance.md) | GitHub governance, PR controls, branch protection reality, merge rules, and issue templates |
-| [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and governance findings |
+| [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and status check gates |
 | [`docs/development/upstream-sync.md`](development/upstream-sync.md) | Operational runbook for upstream synchronization, 3-layer safety preflight, conflict resolution, and rollback |
-| [`docs/development/change-management.md`](development/change-management.md) | Change lifecycle, knowledge-maintenance triggers, evidence discipline, review cadence, and PR documentation record |
+| [`docs/development/change-management.md`](development/change-management.md) | Change lifecycle, knowledge-maintenance triggers, evidence discipline, review cadence, PR documentation record, and routing verification scenarios |
 | [`docs/development/ai-skills.md`](development/ai-skills.md) | Repository-scoped AI skill index, automation boundaries, and maintenance rules |
-| [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) | Scenario-based O10 readiness evidence, deferred controls, and final-revalidation procedure |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:

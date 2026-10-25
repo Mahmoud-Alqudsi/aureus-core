@@ -28,6 +28,19 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
+## Knowledge-Base Restructure — Stage 3: Governance & Operations SSoT Consolidation (2026-10-25)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Decoupled all governance and development specifications under `docs/development/` ([`git-workflow.md`](development/git-workflow.md), [`github-governance.md`](development/github-governance.md), [`ci-testing-governance.md`](development/ci-testing-governance.md), [`upstream-sync.md`](development/upstream-sync.md), [`change-management.md`](development/change-management.md), and [`ai-skills.md`](development/ai-skills.md)) from historical operational stage markers (`O0`–`O10`, `R6`, `R8`), removing all `Completion Boundary` and `Owning Operational Stage` sections (`0` stage references remaining across `docs/development/`).
+- Enforced strict Single Source of Truth (SSoT) ownership across the governance triad:
+  - [`git-workflow.md`](development/git-workflow.md) exclusively owns dual-remote topology, branch hierarchy, naming conventions, commit formatting, and merge/release lifecycles.
+  - [`github-governance.md`](development/github-governance.md) exclusively owns GitHub server-side default branch state, active repository rulesets (`23566563` and `23566566`), repository merge button settings, PR review rules, and issue templates (`.github/ISSUE_TEMPLATE/bug.yml`, `feature_request.yml`, and retained `bug_report.md`).
+  - [`ci-testing-governance.md`](development/ci-testing-governance.md) exclusively owns `.github/workflows/*.yml`, runtime/database matrices, test execution architecture, and the 4 required status check contexts, delegating per-plugin test file counts to [`docs/ai/testing-rules.md`](ai/testing-rules.md).
+- Replaced temporary audit-phase badges (`RECOMMENDED`, `DEFERRED`, `PENDING DECISION`) in [`github-governance.md`](development/github-governance.md) and [`ci-testing-governance.md`](development/ci-testing-governance.md) with explicit tables contrasting active enforced controls against optional future enhancements.
+- Merged the 7 routing and readiness verification scenarios into [`docs/development/change-management.md`](development/change-management.md#routing-and-readiness-verification-scenarios) and retired the standalone `docs/development/knowledge-base-readiness-audit.md` file (whose historical dated entries from `2026-09-17` through `2026-09-22` are preserved in this changelog), updating the canonical document count in [`docs/README.md`](README.md) from 80 to 79 verified files.
+
+---
+
 ## Knowledge-Base Restructure — Stage 2: AI Layer Consolidation, Reading-Order Routing & Markdown Anchor Normalization (2026-10-25)
 
 - **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
@@ -151,7 +164,7 @@ Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath
     - Pruned stale linked worktree in `/tmp/aureuserp-upstream-sync-20260918-c2b4ddaa2` using `git worktree prune -v`.
     - Safely deleted seven local branches fully merged into `develop` using `git branch -d`: `chore/upstream-sync-20260918-c2b4ddaa2`, `chore/enforce-ci-status-checks`, `chore/update-dependencies`, `docs/record-upstream-sync`, `docs/record-o6-enforcement`, `refactor/ai-knowledge-architecture`, and `feature/privacy-and-localization`.
     - Preserved protected branches (`master`, `develop`), checkpoints (`checkpoint/*`), active topic branch (`docs/sync-domain-knowledge-base`), and active feature branches/worktrees.
-  - Completed final scenario revalidation and closed Operational Stage O10 in [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) and [`docs/README.md`](README.md).
+  - Completed final scenario revalidation and closed Operational Stage O10 in `docs/development/knowledge-base-readiness-audit.md` and [`docs/README.md`](README.md).
 
 ### Post-Upstream Metrics & Governance Reconciliation (2026-09-22)
 
@@ -264,7 +277,7 @@ Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath
 - **Status**: **Initial audit complete / final revalidation pending**.
 - **Primary Focus**: Testing whether realistic agent tasks reach the correct canonical controls and direct repository evidence without granting unapproved authority.
 - **Recorded Result**:
-  - Added [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) with seven scenario-based routing checks covering plugin, company-scoped schema, API, security, test/CI, documentation, and upstream work.
+  - Added `docs/development/knowledge-base-readiness-audit.md` with seven scenario-based routing checks covering plugin, company-scoped schema, API, security, test/CI, documentation, and upstream work.
   - All seven current routing scenarios passed static evidence inspection; the audit does not claim application execution or platform enforcement from that result.
   - Final O10 revalidation remains dependent on an authorized upstream synchronization, review of incoming workflow changes, and the separately tracked O6 decisions.
 

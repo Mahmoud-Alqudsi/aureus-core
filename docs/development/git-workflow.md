@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: repository-configuration
-last_verified: 2026-09-17
+last_verified: 2026-10-25
 scope: development-workflow
 confidence: high
 ---
@@ -66,7 +66,7 @@ master
 ### Branch Roles
 
 - **`master` — Stable Release Branch**:
-  `master` contains only verified releases of Aureus ERP. It is not the default branch and it is never updated directly; its normal source is a verified Pull Request from `develop`. Immutable downstream version tags are created from verified commits on this branch only.
+  `master` contains only verified releases of Aureus ERP. It is not the default branch and it is never updated directly; its normal source is a verified Pull Request from `develop`. Immutable downstream version tags are created from verified commits on `master` only.
 - **`develop` — Primary Integration Branch**:
   `develop` is the default integration branch for daily development. All features, fixes, refactorings, documentation updates, and chores integrate into `develop`.
 - **Topic Branches (`feature/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`)**:
@@ -200,7 +200,7 @@ develop
 > The active solo-maintainer rulesets require a Pull Request but zero approving reviews. Self-review and recorded verification are therefore mandatory for every Pull Request; independent review remains mandatory when another repository control or the change risk requires it.
 
 > [!NOTE]
-> Detailed GitHub-level branch protection rule enforcement and CI status check requirements are defined in Operational Stage O5. Upstream synchronization exceptions and operational runbooks are documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
+> Detailed GitHub server-side branch protection rulesets and required status checks are defined in [`docs/development/github-governance.md`](github-governance.md) and [`docs/development/ci-testing-governance.md`](ci-testing-governance.md). Upstream synchronization exceptions and operational runbooks are documented in [`docs/development/upstream-sync.md`](upstream-sync.md).
 
 ---
 
@@ -352,7 +352,7 @@ develop  ───► Protected by Policy: Direct push prohibited.
    - An upstream synchronization enters through an authorized, self-reviewed `chore/upstream-sync-<date>` Pull Request and uses a Merge Commit.
 
 > [!IMPORTANT]
-> This section outlines the normative project policy. GitHub-level enforcement mechanisms (such as branch protection rules, required reviews, and automated CI gates) belong to Operational Stage O5.
+> This section outlines the normative project policy. GitHub server-side enforcement mechanisms (repository rulesets, conversation resolution, and automated CI gates) are canonically documented in [`docs/development/github-governance.md`](github-governance.md).
 
 ### Urgent-Fix Handling
 

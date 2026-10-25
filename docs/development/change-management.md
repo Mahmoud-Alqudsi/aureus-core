@@ -1,7 +1,7 @@
 ---
 status: policy
 source_of_truth: repository-change-evidence
-last_verified: 2026-09-17
+last_verified: 2026-10-25
 scope: change-management-and-knowledge-maintenance
 confidence: high
 ---
@@ -73,7 +73,7 @@ The following events require an explicit documentation-impact decision in the PR
 | Schema, relationship, model, plugin lifecycle, or dependency change | Update the relevant database, architecture, plugin, or terminology documentation after confirming the repository evidence. Do not alter canonical terminology without source support. |
 | Security, authorization, company isolation, or ownership change | Update the applicable security documentation and AI rules when the implementation changes a mandatory invariant. Treat the impact as security-sensitive. |
 | Test strategy, CI workflow, quality gate, or developer-tooling change | Update CI/testing governance and the PR verification guidance. Do not claim a gate is enforced until its successful execution and GitHub enforcement are verified separately. |
-| Git, GitHub, release, or upstream procedure change | Update the corresponding development runbook and `AGENTS.md` when agent operating behavior changes. Review incoming upstream workflows under the O7 procedure. |
+| Git, GitHub, release, or upstream procedure change | Update the corresponding development runbook and `AGENTS.md` when agent operating behavior changes. Review incoming upstream workflows under the procedure in [`upstream-sync.md`](upstream-sync.md). |
 | Documentation correction, navigation change, or AI-guidance change | Update the index or reading route when discoverability changes; preserve the source-of-truth hierarchy and record a material correction in `docs/CHANGELOG.md`. |
 | Documentation-only formatting or spelling fix | Update no additional document unless links, meanings, evidence labels, or navigation change. A changelog entry is optional when the change is non-material. |
 
@@ -106,7 +106,7 @@ Every PR must use [`.github/PULL_REQUEST_TEMPLATE.md`](../../.github/PULL_REQUES
 3. the verification performed and its outcome;
 4. any remaining `[UNKNOWN]`, deferred item, or follow-up owner.
 
-This is a review record, not an automated enforcement mechanism. Required status checks remain governed by O5/O6 and are not implied by a checked template box.
+This is a review record, not an automated enforcement mechanism. Required status checks remain governed by [`github-governance.md`](github-governance.md) and [`ci-testing-governance.md`](ci-testing-governance.md) and are not implied by a checked template box.
 
 The PR template records traceability and verification; it does not replace the Issue. An Issue describes the tracked work, while the PR records the implementation proposed for integration.
 
@@ -117,18 +117,28 @@ The PR template records traceability and verification; it does not replace the I
 - Do not edit historical changelog records to make a new policy appear historical. Record current operational work separately.
 - Do not execute upstream synchronization, alter GitHub enforcement, publish tags, or change CI merely because their documentation is updated. Each action retains its own authorization boundary.
 
+## Routing and Readiness Verification Scenarios
+
+When auditing or revalidating whether AI agents and developers can route realistic tasks to canonical controls and direct repository evidence without assuming unapproved authority, evaluate these seven baseline scenarios in read-only mode:
+
+| Scenario | Expected route | Direct evidence inspected | Required boundary |
+| --- | --- | --- | --- |
+| Change an existing local plugin | `AGENTS.md` → `docs/ai/reading-order.md` → `aureus-plugin-change` → `docs/ai/plugin-rules.md` & `docs/architecture/plugin-registry.md` → owning `docs/plugins/<plugin>.md` | `plugins/webkul/partners/src/PartnerServiceProvider.php` configures `Package`; `PartnerPlugin::register()` exists; Partners has workflow, API, and Filament tests. | Provider, panel participation, dependencies, direct references, and tests are verified before editing. |
+| Add a company-scoped persistence change | `AGENTS.md` → `docs/ai/reading-order.md` → `aureus-schema-change` → `docs/ai/database-rules.md` & `docs/architecture/change-impact.md` | `BelongsToCompany::bootBelongsToCompany()` adds `CompanyScope`; the owning provider declares migrations via `hasMigrations()`. | Ownership, schema conventions, company isolation, and explicit human plan approval are enforced. |
+| Add or change an API endpoint | `AGENTS.md` → `docs/ai/reading-order.md` → `aureus-api-change` → `docs/ai/security-rules.md`, `docs/application/overview.md`, & `docs/security/` | `plugins/webkul/partners/routes/api.php` uses `auth:sanctum`; partner API feature tests exist; `AppServiceProvider` binds the runtime authenticatable model. | Route, controller/action, authentication, authorization, company isolation, and nearest tests are traced. |
+| Fix a security-sensitive defect | `AGENTS.md` → `docs/ai/reading-order.md` → `docs/ai/security-rules.md` & `docs/security/` → direct security source and tests | `Webkul\Security\Bouncer`, `OwnershipScope`, and `PermissionType` exist; company-isolation tests exist in Support. | Reading order directs the agent to security rules and source evidence without bypassing tenancy or policies. |
+| Change a test, helper, or CI workflow | `AGENTS.md` → `docs/ai/reading-order.md` → `aureus-test-and-ci-change` → `docs/ai/testing-rules.md` & `docs/development/ci-testing-governance.md` | Existing Pest, Playwright, and translation workflows declare triggers, permissions, concurrency, and jobs; shared test bootstrap exists. | Distinguishes test work from GitHub ruleset enforcement and treats incoming workflow changes as security-sensitive. |
+| Correct a material document or AI rule | `AGENTS.md` → `docs/ai/reading-order.md` → `aureus-documentation-change` → `docs/development/change-management.md` → direct domain evidence | `docs/development/change-management.md`, `docs/CHANGELOG.md`, `AGENTS.md`, and `.github/PULL_REQUEST_TEMPLATE.md` define evidence, impact, and record boundaries. | Preserves the source-of-truth hierarchy and separates knowledge-base history from software release history. |
+| Audit or execute an upstream synchronization | `AGENTS.md` → `docs/ai/reading-order.md` → `aureus-upstream-sync` → `docs/development/git-workflow.md`, `github-governance.md`, & `upstream-sync.md` | Both `origin` and `upstream` remotes exist; the runbook defines command classes `[A]`–`[E]`, workflow review, stop conditions, an upstream PR to `develop`, and recovery. | Preserves explicit human authorization and prohibits direct pushes to `master` or `develop`. |
+
 ## Verification for This Policy
 
 When changing this policy or an associated navigation/control document:
 
 ```bash
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/kb_lint.py --root . --strict --all
 git diff --check
-rg --files docs AGENTS.md .github/PULL_REQUEST_TEMPLATE.md
 git status --short
 ```
 
-Also confirm every Markdown link introduced by the change resolves to an existing repository file and that the PR template still renders as a checklist.
-
-## Completion Boundary
-
-O8 is complete on this branch when the lifecycle, responsibilities, triggers, evidence rules, review cadence, PR record, and documentation-change boundaries are documented and connected to the entry points used by developers and AI agents. It does not prove that every future PR will follow the policy; compliance is verified per change and through the quarterly review.
+Confirm every Markdown link and section anchor resolves and that `.github/PULL_REQUEST_TEMPLATE.md` renders cleanly.
