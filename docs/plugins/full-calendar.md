@@ -149,7 +149,7 @@ The `full-calendar` plugin defines **zero Eloquent models**. It provides the abs
 
 ## Database
 [NOT APPLICABLE]
-The `full-calendar` plugin defines **zero database migrations** and owns **zero database tables** (confirmed in `docs/database/erds/core.md:40, 1035`). All physical working calendar and schedule tables (`calendars`, `calendar_attendances`, `calendar_leaves`) in Aureus ERP are owned and migrated by the `support` plugin (`plugins/webkul/support/database/migrations/2026_04_02_000001_create_calendars_table.php`).
+The `full-calendar` plugin defines **zero database migrations** and owns **zero database tables** (confirmed in `docs/database/erds/core.md#included-core-plugins`). All physical working calendar and schedule tables (`calendars`, `calendar_attendances`, `calendar_leaves`) in Aureus ERP are owned and migrated by the `support` plugin (`plugins/webkul/support/database/migrations/2026_04_02_000001_create_calendars_table.php`).
 
 ## Filament resources/pages/widgets/clusters
 [VERIFIED]

@@ -95,53 +95,13 @@ for details. The config is local per clone; it is not pushed.
 
 ## Technology Baseline
 
-Verified runtime environment and framework versions:
-
-| Component | Installed Version | Verification Evidence |
-| :--- | :--- | :--- |
-| **PHP** | `8.3.29` | Source baseline (`composer.json` platform constraint `^8.3`) |
-| **Laravel Framework** | `13.31.0` | `composer.lock` (`laravel/framework`) |
-| **Filament Admin Engine** | `5.8.1` | `composer.lock` (`filament/filament`) |
-| **Livewire** | `4.4.5` | `composer.lock` (`livewire/livewire`) — *Adhere to v4 specifications* |
-| **Testing Framework** | Pest `4.7.5` / PHPUnit `12` | `composer.lock` (`pestphp/pest`) |
-| **Permissions / RBAC** | Filament Shield `4.2.0` | `composer.lock` (`bezhansalleh/filament-shield`) |
-| **API Authentication** | Laravel Sanctum `4.3.3` | `composer.lock` (`laravel/sanctum`) |
-| **Query Filtering** | Spatie Query Builder | `composer.lock` (`spatie/laravel-query-builder`) |
-| **Package Autoloading** | `composer-merge-plugin` | Root `composer.json` (`wikimedia/composer-merge-plugin`) |
+The canonical technology baseline (PHP `^8.3`, Laravel `v13.x`, Filament `v5.x`, Livewire `v4.x`, Pest `v4.x`, Filament Shield `v4.x`, and Laravel Sanctum `v4.x`) is maintained in [`AGENTS.md` (Technology Baseline)](../AGENTS.md#technology-baseline). Always verify exact installed package versions directly against [`composer.lock`](../composer.lock) and [`composer.json`](../composer.json).
 
 ---
 
 ## Critical Project Terminology
 
-The following architectural distinctions are binding across the entire repository:
-
-### 1. Multi-Company Isolation (No `HasCompanyScope`)
-- **No `HasCompanyScope` Trait**: The trait `HasCompanyScope` does not exist in Aureus ERP.
-- **Actual Suite**:
-  - `Webkul\Support\Services\CompanyContext`: Resolves active company from session/header.
-  - `Webkul\Support\Models\Scopes\CompanyScope`: Global query scope filtering by single `company_id`.
-  - `Webkul\Support\Models\Scopes\CompaniesScope`: Global query scope filtering across many-to-many company pivots.
-  - `Webkul\Support\Traits\BelongsToCompany`: Model trait attaching `CompanyScope` and auto-setting `company_id`.
-  - `Webkul\Support\Traits\BelongsToCompanies`: Model trait for entities belonging to multiple companies.
-  - `Webkul\Support\Traits\ChecksCompanyConsistency`: Validates foreign key relational consistency across company boundaries.
-  - `Webkul\Support\Traits\RestrictToAllowedCompanies`: Model trait applying `AllowedCompanyScope` to restrict company queries to user-assigned companies (unauthorized company switching sanitized via `CompanyContext`).
-
-### 2. Authorization Service (Custom Bouncer)
-- `Webkul\Security\Bouncer` (and its facade `Webkul\Security\Facades\Bouncer`) is an **internal Aureus implementation** (`plugins/webkul/security/src/Bouncer.php`).
-- It is **NOT** the open-source `silber/bouncer` package. Third-party Bouncer methods or database tables do not exist.
-
-### 3. Dependency Taxonomy
-Always distinguish between:
-- **Composer Dependencies**: Declared in `composer.json` packages; loaded via Composer.
-- **Runtime Plugin Dependencies**: Declared via `Package::hasDependencies([...])` in service providers; enforced during installation.
-- **Code-Level Consumption**: Actual symbol imports, class references, services, observers, or dynamic relationships.
-
-### 4. Queue Jobs
-- **Precise Invariant**: The repository contains **zero PHP queue Job classes**. Asynchronous work is handled via alternative mechanisms (such as database notifications or command triggers); do not assume queue workers exist.
-
-### 5. Filament Panels
-- **Admin Panel**: Accessible at `/admin` (`App\Providers\Filament\AdminPanelProvider`), using default auth guard.
-- **Customer Panel**: Accessible at `/` (`App\Providers\Filament\CustomerPanelProvider`), using a separate dedicated customer guard.
+Canonical terminology, class mappings, and misconception corrections (including multi-company isolation traits, `Webkul\Security\Bouncer`, dependency taxonomy, zero queue `Job` classes, and Filament panels) are defined solely in [`docs/ai/terminology.md`](ai/terminology.md). Refer directly to that file rather than duplicating definitions across entry documents.
 
 ---
 
@@ -311,47 +271,11 @@ Cross-cutting verification tracking and change-impact controls:
 
 ## Plugin Ecosystem Overview
 
-Aureus ERP contains **28 domain plugins** located under `plugins/webkul/`. Plugins are classified as **Core** (system-critical, cannot be uninstalled) or **Optional** (runtime installable).
+Aureus ERP contains **28 domain plugins** located under `plugins/webkul/` (9 Core and 19 Optional).
 
-- **Core Status**: Defined by `Package::isCore()` in the plugin's `PackageServiceProvider`.
-- **Runtime Dependencies**: Declared via `Package::hasDependencies([...])`.
-- **Test Coverage Status**: Sourced authoritatively from the audit in [`docs/ai/testing-rules.md`](ai/testing-rules.md) (11 Tested / 17 Untested).
-
-### Complete Plugin Directory & Status Index
-
-| Plugin Slug | Type | Runtime Dependencies | Test Coverage Status | Documentation Link |
-| :--- | :---: | :---: | :---: | :--- |
-| `plugin-manager` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/plugin-manager.md`](plugins/plugin-manager.md) |
-| `analytics` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/analytics.md`](plugins/analytics.md) |
-| `chatter` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/chatter.md`](plugins/chatter.md) |
-| `fields` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/fields.md`](plugins/fields.md) |
-| `full-calendar` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/full-calendar.md`](plugins/full-calendar.md) |
-| `partners` | **Core** | None | **Tested** (10 test files) | [`docs/plugins/partners.md`](plugins/partners.md) |
-| `security` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/security.md`](plugins/security.md) |
-| `support` | **Core** | None | **Tested** (18 test files) | [`docs/plugins/support.md`](plugins/support.md) |
-| `table-views` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/table-views.md`](plugins/table-views.md) |
-| `accounting` | **Optional** | `accounts` | **Tested** (9 test files) | [`docs/plugins/accounting.md`](plugins/accounting.md) |
-| `accounts` | **Optional** | `products` | **Tested** (44 test files) | [`docs/plugins/accounts.md`](plugins/accounts.md) |
-| `barcode` | **Optional** | `inventories` | Untested (`tests/` absent) | [`docs/plugins/barcode.md`](plugins/barcode.md) |
-| `blogs` | **Optional** | `website` | Untested (`tests/` absent) | [`docs/plugins/blogs.md`](plugins/blogs.md) |
-| `contacts` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/contacts.md`](plugins/contacts.md) |
-| `employees` | **Optional** | None | **Tested** (6 test files) | [`docs/plugins/employees.md`](plugins/employees.md) |
-| `inventories` | **Optional** | `products` | **Tested** (41 test files) | [`docs/plugins/inventories.md`](plugins/inventories.md) |
-| `invoices` | **Optional** | `accounts` | Untested (`tests/` absent) | [`docs/plugins/invoices.md`](plugins/invoices.md) |
-| `maintenance` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/maintenance.md`](plugins/maintenance.md) |
-| `manufacturing` | **Optional** | `products`, `inventories` | **Tested** (8 test files) | [`docs/plugins/manufacturing.md`](plugins/manufacturing.md) |
-| `payments` | **Optional** | `accounts` | Untested (`tests/` absent) | [`docs/plugins/payments.md`](plugins/payments.md) |
-| `products` | **Optional** | None | **Tested** (19 test files) | [`docs/plugins/products.md`](plugins/products.md) |
-| `projects` | **Optional** | None | **Tested** (8 test files) | [`docs/plugins/projects.md`](plugins/projects.md) |
-| `purchases` | **Optional** | `invoices` | **Tested** (16 test files) | [`docs/plugins/purchases.md`](plugins/purchases.md) |
-| `recruitments` | **Optional** | `employees` | Untested (`tests/` absent) | [`docs/plugins/recruitments.md`](plugins/recruitments.md) |
-| `sales` | **Optional** | `invoices`, `payments` | **Tested** (20 test files) | [`docs/plugins/sales.md`](plugins/sales.md) |
-| `time-off` | **Optional** | `employees` | Untested (`tests/` absent) | [`docs/plugins/time-off.md`](plugins/time-off.md) |
-| `timesheets` | **Optional** | `projects` | Untested (`tests/` absent) | [`docs/plugins/timesheets.md`](plugins/timesheets.md) |
-| `website` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/website.md`](plugins/website.md) |
-
-> [!TIP]
-> For detailed plugin architectural overviews, panel participation, database table allocations, and cross-plugin dependency graphs, consult [`docs/plugins/README.md`](plugins/README.md).
+- **Complete Plugin Directory, Classification & Dependency Matrix**: Maintained solely in [`docs/plugins/README.md`](plugins/README.md).
+- **Per-Plugin Test Coverage Audit (11 Tested / 17 Untested)**: Maintained solely in [`docs/ai/testing-rules.md`](ai/testing-rules.md#2-fresh-repository-test-coverage-audit).
+- **Plugin Lifecycle & Registration Rules**: Maintained in [`docs/ai/plugin-rules.md`](ai/plugin-rules.md) and [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md).
 
 ---
 

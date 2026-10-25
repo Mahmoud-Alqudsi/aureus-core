@@ -73,7 +73,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Common misconception**: Believing Livewire is on version 3 based on historical or stale repository documentation or configuration notes.
 - **Evidence**:
   - `composer.lock` (package `livewire/livewire` installed version: `v4.4.5`)
-  - `docs/ai/context.md:34, 42`
+  - `docs/ai/context.md#purpose-and-source-of-truth-rule`
   - [`AGENTS.md`](../../AGENTS.md) and this documentation now align with the installed v4 baseline.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST adhere to Livewire 4.4.5 APIs and conventions when authoring or debugging Livewire components.
@@ -270,7 +270,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/products/src/Models/Product.php`
   - `plugins/webkul/products/database/migrations/2024_11_25_091807_create_products_products_table.php`
-  - `docs/database/erds/operations.md:1155`
+  - `docs/database/erds/operations.md#architectural-observations`
   - No `ProductTemplate` model class or `products_templates` table exists in the repository.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT create a separate `ProductTemplate` model or migration.
@@ -303,7 +303,7 @@ When writing code, developing plugins, generating migrations, configuring securi
   - `table-views` (`Webkul\TableViews`): Defines ZERO `*Plugin.php` classes (`TableViewsPlugin.php` does not exist). Instead, it hooks into Filament globally via render hooks registered in `TableViewsServiceProvider::packageRegistered()`.
 - **Common misconception**: Assuming every plugin in Aureus ERP must define a `*Plugin.php` implementing `Filament\Contracts\Plugin` registered via `$panel->plugin(...)`.
 - **Evidence**:
-  - `docs/architecture/overview.md:90-93`
+  - `docs/architecture/overview.md#filament-panel-architecture`
   - `plugins/webkul/analytics/src/AnalyticServiceProvider.php`
   - `plugins/webkul/table-views/src/TableViewsServiceProvider.php:37-48`
 - **Prescriptive Rule**:
@@ -339,8 +339,8 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php:11` implements `ShouldQueue`
   - Zero traditional queue Job classes in `app/` or `plugins/webkul/*/src/`
-  - `docs/architecture/change-impact.md:559, 596`
-  - `docs/verification-matrix.md:95` (`TERM-011`)
+  - `docs/architecture/change-impact.md#121-reactive-infrastructure-summary`
+  - `docs/verification-matrix.md#3-the-master-verification-matrix` (`TERM-011`)
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT assume background processing is handled by queued Job classes.
   - Developers and AI agents MUST NOT treat "zero queue Job classes" and "zero asynchronous behavior" as equivalent, as `ChatterDatabaseNotification` implements `ShouldQueue`.
@@ -410,7 +410,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/sales/src/Models/Order.php` (`is_locked` boolean)
   - `plugins/webkul/purchases/src/Models/Order.php` (`OrderState::DONE`)
-  - `docs/workflows/purchasing.md:403`
+  - `docs/workflows/purchasing.md#15-business-rules-observed`
 - **Prescriptive Rule**:
   - Code evaluating sales order lock states MUST check the `is_locked` boolean attribute.
   - Code evaluating purchase order lock states MUST check whether `state === OrderState::DONE`.
@@ -444,7 +444,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`
   - `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`
-  - `docs/architecture/filament-architecture.md:293-298`
+  - `docs/architecture/filament-architecture.md#deliberately-hidden-resources-shouldregisternavigation--false`
 - **Prescriptive Rule**:
   - Developers MUST NOT change `shouldRegisterNavigation` to `true` on foundational core resources without verifying whether a presentation plugin owns user-facing navigation.
   - When exposing customized or clustered views of core resources, presentation plugins MUST control navigation registration.
@@ -472,9 +472,9 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **What it actually is**: The foundational architectural truth that declaring a capability in a Policy, Filament Shield permission, model `$fillable` array, PHP enum case, Form Request rule, or UI component toggle does NOT guarantee active enforcement across all execution paths (e.g., raw SQL queries, API endpoints, console commands, or internal service workflows).
 - **Common misconception**: Assuming that because a permission, validation rule, or state restriction is declared in a Filament form or Policy, the backend logic and database are automatically protected from unauthorized or inconsistent state transitions.
 - **Evidence**:
-  - `docs/security/authorization.md:25-28`
-  - `docs/ai/security-rules.md:148-155`
-  - `docs/ai/forbidden-patterns.md:29-43`
+  - `docs/security/authorization.md#security-mechanisms-are-not-a-universal-request-pipeline`
+  - `docs/ai/security-rules.md#the-foundational-architectural-truth`
+  - `docs/ai/forbidden-patterns.md#1-declaration--enforcement`
 - **Prescriptive Rule**:
   - Future documentation and code MUST distinguish between a capability being declared and that capability actually being enforced on the relevant execution path.
   - Security-critical constraints, financial balances, and company boundaries MUST be enforced at the service or model level, NOT solely in UI schemas or form requests.

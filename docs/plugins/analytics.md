@@ -43,7 +43,7 @@ The `analytics` plugin serves as the foundational analytic ledger and metric dis
 
 ## Filament Plugin class
 [NOT APPLICABLE]
-The `analytics` plugin defines **zero Filament plugin classes** (no `AnalyticPlugin.php` exists; confirmed architectural exception in `docs/architecture/overview.md:90` and `docs/architecture/plugin-registry.md:89`). It contributes zero direct Filament resources, pages, clusters, or widgets, and registers no UI components on either the `admin` or `customer` panel. All user interfaces interacting with `analytic_records` are provided by consuming downstream plugins (such as `timesheets` and `projects`).
+The `analytics` plugin defines **zero Filament plugin classes** (no `AnalyticPlugin.php` exists; confirmed architectural exception in `docs/architecture/overview.md#filament-panel-architecture` and `docs/architecture/plugin-registry.md#filament-registration-lifecycle`). It contributes zero direct Filament resources, pages, clusters, or widgets, and registers no UI components on either the `admin` or `customer` panel. All user interfaces interacting with `analytic_records` are provided by consuming downstream plugins (such as `timesheets` and `projects`).
 
 ## Composer dependencies
 [VERIFIED]
@@ -154,7 +154,7 @@ plugins/webkul/analytics/
 
 ### Resolution of Prior Documentation Discrepancy: Table Ownership (1 vs 3 Tables)
 [VERIFIED]
-- **Discrepancy**: An earlier planning note (recorded in `docs/database/schema-conventions.md:63`) claimed that `analytics` owned three tables: `analytic_records`, `analytic_plans`, and `analytic_accounts`. Conversely, the verified Core Entity Inventory in `docs/database/erds/core.md:129` listed only `analytic_records`.
+- **Discrepancy**: An earlier planning note (recorded in `docs/database/schema-conventions.md#4-non-universal-plugin-exceptions`) claimed that `analytics` owned three tables: `analytic_records`, `analytic_plans`, and `analytic_accounts`. Conversely, the verified Core Entity Inventory in `docs/database/erds/core.md#core-entity-inventory` listed only `analytic_records`.
 - **Definitive Verification**:
   1. Direct inspection of `plugins/webkul/analytics/database/migrations/` confirms that **only one migration exists** (`2024_12_18_131844_create_analytic_records_table.php`), creating exclusively `analytic_records`.
   2. A comprehensive search across all 28 plugins in the repository confirms that **neither `analytic_plans` nor `analytic_accounts` exists anywhere in migrations, models, or database schemas**.
@@ -289,7 +289,7 @@ The `analytics` plugin relies on 3 upstream core infrastructure plugins and is c
      - `TopAssigneesWidget` (`plugins/webkul/projects/src/Filament/Widgets/TopAssigneesWidget.php:51-70`): Joins `users` on `analytic_records.user_id` and filters by partner and date ranges.
      - `TopProjectsWidget` (`plugins/webkul/projects/src/Filament/Widgets/TopProjectsWidget.php:47-78`): Joins `projects_projects` on `analytic_records.project_id`, aggregating `SUM(analytic_records.unit_amount)` and `COUNT(DISTINCT analytic_records.task_id)`.
 2. **`timesheets` Plugin (Optional — Code-Level & UI Consumer)**:
-   - Owns **0 dedicated physical tables and 0 migrations** (`docs/database/erds/operations.md:53, 1132`).
+   - Owns **0 dedicated physical tables and 0 migrations** (`docs/database/erds/operations.md#human-resources-collaboration--extended-operations-9-plugins`).
    - Defines `Webkul\Timesheet\Models\Timesheet` (`plugins/webkul/timesheets/src/Models/Timesheet.php:8`) extending `Webkul\Project\Models\Timesheet` (which extends `Webkul\Analytic\Models\Record`), attaching `HasCustomFields`.
    - Provides administrative UI via `TimesheetResource` for managing time records stored in `analytic_records`.
 3. **`accounts` Plugin (Optional — Schema/Concept Field Consumer)**:

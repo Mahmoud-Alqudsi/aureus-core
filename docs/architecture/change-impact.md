@@ -329,7 +329,7 @@ $package
 - **`time-off` Unregistered Data Migration**: `2026_08_04_100000_share_default_time_off_leave_types.php` exists on disk but is omitted from `TimeOffServiceProvider::hasMigrations()`.
 - **`employees` Orphaned Calendar Migrations**: Three migration files exist on disk in `employees` but were omitted from `EmployeeServiceProvider::hasMigrations()` when calendar logic was centralized.
 
-[VERIFIED] Evidence: `docs/ai/database-rules.md:53-78`.
+[VERIFIED] Evidence: `docs/ai/database-rules.md#verified-repository-anomalies-emailtemplate--newly-discovered-sites`.
 
 ### 7.2 Foreign-Key Delete Behavior Decision Framework
 
@@ -375,7 +375,7 @@ Approximately **143 files** in Aureus ERP execute raw database operations (`DB::
 > 5. Aggregate calculations (`SUM`, `COUNT`) filter out foreign company rows.
 > 6. Results are verified against `CompanyContext` before output.
 
-[VERIFIED] Evidence: `docs/ai/security-rules.md:31-66`.
+[VERIFIED] Evidence: `docs/ai/security-rules.md#2-company-scoped-query-rule-raw-sql--query-builder`.
 
 ---
 
@@ -561,7 +561,7 @@ Whenever a workflow is altered, impact MUST be traced through all eight architec
 └──────────────────────────────┴───────────────┴─────────────────────────────────────────────────────────┘
 ```
 
-[VERIFIED] Evidence: `docs/architecture/events-catalog.md:17-25`.
+[VERIFIED] Evidence: `docs/architecture/events-catalog.md#1-overview--architectural-summary`.
 
 ### 12.2 Synchronous In-Transaction Hazard
 
@@ -620,7 +620,7 @@ Established deferred and reactive mechanisms in Aureus ERP:
 └────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-[VERIFIED] Evidence: `docs/ai/testing-rules.md:31-86`.
+[VERIFIED] Evidence: `docs/ai/testing-rules.md#2-fresh-repository-test-coverage-audit`.
 
 ### 13.2 The Testing Governance Principle
 

@@ -34,7 +34,7 @@ Every pattern documented here has occurred in this repository or in historical a
   - Laravel Policies and Filament Shield permissions exist for domain resources, but direct API routes in `routes/api.php`, console commands, and service methods bypass policies completely unless explicitly called.
   - Multi-company relational consistency between parent and child models (e.g. verifying that a warehouse belongs to the same company as the sales order) was historically filtered in UI select dropdowns, but lacked backend enforcement until `ChecksCompanyConsistency` was introduced.
 - **Evidence**:
-  - `docs/security/authorization.md:25-28`
+  - `docs/security/authorization.md#security-mechanisms-are-not-a-universal-request-pipeline`
   - `docs/business-rules/accounting.md#5-validation-constraints--enforcement-matrix`
   - `plugins/webkul/support/src/Traits/ChecksCompanyConsistency.php`
 - **Rule that prevents it**:
@@ -107,8 +107,8 @@ Every pattern documented here has occurred in this repository or in historical a
   - **Foreign-Key Nullability**: Observing that 59.7% of repository foreign keys use `nullOnDelete()` tempted past audits to claim that Aureus ERP had an "explicit architecture-wide preference for nullable cascading", whereas source inspection proved it was merely uncoordinated historical author choice, and financial/accounting tables strictly require `restrictOnDelete()` or cascade integrity.
   - **Extension Plugin Separation**: Assuming `contacts` was separated from `partners` for complex DDD bounded-context rationale, whereas source code reveals it is simply an administrative presentation wrapper around `partners` models.
 - **Evidence**:
-  - `docs/database/schema-conventions.md:210-225`
-  - `docs/ai/database-rules.md:75-79`
+  - `docs/database/schema-conventions.md#soft-deletes-deleted_at`
+  - `docs/ai/database-rules.md#verified-repository-anomalies-emailtemplate--newly-discovered-sites`
   - `docs/ai/terminology.md`
 - **Rule that prevents it**:
   - Developers and AI agents MUST distinguish verified observed behavior from inferred architectural rationale.
@@ -138,8 +138,8 @@ Every pattern documented here has occurred in this repository or in historical a
 - **Specific Aureus ERP instance(s)**:
   - During earlier documentation audits, typos in `AGENTS.md` (Livewire v3) and missing migrations in `support` were identified. Directly editing those files would violate task isolation and create unreviewed code modifications.
 - **Evidence**:
-  - `AGENTS.md:97`
-  - `docs/development/change-management.md:61`
+  - `AGENTS.md#critical-constraints`
+  - `docs/development/change-management.md#required-change-lifecycle`
 - **Rule that prevents it**:
   - Developers and AI agents MUST NOT modify files outside the authorized write scope of the current task.
   - Discovered bugs or proposed corrections outside the active scope MUST be noted in task output or pull request notes rather than edited silently.
@@ -153,8 +153,8 @@ Every pattern documented here has occurred in this repository or in historical a
 - **Specific Aureus ERP instance(s)**:
   - Earlier database and security documentation recorded "None identified" under Unknowns, yet subsequent audits discovered that `security` had zero tests, that `EmailTemplate` had a missing migration file, and that 17 of 28 plugins lacked automated tests.
 - **Evidence**:
-  - `docs/database/schema-conventions.md:363-365`
-  - `docs/ai/context.md:90`
+  - `docs/database/schema-conventions.md#partially-verified--inferred-areas`
+  - `docs/ai/context.md#investigation-method`
 - **Rule that prevents it**:
   - The absence of explicit `[UNKNOWN]` markers MUST NOT be treated as proof of exhaustive understanding.
   - Critical implementation details MUST be verified directly against source code and lockfiles before making architectural commitments.
@@ -170,7 +170,7 @@ Every pattern documented here has occurred in this repository or in historical a
   - Similarly, assuming 19 optional plugins have 10 tested without fresh checking leads to inaccurate audit conclusions.
 - **Evidence**:
   - `docs/architecture/events-catalog.md#8-historical-discrepancy--verification-audit`
-  - `docs/ai/testing-rules.md:23-55`
+  - `docs/ai/testing-rules.md#1-overview--core-philosophy`
 - **Rule that prevents it**:
   - Whenever an architectural rule, security review, or documentation metric depends on numerical precision, developers and AI agents MUST freshly verify the count from source code.
   - Historical summaries MUST NOT be trusted without direct verification.
@@ -186,7 +186,7 @@ Every pattern documented here has occurred in this repository or in historical a
 - **Evidence**:
   - [`AGENTS.md`](../../AGENTS.md)
   - `composer.lock` (line entries for `livewire/livewire` specifying `v4.4.5`)
-  - `docs/ai/context.md:40-43`
+  - `docs/ai/context.md#purpose-and-source-of-truth-rule`
 - **Rule that prevents it**:
   - The Source-of-Truth Hierarchy MUST be obeyed:
     `Source Code > Tests > Migrations/Schema > Config > Composer Metadata > Documentation > Previous AI`.

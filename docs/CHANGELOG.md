@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-10-23
+last_verified: 2026-10-25
 scope: documentation-changelog
 confidence: high
 ---
@@ -25,6 +25,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 1. **Git-Verified History**: Backed directly by immutable Git commit hashes, author timestamps, and repository diffs (`git log -- docs/`).
 2. **Documented Execution History**: Backed by documented phase execution reports, verification matrices, and structured project logs where exact commit hashes were synthesized or consolidated.
 3. **Reconstructed / Active History**: Actively in progress or reconstructed from conversational context; explicitly flagged to prevent false claims of Git verification.
+
+---
+
+## Knowledge-Base Restructure — Stage 2: AI Layer Consolidation, Reading-Order Routing & Markdown Anchor Normalization (2026-10-25)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Updated [`docs/ai/reading-order.md`](ai/reading-order.md) so every task row routes through its mandatory prescriptive rules file in `docs/ai/*-rules.md` (and `docs/workflows/` / `docs/business-rules/` for domain workflow and calculation changes), and replaced the duplicated `Plugin change checklist` section with a direct link to the canonical checklists in [`docs/ai/plugin-rules.md`](ai/plugin-rules.md).
+- Eliminated duplicated technology-baseline version tables and terminology summaries from [`docs/ai/context.md`](ai/context.md) and [`docs/README.md`](README.md), pointing directly to [`AGENTS.md`](../AGENTS.md#technology-baseline), [`composer.lock`](../composer.lock), and [`docs/ai/terminology.md`](ai/terminology.md).
+- Removed the duplicated 28-plugin directory table from [`docs/README.md`](README.md) and the duplicated per-plugin test coverage breakdown from [`docs/ai/plugin-rules.md`](ai/plugin-rules.md), consolidating those inventories into [`docs/plugins/README.md`](plugins/README.md) and [`docs/ai/testing-rules.md`](ai/testing-rules.md).
+- Replaced all 46 fragile Markdown-to-Markdown `path.md:line` citations across [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md), [`docs/ai/terminology.md`](ai/terminology.md), [`docs/architecture/change-impact.md`](architecture/change-impact.md), [`docs/architecture/dynamic-schema.md`](architecture/dynamic-schema.md), [`docs/plugins/analytics.md`](plugins/analytics.md), [`docs/plugins/barcode.md`](plugins/barcode.md), [`docs/plugins/full-calendar.md`](plugins/full-calendar.md), [`docs/plugins/sales.md`](plugins/sales.md), and `docs/CHANGELOG.md` with stable `#heading-slug` section links (`0` Markdown line citations remaining).
 
 ---
 
@@ -80,11 +90,11 @@ Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath
 - **Status**: **Reconciled external prompt citations and retired undefined artifact requirement**.
 - **Recorded Scope**:
   - **Retired External Authoring Spec Citations**: Removed four dangling citations to untracked external authoring execution prompt files across [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md) (Patterns 6 and 7) and [`docs/ai/terminology.md`](ai/terminology.md) (Sections 23 and 25). Replaced with verified repository evidence:
-    - Pattern 6 (Absolute vs Relative Paths): Cited [`docs/CHANGELOG.md:351`](CHANGELOG.md) (Machine Path Gate) and [`docs/development/change-management.md:84`](development/change-management.md).
-    - Pattern 7 (Silent Protected-File Modification): Cited `AGENTS.md:97` (Critical Constraint #8) and [`docs/development/change-management.md:61`](development/change-management.md).
-    - Section 23 (Navigation Composition Pattern): Cited [`plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`](../plugins/webkul/partners/src/Filament/Resources/PartnerResource.php), [`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`](../plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php), and [`docs/architecture/filament-architecture.md:293-298`](architecture/filament-architecture.md).
-    - Section 25 (Declaration ≠ Enforcement): Cited [`docs/security/authorization.md:25-28`](security/authorization.md), [`docs/ai/security-rules.md:148-155`](ai/security-rules.md), and [`docs/ai/forbidden-patterns.md:29-43`](ai/forbidden-patterns.md).
-  - **Retired Dangling "Exit Report" Requirement**: Removed the obsolete reference to an undefined "Exit Report" in [`docs/ai/forbidden-patterns.md:143`](ai/forbidden-patterns.md). Aligned out-of-scope bug reporting with `AGENTS.md` Critical Constraint #8 and standard PR/task notes.
+    - Pattern 6 (Absolute vs Relative Paths): Cited [`docs/CHANGELOG.md`](CHANGELOG.md#2-phase-by-phase-documentation-evolution) (Machine Path Gate) and [`docs/development/change-management.md`](development/change-management.md#evidence-and-claim-discipline).
+    - Pattern 7 (Silent Protected-File Modification): Cited `AGENTS.md#critical-constraints` (Critical Constraint #8) and [`docs/development/change-management.md`](development/change-management.md#required-change-lifecycle).
+    - Section 23 (Navigation Composition Pattern): Cited [`plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`](../plugins/webkul/partners/src/Filament/Resources/PartnerResource.php), [`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`](../plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php), and [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md#deliberately-hidden-resources-shouldregisternavigation--false).
+    - Section 25 (Declaration ≠ Enforcement): Cited [`docs/security/authorization.md`](security/authorization.md#security-mechanisms-are-not-a-universal-request-pipeline), [`docs/ai/security-rules.md`](ai/security-rules.md#the-foundational-architectural-truth), and [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md#1-declaration--enforcement).
+  - **Retired Dangling "Exit Report" Requirement**: Removed the obsolete reference to an undefined "Exit Report" in [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md#7-silent-protected-file-modification). Aligned out-of-scope bug reporting with `AGENTS.md` Critical Constraint #8 and standard PR/task notes.
 
 ### Upstream Sync Knowledge-Base Gaps Reconciled (2026-09-25)
 
@@ -410,10 +420,10 @@ Audit        Foundation      Plugins         Synthesis    Workflows    Rules    
   - **Closure Gate (Sections 44–60)**: Documentation Quality Gate passed across all 7 dimensions (accuracy, completeness, traceability, consistency, navigability, AI usability, maintenance). Final Coverage Matrix produced for 23 architectural surfaces. Git integrity verified. Final verdict issued: PHASE 13 — COMPLETE / LOCKED.
   - **Final Micro-Reconciliation Gate**: Reconciled known closure inconsistencies:
     1. **CLOSURE-01 (Status Alignment)**: Synchronized `docs/README.md` Phase 13 status from `PENDING` to `COMPLETE / LOCKED`.
-    2. **CLOSURE-02 & CLOSURE-13 (`ShouldQueue` Reconciled)**: Reconciled `docs/ai/terminology.md:332-343` to align with `ChatterDatabaseNotification implements ShouldQueue` (`TERM-011`) while firmly preserving the zero traditional PHP queue Job classes architectural fact.
-    3. **CLOSURE-15 (Sales Quotation Template Boundary)**: Reconciled `docs/workflows/sales.md:180` to clarify that `QuotationForm` in the active admin UI does not expose a template selector, resolving the internal contradiction with line 46.
+    2. **CLOSURE-02 & CLOSURE-13 (`ShouldQueue` Reconciled)**: Reconciled `docs/ai/terminology.md#16-filament-multi-panel-boundaries-admin-vs-customer` to align with `ChatterDatabaseNotification implements ShouldQueue` (`TERM-011`) while firmly preserving the zero traditional PHP queue Job classes architectural fact.
+    3. **CLOSURE-15 (Sales Quotation Template Boundary)**: Reconciled `docs/workflows/sales.md#b-quotation-templates--optional-products` to clarify that `QuotationForm` in the active admin UI does not expose a template selector, resolving the internal contradiction with line 46.
     4. **CLOSURE-12 (Framework Versions)**: Re-verified versions against `composer.lock` (Laravel 13.21.1, Filament 5.7.6, Livewire 4.3.3). Retained `AGENTS.md` Livewire v3 claim as `[KNOWN STALE PROJECT ARTIFACT]` outside documentation closure scope.
-    5. **CLOSURE-08 (Inventory Valuation Semantic Boundary)**: Reconciled historical Phase 9 milestone entry in `docs/CHANGELOG.md:131` to explicitly distinguish the initial draft description from the subsequent reconciliation in `522e464ce`, confirming purely quantitative stock tracking, physical removal strategies (FIFO/LIFO), and zero monetary valuation layer.
+    5. **CLOSURE-08 (Inventory Valuation Semantic Boundary)**: Reconciled historical Phase 9 milestone entry in `docs/CHANGELOG.md#phase-9--domain-business--calculation-rules` to explicitly distinguish the initial draft description from the subsequent reconciliation in `522e464ce`, confirming purely quantitative stock tracking, physical removal strategies (FIFO/LIFO), and zero monetary valuation layer.
 
 ### Phase 1 — Final Documentation Baseline Validation & Closure (Micro-Reconciliation)
 - **Evidentiary Tier**: Git-Verified Diff

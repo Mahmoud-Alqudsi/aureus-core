@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-29
+last_verified: 2026-10-25
 scope: global
 confidence: high
 ---
@@ -26,20 +26,10 @@ Use these labels precisely:
 
 ## Verified platform baseline
 
-| Component | Installed / declared version | Evidence |
-| --- | --- | --- |
-| PHP | runtime `8.3.29`; project constraint `^8.3` | `php -v`; `composer.json` → `require.php` |
-| Laravel | `v13.31.0` | `composer.lock` → `laravel/framework` |
-| Filament | `v5.8.1` | `composer.lock` → `filament/filament` |
-| Livewire | `v4.4.5` | `composer.lock` → `livewire/livewire` |
-| Pest | `v4.7.5` | `composer.lock` → `pestphp/pest` |
-| Filament Shield | `4.2.0` | `composer.lock` → `bezhansalleh/filament-shield` |
-| Laravel Sanctum | `v4.3.3` | `composer.lock` → `laravel/sanctum` |
-| Composer merge plugin | `v2.1.0` | `composer.lock` → `wikimedia/composer-merge-plugin` |
+Expected major/minor ranges for the platform stack (PHP `^8.3`, Laravel `v13.x`, Filament `v5.x`, Livewire `v4.x`, Pest `v4.x`, Filament Shield `v4.x`, Laravel Sanctum `v4.x`, and `wikimedia/composer-merge-plugin` `v2.x`) are defined in [`AGENTS.md` (Technology Baseline)](../../AGENTS.md#technology-baseline). Do not maintain a duplicate pinned version table here; always verify exact installed package versions directly against [`composer.lock`](../../composer.lock) and [`composer.json`](../../composer.json).
 
 [VERIFIED]
-Evidence: `composer.lock` → `livewire/livewire`, `laravel/sanctum`
-Note: Always verify exact versions against `composer.lock`. Direct inspection of `composer.lock` (lines 4135–4148) confirms `laravel/sanctum` is installed at `v4.3.3`.
+Evidence: `composer.json`; `composer.lock`
 
 ## Repository map
 
@@ -65,17 +55,7 @@ Evidence: `app/Providers/Filament/AdminPanelProvider.php` → `AdminPanelProvide
 
 ## Terms used in this repository
 
-- **Plugin package:** a local package under `plugins/webkul/<plugin>`, configured by a class extending `Webkul\PluginManager\PackageServiceProvider`.
-- **Package:** `Webkul\PluginManager\Package`, the runtime metadata object configured by each plugin provider.
-- **Core plugin:** a package whose provider calls `Package::isCore()`. This affects the base provider's route/migration loading gates; it is not a Composer dependency classification.
-- **Installed plugin:** a plugin whose database record has `is_installed` truthy as read by `Package::isPluginInstalled()`. The method returns false when the database cannot be reached or the `plugins` table is absent.
-- **Filament plugin class:** a local `*Plugin.php` class implementing `Filament\Contracts\Plugin`; its `register()` method contributes discovery/configuration to a `Panel`.
-- **Runtime plugin dependency:** a name declared with `Package::hasDependencies()`. It is consumed by the plugin-manager installation command; it is not a Composer `require` relationship.
-- **Company trait terminology:** `BelongsToCompany` is an existing trait. Do not invent a `HasCompanyScope` trait.
-- **Bouncer terminology:** `Webkul\Security\Bouncer` is a local Aureus class, not the `silber/bouncer` package. See `docs/security/authorization.md` for its detailed behaviour.
-
-[VERIFIED]
-Evidence: `plugins/webkul/plugin-manager/src/Package.php` → `Package::isCore()`, `Package::isPluginInstalled()`, `Package::hasDependencies()`; `plugins/webkul/support/src/Traits/BelongsToCompany.php`; `plugins/webkul/security/src/Bouncer.php`
+Canonical project terminology, class mappings, and misconception corrections (including multi-company isolation traits, `Webkul\Security\Bouncer`, plugin lifecycle states, dependency taxonomy, and Filament panels) are defined solely in [`docs/ai/terminology.md`](terminology.md). Read [`docs/ai/terminology.md`](terminology.md) before naming, creating, or changing a model, trait, service, table, policy, or documentation term.
 
 ## Investigation method
 

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-03
+last_verified: 2026-10-25
 scope: global
 confidence: high
 ---
@@ -199,58 +199,7 @@ A plugin introducing a company-sensitive model or database table MUST deliberate
 
 ## 5. Automated Test Coverage Baseline (Fresh Repository Audit)
 
-A fresh repository audit confirms that automated test coverage is **highly uneven** across the 28 plugins:
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                           Fresh Plugin Test Coverage Audit Summary                               │
-├────────────────────────────┬─────────────────────────────┬───────────────────────────────────────┤
-│ Category                   │ Total In Category           │ Plugins with ZERO Test Coverage       │
-├────────────────────────────┼─────────────────────────────┼───────────────────────────────────────┤
-│ Core Plugins               │ 9 plugins                   │ 7 plugins (77.8% zero coverage)       │
-│ Optional Plugins           │ 19 plugins                  │ 10 plugins (52.6% zero coverage)      │
-├────────────────────────────┼─────────────────────────────┼───────────────────────────────────────┤
-│ Total Entire Repository    │ 28 plugins                  │ 17 plugins (60.7% zero coverage)      │
-└────────────────────────────┴─────────────────────────────┴───────────────────────────────────────┘
-```
-
-### Complete Breakdown by Category
-
-#### 1. Core Plugins (9 Total)
-- **Core Plugins with Automated Tests (2)**:
-  - `partners` (10 test files)
-  - `support` (18 test files)
-- **Core Plugins with ZERO Automated Test Coverage (7)**:
-  - `analytics` (`tests/` does not exist)
-  - `chatter` (`tests/` does not exist)
-  - `fields` (`tests/` does not exist)
-  - `full-calendar` (`tests/` does not exist)
-  - `plugin-manager` (`tests/` does not exist)
-  - `security` (`tests/` does not exist)
-  - `table-views` (`tests/` does not exist)
-
-#### 2. Optional Plugins (19 Total)
-- **Optional Plugins with Automated Tests (9)**:
-  - `accounting` (9 test files)
-  - `accounts` (44 test files)
-  - `employees` (6 test files)
-  - `inventories` (41 test files)
-  - `manufacturing` (8 test files)
-  - `products` (19 test files)
-  - `projects` (8 test files)
-  - `purchases` (16 test files)
-  - `sales` (20 test files)
-- **Optional Plugins with ZERO Automated Test Coverage (10)**:
-  - `barcode` (`tests/` does not exist)
-  - `blogs` (`tests/` does not exist)
-  - `contacts` (`tests/` does not exist)
-  - `invoices` (`tests/` does not exist)
-  - `maintenance` (`tests/` does not exist)
-  - `payments` (`tests/` does not exist)
-  - `recruitments` (`tests/` does not exist)
-  - `time-off` (`tests/` does not exist)
-  - `timesheets` (`tests/` does not exist)
-  - `website` (`tests/` does not exist)
+The canonical per-plugin test coverage audit (11 tested plugins and 17 untested plugins across the 28 local packages) is maintained solely in [`docs/ai/testing-rules.md`](testing-rules.md#2-fresh-repository-test-coverage-audit), with the master plugin catalog in [`docs/plugins/README.md`](../plugins/README.md). Do not duplicate per-plugin test file counts here.
 
 ### Prescriptive Rules: Testing Baseline
 - **Historical Practice ≠ Future Standard**: The fact that 17 existing plugins lack automated tests MUST NOT become the future standard.
