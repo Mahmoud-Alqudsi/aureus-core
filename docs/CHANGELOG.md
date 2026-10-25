@@ -28,7 +28,17 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
-## Knowledge-Base Restructure — Phase 1 Baseline Corrections (2026-10-23)
+## Knowledge-Base Restructure — Stage 1: De-Phasing & Prompt-Artifact Cleanup (2026-10-25)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Decoupled domain, architecture, database, plugin, and verification documentation from historical project build phases (`Phase 0`–`Phase 13`), consolidating historical phase narratives and operational remediation roadmaps exclusively into `docs/CHANGELOG.md`.
+- Removed historical phase and operational roadmap tables from [`docs/README.md`](README.md), phase columns and headings from [`docs/plugins/README.md`](plugins/README.md), and phase-attributed verification columns, prompt target-range rows, and handoff notes from [`docs/verification-matrix.md`](verification-matrix.md) and [`docs/architecture/change-impact.md`](architecture/change-impact.md).
+- Replaced prompt-completion headings (`## 11. Mandatory Final Answer` / `### Explicit Answer:`) with standard domain verification sections across [`docs/business-rules/accounting.md`](business-rules/accounting.md), [`docs/business-rules/inventory.md`](business-rules/inventory.md), [`docs/business-rules/purchasing.md`](business-rules/purchasing.md), and [`docs/business-rules/sales.md`](business-rules/sales.md).
+- Removed relative phase scoping wording (`later-phase`, `outside this phase`) from [`docs/ai/context.md`](ai/context.md), [`docs/ai/reading-order.md`](ai/reading-order.md), [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md), [`docs/architecture/overview.md`](architecture/overview.md), [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md), [`docs/database/overview.md`](database/overview.md), [`docs/database/company-isolation.md`](database/company-isolation.md), and affected plugin documents.
+
+---
+
+## Knowledge-Base Restructure — Baseline Citation & Playwright Inventory Corrections (2026-10-23)
 
 - **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure` at commit `74c8b860ce1e13593bf7f480de4ca4a525b8cc18`.
 - Repaired 12 stale line-citation starts across the accounting, fields, full-calendar, invoices, partners, and timesheets plugin documents by pointing each claim at a non-blank source line.

@@ -289,7 +289,7 @@ A central architectural characteristic of Aureus ERP is that **conventional stat
 4. **Runtime Database Columns and Fillables**:
    - `Field::forCustomizable(static::class)` injects `$fillable` attributes and `$casts` dynamically during Eloquent lifecycle events (`retrieved`, `creating`, `updating`).
    - Static inspection of `$model->getFillable()` or `$model->getCasts()` in model class definitions reflects only baseline hardcoded fields.
-5. **Phase 4 Verification Alignment**:
+5. **Static vs. Runtime Relationship Alignment**:
    - This analysis validates and resolves the caveat documented in `docs/database/relationships.md`:
      > *«Dynamic Relationship State: [UNKNOWN] — Which dynamic relationships actually exist at runtime is fundamentally unknown from static analysis alone. It depends entirely on which plugins are installed, active, and successfully booted in the current environment.»*
 

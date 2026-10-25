@@ -224,7 +224,7 @@ The `invoices` plugin **owns zero physical database tables** and registers **zer
 
 All physical schemas (`accounts_account_moves`, `accounts_account_move_lines`, `accounts_accounts`, `accounts_journals`, `accounts_taxes`, `accounts_tax_groups`, `accounts_tax_repartition_lines`, `accounts_fiscal_positions`, `accounts_payment_terms`, `accounts_account_payments`, `accounts_accounts_move_payment`, `accounts_partial_reconciles`, `accounts_full_reconciles`), foreign key constraints, indexes, and company isolation scopes are physically defined and owned by `accounts`.
 
-For comprehensive database schema diagrams, column definitions, foreign keys, indexes, and multi-company scoping rules, refer to the verified Phase 4 ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md) and the plugin documentation: [`docs/plugins/accounts.md`](accounts.md).
+For comprehensive database schema diagrams, column definitions, foreign keys, indexes, and multi-company scoping rules, refer to the verified financial domain ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md) and the plugin documentation: [`docs/plugins/accounts.md`](accounts.md).
 
 - **Seeders**: `DatabaseSeeder` (`plugins/webkul/invoices/database/seeders/DatabaseSeeder.php:7`) defines an empty run method (`$this->call([])`).
 - **Factories**: `CategoryFactory` (`plugins/webkul/invoices/database/factories/CategoryFactory.php:11`) extends `AccountCategoryFactory` with `product_properties_definition` state management.

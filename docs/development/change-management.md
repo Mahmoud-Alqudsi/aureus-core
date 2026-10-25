@@ -114,7 +114,7 @@ The PR template records traceability and verification; it does not replace the I
 
 - Keep `docs/CHANGELOG.md` for knowledge-base evolution; keep the root `CHANGELOG.md` for application releases.
 - Do not update every document merely because one term appears in it. Follow direct implementation and navigation impact.
-- Do not edit locked historical phase narratives to make a new policy appear historical. Record current operational work separately.
+- Do not edit historical changelog records to make a new policy appear historical. Record current operational work separately.
 - Do not execute upstream synchronization, alter GitHub enforcement, publish tags, or change CI merely because their documentation is updated. Each action retains its own authorization boundary.
 
 ## Verification for This Policy

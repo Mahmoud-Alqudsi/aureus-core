@@ -10,7 +10,7 @@ confidence: high
 
 ## Goal
 
-Read the smallest set that can establish the changed behaviour and its immediate integration points. Documentation narrows the search; the current source code decides the result. Begin at `AGENTS.md`, then read `docs/ai/context.md` and this file before choosing the task row below. Do not load unrelated historical-phase documentation merely because it exists.
+Read the smallest set that can establish the changed behaviour and its immediate integration points. Documentation narrows the search; the current source code decides the result. Begin at `AGENTS.md`, then read `docs/ai/context.md` and this file before choosing the task row below. Do not load unrelated domain documentation merely because it exists.
 
 ## Baseline for every code change
 

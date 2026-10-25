@@ -405,12 +405,9 @@ All quantity equality checks evaluate through `float_is_zero($qty, precisionRoun
 
 ---
 
-## 11. Mandatory Final Answer
+## 11. Financial Inventory Valuation Boundary
 
-> **Question:**
-> *"Does this codebase implement any inventory valuation/costing layer at all, or is stock purely quantity-tracked with no verified monetary valuation layer?"*
-
-### Explicit Answer:
+### Verified Behavior:
 **No verified inventory valuation/costing layer exists.**
 
 Stock tracking in Aureus ERP is **purely quantity-tracked** across the double-entry quant ledger (`inventories_product_quantities` and `inventories_moves`). There is:

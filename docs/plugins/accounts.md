@@ -467,7 +467,7 @@ The `accounts` module defines 45 model classes (`plugins/webkul/accounts/src/Mod
 
 ## Database
 [VERIFIED]
-For comprehensive database schema diagrams, physical column definitions, foreign keys, indexes, and company scoping rules, refer to the verified Phase 4 ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md).
+For comprehensive database schema diagrams, physical column definitions, foreign keys, indexes, and company scoping rules, refer to the verified financial domain ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md).
 
 ### Key Database Tables Owned by `accounts`
 | Physical Table Name | Primary Model Class | Company Scoped | Primary Responsibility |

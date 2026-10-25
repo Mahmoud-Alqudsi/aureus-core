@@ -423,12 +423,9 @@ If order is not in `OrderState::SALE`: $\implies \text{InvoiceStatus::NO}$. Othe
 
 ---
 
-## 11. Mandatory Final Answer
+## 11. Credit-Limit Enforcement Verification
 
-> **Question:**
-> *"Does any credit-limit or customer-balance check exist anywhere in the order-confirmation path?"*
-
-### Explicit Answer:
+### Verified Behavior:
 **No credit-limit or customer-balance check exists anywhere in the order-confirmation path.**
 
 ### Evidence & Verification Details:

@@ -93,4 +93,4 @@ Evidence: `plugins/webkul/accounts/src/AccountPlugin.php`; `plugins/webkul/purch
 
 ## Source reading for plugin work
 
-Before editing a plugin, read its `composer.json`, service provider, any `*Plugin.php`, and the corresponding entry in `bootstrap/providers.php`. Then inspect only directly involved migrations, routes, tests, and coupled code. This registry deliberately does not attempt to document plugin-specific workflows, database design, security behaviour, or a complete event catalog; those are outside Phase 2.
+Before editing a plugin, read its `composer.json`, service provider, any `*Plugin.php`, and the corresponding entry in `bootstrap/providers.php`. Then inspect only directly involved migrations, routes, tests, and coupled code. This registry deliberately does not attempt to document plugin-specific workflows, database design, security behaviour, or a complete event catalog; those belong to their dedicated domain specifications.

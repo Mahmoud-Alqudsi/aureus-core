@@ -121,10 +121,10 @@ Every pattern documented here has occurred in this repository or in historical a
 - **What it looks like**: Inserting URI schemas such as `file://` or machine-local absolute paths (e.g., `~/projects/...`, `/absolute/path/...`, drive letter paths) into markdown documentation files under `docs/`.
 - **Why it is tempting**: AI assistants and IDE terminal outputs frequently use machine-specific absolute file URIs.
 - **Specific Aureus ERP instance(s)**:
-  - Early historical phase audits leaked machine-local user paths, breaking portability across developer workstations and failing automated CI path audits.
+  - Early documentation drafts leaked machine-local user paths, breaking portability across developer workstations and failing automated CI path audits.
 - **Evidence**:
-  - `docs/CHANGELOG.md:351`
-  - `docs/development/change-management.md:84`
+  - [`docs/CHANGELOG.md`](../CHANGELOG.md#2-phase-by-phase-documentation-evolution)
+  - [`docs/development/change-management.md`](../development/change-management.md#evidence-and-claim-discipline)
 - **Rule that prevents it**:
   - Canonical documentation in `docs/` MUST use repository-relative paths exclusively (e.g. `plugins/webkul/sales/src/Models/Order.php`).
   - Machine-specific absolute paths and `file://` URIs are STRICTLY FORBIDDEN in canonical documentation files.
@@ -148,7 +148,7 @@ Every pattern documented here has occurred in this repository or in historical a
 
 ### 8. Zero Unknowns ≠ Complete Understanding
 
-- **What it looks like**: Concluding that a subsystem is 100% bug-free and fully understood because an earlier phase document concluded with `## Unknowns: None identified`.
+- **What it looks like**: Concluding that a subsystem is 100% bug-free and fully understood because a domain document concluded with `## Unknowns: None identified`.
 - **Why it is tempting**: "Zero Unknowns" provides a false sense of finality and completeness.
 - **Specific Aureus ERP instance(s)**:
   - Earlier database and security documentation recorded "None identified" under Unknowns, yet subsequent audits discovered that `security` had zero tests, that `EmailTemplate` had a missing migration file, and that 17 of 28 plugins lacked automated tests.

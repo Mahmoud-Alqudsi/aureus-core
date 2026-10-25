@@ -536,12 +536,9 @@ When `tax_calculation_rounding_method` is configured:
 
 ---
 
-## 11. Mandatory Final Answer
+## 11. Automated Match-Suggestion & Reconciliation Boundary
 
-> **Question:**
-> *"Is there any automatic match-suggestion logic at all, or is reconciliation entirely user-selected with no system assistance?"*
-
-### Explicit Answer:
+### Verified Behavior:
 **Aureus ERP provides candidate match discovery (assistance) in the user interface, but reconciliation is NEVER executed automatically by a heuristic background engine without explicit user action.**
 
 Specifically:

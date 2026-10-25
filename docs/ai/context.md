@@ -58,7 +58,7 @@ Evidence: `bootstrap/app.php`; `bootstrap/providers.php`; `app/Providers/Filamen
 2. **Plugin lifecycle boundary.** A plugin service provider configures a `Webkul\PluginManager\Package`. Core status, runtime installation state, migrations/routes, dependencies, and UI registration are related but distinct. Read `docs/architecture/plugin-registry.md` and the affected provider before changing any of them.
 3. **Panel boundary.** There are two configured Filament panels: `admin` at `admin` and `customer` at `/`. A Filament plugin may register different discovery paths for each panel, so inspect its `register(Panel $panel)` method rather than assuming an admin-only feature.
 4. **Cross-plugin boundary.** Search the affected plugin and its dependencies for service-provider hooks, events/listeners, model relation extensions, and references to the changed symbol. Do not infer ownership from a class's directory alone.
-5. **Scope boundary.** Security, database design, workflow, business-rule, event-catalog, and change-impact documentation are later-phase concerns. Their presence in the repository is not evidence that those phases are complete. Inspect code directly when a current task touches one of those areas.
+5. **Scope boundary.** Security, database design, workflow, business-rule, event-catalog, and change-impact documentation live in their respective domain directories under `docs/`. Their presence in the repository does not replace source verification; inspect code directly when a task touches one of those areas.
 
 [VERIFIED]
 Evidence: `app/Providers/Filament/AdminPanelProvider.php` → `AdminPanelProvider::panel()`; `app/Providers/Filament/CustomerPanelProvider.php` → `CustomerPanelProvider::panel()`; `plugins/webkul/plugin-manager/src/PackageServiceProvider.php`; `plugins/webkul/plugin-manager/src/Package.php`
@@ -72,7 +72,7 @@ Evidence: `app/Providers/Filament/AdminPanelProvider.php` → `AdminPanelProvide
 - **Filament plugin class:** a local `*Plugin.php` class implementing `Filament\Contracts\Plugin`; its `register()` method contributes discovery/configuration to a `Panel`.
 - **Runtime plugin dependency:** a name declared with `Package::hasDependencies()`. It is consumed by the plugin-manager installation command; it is not a Composer `require` relationship.
 - **Company trait terminology:** `BelongsToCompany` is an existing trait. Do not invent a `HasCompanyScope` trait.
-- **Bouncer terminology:** `Webkul\Security\Bouncer` is a local Aureus class, not the `silber/bouncer` package. Its behaviour is outside this phase's scope.
+- **Bouncer terminology:** `Webkul\Security\Bouncer` is a local Aureus class, not the `silber/bouncer` package. See `docs/security/authorization.md` for its detailed behaviour.
 
 [VERIFIED]
 Evidence: `plugins/webkul/plugin-manager/src/Package.php` → `Package::isCore()`, `Package::isPluginInstalled()`, `Package::hasDependencies()`; `plugins/webkul/support/src/Traits/BelongsToCompany.php`; `plugins/webkul/security/src/Bouncer.php`

@@ -882,7 +882,7 @@ stateDiagram-v2
 ## Change Impact
 [VERIFIED]
 - **Upstream Dependencies**: Depends on `invoices` (and indirectly `accounts`, `products`, `partners`, `support`, `security`, `chatter`).
-- **Downstream Dependents**: Optional plugins in later phases may integrate with purchasing (e.g. `manufacturing` for component replenishment, `sales` for automated dropshipping / back-to-back PO generation).
+- **Downstream Dependents**: Other optional domain plugins integrate with purchasing (e.g. `manufacturing` for component replenishment, `sales` for automated dropshipping / back-to-back PO generation).
 
 ---
 

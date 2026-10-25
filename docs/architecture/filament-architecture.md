@@ -393,9 +393,9 @@ Total Widget Files in plugins/webkul: 26 files
 | `website` | `TopCategoriesTable` | `TableWidget` | `plugins/webkul/website/src/Filament/Admin/Widgets/TopCategoriesTable.php` | Highest volume blog categories table. |
 | `website` | `StatsOverview` | `StatsOverviewWidget`| `plugins/webkul/website/src/Filament/Admin/Widgets/StatsOverview.php` | Aggregate website metrics (total pages, blogs, categories). |
 
-### Discrepancy Resolution With Phase 0 Audit
+### Widget Inventory Note
 
-The Phase 0 repository audit noted "7 widget files". That preliminary audit occurred prior to the full documentation of all 28 plugins in Phases 5 and 6, and counted only a small subset of widgets in core plugins. Fresh source-code inspection confirms that the repository currently contains **26 widget files** (24 distinct Filament Widget classes + 2 Livewire sub-components).
+Earlier preliminary counts noted only a subset of widgets in core plugins. Full source-code inspection across all 28 plugins confirms that the repository contains **26 widget files** (24 distinct Filament Widget classes + 2 Livewire sub-components).
 
 [VERIFIED]
 Evidence: Scan of all classes extending `Filament\Widgets\*` and `Webkul\FullCalendar\Filament\Widgets\*`

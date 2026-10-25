@@ -10,7 +10,7 @@ confidence: high
 
 ## Scope and evidence
 
-This is the Phase 4 architectural baseline, not a table or model catalog. Migration files establish schema facts; Eloquent models establish ORM mappings and relationships. An Eloquent relationship does not by itself prove a foreign-key constraint.
+This is the database architectural baseline, not a table or model catalog. Migration files establish schema facts; Eloquent models establish ORM mappings and relationships. An Eloquent relationship does not by itself prove a foreign-key constraint.
 
 ## Connection strategy
 

@@ -307,7 +307,7 @@ The `accounting` plugin **owns zero physical database tables** and registers **z
 
 All database entities, table schemas (`accounts_account_moves`, `accounts_account_move_lines`, `accounts_accounts`, `accounts_journals`, `accounts_taxes`, `accounts_fiscal_positions`, `accounts_payment_terms`, `accounts_bank_statements`, `accounts_partial_reconciles`, `accounts_full_reconciles`), referential constraints, and multi-company isolation scopes used by this plugin are physically defined and owned by `accounts`.
 
-For comprehensive database schema diagrams, column definitions, foreign keys, indexes, and company scoping rules, refer to the verified Phase 4 ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md) and the plugin documentation: [`docs/plugins/accounts.md`](accounts.md).
+For comprehensive database schema diagrams, column definitions, foreign keys, indexes, and company scoping rules, refer to the verified financial domain ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md) and the plugin documentation: [`docs/plugins/accounts.md`](accounts.md).
 
 ---
 

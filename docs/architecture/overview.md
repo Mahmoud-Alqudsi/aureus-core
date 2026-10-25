@@ -94,7 +94,7 @@ Evidence: `plugins/webkul/analytics/src/AnalyticServiceProvider.php`; `plugins/w
 
 ## Cross-plugin investigation boundary
 
-Plugins can couple through provider hooks, Laravel events/listeners, and dynamically registered Eloquent relations. These mechanisms mean that a class's directory is not a complete dependency boundary. Before changing a shared model or an event, search for its direct consumers and `resolveRelationUsing` registrations. Detailed event, workflow, database, and security behaviour remains outside this phase.
+Plugins can couple through provider hooks, Laravel events/listeners, and dynamically registered Eloquent relations. These mechanisms mean that a class's directory is not a complete dependency boundary. Before changing a shared model or an event, search for its direct consumers and `resolveRelationUsing` registrations. Detailed event, workflow, database, and security behaviour is covered in the dedicated domain specifications.
 
 [VERIFIED]
 Evidence: `plugins/webkul/sales/src/SaleServiceProvider.php` → `SaleServiceProvider::packageBooted()`; repository search for `resolveRelationUsing`
