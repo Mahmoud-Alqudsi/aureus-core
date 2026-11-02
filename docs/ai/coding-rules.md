@@ -150,6 +150,16 @@ Filament architecture across Aureus ERP is governed by the comprehensive analysi
   ```
 - This helper automatically inspects if the related model implements `SoftDeletes`, scopes out soft-deleted records via `$model->getQualifiedDeletedAtColumn()`, and retains existing scalar or array selections via `orWhereIn`.
 
+### 7. Navigation Label & Page Title Harmonization Rule (`HasNavigationLabelTitles`)
+- Resources across all plugins requiring consistent breadcrumb, list page title, relation tab header, and top navigation labels MUST use `Webkul\Support\Filament\Concerns\HasNavigationLabelTitles`.
+- **Top-Most Resource Invariant**: Developers and AI agents MUST attach `HasNavigationLabelTitles` **only to the top-most resource in an inheritance chain**. Do NOT attach it to a child resource that extends a base resource (e.g. `QuotationResource` extending `OrderResource`), because trait methods override inherited methods in PHP and will shadow an intermediate parent class's `getNavigationLabel()`.
+- **Label Resolution**: The concern automatically falls back from `$navigationLabel` to `Str::ucwords(static::getPluralModelLabel())`, resolving `getTitleCasePluralModelLabel()` to match the navigation label. This ensures that in non-English locales (especially Arabic), page titles and breadcrumbs reflect the definite noun form while `getPluralModelLabel()` provides the indefinite base form.
+
+### 8. Cluster Breadcrumb Localization Rule (`HasClusterBreadcrumbs`)
+- Clustered navigation groups extending `Filament\Clusters\Cluster` MUST use `Webkul\Support\Traits\HasClusterBreadcrumbs`.
+- **Dynamic Localization**: The trait implements `getClusterBreadcrumb(): ?string` to return `static::getNavigationLabel()`, ensuring child pages and resources inside a cluster display the localized, translated cluster label in their breadcrumb path rather than the English class name fallback.
+- Explicit overrides of `getClusterBreadcrumb()` remain permitted when an alternate breadcrumb label is required.
+
 ---
 
 ## 5. Code-Level Consumption vs. Install Plugins Dependency

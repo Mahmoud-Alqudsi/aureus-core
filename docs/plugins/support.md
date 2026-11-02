@@ -303,6 +303,7 @@ plugins/webkul/support/
 │   │   │   ├── CanBeHidden.php
 │   │   │   ├── CanBeSummarized.php
 │   │   │   ├── HandlesCrossCompanyException.php
+│   │   │   ├── HasNavigationLabelTitles.php
 │   │   │   ├── HasRepeatableEntryColumnManager.php
 │   │   │   ├── HasRepeaterColumnManager.php
 │   │   │   ├── HasTranslationFallback.php
@@ -457,6 +458,7 @@ plugins/webkul/support/
 │       ├── BelongsToCompanies.php
 │       ├── BelongsToCompany.php
 │       ├── ChecksCompanyConsistency.php
+│       ├── HasClusterBreadcrumbs.php
 │       ├── HasFilamentDefaults.php
 │       ├── HasRecordNavigationTabs.php
 │       ├── HasRouterMacros.php
@@ -475,13 +477,16 @@ plugins/webkul/support/
     │   │   ├── UOMCategoryTest.php
     │   │   └── UOMTest.php
     │   ├── Filament/
+    │   │   ├── HasClusterBreadcrumbsTest.php
+    │   │   ├── HasNavigationLabelTitlesTest.php
     │   │   └── ResourceGlobalSearchSmokeTest.php
     │   ├── Locale/
     │   │   ├── ProfileLanguageUpdateTest.php
     │   │   └── SetLocaleMiddlewareTest.php
     │   └── Workflows/
     │       ├── CompanyIsolationTest.php
-    │       └── CompanyScopingInvariantsTest.php
+    │       ├── CompanyScopingInvariantsTest.php
+    │       └── DefaultCurrencyResolutionTest.php
     └── Helpers/
         ├── CompanyHelper.php
         ├── CompanyScopeHelper.php
@@ -626,6 +631,12 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
 - **Infolists**: `RepeatableEntry`, `RepeatableEntry\TableColumn`.
 - **Table Columns**: `ProgressBarEntry`.
 - **Table Summarizers**: `Sum`, `Average`, `Count`, `Range`, `Summarizer`.
+
+### Shared Navigation & Breadcrumb Traits:
+- **`HasNavigationLabelTitles`** (`Webkul\Support\Filament\Concerns\HasNavigationLabelTitles`):
+  Harmonizes resource breadcrumbs, list page titles, relation tab titles, and top navigation labels with `getNavigationLabel()`. Delegates `getTitleCasePluralModelLabel()` to `getNavigationLabel()`, falling back to `Str::ucwords(static::getPluralModelLabel())`. Eliminates duplicate Arabic translation templates and definite/indefinite mismatches. Invariant: MUST only be attached to the top-most resource in an inheritance chain. Consumed by 19 plugins across 119 files.
+- **`HasClusterBreadcrumbs`** (`Webkul\Support\Traits\HasClusterBreadcrumbs`):
+  Ensures child pages and resources inside a cluster display the localized, translated cluster label in their breadcrumb path (`getClusterBreadcrumb()` returns `static::getNavigationLabel()`). Consumed across 14 plugins in 47 cluster files.
 
 ## Panels
 [VERIFIED]
@@ -886,6 +897,10 @@ The `support` plugin provides shared infrastructure consumed across core and opt
    Provides uniform RESTful restore and force-delete endpoint registration for soft-deletable models.
 5. **`PDFHandler` Trait**:
    Can be used by any controller or page to generate and stream RTL-compliant PDF documents.
+6. **`HasNavigationLabelTitles` Concern**:
+   Applied to the top-most resource in an inheritance chain to harmonize navigation labels, list page titles, breadcrumbs, and relation tab titles with localized definite noun forms.
+7. **`HasClusterBreadcrumbs` Trait**:
+   Applied to Filament clusters to guarantee localized cluster breadcrumbs on child pages.
 
 ## Dangerous Areas
 [VERIFIED]
@@ -938,4 +953,6 @@ The `support` plugin provides shared infrastructure consumed across core and opt
 | Company Aware Settings | `plugins/webkul/support/src/Settings/CompanyAwareSettingsRepository.php` | Lines 9–204 (`CompanyAwareSettingsRepository`) |
 | Quick Navigator Palette | `plugins/webkul/support/src/Services/QuickNavigator.php` | Lines 11–278 (`groups()`, `createNodes()`, `flat()`) |
 | Soft Delete Router Macro | `plugins/webkul/support/src/Traits/HasRouterMacros.php` | Lines 9–35 (`registerRouterMacros()`) |
+| Navigation Label Harmonization Concern | `plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php` | Lines 19–30 (`HasNavigationLabelTitles`) |
+| Cluster Breadcrumb Localization Trait | `plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php` | Lines 5–11 (`HasClusterBreadcrumbs`) |
 | Missing EmailTemplate Migration | `plugins/webkul/support/src/SupportServiceProvider.php` | Line 60 (declared), `database/migrations/` (absent) |

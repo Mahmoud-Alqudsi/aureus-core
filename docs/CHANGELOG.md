@@ -28,6 +28,25 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
+## Post-PR #8 Code & Architecture Synchronization (2026-11-02)
+
+- **Evidentiary Tier**: Git-Verified History, verified against commit range `76aa5f9a6` (PR #8) through `develop` (`74c8b860c`) and active branch `docs/knowledge-base-restructure`.
+- **UI Architecture & Concerns**:
+  - Documented [`HasNavigationLabelTitles`](../plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php) concern in [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md), [`docs/ai/coding-rules.md`](ai/coding-rules.md), and [`docs/plugins/support.md`](plugins/support.md), governing standardized page/resource titles, breadcrumbs, and relation manager tabs across 119 files in 19 plugins, along with the strict architectural invariant requiring attachment to the top-most resource in the class hierarchy (`ARCH-009`).
+  - Documented [`HasClusterBreadcrumbs`](../plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php) trait in [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md), [`docs/ai/coding-rules.md`](ai/coding-rules.md), and [`docs/plugins/support.md`](plugins/support.md), establishing centralized cluster breadcrumb localization across 47 files in 14 plugins (`ARCH-010`).
+  - Documented `ManageRelatedRecords` Arabic template override (`lang/vendor/filament-panels/ar/resources/pages/manage-related-records.blade.php`) and `$relatedResource` declaration eliminating redundant action verbs across 13 plugins (`ARCH-011`).
+  - Documented `ProgressStepper` (Forms & Infolists) RTL geometry mirroring (`rotate(-45deg)` chevron rotation and CSS logical properties) and dark-mode styling in [`docs/plugins/fields.md`](plugins/fields.md).
+- **Infrastructure & Environment**:
+  - Documented local Docker development environment updates in [`docs/application/overview.md`](application/overview.md), including external Docker network `laravel-net`, port mapping `8081:8000`, supervisor execution of `php artisan serve`, `config/app.php` asset URL binding, and `config/database.php` `'strict' => false` MySQL session mode.
+- **Upstream Sync & Domain Extensions**:
+  - Documented REST API route controllers and resource transformers (`PriceListController`, `PriceListRequest`, and `PriceRuleItemResource`) in [`docs/plugins/products.md`](plugins/products.md).
+  - Documented manufacturing work center productivity loss and log language models (`work-center-loss-type`, `work-center-productivity-log`, `work-center-productivity-loss`) in [`docs/plugins/manufacturing.md`](plugins/manufacturing.md).
+  - Documented blog post filter partials (`partials/filters.blade.php`) and `Concerns/ListsBlogPosts.php` in [`docs/plugins/blogs.md`](plugins/blogs.md).
+- **Governance & Ledger Tracking**:
+  - Added claims `ARCH-009`, `ARCH-010`, and `ARCH-011` to [`docs/verification-matrix.md`](verification-matrix.md), updating global tracked claim rows to 75.
+
+---
+
 ## Knowledge-Base Restructure — Stage 4: Domain & Plugin SSoT Consolidation & Numeric Reconciliation (2026-11-02)
 
 - **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.

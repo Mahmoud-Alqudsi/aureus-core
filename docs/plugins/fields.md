@@ -395,9 +395,11 @@ The plugin delivers 5 core runtime rendering and schema management services:
 1. **`Webkul\Field\Filament\Forms\Components\ProgressStepper`** (`plugins/webkul/fields/src/Filament/Forms/Components/ProgressStepper.php:7`):
    - Extends `ToggleButtons` using view `fields::filament.forms.components.progress-stepper.index`.
    - Renders horizontal interactive stage progression chevrons for state transitions.
+   - **RTL & Bidirectional Geometry**: Uses CSS logical properties (`padding-inline-start: 30px`, `padding-inline-end: 20px`, `border-inline-end`) and logical border radii. Stage connector chevrons rely on pseudo-elements (`.stage-button::after`), where standard LTR uses `transform: translateY(-50%) rotate(45deg);`, while RTL direction (`html[dir="rtl"]`) explicitly mirrors the chevron orientation with `transform: translateY(-50%) rotate(-45deg);`. Physical `border-top` is utilized in tandem with `border-inline-end` to prevent diagonal chevron distortion across block axes.
+   - **Dark Mode & Terminal States**: Connectors are suppressed on the terminal stage (`.state:last-child .stage-button::after { content: none; }`). Active states and hover states leverage `--primary-600` and `--primary-500` variables with dark-mode borders (`--gray-700`) and backgrounds (`--gray-900`).
 2. **`Webkul\Field\Filament\Infolists\Components\ProgressStepper`** (`plugins/webkul/fields/src/Filament/Infolists/Components/ProgressStepper.php:9`):
    - Extends `Entry` using view `fields::filament.infolists.components.progress-stepper`.
-   - Renders read-only progress stage chevrons on infolist view pages.
+   - Renders read-only progress stage chevrons on infolist view pages with identical bidirectional RTL chevron mirroring (`rotate(-45deg)`) and logical padding/border rules.
 3. **`Webkul\Field\Filament\Forms\Components\TimeToFloatPicker`** (`plugins/webkul/fields/src/Filament/Forms/Components/TimeToFloatPicker.php:8`):
    - Extends `TimePicker`.
    - `dehydrateStateUsing`: Converts `H:i` time string (e.g. `'01:30'`) to float decimal hours (e.g. `1.5`).
@@ -627,3 +629,5 @@ sequenceDiagram
 | **E-021** | `plugins/webkul/fields/database/migrations/2024_11_13_052541_create_custom_fields_table.php` | `Schema::create('custom_fields', ...)` | Physical table schema for custom field definitions |
 | **E-022** | `plugins/webkul/fields/database/factories/FieldFactory.php` | `FieldFactory::definition()` | Factory definition containing stale attributes |
 | **E-023** | `bootstrap/providers.php` | `bootstrap/providers.php:47` | Registration of `FieldServiceProvider` |
+| **E-024** | `plugins/webkul/fields/resources/views/filament/forms/components/progress-stepper/index.blade.php` | Blade view | ProgressStepper form component with RTL chevron mirroring (`-45deg`) and logical styling |
+| **E-025** | `plugins/webkul/fields/resources/views/filament/infolists/components/progress-stepper.blade.php` | Blade view | ProgressStepper infolist entry view with RTL chevron mirroring and dark-mode styling |

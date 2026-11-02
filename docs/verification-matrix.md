@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-26
+last_verified: 2026-11-02
 scope: verification
 confidence: high
 ---
@@ -126,6 +126,9 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 | **ARCH-006** | `SequenceService` coordinates centralized sequential document numbering via `support_sequences` | VERIFIED | HIGH | Method `generate()` acquires row lock on `support_sequences` table | plugins/webkul/support/src/Services/SequenceService.php | SequenceService | support | sequencing | 2026-09-04 | Source Inspection | Used by sales, purchases, invoices, stock operations, and manufacturing |
 | **ARCH-007** | All 28 domain events and 6 listeners execute synchronously within active database transactions | VERIFIED | HIGH | Event dispatches lack queue interfaces; failures trigger transaction rollback | plugins/webkul/sales/src/SaleServiceProvider.php | EventDispatcher | 5 plugins | reactive | 2026-09-04 | Source Inspection | Guarantees multi-module ACID consistency but creates rollback hazards |
 | **ARCH-008** | Financial domain split: accounts (engine), accounting (reports), invoices (billing), payments (gateways) | VERIFIED | HIGH | Directory and migration inspection: accounts owns tables; accounting/invoices own 0 | plugins/webkul/accounts/ | Finance | 4 plugins | domain | 2026-09-04 | Source Inspection | Strict functional boundary prevents duplicate tables and circular deps |
+| **ARCH-009** | Resource/Page titles, breadcrumbs, and relation manager tabs standardized across 19 plugins via `HasNavigationLabelTitles` | VERIFIED | HIGH | 119 files consume HasNavigationLabelTitles; verified by HasNavigationLabelTitlesTest.php | plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php | HasNavigationLabelTitles | support, 19 plugins | presentation | 2026-11-02 | Source Inspection & Pest Unit Test | Standardizes navigation label, model label, breadcrumbs, and relation manager tab titles; must attach to top-most resource in hierarchy |
+| **ARCH-010** | Cluster breadcrumb localization standardized across 14 plugins via `HasClusterBreadcrumbs` trait | VERIFIED | HIGH | 47 files consume HasClusterBreadcrumbs; verified by HasClusterBreadcrumbsTest.php | plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php | HasClusterBreadcrumbs | support, 14 plugins | presentation | 2026-11-02 | Source Inspection & Pest Unit Test | Resolves localized cluster breadcrumbs without hardcoded English fallbacks |
+| **ARCH-011** | `ManageRelatedRecords` Arabic template override and `$relatedResource` eliminate redundant action verbs in relation tabs | VERIFIED | HIGH | Template override in lang/vendor/filament-panels/ar/; $relatedResource declared across 13 plugins | lang/vendor/filament-panels/ar/resources/pages/manage-related-records.blade.php | ManageRelatedRecords | all | presentation | 2026-11-02 | Source Inspection | Customizes relation manager title rendering to prevent verb duplication (e.g. "إدارة الفواتير") |
 | **DB-001** | Migration file on disk does NOT execute unless declared in `$package->hasMigrations([...])` | VERIFIED | HIGH | `PackageServiceProvider::runsMigrations()` iterates exclusively over declared array | plugins/webkul/plugin-manager/src/PackageServiceProvider.php | hasMigrations | all | database | 2026-09-04 | Source Inspection | Cardinal database rule: migration file on disk ≠ executed migration state |
 | **DB-002** | Foreign-key delete rules must follow relationship lifecycle semantics, not frequency stats | VERIFIED | HIGH | Composition requires cascade; optional lookup nullOnDelete; ledgers restrictOnDelete | docs/database/schema-conventions.md | ForeignKey | all | database | 2026-09-04 | Schema Inspection | Historical 60% nullOnDelete frequency does not justify defaulting to it |
 | **DB-003** | Double-entry balanced move line invariant (`sum(debit) == sum(credit)`) enforced on posting | VERIFIED | HIGH | `Move::actionPost()` validates balance before transitioning state to `posted` | plugins/webkul/accounts/src/Models/Move.php | actionPost | accounts | accounting | 2026-09-04 | Source Inspection | Posting unbalanced entries throws DomainException |
@@ -165,7 +168,7 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 ┌─────────────────────────────────────────────────────────────┬────────┐
 │ Metric Description                                          │ Value  │
 ├─────────────────────────────────────────────────────────────┼────────┤
-│ Total Tracked Claim Rows                                    │ 72     │
+│ Total Tracked Claim Rows                                    │ 75     │
 └─────────────────────────────────────────────────────────────┴────────┘
 ```
 
@@ -175,16 +178,16 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 ┌─────────┬──────────────────────────────────────┬──────────┬──────────┐
 │ Prefix  │ Category                             │ Count    │ % Total  │
 ├─────────┼──────────────────────────────────────┼──────────┼──────────┤
-│ TERM    │ Terminology Corrections              │ 15       │ 20.8%    │
-│ COUNT   │ Repository-Wide Counts               │ 13       │ 18.1%    │
-│ SEC     │ Security & Multi-Company Claims      │ 8        │ 11.1%    │
-│ ARCH    │ Architectural & Plugin Claims        │ 8        │ 11.1%    │
-│ DB      │ Database & Persistence Claims        │ 5        │ 6.9%     │
-│ DEP     │ Dependency Tier Claims               │ 5        │ 6.9%     │
-│ OPEN    │ Unresolved Unknowns & Research Items │ 6        │ 8.3%     │
-│ CORR    │ Proposed Corrections & Discrepancies │ 12       │ 16.7%    │
+│ TERM    │ Terminology Corrections              │ 15       │ 20.0%    │
+│ COUNT   │ Repository-Wide Counts               │ 13       │ 17.3%    │
+│ SEC     │ Security & Multi-Company Claims      │ 8        │ 10.7%    │
+│ ARCH    │ Architectural & Plugin Claims        │ 11       │ 14.7%    │
+│ DB      │ Database & Persistence Claims        │ 5        │ 6.7%     │
+│ DEP     │ Dependency Tier Claims               │ 5        │ 6.7%     │
+│ OPEN    │ Unresolved Unknowns & Research Items │ 6        │ 8.0%     │
+│ CORR    │ Proposed Corrections & Discrepancies │ 12       │ 16.0%    │
 ├─────────┴──────────────────────────────────────┼──────────┼──────────┤
-│ Total                                          │ 72       │ 100.0%   │
+│ Total                                          │ 75       │ 100.0%   │
 └────────────────────────────────────────────────┴──────────┴──────────┘
 ```
 
@@ -194,13 +197,13 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 ┌──────────────────────────┬──────────┬──────────┐
 │ Status Classification    │ Count    │ % Total  │
 ├──────────────────────────┼──────────┼──────────┤
-│ VERIFIED                 │ 57       │ 79.2%    │
-│ PROPOSED                 │ 9        │ 12.5%    │
-│ UNKNOWN                  │ 4        │ 5.6%     │
-│ INFERRED                 │ 2        │ 2.8%     │
+│ VERIFIED                 │ 60       │ 80.0%    │
+│ PROPOSED                 │ 9        │ 12.0%    │
+│ UNKNOWN                  │ 4        │ 5.3%     │
+│ INFERRED                 │ 2        │ 2.7%     │
 │ CONFLICTING              │ 0        │ 0.0%     │
 ├──────────────────────────┼──────────┼──────────┤
-│ Total                    │ 72       │ 100.0%   │
+│ Total                    │ 75       │ 100.0%   │
 └──────────────────────────┴──────────┴──────────┘
 ```
 
@@ -210,11 +213,11 @@ To enable rapid filtering, automated validation, and cross-document referencing,
 ┌──────────────────────────┬──────────┬──────────┐
 │ Confidence Level         │ Count    │ % Total  │
 ├──────────────────────────┼──────────┼──────────┤
-│ HIGH                     │ 68       │ 94.4%    │
-│ MEDIUM                   │ 2        │ 2.8%     │
-│ LOW                      │ 2        │ 2.8%     │
+│ HIGH                     │ 71       │ 94.7%    │
+│ MEDIUM                   │ 2        │ 2.7%     │
+│ LOW                      │ 2        │ 2.6%     │
 ├──────────────────────────┼──────────┼──────────┤
-│ Total                    │ 72       │ 100.0%   │
+│ Total                    │ 75       │ 100.0%   │
 └──────────────────────────┴──────────┴──────────┘
 ```
 

@@ -175,9 +175,11 @@ plugins/webkul/blogs/
 │           └── customer/
 │               └── resources/
 │                   ├── category/
-│                   │   └── pages/
-│                   │       ├── list-records.blade.php
-│                   │       └── view-record.blade.php
+│                   │   ├── pages/
+│                   │   │   ├── list-records.blade.php
+│                   │   │   └── view-record.blade.php
+│                   │   └── partials/
+│                   │       └── filters.blade.php
 │                   └── post/
 │                       └── pages/
 │                           ├── list-records.blade.php
@@ -220,6 +222,8 @@ plugins/webkul/blogs/
     │   │       │       └── PostsTable.php
     │   │       └── PostResource.php
     │   └── Customer/
+    │       ├── Concerns/
+    │       │   └── ListsBlogPosts.php
     │       └── Resources/
     │           ├── CategoryResource/
     │           │   └── Pages/
@@ -780,4 +784,5 @@ sequenceDiagram
 | Customer Multi-Locale Search | `plugins/webkul/blogs/src/Filament/Customer/Resources/CategoryResource/Pages/ListCategories.php` | `Lines 35-54: getPosts()` |
 | Customer Post View & OpenGraph Meta | `plugins/webkul/blogs/src/Filament/Customer/Resources/PostResource/Pages/ViewPost.php` | `Lines 9-24: ViewPost class` |
 | Shield Permission Configuration | `plugins/webkul/blogs/config/filament-shield.php` | `Lines 16-25: return [...]` |
+| Customer Blog Filter Concern & View | `plugins/webkul/blogs/src/Filament/Customer/Concerns/ListsBlogPosts.php` | `ListsBlogPosts trait; filters.blade.php` |
 | Browser E2E Tests | `tests/e2e-pw/tests/06_website/02_websiteBlogs.spec.ts` | `Lines 7-215: Website Blogs test suite` |

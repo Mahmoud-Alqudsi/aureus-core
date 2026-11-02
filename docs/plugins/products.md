@@ -307,6 +307,7 @@ plugins/webkul/products/
 │   │   │           ├── CategoryController.php
 │   │   │           ├── Controller.php
 │   │   │           ├── PackagingController.php
+│   │   │           ├── PriceListController.php
 │   │   │           ├── ProductAttributeController.php
 │   │   │           ├── ProductController.php
 │   │   │           ├── ProductVariantController.php
@@ -316,6 +317,7 @@ plugins/webkul/products/
 │   │   │   ├── AttributeRequest.php
 │   │   │   ├── CategoryRequest.php
 │   │   │   ├── PackagingRequest.php
+│   │   │   ├── PriceListRequest.php
 │   │   │   ├── ProductAttributeRequest.php
 │   │   │   ├── ProductAttributeValueRequest.php
 │   │   │   ├── ProductRequest.php
@@ -327,6 +329,7 @@ plugins/webkul/products/
 │   │           ├── CategoryResource.php
 │   │           ├── PackagingResource.php
 │   │           ├── PriceListResource.php
+│   │           ├── PriceRuleItemResource.php
 │   │           ├── ProductAttributeResource.php
 │   │           ├── ProductAttributeValueResource.php
 │   │           ├── ProductResource.php
@@ -688,6 +691,10 @@ The plugin registers REST API v1 endpoints under route group prefix `admin/api/v
 | `PUT`/`PATCH` | `/admin/api/v1/products/price-lists/{price_list}` | `update` | `PriceListController` | Update price list |
 | `DELETE` | `/admin/api/v1/products/price-lists/{price_list}` | `destroy` | `PriceListController` | Delete price list |
 
+### API Resource Transformers:
+- **`PriceListResource`**: Formats price list master data (name, currency, validity dates, company ID, active status) and embeds eager-loaded rule items.
+- **`PriceRuleItemResource`** (`Webkul\Product\Http\Resources\V1\PriceRuleItemResource`): Transforms tiered pricing rule items (`price_rule_items`), mapping calculation parameters (`fixed_price`, `percent_price`, `price_discount`, `price_markup`, `price_round`, `price_surcharge`, `price_min_margin`, `price_max_margin`), quantity thresholds (`min_quantity`), application targets (`apply_to`, `base`), validity dates (`starts_at`, `ends_at`), and nested relations (`product`, `category`, `currency`).
+
 ## Settings
 [VERIFIED]
 - **Class**: `Webkul\Product\Settings\ProductSettings` (`plugins/webkul/products/src/Settings/ProductSettings.php:7`)
@@ -864,6 +871,7 @@ Modifications to `products` have high architectural impact across the entire Aur
 - Core Models & Variant Logic: `plugins/webkul/products/src/Models/Product.php`, `Category.php`, `Attribute.php`, `AttributeOption.php`, `ProductAttribute.php`, `ProductAttributeValue.php`, `ProductCombination.php`, `ProductSupplier.php`, `Packaging.php`, `PriceRuleItem.php`, `PriceList.php`, `Tag.php`
 - Observers & In-Use Guards: `plugins/webkul/products/src/Observers/ProductAttributeObserver.php`, `UOMObserver.php`, `src/Support/ProductUsageRegistry.php`, `src/Support/VariantUsage.php`
 - Filament UI & Variant Action: `plugins/webkul/products/src/Filament/Resources/ProductResource/Actions/GenerateVariantsAction.php`, `Pages/ManageAttributes.php`, `Pages/ManageVariants.php`, `Schemas/ProductForm.php`, `Support/ProductSchemaRegistry.php`
-- API Routing & Controllers: `plugins/webkul/products/routes/api.php`, `src/Http/Controllers/API/V1/ProductController.php`, `ProductVariantController.php`
+- API Routing & Controllers: `plugins/webkul/products/routes/api.php`, `src/Http/Controllers/API/V1/ProductController.php`, `ProductVariantController.php`, `PriceListController.php`
+- API Transformers: `plugins/webkul/products/src/Http/Resources/V1/PriceRuleItemResource.php`, `PriceListResource.php`, `ProductResource.php`
 - Migrations: `plugins/webkul/products/database/migrations/2025_01_05_100751_create_products_products_table.php`, `2025_02_21_053249 _create_products_product_combinations_table.php`
 - Automated Pest Tests: `plugins/webkul/products/tests/Feature/API/V1/ProductVariantTest.php`, `tests/Feature/Filament/GenerateVariantsActionTest.php`, `tests/Feature/Workflows/ProductUsageRegistryTest.php`, `CompanyScopingInvariantsTest.php`

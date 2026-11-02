@@ -429,8 +429,9 @@ Evidence: `tests/` directory listing; `tests/e2e-pw/` complete file listing
 
 | Config File | Architectural Significance |
 |:---|:---|
-| [`config/app.php`](../../config/app.php) | `supported_locales` (5 locales with RTL flags), `currency` (base currency code) |
+| [`config/app.php`](../../config/app.php) | `supported_locales` (5 locales with RTL flags), `currency` (base currency code), `asset_url` (CDN or external asset URL binding) |
 | [`config/auth.php`](../../config/auth.php) | Dual guards (`web` → `Webkul\Security\Models\User`, `customer` → `Webkul\Website\Models\Partner`), dual password brokers |
+| [`config/database.php`](../../config/database.php) | MySQL/MariaDB connections explicitly set `'strict' => false` to support dynamic reporting grouping and legacy aggregations |
 | [`config/filament-shield.php`](../../config/filament-shield.php) | Permission generation rules, super admin configuration |
 | [`config/permission.php`](../../config/permission.php) | Spatie Permission model classes, cache configuration |
 | [`config/sanctum.php`](../../config/sanctum.php) | Stateful domains, API token guard |
@@ -438,7 +439,15 @@ Evidence: `tests/` directory listing; `tests/e2e-pw/` complete file listing
 | [`config/query-builder.php`](../../config/query-builder.php) | Spatie QueryBuilder defaults for API filtering |
 | [`config/settings.php`](../../config/settings.php) | Spatie Laravel Settings configuration |
 
-Standard Laravel configuration files (cache, database, filesystems, logging, mail, queue, session) use default framework settings and are not architecturally significant.
+Standard Laravel configuration files (cache, filesystems, logging, mail, queue, session) use default framework settings.
+
+### Local Development & Docker Infrastructure (`docker-compose.yml`)
+
+The root [`docker-compose.yml`](../../docker-compose.yml) configures a streamlined local development service container (`laravel.test`) optimized for externalized developer infrastructure:
+- **External Docker Network (`laravel-net`)**: Bundled database, Redis, and Mailpit containers have been removed. The service attaches to an external bridge network (`laravel-net`) to share persistent local database, cache, and email testing services across projects.
+- **Port Mapping (`8081:8000`)**: Maps container port `8000` to host port `8081`, eliminating port conflicts with local web servers or default containers bound to port `80` or `8000`.
+- **Artisan Serve Command**: Sets `SUPERVISOR_PHP_COMMAND` environment variable to execute `php artisan serve --host=0.0.0.0 --port=8000` within the container supervisor manager.
+- **Production Decoupling**: Development compose configuration operates independently of the multi-architecture production container build defined in [`docker/production/Dockerfile`](../../docker/production/Dockerfile) and automated by the release pipeline ([`.github/workflows/docker_publish.yml`](../../.github/workflows/docker_publish.yml)).
 
 ### Other Project-Level Files
 
@@ -446,7 +455,7 @@ Standard Laravel configuration files (cache, database, filesystems, logging, mai
 |:---|:---|
 | [`.env.example`](../../.env.example) | Environment template: MySQL default, database sessions/cache/queue, log channel, NativePHP barcode config |
 | [`pint.json`](../../pint.json) | Laravel Pint code style: `laravel` preset, `concat_space: none`, `=> align` operator spacing |
-| [`docker-compose.yml`](../../docker-compose.yml) | Docker configuration with production setup under `docker/production/` |
+| [`docker-compose.yml`](../../docker-compose.yml) | Local development Docker compose setup with external network `laravel-net` and port `8081` mapping |
 
 [VERIFIED]
 Evidence: `config/` directory listing; `.env.example`; `pint.json`; `docker-compose.yml`
