@@ -557,7 +557,7 @@ Contains comprehensive English translations across `enums/`, `filament/`, `model
 
 ## Tests
 [VERIFIED]
-The `inventories` plugin contains an extensive automated test suite comprising **40 dedicated test files** under `plugins/webkul/inventories/tests/`:
+The `inventories` plugin contains an extensive automated test suite comprising **40 `*Test.php` feature test files** plus **1 test helper** (`InventoryHelper.php`, `41` total PHP files; see [`docs/plugins/README.md`](README.md)) under `plugins/webkul/inventories/tests/`:
 
 - **Direct Playwright UI coverage**: Five inventory specs cover settings, products, operations, warehouse flows, and configuration journeys. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the complete mapping and explicit limits of browser coverage.
 
@@ -617,63 +617,29 @@ graph TD
 ## Data Flow and Workflows
 [VERIFIED]
 
-### 1. Inbound Receipt Flow (1-Step, 2-Step, 3-Step)
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Vendor
-    participant Input as Input / QC Location
-    participant Stock as Internal Stock Location
-    participant Quant as ProductQuantity Ledger
-    participant Op as Receipt Operation
+Within the `inventories` plugin boundary, `InventoryManager` (`plugins/webkul/inventories/src/InventoryManager.php`) orchestrates transfer lifecycles by delegating stock reservation to `MoveReserver`, double-entry quant settlement to `MoveCompleter`, short-move splitting to `BackorderCreator`, and multi-step logistics propagation to `PushRuleRunner` and `RuleResolver`.
 
-    Vendor->>Op: Purchase Order Confirmed (WH/IN/...)
-    Note over Op: State = CONFIRMED
-    Op->>Op: Check Availability & Reserve
-    Vendor->>Input: Physical Goods Arrive
-    Op->>Quant: Complete Move (Supplier Loc -> Stock Loc)
-    Quant->>Quant: Deduct Supplier / Credit Stock (+Qty)
-    Note over Op: State = DONE
-```
-
-### 2. Outbound Delivery Flow (Picking, Packing, Shipping)
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Sales
-    participant Stock as Internal Stock Location
-    participant Pack as Pack / Output Location
-    participant Customer as Customer Virtual Location
-    participant Quant as ProductQuantity Ledger
-    participant Op as Delivery Operation
-
-    Sales->>Op: Sales Order Confirmed (WH/OUT/...)
-    Op->>Quant: Reserve Stock (FIFO / LIFO)
-    Note over Quant: reserved_quantity += demanded_qty
-    Op->>Stock: Pick Items
-    Op->>Pack: Pack into Package
-    Op->>Customer: Ship Delivery
-    Op->>Quant: Settle Stock (Stock Loc -> Customer Loc)
-    Note over Quant: quantity -= qty, reserved_quantity -= qty
-    Note over Op: State = DONE
-```
+The full operational taxonomy, multi-step transfer sequences, and state transitions are canonically documented in [`docs/workflows/inventory.md`](../workflows/inventory.md):
+- **Full Operation Taxonomy (Receipts, Deliveries, Internal Transfers, Dropship, Manufacturing)**: [`docs/workflows/inventory.md#4-full-operation-taxonomy`](../workflows/inventory.md#4-full-operation-taxonomy) and [`#16-mermaid-flowchart`](../workflows/inventory.md#16-mermaid-flowchart).
+- **Internal Transfer & Multi-Step Warehouse Flows**: [`docs/workflows/inventory.md#5-internal-transfer-workflow`](../workflows/inventory.md#5-internal-transfer-workflow).
+- **Replenishment & Order Points Behavior**: [`docs/workflows/inventory.md#6-replenishment--order-points-analysis`](../workflows/inventory.md#6-replenishment--order-points-analysis).
+- **Scrap Lifecycle & Lot/Serial Traceability**: [`docs/workflows/inventory.md#7-scrap-workflow`](../workflows/inventory.md#7-scrap-workflow) and [`#8-lot--serial-number-traceability`](../workflows/inventory.md#8-lot--serial-number-traceability).
 
 ---
 
 ## Business Rules
 [VERIFIED]
-1. **Double-Entry Equilibrium**: Every stock change must be recorded via a balanced `Move` specifying valid source and destination locations. Quantities can never be directly incremented without a corresponding counterpart move.
-2. **Strict Company Scoping & Cross-Company Transfer Guard**:
-   - Transfers cannot bridge different legal entities directly. `CrossCompanyTransferGuard::assert()` throws `CrossCompanyTransferException` if `source_location_id` and `destination_location_id` belong to different companies.
-3. **UOM Immutability on Active Stock**:
-   - `ProductObserver` prevents changing `uom_id` on a `Product` if any `Move` records exist for that product.
-   - `UOMObserver` prevents deleting or changing conversion ratios on a `UOM` if it is in use by uncancelled moves or scraps.
-4. **Automated Serial Number Uniqueness**:
-   - Products tracked by unique serial number (`ProductTracking::SERIAL`) enforce that each serial number is assigned to at most one unit and cannot exist in multiple locations simultaneously (`Move::assertSerialUniqueness()`).
-5. **Short Move Backorder Splitting**:
-   - When completing an operation where picked quantity is less than initial demand, `BackorderCreator` automatically creates a child backorder operation for the remaining balance unless explicitly canceled.
-6. **Package Integrity Enforcement**:
-   - `MoveCompleter::assertPackagesStayWhole()` enforces that a single physical package cannot be split across multiple different warehouse locations simultaneously.
+
+1. **Plugin-Local Structural Guards (`CrossCompanyTransferGuard` & Observers)**:
+   - `CrossCompanyTransferGuard::assert()` throws `CrossCompanyTransferException` if `source_location_id` and `destination_location_id` belong to different companies.
+   - `ProductObserver` and `UOMObserver` prevent mutating `uom_id` or conversion factors when stock moves or scraps reference the product or unit of measure.
+   - `Move::assertSerialUniqueness()` and `MoveCompleter::assertPackagesStayWhole()` enforce serial-number uniqueness and physical package integrity at settlement time.
+2. **Canonical Inventory Calculation & Routing Rules ([`docs/business-rules/inventory.md`](../business-rules/inventory.md))**:
+   - **Quantitative-Only Stock Tracking (No Financial Valuation Layer)**: [`docs/business-rules/inventory.md#21-stock-valuation-method--definitive-finding`](../business-rules/inventory.md#21-stock-valuation-method--definitive-finding) and [`#11-financial-inventory-valuation-boundary`](../business-rules/inventory.md#11-financial-inventory-valuation-boundary).
+   - **On-Hand, Free, Incoming, Outgoing, and Forecast Stock Formulas (`Product::stockLevels`)**: [`docs/business-rules/inventory.md#22-stock-availability--forecast-level-calculation`](../business-rules/inventory.md#22-stock-availability--forecast-level-calculation).
+   - **Physical Stock Removal Strategies (`FIFO`, `LIFO`, `FEFO`, `CLOSEST`)**: [`docs/business-rules/inventory.md#23-physical-stock-removal-strategy`](../business-rules/inventory.md#23-physical-stock-removal-strategy) and [`#33-stock-removal-strategy-precedence`](../business-rules/inventory.md#33-stock-removal-strategy-precedence).
+   - **Putaway Rule Specificity & Supply Chain Route/Rule Precedence**: [`docs/business-rules/inventory.md#31-putaway-rule-precedence--location-assignment`](../business-rules/inventory.md#31-putaway-rule-precedence--location-assignment) and [`#32-supply-chain-route--rule-discovery-precedence`](../business-rules/inventory.md#32-supply-chain-route--rule-discovery-precedence).
+   - **Competing Reservation Release Priority**: [`docs/business-rules/inventory.md#34-stock-reservation--competing-line-release-precedence`](../business-rules/inventory.md#34-stock-reservation--competing-line-release-precedence).
 
 ---
 
@@ -723,5 +689,5 @@ sequenceDiagram
 - Observers: `plugins/webkul/inventories/src/Observers/CompanyObserver.php`, `ProductObserver.php`, `UOMObserver.php`
 - Shield Configuration: `plugins/webkul/inventories/config/filament-shield.php:1-73`
 - REST API Routes: `plugins/webkul/inventories/routes/api.php:1-85`
-- Migrations: `plugins/webkul/inventories/database/migrations/` (57 migration files)
-- Tests: `plugins/webkul/inventories/tests/` (40 test files)
+- Migrations: `plugins/webkul/inventories/database/migrations/` (57 database migration files) and `plugins/webkul/inventories/database/settings/` (4 settings migration files)
+- Tests: `plugins/webkul/inventories/tests/` (40 `*Test.php` feature test files + 1 helper = 41 total files)

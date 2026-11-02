@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-22
+last_verified: 2026-10-26
 scope: global
 confidence: high
 ---
@@ -10,7 +10,7 @@ confidence: high
 
 ## 1. Overview & Core Philosophy
 
-This document defines the testing architecture, conventions, and future standards for Aureus ERP. Testing in this repository is built on **Pest v4** (`v4.7.5`) and **PHPUnit v12**.
+This document defines the testing architecture, conventions, and future standards for Aureus ERP. Testing in this repository is built on **Pest v4** and **PHPUnit v12**.
 
 Because the repository has evolved with significant variation in automated test coverage across its 28 plugins, this document establishes a clear separation between **historical practice** and **future mandatory standards**.
 
@@ -20,7 +20,7 @@ Because the repository has evolved with significant variation in automated test 
 ├──────────────────────────────┬───────────────────────────────────────────────────────────────────┤
 │ Testing Framework            │ Pest v4 (PHP 8.3+) with Feature/Unit separation                   │
 │ Shared Test Helpers          │ plugins/webkul/support/tests/Helpers/ (TestBootstrap, Filament)  │
-│ Historical Baseline          │ 11 Tested Plugins / 17 Untested Plugins (Fresh Audit)             │
+│ Historical Baseline          │ 11 Tested Plugins / 17 Untested Plugins (201 files / 189 *Test)   │
 │ Future Rule Standard         │ Historical Practice ≠ Future Standard (Mandatory minimums)       │
 │ Priority Review Areas        │ security, payments, invoices, plugin-manager                      │
 └──────────────────────────────┴───────────────────────────────────────────────────────────────────┘
@@ -30,58 +30,17 @@ Because the repository has evolved with significant variation in automated test 
 
 ## 2. Fresh Repository Test Coverage Audit
 
-A fresh audit of automated test files (`*Test.php`) across `plugins/webkul/*/tests/` confirms the following repository baseline:
+A live audit of `plugins/webkul/*/tests/` confirms **201 PHP files** (`189` `*Test.php` executable test classes + `12` `TestCase.php` and shared helper/fake files) across **11 tested plugins**, while **17 plugins** currently have no `tests/` directory:
 
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                             Fresh Plugin Test Coverage Breakdown                                 │
-├────────────────────────────┬─────────────────────────────┬───────────────────────────────────────┤
-│ Classification             │ Total Plugins               │ Test Coverage Status                  │
-├────────────────────────────┼─────────────────────────────┼───────────────────────────────────────┤
-│ Core Plugins               │ 9 plugins                   │ 2 Tested / 7 Untested (77.8% zero)    │
-│ Optional Plugins           │ 19 plugins                  │ 9 Tested / 10 Untested (52.6% zero)   │
-├────────────────────────────┼─────────────────────────────┼───────────────────────────────────────┤
-│ Entire Repository          │ 28 plugins                  │ 11 Tested / 17 Untested (60.7% zero)  │
-└────────────────────────────┴─────────────────────────────┴───────────────────────────────────────┘
-```
+| Classification | Total Plugins | Tested Plugins | Untested Plugins (`tests/` absent) |
+| :--- | :--- | :--- | :--- |
+| **Core Plugins** | `9` | `2` (`partners`, `support`) | `7` (`analytics`, `chatter`, `fields`, `full-calendar`, `plugin-manager`, `security`, `table-views`) |
+| **Optional Plugins** | `19` | `9` (`accounting`, `accounts`, `employees`, `inventories`, `manufacturing`, `products`, `projects`, `purchases`, `sales`) | `10` (`barcode`, `blogs`, `contacts`, `invoices`, `maintenance`, `payments`, `recruitments`, `time-off`, `timesheets`, `website`) |
+| **Entire Repository** | **`28`** | **`11` (`189` `*Test.php` / `201` total files)** | **`17` (`60.7%` zero PHP test coverage)** |
 
-### Complete Classification List
-
-#### 1. Tested Plugins (11 Total — 199 files: 187 `*Test.php` test classes + 12 shared helpers/fixtures)
-- **Core Tested (2)**:
-  - `partners` (10 test files)
-  - `support` (18 test files [13 `*Test.php` + 5 shared helpers])
-- **Optional Tested (9)**:
-  - `accounting` (9 test files [8 `*Test.php` + 1 helper])
-  - `accounts` (44 test files [43 `*Test.php` + 1 helper])
-  - `employees` (6 test files [5 `*Test.php` + 1 helper])
-  - `inventories` (41 test files [40 `*Test.php` + 1 helper])
-  - `manufacturing` (8 test files [7 `*Test.php` + 1 helper])
-  - `products` (19 test files)
-  - `projects` (8 test files)
-  - `purchases` (16 test files [15 `*Test.php` + 1 helper])
-  - `sales` (20 test files [19 `*Test.php` + 1 helper])
-
-#### 2. Untested Plugins (17 Total with Zero Automated Tests)
-- **Core Untested (7)**:
-  - `analytics` (`tests/` does not exist)
-  - `chatter` (`tests/` does not exist)
-  - `fields` (`tests/` does not exist)
-  - `full-calendar` (`tests/` does not exist)
-  - `plugin-manager` (`tests/` does not exist)
-  - `security` (`tests/` does not exist)
-  - `table-views` (`tests/` does not exist)
-- **Optional Untested (10)**:
-  - `barcode` (`tests/` does not exist)
-  - `blogs` (`tests/` does not exist)
-  - `contacts` (`tests/` does not exist)
-  - `invoices` (`tests/` does not exist)
-  - `maintenance` (`tests/` does not exist)
-  - `payments` (`tests/` does not exist)
-  - `recruitments` (`tests/` does not exist)
-  - `time-off` (`tests/` does not exist)
-  - `timesheets` (`tests/` does not exist)
-  - `website` (`tests/` does not exist)
+> [!NOTE]
+> **Single Source of Truth for Per-Plugin Counts**:
+> The complete 28-plugin table with exact per-plugin `*Test.php` and total `tests/*.php` file counts is maintained solely in [`docs/plugins/README.md`](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). Do not duplicate per-plugin count lists in other documents.
 
 ---
 

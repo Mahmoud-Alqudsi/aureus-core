@@ -73,7 +73,7 @@ The `accounts` module serves as the foundational double-entry financial accounti
     - Registers view namespace (`hasViews()`).
     - Registers translation namespace (`hasTranslations()`).
     - Registers API routes (`hasRoutes(['api'])`).
-    - Registers 55 database migrations (`hasMigrations([...])`) and executes them (`runsMigrations()`):
+    - Registers 70 database migrations (`hasMigrations([...])`, with 71 migration files on disk in `database/migrations/` including `2025_11_21_100010_create_accounts_account_companies_table.php`) and executes them (`runsMigrations()`):
       1. `2025_01_29_044430_create_accounts_payment_terms_table`
       2. `2025_01_29_064646_create_accounts_payment_due_terms_table`
       3. `2025_01_29_134156_create_accounts_incoterms_table`
@@ -237,7 +237,7 @@ plugins/webkul/accounts/
 │   │   ├── TaxFactory.php
 │   │   ├── TaxGroupFactory.php
 │   │   └── TaxPartitionFactory.php
-│   ├── migrations/ (55 migration files)
+│   ├── migrations/ (71 migration files; 70 registered in hasMigrations)
 │   ├── seeders/ (26 seeder files)
 │   └── settings/ (3 settings migration files)
 ├── resources/
@@ -316,7 +316,7 @@ plugins/webkul/accounts/
     └── Feature/
         ├── API/V1/ (18 API feature test files)
         ├── Filament/ (6 Filament UI test files)
-        └── Workflows/ (17 business logic workflow test files)
+        └── Workflows/ (19 business logic workflow test files)
 ```
 
 ---
@@ -804,7 +804,7 @@ Located in `plugins/webkul/accounts/resources/lang/en/`:
 
 ## Tests
 [VERIFIED]
-The `accounts` plugin has a comprehensive suite of **43 test files** (18 API feature tests, 6 Filament feature tests, 19 Workflow feature tests) plus 1 test helper located in `plugins/webkul/accounts/tests/`:
+The `accounts` plugin has a comprehensive suite of **43 `*Test.php` feature test files** (18 API feature tests, 6 Filament feature tests, 19 Workflow feature tests) plus **1 test helper** (`44` total files) located in `plugins/webkul/accounts/tests/` (see [`docs/plugins/README.md`](README.md)):
 
 - **Direct Playwright UI coverage**: The administrative company journey is covered by [`02_companies/01_companies.spec.ts`](../../tests/e2e-pw/tests/02_companies/01_companies.spec.ts). See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for its page-object mapping and coverage boundary.
 
@@ -862,44 +862,28 @@ This section records code-level consumption; the installation-order declaration 
 ## Data Flow and Workflows
 [VERIFIED]
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant UI as Filament / REST API
-    participant WF as MoveWorkflow
-    participant CALC as MoveCalculator
-    participant TAX as TaxManager
-    participant SEQ as SequenceService
-    participant DB as accounts_account_moves / lines
-    participant EVT as MoveConfirmed Event
-    participant DOWN as Sales / Purchases Listeners
+Within the `accounts` plugin boundary, `AccountManager` (`plugins/webkul/accounts/src/AccountManager.php`) delegates journal entry lifecycle operations to `MoveWorkflow`, line/document balancing to `MoveCalculator`, tax evaluation to `TaxManager` / `TaxComputer`, payment settlement to `PaymentRegistrar`, and receivable/payable matching to `Reconciler`.
 
-    UI->>WF: post(Move $move)
-    WF->>WF: assertPostable($move)
-    WF->>CALC: recompute($move)
-    CALC->>TAX: computeAll(taxes, price, quantity)
-    TAX-->>CALC: breakdown & tax lines
-    CALC-->>WF: balanced lines & totals
-    WF->>SEQ: nextFor(Journal)
-    SEQ-->>WF: INV/2026/00001 (locked name)
-    WF->>DB: Save Move (state='posted', posted_before=true)
-    WF->>DB: Stamp lines (parent_state='posted')
-    WF->>WF: bumpPartnerRanks($move)
-    WF->>EVT: MoveConfirmed::dispatch($move)
-    EVT->>DOWN: ComputeSaleOrderFromMoveListener / ComputePurchaseOrderFromMoveListener
-```
+The full general-ledger posting lifecycle, state machine, and reconciliation flows are canonically documented in [`docs/workflows/accounting.md`](../workflows/accounting.md):
+- **Manual Journal Entry & Posting Lifecycle (`MoveState`: `draft` → `posted` / `cancel`)**: [`docs/workflows/accounting.md#4-manual-journal-entry-flow`](../workflows/accounting.md#4-manual-journal-entry-flow), [`#5-posting--modification-lifecycle`](../workflows/accounting.md#5-posting--modification-lifecycle), and [`#17-mermaid-flowchart`](../workflows/accounting.md#17-mermaid-flowchart).
+- **Full & Partial Reconciliation Engine (`Reconciler`)**: [`docs/workflows/accounting.md#6-reconciliation-engine`](../workflows/accounting.md#6-reconciliation-engine).
+- **Bank Statement & Period-Closing Implementation Boundaries**: [`docs/workflows/accounting.md#7-bank-statement-processing-status`](../workflows/accounting.md#7-bank-statement-processing-status) and [`#8-period--fiscal-year-closing-status`](../workflows/accounting.md#8-period--fiscal-year-closing-status).
 
 ---
 
 ## Business Rules
 [VERIFIED]
-1. **Double-Entry Ledger Invariant**: Every posted `Move` must have total debits exactly equal to total credits (`balance = 0`) across all `accounts_account_move_lines`.
-2. **Immutable Sequential Numbering**: Document numbers (`accounts_account_moves.name`) generated via `SequenceService` cannot be overwritten or altered once posted.
-3. **No Hard Deletes on Posted Ledgers**: Posted moves cannot be deleted; they must be reversed via `MoveWorkflow::reverse()`, creating an opposing reversing move linked via `reversed_entry_id`.
-4. **Multi-Company Chart Sharing**: Accounts (`accounts_accounts`) link to companies via many-to-many `accounts_account_companies`. A single chart of accounts can be shared by multiple sister companies or segregated per tenant.
-5. **Multi-Tenant Property EAV Isolation**: Partner and Product financial accounts are stored in `partners_partner_company_properties`, `products_product_company_accounts`, and `products_category_company_accounts`. The `CompanyProperty` cast transparently routes reads/writes according to the active company context.
-6. **Strict Tax Repartition Parity**: Invoices and refunds must have identical repartition line counts, exactly one BASE line, at least one TAX line, and total tax percentages summing to exactly 100% (and -100% for negative taxes).
-7. **Cash Rounding Balance Adjustments**: When cash rounding is enabled, difference lines are posted to the designated rounding account with `display_type = 'rounding'`.
+
+1. **Plugin-Local Multi-Company & Persistence Invariants**:
+   - **Multi-Company Chart Sharing**: `Account` (`accounts_accounts`) links to companies via many-to-many `accounts_account_companies` (`BelongsToCompanies`), allowing shared or tenant-segregated charts of accounts.
+   - **Multi-Tenant Property EAV Isolation**: Partner and product ledger accounts (`partners_partner_company_properties`, `products_product_company_accounts`, `products_category_company_accounts`) are routed per active company via the `CompanyProperty` cast.
+   - **Immutable Sequential Numbering & Reversal-Only Ledger**: Posted moves lock their `SequenceService::nextFor($journal)` document number and cannot be hard-deleted; modifications require `MoveWorkflow::resetToDraft()` or `MoveWorkflow::reverse()`.
+2. **Canonical Financial & Tax Calculation Rules ([`docs/business-rules/accounting.md`](../business-rules/accounting.md))**:
+   - **Tax Calculation Pipeline, Compounding, and Repartition Distribution**: [`docs/business-rules/accounting.md#21-tax-calculation-pipeline`](../business-rules/accounting.md#21-tax-calculation-pipeline).
+   - **Payment Term Due-Date & Installment Allocation (`PaymentDueTerm`)**: [`docs/business-rules/accounting.md#22-payment-term-due-date--installment-calculation`](../business-rules/accounting.md#22-payment-term-due-date--installment-calculation).
+   - **Multi-Currency Rate Resolution & Realized Exchange Gain/Loss**: [`docs/business-rules/accounting.md#23-multi-currency-conversion--exchange-gainloss-calculation`](../business-rules/accounting.md#23-multi-currency-conversion--exchange-gainloss-calculation).
+   - **Cash Rounding Strategies (`CashRounding`)**: [`docs/business-rules/accounting.md#24-cash-rounding-calculation`](../business-rules/accounting.md#24-cash-rounding-calculation).
+   - **Fiscal Position Remapping, Account Resolution Precedence, and Reconciliation Matching**: [`docs/business-rules/accounting.md#3-precedence--matching-rules`](../business-rules/accounting.md#3-precedence--matching-rules) and [`#5-validation-constraints--enforcement-matrix`](../business-rules/accounting.md#5-validation-constraints--enforcement-matrix).
 
 ---
 
@@ -915,7 +899,7 @@ sequenceDiagram
 
 ## Dangerous Areas
 [VERIFIED]
-1. **Has Test Files**: Yes (**41 test files** present in `plugins/webkul/accounts/tests/`).
+1. **Has Test Files**: Yes (**43 `*Test.php` test files** plus **1 test helper** = **44 total files** present in `plugins/webkul/accounts/tests/`).
 2. **Sequence Gap Burning**: Calling `SequenceService::next()` inside an aborted or failed database transaction burns the sequence counter, leaving permanent numerical gaps in ledger audits.
 3. **Exchange Difference Cascades**: Un-reconciling transactions with currency fluctuations must cleanly purge associated `PartialReconcile` and `FullReconcile` records to prevent phantom exchange difference entries.
 4. **Multi-Company EAV Desynchronization**: If `CompanyProperty::flush()` fails during model saving, in-memory pending attributes will be dropped, causing partner/product accounts to revert to null or fall back incorrectly.
@@ -945,4 +929,4 @@ sequenceDiagram
 | Tax Calculation Engine | `plugins/webkul/accounts/src/Services/TaxComputer.php`, `TaxManager.php` | `TaxComputer::computeTaxes`, `TaxManager::computeAll` |
 | Accounting Setup & Multi-Company Clone | `plugins/webkul/accounts/src/Services/AccountingSetupService.php` | Lines 10–222 (`setUp`, `copyAccounts`, `copyTaxes`, `copyJournals`) |
 | REST API Routes | `plugins/webkul/accounts/routes/api.php` | Lines 24–90 (API endpoints under `admin/api/v1/accounts`) |
-| Verified Test Suite | `plugins/webkul/accounts/tests/` | 41 test files across `Feature/API/V1/`, `Feature/Filament/`, `Feature/Workflows/` |
+| Verified Test Suite | `plugins/webkul/accounts/tests/` | 43 `*Test.php` test files (`+ 1` helper = 44 total files) across `Feature/API/V1/`, `Feature/Filament/`, `Feature/Workflows/` |

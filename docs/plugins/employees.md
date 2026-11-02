@@ -755,7 +755,7 @@ Structure per locale includes:
 
 ## Tests
 [VERIFIED]
-The plugin includes **5 Pest feature test files** and **1 test helper** located in `plugins/webkul/employees/tests/`:
+The plugin includes **5 `*Test.php` feature test files** and **1 test helper** (`6` total files; see [`docs/plugins/README.md`](README.md)) located in `plugins/webkul/employees/tests/`:
 
 1. **`tests/Feature/Filament/ManageResumeTest.php`**:
    - Tests rendering the Manage Resume page for an employee (`ManageResume::class`).

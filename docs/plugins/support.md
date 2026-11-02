@@ -80,7 +80,7 @@ This document owns the implementation facts for the `support` plugin's shared in
     - Sets package name to `'support'`
     - Declares package as core (`$package->isCore()`)
     - Configures views (`hasViews()`), translations (`hasTranslations()`), and routes (`hasRoutes(['api', 'web'])`)
-    - Registers 35 database migrations via `hasMigrations([...])` and enables execution via `runsMigrations()`
+    - Registers 35 database migration entries via `hasMigrations([...])` (`34` physical migration files on disk in `plugins/webkul/support/database/migrations/`) and enables execution via `runsMigrations()`
     - Registers settings migration `'2026_06_12_000001_create_brand_settings'` via `hasSettings([...])` and enables execution via `runsSettings()`
     - Registers root seeder `'Webkul\Support\Database\Seeders\DatabaseSeeder'` via `hasSeeder()`
   - `packageRegistered()`:
@@ -785,7 +785,7 @@ Prefix: `admin/api/v1/support`, Middleware: `['auth:sanctum']`, Route Name Prefi
 ## Tests
 [VERIFIED]
 **Test Coverage Status: HAS TESTS.**
-The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/support/tests/` comprising 13 feature test files and 5 test helper classes:
+The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/support/tests/` comprising **15 `*Test.php` feature test files and 5 test helper classes** (`20` total files; see [`docs/plugins/README.md`](README.md)):
 
 ### Feature Tests:
 1. `plugins/webkul/support/tests/Feature/API/V1/BankTest.php`: CRUD, soft delete, restore, force delete, Spatie query builder filtering/sorting on banks API.
@@ -795,12 +795,14 @@ The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/
 5. `plugins/webkul/support/tests/Feature/API/V1/StateTest.php`: State index, create, update, delete endpoints.
 6. `plugins/webkul/support/tests/Feature/API/V1/UOMCategoryTest.php`: Unit of measure category management.
 7. `plugins/webkul/support/tests/Feature/API/V1/UOMTest.php`: Nested unit of measure endpoints with ratio precision.
-8. `plugins/webkul/support/tests/Feature/Filament/ResourceGlobalSearchSmokeTest.php`: Verifies global search provider across resources.
-9. `plugins/webkul/support/tests/Feature/Locale/ProfileLanguageUpdateTest.php`: Verifies user locale updates.
-10. `plugins/webkul/support/tests/Feature/Locale/SetLocaleMiddlewareTest.php`: Verifies application locale resolution.
-11. `plugins/webkul/support/tests/Feature/Workflows/CompanyIsolationTest.php`: Verifies multi-company tenant isolation invariants (record hiding across companies, active company switching, allowed company scoping).
-12. `plugins/webkul/support/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`: Verifies automated company assignment and shared model declarations (`ActivityPlan`, `Calendar`, `Sequence`, `UtmCampaign`).
-13. `plugins/webkul/support/tests/Feature/Workflows/DefaultCurrencyResolutionTest.php`: Verifies default currency resolution hierarchy (country currency -> app.currency config fallback -> first active currency), ISO code lookup via `findByCode()`, and company currency assignment activation.
+8. `plugins/webkul/support/tests/Feature/Filament/HasClusterBreadcrumbsTest.php`: Verifies cluster breadcrumb trail generation on clustered pages and resources.
+9. `plugins/webkul/support/tests/Feature/Filament/HasNavigationLabelTitlesTest.php`: Verifies navigation label title resolution on Filament pages.
+10. `plugins/webkul/support/tests/Feature/Filament/ResourceGlobalSearchSmokeTest.php`: Verifies global search provider across resources.
+11. `plugins/webkul/support/tests/Feature/Locale/ProfileLanguageUpdateTest.php`: Verifies user locale updates.
+12. `plugins/webkul/support/tests/Feature/Locale/SetLocaleMiddlewareTest.php`: Verifies application locale resolution.
+13. `plugins/webkul/support/tests/Feature/Workflows/CompanyIsolationTest.php`: Verifies multi-company tenant isolation invariants (record hiding across companies, active company switching, allowed company scoping).
+14. `plugins/webkul/support/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`: Verifies automated company assignment and shared model declarations (`ActivityPlan`, `Calendar`, `Sequence`, `UtmCampaign`).
+15. `plugins/webkul/support/tests/Feature/Workflows/DefaultCurrencyResolutionTest.php`: Verifies default currency resolution hierarchy (country currency -> app.currency config fallback -> first active currency), ISO code lookup via `findByCode()`, and company currency assignment activation.
 
 ### Test Helpers:
 - `CompanyHelper.php`: User authentication with company contexts and session state setup.

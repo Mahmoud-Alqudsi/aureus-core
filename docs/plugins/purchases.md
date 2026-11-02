@@ -728,7 +728,7 @@ Translation files reside under `resources/lang/` for 5 supported locales: `en`, 
 
 ## Tests
 [VERIFIED]
-The `purchases` plugin contains comprehensive automated test coverage with **15 test files and 1 test helper** structured under `plugins/webkul/purchases/tests/`:
+The `purchases` plugin contains comprehensive automated test coverage with **15 `*Test.php` feature test files and 1 test helper** (`16` total files; see [`docs/plugins/README.md`](README.md)) structured under `plugins/webkul/purchases/tests/`:
 
 - **Direct Playwright UI coverage**: Five specs cover vendors, products, RFQs, purchase agreements, and the purchase flow, including inventory integration. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the per-spec page-object mapping and coverage boundary.
 
@@ -784,94 +784,30 @@ This section records code-level consumption; only `invoices` is declared as an i
 ## Data Flow and Workflows
 [VERIFIED]
 
-The purchasing architecture operates a strict multi-stage lifecycle linking requisitions, purchase orders, warehouse operations, and vendor bills:
+Within the `purchases` plugin boundary, `PurchaseManager` (`plugins/webkul/purchases/src/PurchaseManager.php`) coordinates procurement state transitions via `OrderWorkflow`, line/order financial and status rollups via `OrderCalculator`, warehouse receipt and dropship generation via `ReceiptPlanner`, and vendor bill creation via `Biller`.
 
-```mermaid
-stateDiagram-v2
-    [*] --> RequisitionDraft: Create Agreement
-    RequisitionDraft --> RequisitionConfirmed: Confirm Tender
-    RequisitionConfirmed --> RFQDraft: Generate RFQs
-    RequisitionConfirmed --> RequisitionClosed: All POs Done/Canceled
-    RequisitionConfirmed --> RequisitionCanceled: Cancel Tender
-
-    [*] --> RFQDraft: Direct Creation
-    RFQDraft --> RFQSent: Send by Email (PO/PDF)
-    RFQSent --> RFQDraft: Edit / Revise
-    
-    RFQDraft --> ToApprove: Confirm (Amount >= Limit & Not Manager)
-    RFQSent --> ToApprove: Confirm (Amount >= Limit & Not Manager)
-    
-    RFQDraft --> PurchaseOrder: Confirm (Amount < Limit or Manager)
-    RFQSent --> PurchaseOrder: Confirm (Amount < Limit or Manager)
-    ToApprove --> PurchaseOrder: Manager Approval
-    
-    PurchaseOrder --> InventoryReceipts: Generate Warehouse Moves
-    PurchaseOrder --> LockedDone: Auto-Lock or LockAction
-    LockedDone --> PurchaseOrder: UnlockAction
-    
-    PurchaseOrder --> Canceled: Cancel Order
-    RFQDraft --> Canceled: Cancel RFQ
-    RFQSent --> Canceled: Cancel RFQ
-    
-    PurchaseOrder --> VendorBill: Create Bill (Biller::createBill)
-    LockedDone --> VendorBill: Create Bill (Biller::createBill)
-    
-    VendorBill --> PostBill: Validate in Accounting
-    PostBill --> InvoicedStatus: InvoiceStatus = INVOICED
-```
-
-### Exact State Machine Enums & Values
-
-#### 1. Requisition Lifecycle (`RequisitionState`)
-- **`draft`**: Tender agreement in drafting phase.
-- **`confirmed`**: Active agreement open for RFQ generation (`canBeConfirmed`: requires at least 1 line).
-- **`closed`**: Completed agreement (`canBeClosed`: all child orders settled in `done` or `canceled`).
-- **`canceled`**: Revoked agreement.
-
-#### 2. Order Lifecycle (`OrderState`)
-- **`draft`**: Request for Quotation initialized with sequence number `PO/#####`.
-- **`sent`**: Quotation PDF generated and emailed to vendor.
-- **`to_approve`**: High-value purchase order waiting for manager approval (`total_amount >= order_validation_amount`).
-- **`purchase`**: Confirmed purchase order. Incoming receipts and inventory moves generated in `inventories`.
-- **`done`**: Locked purchase order. Cannot be modified without unlocking.
-- **`canceled`**: Canceled order. Cancels linked open warehouse receipts.
-
-#### 3. Receipt Status (`OrderReceiptStatus`)
-- **`no`**: Non-stock goods, unconfirmed order, or `inventories` plugin not installed.
-- **`pending`**: Receipt transfer generated but not yet processed in warehouse.
-- **`partial`**: Part of ordered goods received into warehouse.
-- **`full`**: All incoming stock moves marked `done` or canceled.
-
-#### 4. Invoice / Billing Status (`OrderInvoiceStatus`)
-- **`no`**: Order in draft/sent/canceled state or zero billable quantity.
-- **`to_invoiced`**: Billable quantity remains (`qty_to_invoice != 0`). Calculated based on product purchasing policy:
-  - Ordered quantities policy (`purchase_method = 'purchase'`): `product_qty - qty_invoiced`.
-  - Received quantities policy (`purchase_method = 'receive'`): `qty_received - qty_invoiced`.
-- **`invoiced`**: All line items completely billed (`qty_to_invoice == 0`) and matching `AccountMove` exists.
+The complete procurement lifecycle, state transition matrices, and flow diagrams are canonically documented in [`docs/workflows/purchasing.md`](../workflows/purchasing.md):
+- **Primary RFQ-to-Pay Flow & Diagram**: [`docs/workflows/purchasing.md#4-main-flow`](../workflows/purchasing.md#4-main-flow) and [`#18-mermaid-flowchart`](../workflows/purchasing.md#18-mermaid-flowchart).
+- **State Machine Transitions (`OrderState`, `RequisitionState`, `OrderReceiptStatus`, `OrderInvoiceStatus`)**: [`docs/workflows/purchasing.md#5-state-transitions`](../workflows/purchasing.md#5-state-transitions).
+- **Purchase Agreements (Requisitions), Approval Gate, and Vendor Portal**: [`docs/workflows/purchasing.md#6-alternative-paths`](../workflows/purchasing.md#6-alternative-paths).
+- **Partial Receipts, Backorders, and Three-Way Match Analysis**: [`docs/workflows/purchasing.md#7-partial-receipt--backorder-workflow`](../workflows/purchasing.md#7-partial-receipt--backorder-workflow) and [`#8-three-way-match-analysis`](../workflows/purchasing.md#8-three-way-match-analysis).
+- **Cancellation Guardrails & Administrative Locking**: [`docs/workflows/purchasing.md#9-cancellation--rejection-rules`](../workflows/purchasing.md#9-cancellation--rejection-rules) and [`#10-administrative-locking`](../workflows/purchasing.md#10-administrative-locking).
 
 ---
 
 ## Business Rules
 [VERIFIED]
 
-1. **Company Scoping & Consistency**:
-   - `Order` and `OrderLine` enforce strict company tenancy via `BelongsToCompany` and `ChecksCompanyConsistency`.
-   - `Order::companyConsistentFields()` validates that `fiscal_position_id`, `payment_term_id`, `operation_type_id`, and `requisition_id` belong to the same company as the purchase order.
-   - `OrderLine::companyConsistentFields()` asserts product company consistency.
-
-2. **Sequential Numbering (`SequenceService`)**:
-   - Purchase orders utilize sequence code `'purchases.order'` prefixed with `'PO/'`.
-   - Requisitions generate document identifiers formatted as `'BO/' . $id` (for blanket orders) or `'PT/' . $id` (for purchase templates).
-
-3. **Tax Computation & Multi-Currency**:
-   - Tax amounts are computed per line via `TaxFacade::computeAll()`, correctly respecting tax inclusion/exclusion flags, customer/vendor fiscal position mappings, and currency decimal precision (`decimal:4`).
-   - Line subtotal and tax amounts convert into company currency (`total_cc_amount`) using the exchange rate at order date.
-
-4. **Automated Inventory Dropshipping**:
-   - When an order specifies a `destination_address_id` and an operation type of type `DROPSHIP`, `ReceiptPlanner` automatically routes destination locations directly to the customer location (`LocationType::CUSTOMER`) without moving goods through internal stock.
-
-5. **Chatter & Audit Trail**:
-   - `Order` and `Requisition` implement `HasChatter` and `HasLogActivity`, logging state changes, partner revisions, buyer assignments, and untaxed amounts to the chatter feed.
+1. **Company Scoping & Consistency (Plugin-Local Persistence Invariants)**:
+   - `Order` and `OrderLine` enforce tenant isolation via `BelongsToCompany` and `ChecksCompanyConsistency` (`Order::companyConsistentFields()` validates `fiscal_position_id`, `payment_term_id`, `operation_type_id`, and `requisition_id`; `OrderLine::companyConsistentFields()` validates `product_id`).
+2. **Sequential Numbering (`SequenceService`) & Audit Trail**:
+   - Purchase orders use sequence code `'purchases.order'` (`PO/#####`), while requisitions format identifiers as `'BO/' . $id` or `'PT/' . $id`. `Order` and `Requisition` log state and attribute mutations via `HasChatter` and `HasLogActivity`.
+3. **Canonical Procurement Calculation & Precedence Rules ([`docs/business-rules/purchasing.md`](../business-rules/purchasing.md))**:
+   - **Approval Threshold Algorithm (`OrderWorkflow::confirm`)**: [`docs/business-rules/purchasing.md#21-multi-tier-approval-thresholds`](../business-rules/purchasing.md#21-multi-tier-approval-thresholds).
+   - **Vendor Bill Matching & Billable Quantity Formulas (`OrderCalculator::refreshQtyBilled`, `Biller::createBill`)**: [`docs/business-rules/purchasing.md#22-vendor-bill-matching-logic-2-way-vs-3-way-match`](../business-rules/purchasing.md#22-vendor-bill-matching-logic-2-way-vs-3-way-match).
+   - **Supplier Price List & Multi-Currency Resolution**: [`docs/business-rules/purchasing.md#23-supplier-price-list-resolution`](../business-rules/purchasing.md#23-supplier-price-list-resolution).
+   - **Purchase Agreement Call-Off & Quantity Limits**: [`docs/business-rules/purchasing.md#24-blanket-order--call-for-tenders-purchase-agreements`](../business-rules/purchasing.md#24-blanket-order--call-for-tenders-purchase-agreements).
+   - **Receipt Synchronization & Billing Status Precedence**: [`docs/business-rules/purchasing.md#25-purchase-to-stock-receipt-synchronization`](../business-rules/purchasing.md#25-purchase-to-stock-receipt-synchronization) and [`#3-precedence--matching-rules`](../business-rules/purchasing.md#3-precedence--matching-rules).
 
 ---
 
@@ -897,7 +833,7 @@ stateDiagram-v2
 
 > [!NOTE]
 > **Automated Test Coverage**:
-> Automated tests exist and are actively maintained (`plugins/webkul/purchases/tests/` contains 14 feature test files covering workflows, API endpoints, Filament UI smoke tests, multi-company boundaries, and billing calculations).
+> Automated tests exist and are actively maintained (`plugins/webkul/purchases/tests/` contains **15 `*Test.php` feature test files** and **1 test helper** = **16 total files** covering workflows, API endpoints, Filament UI smoke tests, multi-company boundaries, and billing calculations).
 
 ---
 

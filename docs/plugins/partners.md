@@ -691,7 +691,7 @@ Dictionary structures:
 
 ## Tests
 [VERIFIED]
-The `partners` plugin contains an active test suite located under `plugins/webkul/partners/tests/`:
+The `partners` plugin contains an active test suite of **10 `*Test.php` feature test files** (`10` total files; see [`docs/plugins/README.md`](README.md)) located under `plugins/webkul/partners/tests/`:
 
 - **Cross-plugin Playwright coverage**: Customer and vendor records are exercised inside the sales and purchases browser journeys, including [`04_sales/01_salesCustomers.spec.ts`](../../tests/e2e-pw/tests/04_sales/01_salesCustomers.spec.ts) and [`05_purchases/01_purchaseVendors.spec.ts`](../../tests/e2e-pw/tests/05_purchases/01_purchaseVendors.spec.ts). This is not standalone partner-plugin browser coverage; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the boundary.
 
@@ -840,7 +840,7 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
 [VERIFIED]
 
 1. **Test Coverage Explicit Declaration**:
-   - **Test files exist**: Yes. 9 dedicated test suites exist under `plugins/webkul/partners/tests/` verifying API v1 CRUD endpoints, company scoping invariants, company isolation, and Filament smoke tests.
+   - **Test files exist**: Yes. **10 dedicated `*Test.php` test suites** exist under `plugins/webkul/partners/tests/` verifying API v1 CRUD endpoints, company scoping invariants, company isolation, partner type views, and Filament smoke tests.
 
 2. **Multi-Company Data Leakage Hazard**:
    - Because `Partner` overrides automatic company stamping (`autoAssignsCompany() => false`), partners default to `company_id = null` (shared). If an engineer adds custom queries bypassing `CompanyScope`, partner records could be exposed across organizational boundaries unintentionally.

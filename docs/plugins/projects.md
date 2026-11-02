@@ -472,7 +472,7 @@ Translation files are organized under `plugins/webkul/projects/resources/lang/` 
 
 ## Tests
 [VERIFIED]
-**Test files present in repository**: The `projects` plugin contains an automated test suite under `plugins/webkul/projects/tests/`:
+**Test files present in repository**: The `projects` plugin contains an automated test suite of **8 `*Test.php` feature test files** (`8` total files; see [`docs/plugins/README.md`](README.md)) under `plugins/webkul/projects/tests/`:
 - `Feature/API/V1/ProjectTest.php` (CRUD, validation, soft-delete, restore, force-delete, auth/permissions).
 - `Feature/API/V1/TaskTest.php` (Task ticket creation, multi-assignee assignment, time attributes, validation, lifecycle).
 - `Feature/API/V1/MilestoneTest.php` (Milestone CRUD, completion toggles, project isolation).

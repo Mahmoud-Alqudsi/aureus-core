@@ -714,7 +714,7 @@ The plugin registers REST API v1 endpoints under route group prefix `admin/api/v
 
 ## Tests
 [VERIFIED]
-The `products` plugin contains an extensive, dedicated Pest automated test suite with **19 test files** under `plugins/webkul/products/tests/`:
+The `products` plugin contains an extensive, dedicated Pest automated test suite with **19 `*Test.php` test files** (`9` API, `3` Filament, `7` Workflows; see [`docs/plugins/README.md`](README.md)) under `plugins/webkul/products/tests/`:
 
 - **Cross-plugin Playwright coverage**: Product journeys are exercised from sales, purchases, and inventory specs. This is cross-plugin browser coverage rather than a standalone products spec; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas).
 - **API Tests (`tests/Feature/API/V1/`)**:
@@ -736,8 +736,8 @@ The `products` plugin contains an extensive, dedicated Pest automated test suite
   - `AttributeRowDeleteTest.php`: Tests row-level attribute deletion safeguards.
   - `CompanyIsolationTest.php`: Validates multi-tenant query isolation and access boundaries.
   - `CompanyScopingInvariantsTest.php`: Enforces that declared shared models (`Product`, `Packaging`) maintain nullable company columns and do not unexpectedly auto-stamp tenant IDs.
-  - `PriceListResolverTest.php`: Verifies price-list selection and fallback resolution.
-  - `PriceRuleItemScopeTest.php`: Verifies company and applicability scoping for price-rule items.
+  - `PriceListResolverTest.php`: Verifies price-list rule precedence, quantity/date filters, and computed pricing resolution.
+  - `PriceRuleItemScopeTest.php`: Verifies company and rule scoping on price-list rule items.
   - `ProductUsageRegistryTest.php`: Verifies model registration, table existence checks, and multi-company cross-reference detection in `ProductUsageRegistry`.
 
 ## Shared Infrastructure Dependencies
@@ -848,7 +848,7 @@ flowchart TD
 3. **Company Scope Synchronization on Variants**:
    - Variants inherit `company_id` from their parent template. Updating a variant's `company_id` directly in the database without updating the parent template will cause `Product::saved()` to overwrite the variant's company when the parent is next saved.
 4. **Test Suite Coverage**:
-   - Explicit verification: `products` possesses a comprehensive 16-file test suite (`tests/Feature/API/V1`, `tests/Feature/Filament`, `tests/Feature/Workflows`). Running `php artisan test --filter=Product` validates API endpoints, UI actions, company scoping invariants, and safety guards.
+   - Explicit verification: `products` possesses a comprehensive **19-file `*Test.php` test suite** (`tests/Feature/API/V1`, `tests/Feature/Filament`, `tests/Feature/Workflows`). Running `php artisan test --filter=Product` validates API endpoints, UI actions, company scoping invariants, and safety guards.
 
 ## Change Impact
 [VERIFIED]

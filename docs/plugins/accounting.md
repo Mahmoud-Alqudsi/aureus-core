@@ -501,7 +501,7 @@ The `accounting` module registers the translation namespace `accounting` (`resou
 
 ## Tests
 [VERIFIED]
-- **Test Presence**: The `accounting` plugin **has dedicated feature test files** residing in `plugins/webkul/accounting/tests/`.
+- **Test Presence**: The `accounting` plugin **has 8 `*Test.php` feature test files and 1 test helper** (`9` total files; see [`docs/plugins/README.md`](README.md)) residing in `plugins/webkul/accounting/tests/`.
 - **Test Framework**: Pest 4 / PHPUnit 12 with Livewire test utilities (`Livewire::test(...)`).
 - **Feature Tests** (`plugins/webkul/accounting/tests/Feature/Filament/`):
   1. `AgedPayableTest.php` (8 tests): Verifies aged payable page rendering, bucket placement for not-yet-due bills (`at_date`), overdue bills (<1 period in `period_1`, >1 period in `period_2`), partner total consistency, draft bill exclusions, and single-partner filtering.

@@ -604,23 +604,14 @@ Established deferred and reactive mechanisms in Aureus ERP:
 
 ### 13.1 The Coverage Baseline: 11 Tested vs. 17 Untested Plugins
 
-```
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 Automated Test Coverage Distribution                                  │
-├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ TESTED PLUGINS (11) — Automated Pest Tests Exist in plugins/webkul/<plugin>/tests/                     │
-│ Core (2):     partners (9 tests), support (17 tests)                                                   │
-│ Optional (9): accounting (9), accounts (42), employees (5), inventories (41), manufacturing (8),       │
-│               products (16), projects (8), purchases (15), sales (17)                                  │
-├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ UNTESTED PLUGINS (17) — Zero Automated Tests (tests/ directory does not exist)                         │
-│ Core (7):     analytics, chatter, fields, full-calendar, plugin-manager, security, table-views         │
-│ Optional (10):barcode, blogs, contacts, invoices, maintenance, payments, recruitments, time-off,       │
-│               timesheets, website                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
+- **Tested Plugins (`11` total — `189` `*Test.php` classes / `201` total PHP files in `tests/`)**:
+  - Core (`2`): `partners`, `support`.
+  - Optional (`9`): `accounting`, `accounts`, `employees`, `inventories`, `manufacturing`, `products`, `projects`, `purchases`, `sales`.
+- **Untested Plugins (`17` total — `tests/` directory absent)**:
+  - Core (`7`): `analytics`, `chatter`, `fields`, `full-calendar`, `plugin-manager`, `security`, `table-views`.
+  - Optional (`10`): `barcode`, `blogs`, `contacts`, `invoices`, `maintenance`, `payments`, `recruitments`, `time-off`, `timesheets`, `website`.
 
-[VERIFIED] Evidence: `docs/ai/testing-rules.md#2-fresh-repository-test-coverage-audit`.
+[VERIFIED] Evidence: Per-plugin test and migration counts are maintained solely in [`docs/plugins/README.md`](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage) and [`docs/ai/testing-rules.md`](../ai/testing-rules.md#2-fresh-repository-test-coverage-audit).
 
 ### 13.2 The Testing Governance Principle
 

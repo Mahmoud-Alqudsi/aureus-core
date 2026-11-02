@@ -64,7 +64,7 @@ The `time-off` module provides comprehensive employee leave and absence lifecycl
     - Sets package name to `time-off` (`TimeOffServiceProvider::$name = 'time-off'`).
     - Sets view namespace `time-off` (`TimeOffServiceProvider::$viewNamespace = 'time-off'`).
     - Registers translation namespace (`hasTranslations()`).
-    - Registers 9 migrations in `$package->hasMigrations([...])` and executes them (`runsMigrations()`):
+    - Registers 9 migrations in `$package->hasMigrations([...])` (`10` physical migration files on disk in `database/migrations/`, including `2026_08_04_100000_share_default_time_off_leave_types.php`) and executes them (`runsMigrations()`):
       1. `2025_01_17_080711_create_time_off_leave_types_table`
       2. `2025_01_17_080712_create_time_off_leaves_table`
       3. `2025_01_20_080058_create_time_off_user_leave_types_table`

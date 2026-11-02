@@ -613,7 +613,7 @@ Covers app strings, models (`order`, `team`), enums (`order-state`, `invoice-sta
 
 ## Tests
 [VERIFIED]
-**Test Coverage Status: Fully Tested**. The `sales` plugin contains a comprehensive test suite of **19 feature test files and 1 shared helper** under `plugins/webkul/sales/tests`:
+**Test Coverage Status: Fully Tested**. The `sales` plugin contains a comprehensive test suite of **19 `*Test.php` feature test files and 1 shared helper** (`20` total files; see [`docs/plugins/README.md`](README.md)) under `plugins/webkul/sales/tests`:
 
 - **Direct Playwright UI coverage**: Four specs cover customers, products, quotations, and the sales order flow, including inventory integration. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the per-spec page-object mapping and coverage boundary.
 
@@ -712,78 +712,25 @@ graph TD
 ## Data Flow and Workflows
 [VERIFIED]
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Salesperson as Sales Representative
-    actor Customer as Customer / Client
-    participant Filament as Filament UI (Admin)
-    participant SaleMgr as SaleManager / Workflow
-    participant Sequence as SequenceService
-    participant Calc as OrderCalculator
-    participant InvService as ProcurementRequester
-    participant Inventory as Inventories Plugin
-    participant Invoicer as Invoicer Service
-    participant Accounts as Accounts Plugin
-    participant SMS as Msg91Service
+Within the `sales` plugin boundary, `SaleManager` (`plugins/webkul/sales/src/SaleManager.php`) delegates lifecycle mutations to `OrderWorkflow`, pricing/status aggregation to `OrderCalculator`, stock fulfillment triggers to `ProcurementRequester`, and customer invoice creation to `Invoicer`.
 
-    Salesperson->>Filament: Create Quotation (Partner, Lines, Template)
-    Filament->>Sequence: SequenceService::next('sales.order')
-    Sequence-->>Filament: SO/00001
-    Filament->>Calc: recompute(Order)
-    Calc-->>Filament: Subtotals, Taxes, Total Calculated
-
-    Salesperson->>Filament: Send Quotation by Email
-    Filament->>SaleMgr: sendByEmail()
-    SaleMgr->>Customer: Email Quotation PDF
-    SaleMgr-->>Filament: State -> 'SENT'
-
-    Salesperson->>Filament: Confirm Sales Order
-    Filament->>SaleMgr: confirm()
-    SaleMgr->>SaleMgr: State -> 'SALE', InvoiceStatus -> 'TO_INVOICE'
-    SaleMgr->>InvService: requestForLines()
-    InvService->>Inventory: runProcurements() -> Creates Moves & Delivery Operations
-    SaleMgr-->>Filament: Dispatches OrderConfirmed
-
-    Inventory-->>SaleMgr: OperationDone Event
-    SaleMgr->>Calc: recompute() -> Updates qty_delivered & DeliveryStatus -> 'FULL'
-
-    Salesperson->>Filament: Create Invoice (Advance Payment Wizard / Delivered)
-    Filament->>Invoicer: invoiceOrder()
-    Invoicer->>Accounts: Create Customer Invoice (OUT_INVOICE)
-    Invoicer->>Invoicer: Attach sales_order_invoices & sales_order_line_invoices
-    Invoicer->>Calc: recompute() -> InvoiceStatus -> 'INVOICED'
-
-    Customer->>Accounts: Pay Invoice (Payment Registered)
-    Accounts-->>SaleMgr: MovePaid Event
-    SaleMgr->>SMS: SendSMSNotificationListener -> MSG91 SMS to Customer & Admin
-```
+The end-to-end commercial lifecycle, state transition matrices, and sequence diagrams are canonically documented in [`docs/workflows/sales.md`](../workflows/sales.md):
+- **Primary Quotation-to-Cash Flow**: [`docs/workflows/sales.md#4-main-flow`](../workflows/sales.md#4-main-flow) and [`#16-mermaid-flowchart`](../workflows/sales.md#16-mermaid-flowchart).
+- **State Machine Transitions (`OrderState`, `OrderDeliveryStatus`, `InvoiceStatus`)**: [`docs/workflows/sales.md#5-state-transitions`](../workflows/sales.md#5-state-transitions).
+- **Advance/Down-Payment Invoicing & Quotation Templates**: [`docs/workflows/sales.md#6-alternative-paths`](../workflows/sales.md#6-alternative-paths).
+- **Cancellation, Reversal, and Administrative Locking**: [`docs/workflows/sales.md#7-cancellation--reversal`](../workflows/sales.md#7-cancellation--reversal) and [`#8-administrative-locking`](../workflows/sales.md#8-administrative-locking).
 
 ---
 
 ## Business Rules
 [VERIFIED]
 
-1. **State Machine Invariants**:
-   - Initial quotation creation sets `OrderState::DRAFT` and `InvoiceStatus::NO`.
-   - Email dispatch transitions `DRAFT` to `OrderState::SENT`.
-   - Confirmation transitions `DRAFT` or `SENT` to `OrderState::SALE` and sets `InvoiceStatus::TO_INVOICE`.
-   - Cancellation transitions `DRAFT`, `SENT`, or `SALE` to `OrderState::CANCEL`, resetting `InvoiceStatus::NO` and canceling non-done warehouse delivery operations.
-   - Reversion to quotation transitions `CANCEL` to `OrderState::DRAFT` and `InvoiceStatus::NO`.
-2. **Invoicing Policy Determination**:
-   - Invoicing policy is resolved in priority: line item product policy (`product.invoice_policy`) → product parent policy (`product.parent.invoice_policy`) → global setting (`InvoiceSettings.invoice_policy`).
-   - `InvoicePolicy::ORDER`: `qty_to_invoice = product_uom_qty - qty_invoiced`.
-   - `InvoicePolicy::DELIVERY`: `qty_to_invoice = qty_delivered - qty_invoiced`.
-3. **Delivery Status Computation**:
-   - `NO`: No operations exist or all operations are cancelled.
-   - `PENDING`: Operations exist but none have reached `DONE` state.
-   - `STARTED`: Operations have finished but delivered line items are not yet reflected.
-   - `PARTIAL`: Operations completed and some delivered quantity > 0, but pending moves remain.
-   - `FULL`: All associated warehouse operations are settled (`DONE` or `CANCELED`).
-4. **Order Locking**:
-   - Confirmed sales orders are locked automatically if `enable_lock_confirm_sales = true`. Locked orders cannot have new procurement requests dispatched until unlocked.
-5. **Sequence Numbering**:
-   - Sales order numbers follow format `SO/#####` scoped by `company_id`.
+Plugin-local structural invariants (`SequenceService::next('sales.order')` numbering scoped by `company_id` and `BelongsToCompany` / `ChecksCompanyConsistency` enforcement on `Order` and `OrderLine`) are enforced during model persistence. All commercial calculation formulas, precedence hierarchies, and threshold rules are canonically owned by [`docs/business-rules/sales.md`](../business-rules/sales.md) and [`docs/business-rules/pricing.md`](../business-rules/pricing.md):
+1. **Pricing, Discounts, and Multi-Tier Price List Cascade**: [`docs/business-rules/sales.md#21-pricing--discount-calculation-engine`](../business-rules/sales.md#21-pricing--discount-calculation-engine) and [`docs/business-rules/pricing.md#3-resolution-cascade--rule-matching`](../business-rules/pricing.md#3-resolution-cascade--rule-matching).
+2. **Invoiceable Quantity Formulas (`InvoicePolicy::ORDER` vs `DELIVERY`)**: [`docs/business-rules/sales.md#22-invoiceable-quantity-calculation-invoicepolicy-order-vs-delivery`](../business-rules/sales.md#22-invoiceable-quantity-calculation-invoicepolicy-order-vs-delivery).
+3. **Delivered Quantity, Stock Return Offsetting, and Credit Note Netting**: [`docs/business-rules/sales.md#23-delivered-quantity--stock-returns-offsetting`](../business-rules/sales.md#23-delivered-quantity--stock-returns-offsetting) and [`#24-invoiced-quantity--credit-note-netting`](../business-rules/sales.md#24-invoiced-quantity--credit-note-netting).
+4. **Gross Margin & Profitability Formulas**: [`docs/business-rules/sales.md#25-margin--profitability-calculation`](../business-rules/sales.md#25-margin--profitability-calculation).
+5. **Delivery & Invoicing Status Precedence Rules**: [`docs/business-rules/sales.md#3-precedence--matching-rules`](../business-rules/sales.md#3-precedence--matching-rules).
 
 ---
 
