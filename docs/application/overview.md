@@ -430,6 +430,7 @@ Evidence: `tests/` directory listing; `tests/e2e-pw/` complete file listing
 | Config File | Architectural Significance |
 |:---|:---|
 | [`config/app.php`](../../config/app.php) | `supported_locales` (5 locales with RTL flags), `currency` (base currency code), `asset_url` (CDN or external asset URL binding) |
+| [`config/blade-icons.php`](../../config/blade-icons.php) | Registers the default Blade icon set from `resources/svg/` with the `icon` prefix; the icon inventory and navigation use are described above. |
 | [`config/auth.php`](../../config/auth.php) | Dual guards (`web` → `Webkul\Security\Models\User`, `customer` → `Webkul\Website\Models\Partner`), dual password brokers |
 | [`config/database.php`](../../config/database.php) | MySQL/MariaDB connections explicitly set `'strict' => false` to support dynamic reporting grouping and legacy aggregations |
 | [`config/filament-shield.php`](../../config/filament-shield.php) | Permission generation rules, super admin configuration |
@@ -438,6 +439,7 @@ Evidence: `tests/` directory listing; `tests/e2e-pw/` complete file listing
 | [`config/scribe.php`](../../config/scribe.php) | API documentation generation, route matching, authentication strategy |
 | [`config/query-builder.php`](../../config/query-builder.php) | Spatie QueryBuilder defaults for API filtering |
 | [`config/settings.php`](../../config/settings.php) | Spatie Laravel Settings configuration |
+| [`config/nativephp-remote.php`](../../config/nativephp-remote.php) | Remote native-shell cookie and Android/iOS permissions used by the barcode mobile integration; see [`docs/plugins/barcode.md`](../plugins/barcode.md) for the feature architecture. |
 
 Standard Laravel configuration files (cache, filesystems, logging, mail, queue, session) use default framework settings.
 

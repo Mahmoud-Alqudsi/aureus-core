@@ -36,7 +36,8 @@ The `support` module is the primary architectural bedrock and shared foundation 
    - Houses foundational entity definitions: `Company`, `Currency`, `CurrencyRate`, `Country`, `State`, `Bank`, `UOMCategory`, `UOM`, `Calendar`, `CalendarAttendance`, `CalendarLeave`, `ActivityPlan`, `ActivityPlanTemplate`, `ActivityType`, `ActivityTypeSuggestion`, `UtmStage`, `UTMMedium`, `UTMSource`, `UtmCampaign`, `QuickNavigationFavorite`, and `EmailLog`.
 
 4. **Dynamic Schema Extension Engine**:
-   - Implements `SchemaRegistry` (`plugins/webkul/support/src/Services/SchemaRegistry.php`) allowing third-party and optional plugins to inject, modify, or reorder Filament form and infolist schemas without modifying core resource files.
+   - Provides two distinct extension mechanisms: the service registry (`Webkul\Support\Services\SchemaRegistry`) applies registered form and infolist modifiers, while `Webkul\Support\Filament\Contributions\SchemaRegistry` stores typed contributions exposed through `AbstractSchemaRegistry`.
+   - Resource-specific registries such as `PartnerSchemaRegistry` and `ProductSchemaRegistry` use the contribution mechanism for forms, infolists, tables, actions, preset views, eager loads, and company-dependent fields. Do not confuse these registries with the service registry.
 
 5. **Cross-Database Dialect Abstraction**:
    - Provides `DatabaseDialect` interface (`plugins/webkul/support/src/Database/Dialects/DatabaseDialect.php`) with driver-specific implementations for MySQL/MariaDB (`MySqlDialect`) and PostgreSQL (`PostgresDialect`) covering JSON array aggregation, month bucketing, case-insensitive comparison, column type alteration, and PostgreSQL sequence synchronization.
@@ -638,6 +639,13 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
 - **`HasClusterBreadcrumbs`** (`Webkul\Support\Traits\HasClusterBreadcrumbs`):
   Ensures child pages and resources inside a cluster display the localized, translated cluster label in their breadcrumb path (`getClusterBreadcrumb()` returns `static::getNavigationLabel()`). Consumed across 14 plugins in 47 cluster files.
 
+### Reusable Filament Concerns:
+- **`HandlesCrossCompanyException`** (`Webkul\Support\Filament\Concerns\HandlesCrossCompanyException`): Catches `CrossCompanyException` thrown during a page's parent `create()` or `save()` call and presents a Filament danger notification. Use it on write pages whose model operation can throw this exception. It is UI error handling, not a replacement for `ChecksCompanyConsistency` or other server-side validation.
+- **`HasRepeaterColumnManager`** and **`HasRepeatableEntryColumnManager`** (`Webkul\Support\Filament\Concerns\`): Connect the custom table-style Repeater and RepeatableEntry components to their column visibility and ordering controls. The form concern exposes `applyRepeaterColumnManager()` and `resetRepeaterColumnManager()` for a named repeater.
+- **`HasRecordNavigationTabs`** (`Webkul\Support\Traits\HasRecordNavigationTabs`): Renders resource record sub-navigation as a header widget and allows pages to add further header widgets through `getAdditionalHeaderWidgets()`.
+- **`RefreshesRecordState`** (`Webkul\Support\Traits\RefreshesRecordState`): Refreshes the saved model, clears loaded relations, refills the form, and remembers form data after `afterSave()`. Use when a save can update persisted values or relations that the page must immediately display; it is not required on every edit page.
+- **Translatable page concerns** (`TranslatableCreateRecord`, `TranslatableEditRecord`, `TranslatableListRecords`, `TranslatableManageRecords`, and `TranslatableViewRecord`): Adapt the corresponding Filament page lifecycles for translated content and locale switching. The edit concern also applies the active-locale fallback when filling translated attributes. See the `blogs` and `website` plugin documents for consumers.
+
 ## Panels
 [VERIFIED]
 - **`admin` Panel**:
@@ -660,6 +668,12 @@ The `support` plugin provides foundational utility functions loaded globally at 
 4. **`money(...)`**: Localized currency formatter supporting standard Latin and Arabic numerals, locale handling, and division factors.
 5. **`allowed_companies(): Collection`**: Resolves the collection of allowed `Company` models accessible to the current user via `app(CompanyContext::class)->allowedCompanies()`.
 6. **`allowed_company_ids(): array`**: Resolves the array of allowed company IDs via `app(CompanyContext::class)->allowedIds()`. Used for multi-tenant authorization guards and cross-company form querying.
+7. **`settings(string $settings): object`**: Resolves a registered settings object through `SettingsRegistry`.
+8. **`current_company(): ?Company`** and **`current_company_id(): ?int`**: Resolve the active company model or ID through `CompanyContext`.
+9. **`db_dialect(): DatabaseDialect`**: Resolves the registered database dialect abstraction. Driver-specific SQL behavior belongs in `DatabaseDialect` implementations rather than inline driver checks.
+10. **`owned_by_company($companyId = null): Closure`**: Builds a query constraint for company-owned or shared records. Form helpers **`clear_foreign_company_values()`** and **`reapply_company_defaults()`** clear invalid relationship selections and restore company-dependent field defaults when the form's company changes; these UI helpers do not replace model-level company consistency checks.
+11. **Numeric and time helpers**: `float_round()`, `float_compare()`, `float_is_zero()`, and `float_check_precision()` support precision-aware numeric operations; `format_float_time()` and `parse_float_time()` convert between decimal time and `HH:MM` form. See [`docs/business-rules/accounting.md`](../business-rules/accounting.md) and [`docs/plugins/maintenance.md`](maintenance.md) for domain usage.
+12. **Other helpers**: `random_color()` generates a color value; `make_aware()` returns the original date-time value and a timezone conversion callback; `prepare_rtl_html()` applies RTL-oriented HTML normalization. Their implementation in `src/helpers.php` remains authoritative.
 
 ### 1. `SequenceService` (`plugins/webkul/support/src/Services/SequenceService.php`)
 The centralized document numbering service.
@@ -822,6 +836,8 @@ The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/
 - `SecurityHelper.php`: Disables and restores user permission events during tests.
 - `TestBootstrapHelper.php`: Test environment initialization.
 
+Company-scoped model factories may use `Webkul\Support\Database\Factories\Concerns\HasCompanyDefault` to assign a company during `afterMaking()` when the model allows automatic company assignment. Its `company(Company|int $company)` state helper provides an explicit company override; use the concern only on factories for models that follow this convention.
+
 ## Shared Infrastructure Dependencies
 [VERIFIED]
 This section records code-level consumption; the declared Install Plugins Dependency remains empty because `SupportServiceProvider::configureCustomPackage()` does not call `hasDependencies()` or `hasDependency()`.
@@ -901,6 +917,8 @@ The `support` plugin provides shared infrastructure consumed across core and opt
    Applied to the top-most resource in an inheritance chain to harmonize navigation labels, list page titles, breadcrumbs, and relation tab titles with localized definite noun forms.
 7. **`HasClusterBreadcrumbs` Trait**:
    Applied to Filament clusters to guarantee localized cluster breadcrumbs on child pages.
+8. **`HasContributedAttributes` Concern**:
+   Core models that use this concern can accept fillable attributes and casts contributed by other plugins through `contributeFillable()` and `contributeCasts()`. This lets plugins extend supported models without editing their base model classes; verify the owning model and contribution registration before adding a contribution.
 
 ## Dangerous Areas
 [VERIFIED]

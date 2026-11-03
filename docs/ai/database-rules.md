@@ -218,3 +218,14 @@ Developers and AI agents MUST remember that the database schema is extended dyna
    - Company-specific configuration values on master records (such as receivable/payable accounts on partners) are stored in EAV mapping tables (`partner_company_properties`) via Eloquent casts, NOT as foreign keys on base tables.
 3. **Custom Fields Engine**:
    - Physical table columns are altered dynamically at runtime via `FieldsColumnManager` when custom fields are defined. Migrations MUST NOT hardcode one-off customer-specific custom attributes.
+
+## 7. Cross-Database SQL Dialect
+
+The `support` plugin binds `DatabaseDialect` to the implementation for the active database driver and exposes it through `db_dialect()`.
+
+### Prescriptive Rule: Driver-Specific SQL
+- Call sites MUST use `db_dialect()` for SQL behavior that differs between supported database engines; they MUST NOT branch inline on `DB::connection()->getDriverName()` or equivalent driver checks.
+- When a required operation is not represented by `DatabaseDialect`, add the method to that abstraction and implement it for each supported dialect rather than duplicating driver selection at call sites.
+
+[VERIFIED]
+Evidence: `plugins/webkul/support/src/Database/Dialects/DatabaseDialect.php`; `plugins/webkul/support/src/SupportServiceProvider.php`; `plugins/webkul/support/src/helpers.php` (`db_dialect()`).

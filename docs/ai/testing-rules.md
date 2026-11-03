@@ -88,6 +88,12 @@ beforeEach(function () {
 });
 ```
 
+### Company-Aware Factory Defaults
+
+Factories for models that automatically belong to a company MAY use `Webkul\Support\Database\Factories\Concerns\HasCompanyDefault` to assign a company during `afterMaking()`. The concern respects the model's `autoAssignsCompany()` setting and provides `company(Company|int $company)` for an explicit factory state. This convenience does not replace tests that assert company isolation or explicitly select the intended company.
+
+Evidence: `plugins/webkul/support/src/Database/Factories/Concerns/HasCompanyDefault.php`; `plugins/webkul/support/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`.
+
 ### 4. Authentication & Authorization Setup
 - Administrative tests simulate authentication and Filament Shield permissions via `FilamentHelper`:
   ```php

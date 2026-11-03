@@ -78,12 +78,15 @@ The application partitions its user experience into two independently configured
 | **Notifications** | `databaseNotifications()`, polling every `30s` | None configured | Live in-app alerts for system events, approvals, assignments. |
 | **Global Search** | Configured with `Webkul\Support\GlobalSearchProvider` | None | Cross-module indexing across administrative resources. |
 | **Multi-Factor Auth** | `AppAuthentication::make()->recoverable()` | None | Mandatory TOTP MFA support for administrative accounts. |
+| **Request and form UX** | `set_time_limit(300)` and `unsavedChangesAlerts()` | None configured | Admin panel requests receive a 300-second PHP execution limit and Filament warns before leaving a form with unsaved changes. |
 | **Panel Plugins** | `FilamentShieldPlugin`, `SpatieTranslatablePlugin` | None pre-registered in provider | Admin panel enforces role/permission ACL matrix and translatable field tabs. |
 | **Render Hooks** | `PanelsRenderHook::GLOBAL_SEARCH_END` (`language-switcher`) | `GLOBAL_SEARCH_END` (`language-switcher`), `TOPBAR_END` (`auth-links`), `FOOTER` (`footer/index`) | Customer panel injects custom header auth navigation and multi-column footer with social links. |
 | **Middleware Stack** | Cookie, Session, CSRF, Bindings, `SetLocale`, `ApplyBrandSettings`, `Authenticate` | Cookie, Session, CSRF, Bindings, `SetLocale`, `ApplyBrandSettings`, `authGuard('customer')` | Common branding and locale middleware shared; authentication gates strictly separated. |
 
 [VERIFIED]
 Evidence: `app/Providers/Filament/AdminPanelProvider.php` (lines 32–119); `app/Providers/Filament/CustomerPanelProvider.php` (lines 21–58); `plugins/webkul/website/src/WebsitePlugin.php` (lines 41–83)
+
+Shared record-page concerns, repeatable table column managers, and post-save state refresh are implemented by `support`. Their usage conditions and implementation references are maintained in [`docs/plugins/support.md`](../plugins/support.md#reusable-filament-concerns); this document remains the source for panel-wide configuration and behavior.
 
 ---
 

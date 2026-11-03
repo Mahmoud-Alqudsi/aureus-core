@@ -28,6 +28,14 @@ In accordance with the repository's documentation accuracy rules, historical eve
 
 ---
 
+## Support & Root Application Documentation Corrections (2026-11-03)
+
+- **Evidentiary Tier**: Documented Execution History; updated claims were checked against the current source tree and existing tests. This entry is not a Git-history claim.
+- Clarified the two distinct support schema registries and documented reusable Filament concerns, translated page concerns, selected shared helpers, and company-aware factory defaults in [`docs/plugins/support.md`](plugins/support.md).
+- Added the `DatabaseDialect` call-site rule to [`docs/ai/database-rules.md`](ai/database-rules.md), company-aware factory guidance to [`docs/ai/testing-rules.md`](ai/testing-rules.md), and verified admin request/form settings to [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md).
+- Added Blade icon and NativePHP remote configuration ownership to [`docs/application/overview.md`](application/overview.md), linking the barcode-specific mobile integration rather than duplicating its description.
+- No application code, tests, migrations, dependencies, or CI workflows were changed. The `float_round()` rounding concern remains a separate unverified code investigation.
+
 ## Post-PR #8 Code & Architecture Synchronization (2026-11-02)
 
 - **Evidentiary Tier**: Git-Verified History, verified against commit range `76aa5f9a6` (PR #8) through `develop` (`74c8b860c`) and active branch `docs/knowledge-base-restructure`.
