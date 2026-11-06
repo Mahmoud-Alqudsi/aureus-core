@@ -20,7 +20,7 @@ env:
 
 jobs:
   aureus_playwright_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
@@ -80,7 +80,7 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=1 || true
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only HEAD~1 HEAD || true)
-            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^docs/|^\.github/ISSUE_TEMPLATE/|^\.github/PULL_REQUEST_TEMPLATE\.md$|\.md$' || true)
+            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^\.github/|^\.agents/|^scripts/|^\.gitignore$|\.md$' || true)
             if [ -n "${CHANGED_FILES}" ] && [ -z "${NON_DOC_FILES}" ]; then
               echo "docs_only=true" >> "$GITHUB_OUTPUT"
               echo "Documentation-only pull request detected. Skipping heavy Playwright browser tests."
@@ -251,7 +251,7 @@ jobs:
     if: ${{ always() && !cancelled() }}
     needs:
       - aureus_playwright_test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
@@ -272,7 +272,7 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=1 || true
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only HEAD~1 HEAD || true)
-            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^docs/|^\.github/ISSUE_TEMPLATE/|^\.github/PULL_REQUEST_TEMPLATE\.md$|\.md$' || true)
+            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^\.github/|^\.agents/|^scripts/|^\.gitignore$|\.md$' || true)
             if [ -n "${CHANGED_FILES}" ] && [ -z "${NON_DOC_FILES}" ]; then
               echo "docs_only=true" >> "$GITHUB_OUTPUT"
               echo "Documentation-only pull request detected. Skipping report merge."
@@ -328,7 +328,7 @@ jobs:
     needs:
       - aureus_playwright_test
       - merge_playwright_reports
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Require successful test shards and reports
