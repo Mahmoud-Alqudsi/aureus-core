@@ -122,11 +122,11 @@ def parse_frontmatter(lines):
 
 
 def in_kb(rel):
-    return rel in ("AGENTS.md", "CLAUDE.md") or rel.startswith(KB_PREFIXES)
+    return rel in ("AGENTS.md", "CLAUDE.md", ".github/copilot-instructions.md") or rel.startswith(KB_PREFIXES)
 
 
 def is_agent_facing(rel):
-    return rel.startswith(AGENT_FACING) or rel.endswith("/SKILL.md")
+    return rel.startswith(AGENT_FACING) or rel == ".github/copilot-instructions.md" or rel.endswith("/SKILL.md")
 
 
 class KB:
@@ -149,6 +149,9 @@ class KB:
             p = self.root / name
             if p.is_file():
                 self.files[name] = self._read(p)
+        copilot_instructions = self.root / ".github/copilot-instructions.md"
+        if copilot_instructions.is_file():
+            self.files[".github/copilot-instructions.md"] = self._read(copilot_instructions)
         docs = self.root / "docs"
         if docs.is_dir():
             for p in sorted(docs.rglob("*.md")):
@@ -355,6 +358,103 @@ def check_skills(kb, o, add):
                 % (tool_file, tool_name))
     if any(s.startswith("agents/") for s in kb.skill_dirs) and not (kb.root / ".agents").is_dir():
         add(INFO, "", 0, "skills folder is 'agents/' (no dot) while the docs reference '.agents/'")
+
+@check("knowledge-ownership", "canonical ownership map has unique topics and existing owner paths")
+def check_knowledge_ownership(kb, o, add):
+    rel = "docs/ai/knowledge-ownership.md"
+    lines = kb.files.get(rel)
+    if not lines:
+        add(ERROR, rel, 1, "missing canonical knowledge ownership map")
+        return
+
+    header = False
+    topics = {}
+    for i, line in enumerate(lines, 1):
+        if not line.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) >= 3 and cells[0].lower() == "topic" and cells[1].lower() == "canonical owner":
+            header = True
+            continue
+        if not header or len(cells) < 3 or set(cells[0]) <= set("-: "):
+            continue
+        topic = cells[0].lower()
+        owners = re.findall(r"`([^`]+)`", cells[1])
+        if topic in topics:
+            add(ERROR, rel, i, "duplicate ownership topic '%s' (first at line %d)" % (cells[0], topics[topic]))
+        else:
+            topics[topic] = i
+        if len(owners) != 1:
+            add(ERROR, rel, i, "topic '%s' must declare exactly one canonical owner path" % cells[0])
+            continue
+        owner = owners[0]
+        exists = any(kb.root.glob(owner)) if "*" in owner else (kb.root / owner).exists()
+        if not exists:
+            add(ERROR, rel, i, "canonical owner path '%s' does not exist" % owner)
+
+    if not header:
+        add(ERROR, rel, 1, "missing ownership table with Topic and Canonical owner columns")
+    elif not topics:
+        add(ERROR, rel, 1, "ownership table has no topics")
+
+
+@check("assistant-entrypoints", "selected assistant entrypoints route to the canonical AGENTS.md")
+def check_assistant_entrypoints(kb, o, add):
+    if not kb.repo_mode:
+        return
+
+    required = {
+        "AGENTS.md": ("AGENTS.md", None),
+        "GEMINI.md": ("GEMINI.md", "@AGENTS.md"),
+        ".github/copilot-instructions.md": (".github/copilot-instructions.md", "AGENTS.md"),
+    }
+    for rel, (name, marker) in required.items():
+        lines = kb.files.get(name)
+        if not lines:
+            add(ERROR, rel, 1, "missing supported assistant entrypoint")
+        elif marker and marker not in "\n".join(lines):
+            add(ERROR, rel, 1, "entrypoint must route to the repository-root AGENTS.md")
+
+    index = "\n".join(kb.files.get("docs/development/ai-skills.md", []))
+    for assistant in ("GitHub Copilot", "Gemini CLI", "Codex"):
+        if assistant not in index:
+            add(ERROR, "docs/development/ai-skills.md", 1, "assistant entrypoint index is missing '%s'" % assistant)
+
+
+@check("source-hierarchy-owner", "the source-of-truth ordering is not copied outside AGENTS.md")
+def check_source_hierarchy_owner(kb, o, add):
+    ordered_hierarchy = re.compile(
+        r"Source\s*Code\s*(?:>|\u2192)\s*Automated\s+Tests\s*(?:>|\u2192)\s*(?:Migrations|Database Schema)",
+        re.I,
+    )
+    canonical = "\n".join(kb.files.get("AGENTS.md", []))
+    if "## Source-of-Truth Hierarchy" not in canonical:
+        add(ERROR, "AGENTS.md", 1, "missing canonical Source-of-Truth Hierarchy section")
+    for rel, lines in kb.files.items():
+        if rel in ("AGENTS.md", "docs/CHANGELOG.md"):
+            continue
+        if ordered_hierarchy.search(" ".join(lines)):
+            add(ERROR, rel, 1, "duplicates the source-of-truth ordering; link to AGENTS.md instead")
+
+
+@check("workflow-index", "CI governance inventory matches the workflow files on disk")
+def check_workflow_index(kb, o, add):
+    workflow_root = kb.root / ".github/workflows"
+    if not workflow_root.is_dir():
+        return
+
+    workflows = sorted(p.name for p in workflow_root.iterdir() if p.suffix in (".yml", ".yaml"))
+    rel = "docs/development/ci-testing-governance.md"
+    text = "\n".join(kb.files.get(rel, []))
+    match = re.search(r"pipeline consists of\s+(\d+)\s+distinct workflow files", text, re.I)
+    if not match:
+        add(ERROR, rel, 1, "missing declared workflow count")
+    elif int(match.group(1)) != len(workflows):
+        add(ERROR, rel, 1, "declares %s workflows but %d workflow files exist" % (match.group(1), len(workflows)))
+    for name in workflows:
+        if name not in text:
+            add(ERROR, rel, 1, "workflow '%s' is missing from the CI governance inventory" % name)
+
 
 BANNED = [
     (r"\bHasOwner\b", "non-existent trait: the canonical name is HasOwnershipScope (terminology.md section 7)"),
@@ -825,6 +925,336 @@ def check_evidence_stats(kb, o, add):
     if n:
         add(INFO, "docs/", 0, "labels: %s; files containing [UNKNOWN]: %d of %d" % (
             ", ".join("%s=%d" % (t, counts[t]) for t in tags), unk_files, n))
+
+FORBIDDEN_HEADING_ALLOW_RE = re.compile(r"<!--\s*lint:\s*allow-forbidden-heading\b[^>]*-->")
+FORBIDDEN_HEADING_RE = re.compile(
+    r"^ {0,3}#{2,6}\s+(Enabled\s*/\s*Disabled|Runtime\s+(?:Plugin\s+)?Dependencies)\s*#*\s*$",
+    re.I,
+)
+
+
+def _plugin_facts(kb):
+    if hasattr(kb, "_cached_plugin_facts"):
+        return kb._cached_plugin_facts
+    readme_rel = "docs/plugins/README.md"
+    readme_lines = kb.files.get(readme_rel, [])
+    readme_state = {}
+    readme_install = {}
+    readme_dependents = {}
+    readme_row_line = {}
+    header_ok = False
+    for i, line in enumerate(readme_lines, 1):
+        if line.startswith("| Plugin Slug |") and "Install Plugins Dependency" in line and "Dependents" in line:
+            header_ok = True
+        m = re.match(r"^\|\s*`([a-z][a-z0-9\-]*)`\s*\|", line)
+        if not m:
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 8:
+            continue
+        slug = m.group(1)
+        state = cells[2]
+        inst = sorted(re.findall(r"`([a-z][a-z0-9\-]*)`", cells[5]))
+        deps = sorted(re.findall(r"`([a-z][a-z0-9\-]*)`", cells[6]))
+        readme_state[slug] = state
+        readme_install[slug] = inst
+        readme_dependents[slug] = deps
+        readme_row_line[slug] = i
+
+    src_is_core = {}
+    src_install = {}
+    src_provider = {}
+    composer_webkul = {}
+    ns_to_slug = {}
+    plugins_dir = kb.root / "plugins" / "webkul"
+    if kb.repo_mode and plugins_dir.is_dir():
+        for d in sorted(plugins_dir.iterdir()):
+            if not d.is_dir():
+                continue
+            slug = d.name
+            cj_path = d / "composer.json"
+            if cj_path.is_file():
+                try:
+                    cj = json.loads(cj_path.read_text(encoding="utf-8"))
+                except Exception:
+                    cj = {}
+                composer_webkul[slug] = sorted(
+                    k for k in cj.get("require", {}) if k.startswith("webkul/")
+                )
+                for ns in cj.get("autoload", {}).get("psr-4", {}):
+                    if ns.endswith("\\") and ns.count("\\") == 2:
+                        ns_to_slug[ns] = slug
+            is_core = False
+            inst = []
+            prov_rel = "plugins/webkul/%s/src" % slug
+            src_dir = d / "src"
+            if src_dir.is_dir():
+                for pf in sorted(src_dir.glob("*ServiceProvider.php")):
+                    prov_rel = pf.relative_to(kb.root).as_posix()
+                    ptxt = pf.read_text(encoding="utf-8", errors="replace")
+                    if re.search(r"->isCore\(\s*(?:true\s*)?\)", ptxt):
+                        is_core = True
+                    for bm in re.finditer(r"hasDependencies\(\s*\[(.*?)\]\s*\)", ptxt, re.S):
+                        inst.extend(re.findall(r"['\"]([a-z][a-z0-9\-]*)['\"]", bm.group(1)))
+                    for sm in re.finditer(r"hasDependency\(\s*['\"]([a-z][a-z0-9\-]*)['\"]\s*\)", ptxt):
+                        inst.append(sm.group(1))
+            src_is_core[slug] = is_core
+            src_install[slug] = sorted(set(inst))
+            src_provider[slug] = prov_rel
+
+    kb._cached_plugin_facts = {
+        "header_ok": header_ok,
+        "readme_state": readme_state,
+        "readme_install": readme_install,
+        "readme_dependents": readme_dependents,
+        "readme_row_line": readme_row_line,
+        "src_is_core": src_is_core,
+        "src_install": src_install,
+        "src_provider": src_provider,
+        "composer_webkul": composer_webkul,
+        "ns_to_slug": ns_to_slug,
+    }
+    return kb._cached_plugin_facts
+
+
+@check("forbidden-headings", "prohibited headings (## Enabled/Disabled, ## Runtime (Plugin) Dependencies)")
+def check_forbidden_headings(kb, o, add):
+    for rel, lines in kb.files.items():
+        if rel in HISTORICAL_FILES:
+            continue
+        if FORBIDDEN_HEADING_ALLOW_RE.search("\n".join(lines)):
+            continue
+        mask = fence_mask(lines)
+        for i, (line, in_fence) in enumerate(zip(lines, mask), 1):
+            if in_fence:
+                continue
+            m = FORBIDDEN_HEADING_RE.match(line)
+            if m:
+                add(ERROR, rel, i, "forbidden heading '%s' (use '## Status' or '## Install Plugins Dependency')" % m.group(1))
+
+
+@check("install-deps-mirror", "docs/plugins/README.md Install Plugins Dependency mirrors hasDependencies()")
+def check_install_deps_mirror(kb, o, add):
+    facts = _plugin_facts(kb)
+    rel = "docs/plugins/README.md"
+    if rel not in kb.files:
+        return
+    if not facts["header_ok"]:
+        add(ERROR, rel, 1, "missing 'Install Plugins Dependency' or 'Dependents' column header in plugin table")
+        return
+    if not facts["src_install"]:
+        return
+    for slug, doc_deps in sorted(facts["readme_install"].items()):
+        if slug not in facts["src_install"]:
+            continue
+        src_deps = facts["src_install"][slug]
+        if doc_deps != src_deps:
+            add(
+                ERROR,
+                rel,
+                facts["readme_row_line"].get(slug, 0),
+                "plugin '%s': README Install Plugins Dependency is %s but source hasDependencies() declares %s"
+                % (slug, doc_deps, src_deps),
+            )
+
+
+@check("core-install-empty", "Core plugins must not declare any Install Plugins Dependency")
+def check_core_install_empty(kb, o, add):
+    facts = _plugin_facts(kb)
+    rel = "docs/plugins/README.md"
+    for slug, state in sorted(facts["readme_state"].items()):
+        if state == "Core" and facts["readme_install"].get(slug):
+            add(
+                ERROR,
+                rel,
+                facts["readme_row_line"].get(slug, 0),
+                "Core plugin '%s' must not declare Install Plugins Dependency in README (got %s)"
+                % (slug, facts["readme_install"][slug]),
+            )
+    for slug, is_core in sorted(facts["src_is_core"].items()):
+        if is_core and facts["src_install"].get(slug):
+            add(
+                ERROR,
+                facts["src_provider"].get(slug, rel),
+                0,
+                "Core plugin '%s' must have empty hasDependencies() in source (got %s)"
+                % (slug, facts["src_install"][slug]),
+            )
+
+
+@check("optional-no-core", "Optional plugins must not list any Core plugin in Install Plugins Dependency")
+def check_optional_no_core(kb, o, add):
+    facts = _plugin_facts(kb)
+    rel = "docs/plugins/README.md"
+    core_doc = {s for s, st in facts["readme_state"].items() if st == "Core"}
+    core_src = {s for s, ic in facts["src_is_core"].items() if ic}
+    core_all = core_doc | core_src
+    for slug, state in sorted(facts["readme_state"].items()):
+        if state == "Optional":
+            leaked = sorted(set(facts["readme_install"].get(slug, [])) & core_all)
+            if leaked:
+                add(
+                    ERROR,
+                    rel,
+                    facts["readme_row_line"].get(slug, 0),
+                    "Optional plugin '%s' lists Core plugin(s) %s in Install Plugins Dependency"
+                    % (slug, leaked),
+                )
+    for slug, is_core in sorted(facts["src_is_core"].items()):
+        if not is_core:
+            leaked = sorted(set(facts["src_install"].get(slug, [])) & core_all)
+            if leaked:
+                add(
+                    ERROR,
+                    facts["src_provider"].get(slug, rel),
+                    0,
+                    "Optional plugin '%s' declares Core plugin(s) %s in hasDependencies()"
+                    % (slug, leaked),
+                )
+
+
+@check("core-set-mirror", "docs/plugins/README.md Core/Optional state mirrors Package::isCore()")
+def check_core_set_mirror(kb, o, add):
+    facts = _plugin_facts(kb)
+    rel = "docs/plugins/README.md"
+    if not facts["src_is_core"]:
+        return
+    for slug, state in sorted(facts["readme_state"].items()):
+        if slug not in facts["src_is_core"]:
+            continue
+        expected = "Core" if facts["src_is_core"][slug] else "Optional"
+        if state != expected:
+            add(
+                ERROR,
+                rel,
+                facts["readme_row_line"].get(slug, 0),
+                "plugin '%s' is '%s' in README but '%s' in source provider"
+                % (slug, state, expected),
+            )
+
+
+@check("dependents-mirror", "docs/plugins/README.md Dependents column equals reverse of Install Plugins Dependency")
+def check_dependents_mirror(kb, o, add):
+    facts = _plugin_facts(kb)
+    rel = "docs/plugins/README.md"
+    install_map = facts["readme_install"]
+    for slug, doc_dependents in sorted(facts["readme_dependents"].items()):
+        expected = sorted(p for p, deps in install_map.items() if slug in deps)
+        if doc_dependents != expected:
+            add(
+                ERROR,
+                rel,
+                facts["readme_row_line"].get(slug, 0),
+                "plugin '%s': Dependents column is %s but reverse of Install Plugins Dependency is %s"
+                % (slug, doc_dependents, expected),
+            )
+
+
+@check("plugin-doc-status", "every plugin spec has ## Status and no duplicate ## headings")
+def check_plugin_doc_status(kb, o, add):
+    for rel, lines in sorted(kb.files.items()):
+        if not rel.startswith("docs/plugins/") or rel == "docs/plugins/README.md":
+            continue
+        mask = fence_mask(lines)
+        seen_h2 = {}
+        has_status = False
+        for i, (line, in_fence) in enumerate(zip(lines, mask), 1):
+            if in_fence:
+                continue
+            m = re.match(r"^ {0,3}##\s+(.*?)\s*#*\s*$", line)
+            if not m:
+                continue
+            title = m.group(1).strip()
+            key = title.lower()
+            if key == "status":
+                has_status = True
+            if key in seen_h2:
+                add(ERROR, rel, i, "duplicate H2 heading '## %s' (first at line %d)" % (title, seen_h2[key]))
+            else:
+                seen_h2[key] = i
+        if not has_status:
+            add(ERROR, rel, 1, "missing required '## Status' section")
+
+
+@check("composer-webkul-empty", "webkul/* entries in plugin composer.json require must be documented")
+def check_composer_webkul(kb, o, add):
+    facts = _plugin_facts(kb)
+    for slug, reqs in sorted(facts["composer_webkul"].items()):
+        if not reqs:
+            continue
+        doc_rel = "docs/plugins/%s.md" % slug
+        lines = kb.files.get(doc_rel, [])
+        sec_lines, in_sec = [], False
+        for line in lines:
+            if re.match(r"^ {0,3}##\s+Composer\s+Dependencies\b", line, re.I):
+                in_sec = True
+                continue
+            if in_sec and re.match(r"^ {0,3}##\s+", line):
+                break
+            if in_sec:
+                sec_lines.append(line)
+        sec_txt = "\n".join(sec_lines)
+        missing = [r for r in reqs if not re.search(r"(?<!/)\b" + re.escape(r) + r"\b", sec_txt)]
+        if missing:
+            add(
+                WARN,
+                "plugins/webkul/%s/composer.json" % slug,
+                0,
+                "webkul/* composer require %s not documented in %s" % (missing, doc_rel),
+            )
+
+
+@check("consumption-stats", "code-level consumption (use Webkul\\...) across plugins: declared vs guarded vs unguarded")
+def check_consumption_stats(kb, o, add):
+    facts = _plugin_facts(kb)
+    ns_to_slug = facts["ns_to_slug"]
+    if not kb.repo_mode or not ns_to_slug:
+        return
+    install_map = facts["src_install"]
+    core_set = {s for s, ic in facts["src_is_core"].items() if ic}
+
+    def closure(slug, seen=None):
+        seen = seen or set()
+        for dep in install_map.get(slug, []):
+            if dep not in seen:
+                seen.add(dep)
+                closure(dep, seen)
+        return seen
+
+    closures = {s: closure(s) for s in install_map}
+    use_re = re.compile(r"^\s*use\s+(Webkul\\[A-Za-z]+\\)([^\n;]+);", re.M)
+    guard_re = re.compile(r"isPluginInstalled|class_exists|Schema::hasTable|Schema::hasColumn")
+
+    core_imp = decl_imp = guard_imp = unguard_imp = 0
+    plugins_dir = kb.root / "plugins" / "webkul"
+    for slug in sorted(install_map):
+        src_dir = plugins_dir / slug / "src"
+        if not src_dir.is_dir():
+            continue
+        cl = closures[slug]
+        for php in sorted(src_dir.rglob("*.php")):
+            ptxt = php.read_text(encoding="utf-8", errors="replace")
+            has_guard = bool(guard_re.search(ptxt))
+            for m in use_re.finditer(ptxt):
+                target = ns_to_slug.get(m.group(1))
+                if not target or target == slug:
+                    continue
+                if target in core_set:
+                    core_imp += 1
+                elif target in cl:
+                    decl_imp += 1
+                elif has_guard:
+                    guard_imp += 1
+                else:
+                    unguard_imp += 1
+
+    add(
+        INFO,
+        "plugins/webkul/",
+        0,
+        "cross-plugin PHP imports: core=%d, declared-optional=%d, file-guarded-optional=%d, other-undeclared-optional=%d"
+        % (core_imp, decl_imp, guard_imp, unguard_imp),
+    )
 
 
 # --------------------------------------------------------------------------- driver

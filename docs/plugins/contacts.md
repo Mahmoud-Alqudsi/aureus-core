@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/contacts
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:45` as `Webkul\Contact\ContactServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `ContactServiceProvider` registers the package and configures panel integration via `Panel::configureUsing()`, but Filament admin panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('contacts')` returns `true` (`plugins/webkul/contacts/src/ContactPlugin.php:23-47`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without calling `$package->isCore()` (`plugins/webkul/contacts/src/ContactServiceProvider.php:15-22`). Execution and Filament UI contribution are gated by runtime installation verification via `Package::isPluginInstalled('contacts')` (`plugins/webkul/contacts/src/ContactPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `ContactServiceProvider` registers the package and configures panel integration via `Panel::configureUsing()`, but Filament admin panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('contacts')` returns `true` (`plugins/webkul/contacts/src/ContactPlugin.php:23-47`).
 
 ## Purpose
 [VERIFIED]
@@ -62,7 +60,7 @@ The `contacts` module functions as the administrative CRM, Contact Book, and dir
   - `packageBooted()`:
     - Empty implementation (`//`).
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Contact\ContactPlugin` (`plugins/webkul/contacts/src/ContactPlugin.php:9`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -90,15 +88,10 @@ Defined in `plugins/webkul/contacts/composer.json`:
   - `Webkul\Contact\Tests\`: `tests/`
 - **Require Dependencies**: None declared in `composer.json` (relies on root application packages and Core plugins).
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-- **Declared Runtime Dependencies (`Package::hasDependencies([...])`)**: None (`—`). The plugin does not call `hasDependencies()` in `ContactServiceProvider`.
-- **Implicit Core Plugin Dependencies**:
-  - `partners`: Required base models (`Webkul\Partner\Models\*`), base schemas (`PartnerForm`, `PartnersTable`, `PartnerInfolist`), and base relation managers (`ContactsRelationManager`, `AddressesRelationManager`).
-  - `support`: Required for `NavigationGroup::Contact` enum and base `Bank` entity.
-  - `plugin-manager`: Required for package service provider infrastructure and `Package::isPluginInstalled()`.
-- **Conditional Optional Plugin Dependencies**:
-  - `accounts`: Soft runtime check via `Package::isPluginInstalled('accounts')` to conditionally attach `ManageBankAccounts` page and route.
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`)**: None (`—`). The plugin does not call `hasDependencies()` in `ContactServiceProvider`.
+- No optional plugin is declared through `Package::hasDependencies([...])`; code-level and conditional plugin consumption is recorded separately below.
 
 ## Directory Structure
 [VERIFIED]
@@ -214,7 +207,7 @@ The `contacts` plugin defines 7 lightweight proxy model classes under `Webkul\Co
 
 The `contacts` plugin is a pure UI/proxy domain layer. All underlying tables (`partners_partners`, `partners_bank_accounts`, `partners_industries`, `partners_tags`, `partners_titles`, `partners_partner_tag`, `banks`) are created and owned by the Core `partners` and `support` plugins.
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 All UI components are registered for the `admin` panel:
 
@@ -317,11 +310,11 @@ All UI components are registered for the `admin` panel:
 - **`admin` Panel**: Fully registered when `Package::isPluginInstalled('contacts')` is true. Discovers resources, cluster pages, and configuration forms.
 - **`customer` Panel**: `[NOT APPLICABLE]` Zero presence or registration in the customer portal.
 
-## Services
+## Services and Support Classes
 [NOT APPLICABLE]
 The `contacts` plugin does not define standalone service classes; business logic is delegated to the Core `partners` and `support` modules.
 
-## Events & Listeners
+## Events, Listeners, and Observers
 [NOT APPLICABLE]
 The `contacts` plugin does not define or register custom domain events or event listeners.
 
@@ -329,7 +322,7 @@ The `contacts` plugin does not define or register custom domain events or event 
 [NOT APPLICABLE]
 The `contacts` plugin does not define Eloquent observers; lifecycle hooks and company defaults are handled by the underlying base models in `Webkul\Partner\Models\*`.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 Authorization for contact resources is governed by Filament Shield and the model policy hierarchy from the Core `partners` module:
 
@@ -378,11 +371,17 @@ Translation structure:
 - **Coverage Status**: No unit or feature tests exist in `plugins/webkul/contacts/tests/` or in the root `tests/` directory for the `contacts` plugin.
 - **Verification Rationale**: The plugin is a lightweight UI and model subclassing layer over `partners`; test coverage for the underlying data layer is handled in `partners` and other domain plugins.
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-- **Mandatory Runtime Dependencies**: None declared in `PackageServiceProvider`.
-- **Required Core Modules**: `partners`, `support`, `plugin-manager`.
-- **Optional Plugin Extensions**: `accounts` (when present, enables bank account tab on partner view/edit).
+This section records code-level consumption; the plugin declares no prerequisite optional plugins in `hasDependencies()`.
+
+- **`plugin-manager`**: `ContactServiceProvider` and `ContactPlugin` use the shared package lifecycle and installation checks (`plugins/webkul/contacts/src/ContactServiceProvider.php`, `plugins/webkul/contacts/src/ContactPlugin.php`).
+- **`partners`**: Provides the base partner models, schemas, resources, and relation managers subclassed or reused by the contacts layer (`plugins/webkul/contacts/src/Models/`, `plugins/webkul/contacts/src/Filament/`).
+- **`support`**: Provides `NavigationGroup::Contact` and the bank/reference-data boundary (`plugins/webkul/contacts/src/Filament/Clusters/Configurations.php`, `plugins/webkul/contacts/src/Models/Bank.php`).
+- **`security`**: Supplies the authenticated `User` model used by contact policies (`plugins/webkul/contacts/src/Policies/`).
+- **`chatter`**: Contact records inherit partner-resource audit and activity integration (`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php`, `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php`).
+- **`fields`**: Contact resources inherit custom-field integration from the partner resource (`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php`, `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php`).
+- **`accounts`**: Conditional extension only; `PartnerResource` checks `Package::isPluginInstalled('accounts')` before attaching the bank-account page and route (`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php`). This is not a declared Install Plugins Dependency.
 
 ## Cross-Plugin Relationships
 [VERIFIED]
@@ -395,7 +394,7 @@ Translation structure:
 | `chatter` [CORE] | Record Audit & Timeline | Inherited from `BasePartnerResource` infolist/form integrations. |
 | `fields` [CORE] | Custom Field Injection | Inherited via `HasCustomFields` on `Webkul\Partner\Filament\Resources\PartnerResource`. |
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid

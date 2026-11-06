@@ -35,7 +35,7 @@ The Core database model encompasses root framework migrations and 9 verified Cor
 4. **`chatter` (`Webkul\Chatter`)**: Unified cross-cutting communication engine providing record-level audit logging, internal messaging, task assignments (`chatter_messages`), binary file attachments (`chatter_attachments`), and record subscriber tracking (`chatter_followers`).
 5. **`fields` (`Webkul\Field`)**: Runtime customizable metadata system defining dynamic custom attributes per model (`custom_fields`).
 6. **`analytics` (`Webkul\Analytic`)**: Shared foundational ledger for financial and operational analytic distribution records (`analytic_records`).
-7. **`plugin-manager` (`Webkul\PluginManager`)**: Internal system module catalog (`plugins`) and runtime plugin dependency tracking (`plugin_dependencies`).
+7. **`plugin-manager` (`Webkul\PluginManager`)**: Internal system module catalog (`plugins`) and Install Plugins Dependency tracking (`plugin_dependencies`).
 8. **`table-views` (`Webkul\TableViews`)**: Filament table personalization, saved filter definitions (`table_views`), and user favorites (`table_view_favorites`).
 9. **`full-calendar` (`Webkul\FullCalendar`)**: Core UI/Livewire plugin verified to contain zero database tables or migrations (see [Tables / Models Intentionally Excluded](#tables--models-intentionally-excluded)).
 

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-22
+last_verified: 2026-10-26
 scope: global
 confidence: high
 ---
@@ -10,7 +10,7 @@ confidence: high
 
 ## 1. Overview & Core Philosophy
 
-This document defines the testing architecture, conventions, and future standards for Aureus ERP. Testing in this repository is built on **Pest v4** (`v4.7.5`) and **PHPUnit v12**.
+This document defines the testing architecture, conventions, and future standards for Aureus ERP. Testing in this repository is built on **Pest v4** and **PHPUnit v12**.
 
 Because the repository has evolved with significant variation in automated test coverage across its 28 plugins, this document establishes a clear separation between **historical practice** and **future mandatory standards**.
 
@@ -20,7 +20,7 @@ Because the repository has evolved with significant variation in automated test 
 ├──────────────────────────────┬───────────────────────────────────────────────────────────────────┤
 │ Testing Framework            │ Pest v4 (PHP 8.3+) with Feature/Unit separation                   │
 │ Shared Test Helpers          │ plugins/webkul/support/tests/Helpers/ (TestBootstrap, Filament)  │
-│ Historical Baseline          │ 11 Tested Plugins / 17 Untested Plugins (Fresh Audit)             │
+│ Coverage Inventory           │ See `docs/plugins/README.md` for current plugin counts            │
 │ Future Rule Standard         │ Historical Practice ≠ Future Standard (Mandatory minimums)       │
 │ Priority Review Areas        │ security, payments, invoices, plugin-manager                      │
 └──────────────────────────────┴───────────────────────────────────────────────────────────────────┘
@@ -28,66 +28,15 @@ Because the repository has evolved with significant variation in automated test 
 
 ---
 
-## 2. Fresh Repository Test Coverage Audit
+## 2. Current Plugin Test Coverage
 
-A fresh audit of automated test files (`*Test.php`) across `plugins/webkul/*/tests/` confirms the following repository baseline:
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                             Fresh Plugin Test Coverage Breakdown                                 │
-├────────────────────────────┬─────────────────────────────┬───────────────────────────────────────┤
-│ Classification             │ Total Plugins               │ Test Coverage Status                  │
-├────────────────────────────┼─────────────────────────────┼───────────────────────────────────────┤
-│ Core Plugins               │ 9 plugins                   │ 2 Tested / 7 Untested (77.8% zero)    │
-│ Optional Plugins           │ 19 plugins                  │ 9 Tested / 10 Untested (52.6% zero)   │
-├────────────────────────────┼─────────────────────────────┼───────────────────────────────────────┤
-│ Entire Repository          │ 28 plugins                  │ 11 Tested / 17 Untested (60.7% zero)  │
-└────────────────────────────┴─────────────────────────────┴───────────────────────────────────────┘
-```
-
-### Complete Classification List
-
-#### 1. Tested Plugins (11 Total — 199 files: 187 `*Test.php` test classes + 12 shared helpers/fixtures)
-- **Core Tested (2)**:
-  - `partners` (10 test files)
-  - `support` (18 test files [13 `*Test.php` + 5 shared helpers])
-- **Optional Tested (9)**:
-  - `accounting` (9 test files [8 `*Test.php` + 1 helper])
-  - `accounts` (44 test files [43 `*Test.php` + 1 helper])
-  - `employees` (6 test files [5 `*Test.php` + 1 helper])
-  - `inventories` (41 test files [40 `*Test.php` + 1 helper])
-  - `manufacturing` (8 test files [7 `*Test.php` + 1 helper])
-  - `products` (19 test files)
-  - `projects` (8 test files)
-  - `purchases` (16 test files [15 `*Test.php` + 1 helper])
-  - `sales` (20 test files [19 `*Test.php` + 1 helper])
-
-#### 2. Untested Plugins (17 Total with Zero Automated Tests)
-- **Core Untested (7)**:
-  - `analytics` (`tests/` does not exist)
-  - `chatter` (`tests/` does not exist)
-  - `fields` (`tests/` does not exist)
-  - `full-calendar` (`tests/` does not exist)
-  - `plugin-manager` (`tests/` does not exist)
-  - `security` (`tests/` does not exist)
-  - `table-views` (`tests/` does not exist)
-- **Optional Untested (10)**:
-  - `barcode` (`tests/` does not exist)
-  - `blogs` (`tests/` does not exist)
-  - `contacts` (`tests/` does not exist)
-  - `invoices` (`tests/` does not exist)
-  - `maintenance` (`tests/` does not exist)
-  - `payments` (`tests/` does not exist)
-  - `recruitments` (`tests/` does not exist)
-  - `time-off` (`tests/` does not exist)
-  - `timesheets` (`tests/` does not exist)
-  - `website` (`tests/` does not exist)
+Current per-plugin test status and exact file counts are maintained solely in the [plugin registry](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). This document owns testing conventions and standards, not a second coverage inventory.
 
 ---
 
 ## 3. Actual Pest Testing Conventions
 
-Observed across the 11 tested plugins, tests adhere to these standard conventions:
+Observed in existing plugin test suites, tests adhere to these standard conventions:
 
 ### 1. Test Directory Structure
 Tests reside exclusively inside each plugin's `tests/` directory:
@@ -128,6 +77,12 @@ beforeEach(function () {
     URL::resolveMissingNamedRoutesUsing(fn () => '#');
 });
 ```
+
+### Company-Aware Factory Defaults
+
+Factories for models that automatically belong to a company MAY use `Webkul\Support\Database\Factories\Concerns\HasCompanyDefault` to assign a company during `afterMaking()`. The concern respects the model's `autoAssignsCompany()` setting and provides `company(Company|int $company)` for an explicit factory state. This convenience does not replace tests that assert company isolation or explicitly select the intended company.
+
+Evidence: `plugins/webkul/support/src/Database/Factories/Concerns/HasCompanyDefault.php`; `plugins/webkul/support/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`.
 
 ### 4. Authentication & Authorization Setup
 - Administrative tests simulate authentication and Filament Shield permissions via `FilamentHelper`:
@@ -176,7 +131,7 @@ beforeEach(function () {
 
 ## 4. Prioritized List of High-Risk Untested Areas
 
-Because 17 plugins currently lack automated tests, future testing and refactoring efforts MUST prioritize modules according to risk profile:
+For plugins listed without automated tests in the [plugin registry](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage), future testing and refactoring efforts MUST prioritize modules according to risk profile:
 
 | Priority | Plugin | Status | Primary Risk Factors & Architectural Justification |
 | :-: | :--- | :--- | :--- |

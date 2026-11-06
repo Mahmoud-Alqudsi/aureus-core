@@ -48,7 +48,7 @@ register(Panel $panel)
 1. **Autoload & Merge Phase (`wikimedia/composer-merge-plugin`)**:
    The root `composer.json` merges each plugin's `composer.json` metadata, registering PSR-4 namespaces and development autoload paths.
 2. **Service Provider Registration Phase (`bootstrap/providers.php`)**:
-   Every plugin's service provider extending `Webkul\PluginManager\PackageServiceProvider` is explicitly listed in `bootstrap/providers.php`. The provider's `configureCustomPackage(Package $package)` method defines package metadata, core status (`isCore()`), migrations, views, translations, and runtime dependencies (`hasDependencies()`).
+   Every plugin's service provider extending `Webkul\PluginManager\PackageServiceProvider` is explicitly listed in `bootstrap/providers.php`. The provider's `configureCustomPackage(Package $package)` method defines package metadata, core status (`isCore()`), migrations, views, translations, and the Install Plugins Dependency (`hasDependencies()`).
 3. **Panel Configuration Phase (`Panel::configureUsing()`)**:
    During `packageRegistered()`, the service provider hooks into Filament's panel builder and binds a local Filament plugin instance via `$panel->plugin(SomePlugin::make())`.
 4. **Local Plugin Registration & Discovery (`*Plugin.php::register()`)**:
@@ -95,7 +95,7 @@ The Aureus ERP architecture strictly separates three dependency concepts:
 ### Prescriptive Rules: Dependencies
 - When a plugin relies on database tables, migrations, or seeders created by another plugin, it MUST declare that dependency via `$package->hasDependencies(['prerequisite-plugin'])` in `configureCustomPackage()`.
 - Developers MUST NOT assume that adding a package to `composer.json` guarantees that its database tables or settings will be installed prior to the dependent plugin.
-- Importing classes (`use Webkul\...`) from an optional plugin without declaring a runtime dependency or verifying `Package::isPluginInstalled()` at runtime is STRICTLY FORBIDDEN.
+- Importing classes (`use Webkul\...`) from an optional plugin without declaring an Install Plugins Dependency or verifying `Package::isPluginInstalled()` at runtime is STRICTLY FORBIDDEN.
 
 ---
 
@@ -130,7 +130,7 @@ The repository contains exactly **six verified zero-table plugins**:
 ### Prescriptive Rules: Zero-Table Extensions
 - Zero tables MUST NOT be assumed to automatically indicate an extension layer.
 - A future zero-table plugin MUST explicitly identify the existing schema/behavior it extends and document why it does not own persistence.
-- A future zero-table plugin extending another domain MUST declare the underlying plugin as a runtime dependency via `hasDependencies(['underlying-plugin'])` (unless it is an abstract UI primitive or core component).
+- A future zero-table plugin extending another domain MUST declare the underlying plugin as an Install Plugins Dependency via `hasDependencies(['underlying-plugin'])` (unless it is an abstract UI primitive or core component).
 - Developers MUST NOT create empty migration directories or dummy tables for plugins that qualify for the zero-table extension pattern.
 
 ---

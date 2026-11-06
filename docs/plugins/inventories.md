@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/inventories
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered explicitly in `bootstrap/providers.php:48` as `Webkul\Inventory\InventoryServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `InventoryServiceProvider` boots conditionally based on whether the plugin record in the database is marked `installed = true`. If uninstalled, event observers (`CompanyObserver`, `ProductObserver`, `UOMObserver`), schema mutations into `products`, livewire components, and REST API routes are suppressed.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular business domain plugin without calling `$package->isCore()` (`plugins/webkul/inventories/src/InventoryServiceProvider.php:48-162`). Execution, dynamic schema contribution, and asset registration are gated by runtime installation verification via `Package::isPluginInstalled('inventories')` (`plugins/webkul/inventories/src/InventoryServiceProvider.php:177,197,210` and `plugins/webkul/inventories/src/InventoryPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `InventoryServiceProvider` boots conditionally based on whether the plugin record in the database is marked `installed = true`. If uninstalled, event observers (`CompanyObserver`, `ProductObserver`, `UOMObserver`), schema mutations into `products`, livewire components, and REST API routes are suppressed.
 
 ## Purpose
 [VERIFIED]
@@ -144,7 +142,7 @@ The `inventories` module serves as the comprehensive double-entry inventory ledg
       - `2025_01_17_094024_create_inventories_warehouse_settings`
       - `2025_01_17_094051_create_inventories_logistic_settings`
     - Registers database seeder: `Webkul\Inventory\Database\Seeders\DatabaseSeeder`.
-    - Declares runtime plugin dependency: `products` (`hasDependencies(['products'])`).
+    - Declares an Install Plugins Dependency: `products` (`hasDependencies(['products'])`).
     - Configures install and uninstall lifecycle hooks:
       - `InstallCommand`: installs dependencies, runs migrations, and runs seeders.
       - `UninstallCommand`: truncates 10 inventory tables, purges polymorphic chatter records for `Operation` and `Scrap` via `ChatterCleanupService`, and purges sequence definitions (`inventories.scrap` and `OperationType`) via `SequenceService::purge()`.
@@ -163,7 +161,7 @@ The `inventories` module serves as the comprehensive double-entry inventory ledg
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Inventory\InventoryPlugin` (`plugins/webkul/inventories/src/InventoryPlugin.php:9`)
 - **Plugin ID**: `inventories`
@@ -192,7 +190,7 @@ Inspected directly from `plugins/webkul/inventories/composer.json`:
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 Inspected from `InventoryServiceProvider::configureCustomPackage()`:
 - `products`: Declared via `$package->hasDependencies(['products'])` (`plugins/webkul/inventories/src/InventoryServiceProvider.php:123`).
@@ -367,7 +365,7 @@ When a stock move is processed via `InventoryManager::completeTransfer()`:
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 All UI components register under the `admin` panel within `NavigationGroup::Inventory`.
 
@@ -425,7 +423,7 @@ All UI components register under the `admin` panel within `NavigationGroup::Inve
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 The `inventories` domain logic is driven by 16 specialized service classes orchestrated by `InventoryManager`:
 
@@ -449,7 +447,7 @@ The `inventories` domain logic is driven by 16 specialized service classes orche
 
 ---
 
-## Events, Listeners & Observers
+## Events, Listeners, and Observers
 [VERIFIED]
 
 ### Domain Events (`plugins/webkul/inventories/src/Events/`)
@@ -467,7 +465,7 @@ The `inventories` domain logic is driven by 16 specialized service classes orche
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 Authorization is managed across 24 dedicated policy classes using the custom `Webkul\Security\Bouncer` and Filament Shield permissions:
 
@@ -559,7 +557,9 @@ Contains comprehensive English translations across `enums/`, `filament/`, `model
 
 ## Tests
 [VERIFIED]
-The `inventories` plugin contains an extensive automated test suite comprising **40 dedicated test files** under `plugins/webkul/inventories/tests/`:
+The `inventories` plugin contains an extensive automated test suite comprising **40 `*Test.php` feature test files** plus **1 test helper** (`InventoryHelper.php`, `41` total PHP files; see [`docs/plugins/README.md`](README.md)) under `plugins/webkul/inventories/tests/`:
+
+- **Direct Playwright UI coverage**: Five inventory specs cover settings, products, operations, warehouse flows, and configuration journeys. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the complete mapping and explicit limits of browser coverage.
 
 1. **18 API Feature Tests (`tests/Feature/API/V1/`)**:
    - `DeliveryTest.php`, `DropshipTest.php`, `InternalTransferTest.php`, `LocationTest.php`, `LotTest.php`, `MoveTest.php`, `OperationTypeTest.php`, `PackageTest.php`, `PackageTypeTest.php`, `ProductTest.php`, `QuantityTest.php`, `ReceiptTest.php`, `RouteTest.php`, `RuleTest.php`, `ScrapTest.php`, `StorageCategoryTest.php`, `TagTest.php`, `WarehouseTest.php`.
@@ -569,6 +569,18 @@ The `inventories` plugin contains an extensive automated test suite comprising *
    - `CompanyIsolationTest.php`, `CompanyScopingInvariantsTest.php`, `DropshipTest.php`, `ForecastAvailabilityTest.php`, `InternalTransferTest.php`, `OneStepDeliveryTest.php`, `OneStepReceiptTest.php`, `OperationChangeTest.php`, `QuantityTest.php`, `ReplicationTest.php`, `ScrapTest.php`, `ThreeStepDeliveryTest.php`, `ThreeStepReceiptTest.php`, `TwoStepDeliveryTest.php`, `TwoStepReceiptTest.php`, `WarehouseTest.php`.
 
 ---
+
+## Shared Infrastructure Dependencies
+[VERIFIED]
+This section records code-level consumption; `products` is the only declared Install Plugins Dependency.
+
+- **`plugin-manager`**: `InventoryServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/inventories/src/InventoryServiceProvider.php`).
+- **`products`**: Declared Install Plugins Dependency; stock models resolve products, variants, packaging, UOM, and product usage protection (`plugins/webkul/inventories/src/InventoryServiceProvider.php`, `plugins/webkul/inventories/src/Models/`).
+- **`support`**: Inventory operations use company isolation, `SequenceService`, UOM, and company context (`plugins/webkul/inventories/src/Models/`, `plugins/webkul/inventories/src/Services/`).
+- **`security`**: Operations use ownership scopes and inventory policies use the security permission boundary (`plugins/webkul/inventories/src/Models/`, `plugins/webkul/inventories/src/Policies/`).
+- **`chatter`**: Operations, scraps, lots, and warehouses consume shared activity and audit behavior (`plugins/webkul/inventories/src/Models/`).
+- **`fields`**: Warehouse, location, operation, and scrap resources consume custom-field injection (`plugins/webkul/inventories/src/Filament/`).
+- **`table-views`**: Inventory list pages define preset table views through the shared table-view components (`plugins/webkul/inventories/src/Filament/`).
 
 ## Cross-Plugin Relationships
 [VERIFIED]
@@ -590,8 +602,8 @@ graph TD
 
 1. **Upstream Integrations**:
    - `products`: Base catalog model, variant attribute values, and packaging definitions.
-   - `support`: Tenant company context (`CompanyContext`, `BelongsToCompany`), document sequence generation (`SequenceService`), measurement units (`UOM`).
-   - `security`: Authenticated creators/assignees and policy gates (`User`, custom `Bouncer`).
+   - `support`: Inventory models use `BelongsToCompany`, while operations consume `SequenceService` and `UOM`; the shared company-context and scope contract is owned by [`support.md`](support.md) and [`multi-company.md`](../security/multi-company.md).
+   - `security`: `Operation` uses `HasOwnershipScope`, while inventory policies use the shared `HasScopedPermissions` contract; shared ownership semantics are owned by [`security.md`](security.md), [`authorization.md`](../security/authorization.md), and [`ownership-scopes.md`](../security/ownership-scopes.md).
    - `chatter`: Social activity feed and communication stream on `Operation`, `Scrap`, `Lot`, `Warehouse`.
    - `fields`: Custom field injection into `Warehouse`, `Location`, `Operation`, `Scrap`.
 2. **Downstream Integrations**:
@@ -602,66 +614,32 @@ graph TD
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
-### 1. Inbound Receipt Flow (1-Step, 2-Step, 3-Step)
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Vendor
-    participant Input as Input / QC Location
-    participant Stock as Internal Stock Location
-    participant Quant as ProductQuantity Ledger
-    participant Op as Receipt Operation
+Within the `inventories` plugin boundary, `InventoryManager` (`plugins/webkul/inventories/src/InventoryManager.php`) orchestrates transfer lifecycles by delegating stock reservation to `MoveReserver`, double-entry quant settlement to `MoveCompleter`, short-move splitting to `BackorderCreator`, and multi-step logistics propagation to `PushRuleRunner` and `RuleResolver`.
 
-    Vendor->>Op: Purchase Order Confirmed (WH/IN/...)
-    Note over Op: State = CONFIRMED
-    Op->>Op: Check Availability & Reserve
-    Vendor->>Input: Physical Goods Arrive
-    Op->>Quant: Complete Move (Supplier Loc -> Stock Loc)
-    Quant->>Quant: Deduct Supplier / Credit Stock (+Qty)
-    Note over Op: State = DONE
-```
-
-### 2. Outbound Delivery Flow (Picking, Packing, Shipping)
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Sales
-    participant Stock as Internal Stock Location
-    participant Pack as Pack / Output Location
-    participant Customer as Customer Virtual Location
-    participant Quant as ProductQuantity Ledger
-    participant Op as Delivery Operation
-
-    Sales->>Op: Sales Order Confirmed (WH/OUT/...)
-    Op->>Quant: Reserve Stock (FIFO / LIFO)
-    Note over Quant: reserved_quantity += demanded_qty
-    Op->>Stock: Pick Items
-    Op->>Pack: Pack into Package
-    Op->>Customer: Ship Delivery
-    Op->>Quant: Settle Stock (Stock Loc -> Customer Loc)
-    Note over Quant: quantity -= qty, reserved_quantity -= qty
-    Note over Op: State = DONE
-```
+The full operational taxonomy, multi-step transfer sequences, and state transitions are canonically documented in [`docs/workflows/inventory.md`](../workflows/inventory.md):
+- **Full Operation Taxonomy (Receipts, Deliveries, Internal Transfers, Dropship, Manufacturing)**: [`docs/workflows/inventory.md#4-full-operation-taxonomy`](../workflows/inventory.md#4-full-operation-taxonomy) and [`#16-mermaid-flowchart`](../workflows/inventory.md#16-mermaid-flowchart).
+- **Internal Transfer & Multi-Step Warehouse Flows**: [`docs/workflows/inventory.md#5-internal-transfer-workflow`](../workflows/inventory.md#5-internal-transfer-workflow).
+- **Replenishment & Order Points Behavior**: [`docs/workflows/inventory.md#6-replenishment--order-points-analysis`](../workflows/inventory.md#6-replenishment--order-points-analysis).
+- **Scrap Lifecycle & Lot/Serial Traceability**: [`docs/workflows/inventory.md#7-scrap-workflow`](../workflows/inventory.md#7-scrap-workflow) and [`#8-lot--serial-number-traceability`](../workflows/inventory.md#8-lot--serial-number-traceability).
 
 ---
 
 ## Business Rules
 [VERIFIED]
-1. **Double-Entry Equilibrium**: Every stock change must be recorded via a balanced `Move` specifying valid source and destination locations. Quantities can never be directly incremented without a corresponding counterpart move.
-2. **Strict Company Scoping & Cross-Company Transfer Guard**:
-   - Transfers cannot bridge different legal entities directly. `CrossCompanyTransferGuard::assert()` throws `CrossCompanyTransferException` if `source_location_id` and `destination_location_id` belong to different companies.
-3. **UOM Immutability on Active Stock**:
-   - `ProductObserver` prevents changing `uom_id` on a `Product` if any `Move` records exist for that product.
-   - `UOMObserver` prevents deleting or changing conversion ratios on a `UOM` if it is in use by uncancelled moves or scraps.
-4. **Automated Serial Number Uniqueness**:
-   - Products tracked by unique serial number (`ProductTracking::SERIAL`) enforce that each serial number is assigned to at most one unit and cannot exist in multiple locations simultaneously (`Move::assertSerialUniqueness()`).
-5. **Short Move Backorder Splitting**:
-   - When completing an operation where picked quantity is less than initial demand, `BackorderCreator` automatically creates a child backorder operation for the remaining balance unless explicitly canceled.
-6. **Package Integrity Enforcement**:
-   - `MoveCompleter::assertPackagesStayWhole()` enforces that a single physical package cannot be split across multiple different warehouse locations simultaneously.
+
+1. **Plugin-Local Structural Guards (`CrossCompanyTransferGuard` & Observers)**:
+   - `CrossCompanyTransferGuard::assert()` throws `CrossCompanyTransferException` if `source_location_id` and `destination_location_id` belong to different companies.
+   - `ProductObserver` and `UOMObserver` prevent mutating `uom_id` or conversion factors when stock moves or scraps reference the product or unit of measure.
+   - `Move::assertSerialUniqueness()` and `MoveCompleter::assertPackagesStayWhole()` enforce serial-number uniqueness and physical package integrity at settlement time.
+2. **Canonical Inventory Calculation & Routing Rules ([`docs/business-rules/inventory.md`](../business-rules/inventory.md))**:
+   - **Quantitative-Only Stock Tracking (No Financial Valuation Layer)**: [`docs/business-rules/inventory.md#21-stock-valuation-method--definitive-finding`](../business-rules/inventory.md#21-stock-valuation-method--definitive-finding) and [`#11-financial-inventory-valuation-boundary`](../business-rules/inventory.md#11-financial-inventory-valuation-boundary).
+   - **On-Hand, Free, Incoming, Outgoing, and Forecast Stock Formulas (`Product::stockLevels`)**: [`docs/business-rules/inventory.md#22-stock-availability--forecast-level-calculation`](../business-rules/inventory.md#22-stock-availability--forecast-level-calculation).
+   - **Physical Stock Removal Strategies (`FIFO`, `LIFO`, `FEFO`, `CLOSEST`)**: [`docs/business-rules/inventory.md#23-physical-stock-removal-strategy`](../business-rules/inventory.md#23-physical-stock-removal-strategy) and [`#33-stock-removal-strategy-precedence`](../business-rules/inventory.md#33-stock-removal-strategy-precedence).
+   - **Putaway Rule Specificity & Supply Chain Route/Rule Precedence**: [`docs/business-rules/inventory.md#31-putaway-rule-precedence--location-assignment`](../business-rules/inventory.md#31-putaway-rule-precedence--location-assignment) and [`#32-supply-chain-route--rule-discovery-precedence`](../business-rules/inventory.md#32-supply-chain-route--rule-discovery-precedence).
+   - **Competing Reservation Release Priority**: [`docs/business-rules/inventory.md#34-stock-reservation--competing-line-release-precedence`](../business-rules/inventory.md#34-stock-reservation--competing-line-release-precedence).
 
 ---
 
@@ -711,5 +689,5 @@ sequenceDiagram
 - Observers: `plugins/webkul/inventories/src/Observers/CompanyObserver.php`, `ProductObserver.php`, `UOMObserver.php`
 - Shield Configuration: `plugins/webkul/inventories/config/filament-shield.php:1-73`
 - REST API Routes: `plugins/webkul/inventories/routes/api.php:1-85`
-- Migrations: `plugins/webkul/inventories/database/migrations/` (57 migration files)
-- Tests: `plugins/webkul/inventories/tests/` (40 test files)
+- Migrations: `plugins/webkul/inventories/database/migrations/` (57 database migration files) and `plugins/webkul/inventories/database/settings/` (4 settings migration files)
+- Tests: `plugins/webkul/inventories/tests/` (40 `*Test.php` feature test files + 1 helper = 41 total files)

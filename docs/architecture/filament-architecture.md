@@ -78,12 +78,15 @@ The application partitions its user experience into two independently configured
 | **Notifications** | `databaseNotifications()`, polling every `30s` | None configured | Live in-app alerts for system events, approvals, assignments. |
 | **Global Search** | Configured with `Webkul\Support\GlobalSearchProvider` | None | Cross-module indexing across administrative resources. |
 | **Multi-Factor Auth** | `AppAuthentication::make()->recoverable()` | None | Mandatory TOTP MFA support for administrative accounts. |
+| **Request and form UX** | `set_time_limit(300)` and `unsavedChangesAlerts()` | None configured | Admin panel requests receive a 300-second PHP execution limit and Filament warns before leaving a form with unsaved changes. |
 | **Panel Plugins** | `FilamentShieldPlugin`, `SpatieTranslatablePlugin` | None pre-registered in provider | Admin panel enforces role/permission ACL matrix and translatable field tabs. |
 | **Render Hooks** | `PanelsRenderHook::GLOBAL_SEARCH_END` (`language-switcher`) | `GLOBAL_SEARCH_END` (`language-switcher`), `TOPBAR_END` (`auth-links`), `FOOTER` (`footer/index`) | Customer panel injects custom header auth navigation and multi-column footer with social links. |
 | **Middleware Stack** | Cookie, Session, CSRF, Bindings, `SetLocale`, `ApplyBrandSettings`, `Authenticate` | Cookie, Session, CSRF, Bindings, `SetLocale`, `ApplyBrandSettings`, `authGuard('customer')` | Common branding and locale middleware shared; authentication gates strictly separated. |
 
 [VERIFIED]
 Evidence: `app/Providers/Filament/AdminPanelProvider.php` (lines 32–119); `app/Providers/Filament/CustomerPanelProvider.php` (lines 21–58); `plugins/webkul/website/src/WebsitePlugin.php` (lines 41–83)
+
+Shared record-page concerns, repeatable table column managers, and post-save state refresh are implemented by `support`. Their usage conditions and implementation references are maintained in [`docs/plugins/support.md`](../plugins/support.md#reusable-filament-concerns); this document remains the source for panel-wide configuration and behavior.
 
 ---
 
@@ -393,9 +396,9 @@ Total Widget Files in plugins/webkul: 26 files
 | `website` | `TopCategoriesTable` | `TableWidget` | `plugins/webkul/website/src/Filament/Admin/Widgets/TopCategoriesTable.php` | Highest volume blog categories table. |
 | `website` | `StatsOverview` | `StatsOverviewWidget`| `plugins/webkul/website/src/Filament/Admin/Widgets/StatsOverview.php` | Aggregate website metrics (total pages, blogs, categories). |
 
-### Discrepancy Resolution With Phase 0 Audit
+### Widget Inventory Note
 
-The Phase 0 repository audit noted "7 widget files". That preliminary audit occurred prior to the full documentation of all 28 plugins in Phases 5 and 6, and counted only a small subset of widgets in core plugins. Fresh source-code inspection confirms that the repository currently contains **26 widget files** (24 distinct Filament Widget classes + 2 Livewire sub-components).
+Earlier preliminary counts noted only a subset of widgets in core plugins. Full source-code inspection across all 28 plugins confirms that the repository contains **26 widget files** (24 distinct Filament Widget classes + 2 Livewire sub-components).
 
 [VERIFIED]
 Evidence: Scan of all classes extending `Filament\Widgets\*` and `Webkul\FullCalendar\Filament\Widgets\*`
@@ -489,6 +492,41 @@ If the optional `accounts` plugin is not installed, the `ManageBankAccounts` tab
 [VERIFIED]
 Evidence: `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php` (lines 42–56)
 
+### 6. Navigation Label & Page Title Harmonization (`HasNavigationLabelTitles`)
+Resources across the ERP utilize `Webkul\Support\Filament\Concerns\HasNavigationLabelTitles` (`plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php`) to unify navigation labels, breadcrumbs, list-page titles, and relation tab titles:
+- **Core Mechanism**: Implements `getNavigationLabel(): string` falling back to `static::$navigationLabel ?? Str::ucwords(static::getPluralModelLabel())`, and overrides `getTitleCasePluralModelLabel(): string` to return `static::getNavigationLabel()`.
+- **Multilingual Rationale**: Filament resolves resource breadcrumbs, page titles, and relation tab headers through `getTitleCasePluralModelLabel()`. In non-English locales (specifically Arabic), the navigation label requires a definite form (e.g. "المنتجات") while `getPluralModelLabel()` provides the indefinite base form ("منتجات"). `HasNavigationLabelTitles` eliminates duplicate translations and keeps titles consistent with top navigation menus.
+- **Critical Inheritance Rule**: Must be attached **only to the top-most resource in an inheritance chain**. Because PHP trait methods override inherited parent methods, applying the concern to a child class would shadow an intermediate parent's custom `getNavigationLabel()` implementation.
+- **Consumption Footprint**: Adopted across 119 files in 19 plugins (`accounting`, `accounts`, `blogs`, `employees`, `fields`, `inventories`, `maintenance`, `manufacturing`, `partners`, `products`, `projects`, `purchases`, `recruitments`, `sales`, `security`, `support`, `time-off`, `timesheets`, `website`).
+- **Automated Verification**: Directly verified by `plugins/webkul/support/tests/Feature/Filament/HasNavigationLabelTitlesTest.php`.
+
+[VERIFIED]
+Evidence: `plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php`; `plugins/webkul/support/tests/Feature/Filament/HasNavigationLabelTitlesTest.php`
+
+### 7. Localized Cluster Breadcrumb Trail Resolution (`HasClusterBreadcrumbs`)
+Organized clusters utilize `Webkul\Support\Traits\HasClusterBreadcrumbs` (`plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php`) to guarantee localized cluster breadcrumbs on child pages:
+- **Core Mechanism**: Implements `getClusterBreadcrumb(): ?string` returning `static::getNavigationLabel()`.
+- **Architectural Purpose**: Ensures that when navigating nested cluster resources and pages, Filament renders the localized, human-friendly cluster label in the breadcrumb trail rather than falling back to the English cluster class name. Allows an explicit override if a custom cluster breadcrumb is needed.
+- **Consumption Footprint**: Adopted across 47 cluster files in 14 plugins (`accounting`, `contacts`, `employees`, `inventories`, `invoices`, `maintenance`, `manufacturing`, `projects`, `purchases`, `recruitments`, `sales`, `support`, `time-off`, `website`).
+- **Automated Verification**: Directly verified by `plugins/webkul/support/tests/Feature/Filament/HasClusterBreadcrumbsTest.php`.
+
+[VERIFIED]
+Evidence: `plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php`; `plugins/webkul/support/tests/Feature/Filament/HasClusterBreadcrumbsTest.php`
+
+### 8. Relation Manager & Related Records Title Standardization (`ManageRelatedRecords`)
+Pages extending `Filament\Resources\Pages\ManageRelatedRecords` across the application adhere to strict title and label resolution standards:
+- **Arabic Translation Template Override**: A dedicated override is published at `lang/vendor/filament-panels/ar/resources/pages/manage-related-records.php` defining:
+  ```php
+  'title' => 'إدارة :relationship لـ :label',
+  ```
+  This template overrides upstream Filament's default phrasing, preventing duplicate action verbs in Arabic (e.g. eliminating redundant phrasing such as "إدارة إدارة الفواتير" or "إدارة إدارة جهات الاتصال").
+- **Explicit Target Resource Resolution (`$relatedResource`)**: Pages extending `ManageRelatedRecords` declare `protected static ?string $relatedResource = ...Resource::class;` (such as `ManageBankAccounts` pointing to `BankAccountResource`, and `ManageAddresses` pointing to `AddressResource`). This ensures Filament resolves `:relationship` using the exact localized model label of the target entity rather than deriving it from the relation method name.
+- **Cross-Plugin Verb De-duplication**: Action titles, relation manager headers, and tab navigation strings were harmonized across 13 domain plugins (`accounts`, `partners`, `products`, `projects`, `employees`, `recruitments`, `time-off`, `inventories`, `purchases`, `sales`, `manufacturing`, `invoices`, `accounting`) to ensure action verbs like "إدارة" are never repeated.
+- **Multilingual Completeness**: Added missing relation navigation titles and plural translation keys for Spanish (`es`), French (`fr`), and Brazilian Portuguese (`pt_BR`).
+
+[VERIFIED]
+Evidence: `lang/vendor/filament-panels/ar/resources/pages/manage-related-records.php`; `plugins/webkul/accounts/src/Filament/Resources/PartnerResource/Pages/ManageBankAccounts.php`; `plugins/webkul/partners/src/Filament/Resources/PartnerResource/Pages/ManageAddresses.php`
+
 ---
 
 ## Edge Cases, Discrepancies & Discovered Anomalies
@@ -525,6 +563,9 @@ Evidence: `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php` (
 | Core FullCalendar Engine | `plugins/webkul/full-calendar/src/FullCalendarPlugin.php` | [VERIFIED] |
 | Cross-Plugin Customer Account Cluster | `plugins/webkul/purchases/src/Filament/Customer/Clusters/Account/Resources/OrderResource.php` | [VERIFIED] |
 | Dynamic Custom Field Trait | `plugins/webkul/fields/src/Filament/Traits/HasCustomFields.php` | [VERIFIED] |
+| Navigation Label Harmonization Concern | `plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php` | [VERIFIED] |
+| Cluster Breadcrumb Localization Trait | `plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php` | [VERIFIED] |
+| ManageRelatedRecords Title Template & Standardization | `lang/vendor/filament-panels/ar/resources/pages/manage-related-records.php` | [VERIFIED] |
 | Partner Navigation Suppression | `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php` (`$shouldRegisterNavigation = false`) | [VERIFIED] |
 | Contact Partner Resurfacing | `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php` (`$shouldRegisterNavigation = true`) | [VERIFIED] |
 | Master Inventory Counts (204 Res, 474 Pages, 46 Clu, 24 Wid) | Fresh directory & AST scan across `plugins/webkul/*/src/Filament/` | [VERIFIED] |

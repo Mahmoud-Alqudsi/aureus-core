@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:12` as `Webkul\Chatter\ChatterServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `chatter` module executes unconditionally at boot time across the application.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `ChatterServiceProvider::configureCustomPackage()` (`plugins/webkul/chatter/src/ChatterServiceProvider.php:22`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `chatter` module executes unconditionally at boot time across the application.
 
 ## Purpose
 [VERIFIED]
@@ -77,7 +75,7 @@ The `chatter` module provides the unified cross-cutting collaboration, audit log
     - Registers custom CSS asset `chatter` (`resources/dist/chatter.css`) via `FilamentAsset::register()`.
     - Registers Livewire component `'chatter-panel'` -> `Webkul\Chatter\Livewire\ChatterPanel::class`.
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Chatter\ChatterPlugin` (`plugins/webkul/chatter/src/ChatterPlugin.php:8`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -91,7 +89,7 @@ The `chatter` module provides the unified cross-cutting collaboration, audit log
     - [VERIFIED Code Quirk] Calls `$panel->discoverClusters(in: __DIR__.'/Filament/Widgets', for: 'Webkul\\Chatter\\Filament\\Widgets')` (`plugins/webkul/chatter/src/ChatterPlugin.php:35-38`), discovering widgets directory via `discoverClusters()` rather than `discoverWidgets()`.
 - **Boot**: `boot(Panel $panel)` contains empty method stub (`plugins/webkul/chatter/src/ChatterPlugin.php:41-44`).
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/chatter/composer.json`
   - Name: `webkul/chatter`
@@ -104,11 +102,11 @@ The `chatter` module provides the unified cross-cutting collaboration, audit log
   - `spatie/laravel-package-tools` (`v1.93.0`): Extends `BasePackage` and `BasePackageServiceProvider`.
   - `illuminate/support`, `illuminate/database`, `illuminate/mail`, `illuminate/notifications`: Laravel framework baseline.
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `ChatterServiceProvider::configureCustomPackage()` does not declare runtime dependencies via `hasDependencies()`.
+None (`—`). `ChatterServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/chatter/`:
 
@@ -288,7 +286,7 @@ Physical database schema details are cataloged in `docs/database/erds/core.md` (
 4. `2025_03_12_072356_add_column_is_read_to_chatter_messages_table.php`:
    - Alters `chatter_messages`: Adds `is_read` (boolean, default 0, after `is_internal`).
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 
 ### Filament Resources
@@ -343,7 +341,7 @@ None (`—`).
 - **Admin Panel (`admin`)**: `ChatterPlugin` is registered via `Panel::configureUsing()`. `ChatterAction` and `ActivityTableAction` are consumed extensively across admin panel view/edit pages and resource tables.
 - **Customer Panel (`customer`)**: `ChatterPlugin` is registered via `Panel::configureUsing()`. Customer-facing resources do not currently embed `ChatterAction` directly.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 
 ### 1. `ChatterNotificationService` (`plugins/webkul/chatter/src/Services/ChatterNotificationService.php:16`)
@@ -385,7 +383,7 @@ None (`—`).
 [NOT APPLICABLE]
 No dedicated `*Observer.php` classes are registered. All lifecycle logic is implemented directly via Eloquent model/trait `boot()` methods.
 
-## Policies
+## Policies and Authorization
 [NOT APPLICABLE]
 No standalone `*Policy.php` classes exist in `chatter`. Authorization is governed by parent model policies and permissions on the owning Filament resources.
 
@@ -421,11 +419,16 @@ Translation files live under `plugins/webkul/chatter/resources/lang/` across 5 l
 [VERIFIED]
 **No Test Files Found**. The `plugins/webkul/chatter/` directory contains no `tests/` subdirectory, and no unit or feature tests exist for `chatter` models, services, traits, notifications, or Livewire components.
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-None (`—`). `ChatterServiceProvider::configureCustomPackage()` declares no runtime dependencies.
+This section records code-level consumption; the provider declares no Install Plugins Dependency through `hasDependencies()`.
 
-## Cross-plugin relationships
+- **`plugin-manager`**: `ChatterServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/chatter/src/ChatterServiceProvider.php`).
+- **`support`**: `Message` and `Attachment` use company scoping; activity types/plans and `EmailService` are consumed by chatter actions and notifications (`plugins/webkul/chatter/src/Models/Message.php`, `plugins/webkul/chatter/src/Models/Attachment.php`, `plugins/webkul/chatter/src/Filament/Actions/ActivityAction.php`).
+- **`security`**: Chatter message and attachment records resolve assigned users, creators, mentions, and notification recipients through `Webkul\Security\Models\User` (`plugins/webkul/chatter/src/Models/Message.php`, `plugins/webkul/chatter/src/Models/Attachment.php`, `plugins/webkul/chatter/src/Traits/HasChatter.php`).
+- **`partners`**: Follower subscriptions persist `partner_id` and use `Webkul\Partner\Models\Partner` as the follower identity (`plugins/webkul/chatter/src/Models/Follower.php`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 
 ### 1. Foundation Plugins Consumed by Chatter
@@ -472,7 +475,7 @@ At the time of verification, 25 models across 14 plugins were found to consume `
 | `time-off` | `Webkul\TimeOff\Models\Leave` | [VERIFIED] | [VERIFIED] | [VERIFIED] (`Leave`, `LeaveAllocation`) |
 | `time-off` | `Webkul\TimeOff\Models\LeaveAllocation` | [VERIFIED] | [VERIFIED] | [VERIFIED] |
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid
@@ -525,7 +528,7 @@ flowchart TD
 4. **Recipient Resolution & Dispatch**: `ChatterNotificationService` parses `@` mentions via `ChatterMentions`, sends `ChatterDatabaseNotification` to assignees and followers (stored in Laravel `notifications` table), and dispatches `MessageMail` via `Mail::send()`.
 5. **UI Refresh**: Livewire dispatches `'chatter.refresh'` to reload feed entries and badge counts in real time.
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Multi-Tenant Isolation**: `chatter_messages` and `chatter_attachments` enforce company scoping via `BelongsToCompany` trait. Messages and files are automatically partitioned by `company_id`.
 2. **Subscriber Deduping**: `chatter_followers` enforces a database-level composite unique constraint `(followable_type, followable_id, partner_id)` preventing duplicate subscriptions.
@@ -533,7 +536,7 @@ flowchart TD
 4. **Mention Auto-Subscription**: Mentioning a user (`@Username`) in rich text automatically adds the user's partner to the record's follower list.
 5. **Physical File Removal on Delete**: Deleting an `Attachment` model invokes its `deleted` hook to purge the physical file from `Storage::disk('public')`.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 - **`HasChatter::chatterResponsibles()`**: Consuming models can override to return an array of responsible relationship/column names to monitor for auto-following.
 - **`HasChatter::activityPlanPlugin()` / `ACTIVITY_PLAN_PLUGIN`**: Consuming models define constant `ACTIVITY_PLAN_PLUGIN` to automatically filter available `ActivityPlan` templates in activity scheduling.
@@ -541,7 +544,7 @@ flowchart TD
 - **`HasLogActivity::getModelTitle()`**: Abstract method requiring each model to declare its display name for audit event text generation.
 - **`ChatterAction` Customization**: Consuming pages can override email views (`messageMailView()`, `followerMailView()`), activity plans (`activityPlans()`), and toggle action visibility (`showLogAction()`, `showActivityAction()`, `showFileAction()`, `showFollowerAction()`).
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 
 ### 1. Polymorphic Orphan Data on Hard Deletes
@@ -560,7 +563,7 @@ flowchart TD
 ### 4. Application Termination Notification Delivery
 - Notification dispatch occurs within `app()->terminating(...)` callbacks. In environments where long-running queue workers, Octane, or atypical request lifecycles terminate abruptly, pending notifications may fail silently without raising user-visible exceptions.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 Modifications to `chatter` directly impact core infrastructure and 14 domain modules:
 - Breaking changes in `HasChatter` or `HasLogActivity` trait signatures will break model boots across 25 domain models (`Order`, `Move`, `Partner`, `Task`, `Employee`, `Candidate`, etc.).

@@ -22,6 +22,16 @@ Authentication vs. Authorization vs. Isolation:
 - **Ownership filtering**: Limits visibility to records owned by the user or their group (handled by `OwnershipScope`).
 - **Company isolation**: Limits visibility to records within the user's active company context (handled by `CompanyScope` and `CompaniesScope`).
 
+## Canonical Ownership Boundary
+[VERIFIED]
+
+This document owns the system-wide authorization contract and its limits: the distinction between authentication, capability authorization, ownership filtering, and company isolation, plus the rule that these mechanisms are not a universal request pipeline.
+
+- The `security` plugin document owns the implementation inventory for `Bouncer`, `OwnershipScope`, `HasScopedPermissions`, RBAC/Shield, MFA, invitations, and API authentication: [`docs/plugins/security.md`](../plugins/security.md).
+- The company-isolation mechanism is owned by [`docs/security/multi-company.md`](multi-company.md) and implemented by [`docs/plugins/support.md`](../plugins/support.md).
+- The ownership-source and query-scope contract is owned by [`docs/security/ownership-scopes.md`](ownership-scopes.md).
+- Consumer plugin documents retain only the policy, permission, owner-source, and execution-path facts verified for that plugin. They must not imply complete backend enforcement from a declaration or UI capability alone.
+
 ### Security Mechanisms Are Not a Universal Request Pipeline
 [VERIFIED]
 The source does not implement one fixed sequence containing authentication, Shield, policies, Bouncer, and scopes for every request. Panel access is evaluated by the relevant Filament user implementation; API groups apply `auth:sanctum`; policies run when a caller invokes Laravel/Filament authorization; and company/ownership scopes apply when a model that opts into them builds an Eloquent query. `Bouncer` is consumed by `OwnershipScope`, while policies using `HasScopedPermissions` independently compare `PermissionType` with an owner relation. These mechanisms can combine for a particular endpoint, but their presence does not guarantee isolated retrieval for every query path.

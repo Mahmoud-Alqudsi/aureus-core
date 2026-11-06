@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-29
+last_verified: 2026-10-25
 scope: global
 confidence: high
 ---
@@ -15,7 +15,9 @@ Aureus ERP is a Laravel ERP application whose domain functionality is primarily 
 [VERIFIED]
 Evidence: `composer.json`; `bootstrap/providers.php`; `plugins/webkul/`
 
-For a coding task, use this evidence order: implementation and executable configuration first; then tests that exercise the behaviour; then Composer metadata and lockfile for installed dependency versions; then repository documentation. Existing documentation, comments, and prior analysis are leads to verify, not evidence by themselves. When sources disagree, record the discrepancy in the relevant in-scope work and follow the implementation.
+Use the source-of-truth hierarchy in the repository's canonical AI entry point, [`AGENTS.md`](../../AGENTS.md#source-of-truth-hierarchy), when sources disagree. Repository documentation, comments, and prior analysis are leads to verify, not evidence by themselves. Record discrepancies in the relevant in-scope work and follow the governing source.
+
+For documentation ownership and canonical destinations, use [`knowledge-ownership.md`](knowledge-ownership.md). Other documents may provide task-specific summaries, but must link to the owner rather than restate its authoritative content.
 
 Use these labels precisely:
 
@@ -26,20 +28,10 @@ Use these labels precisely:
 
 ## Verified platform baseline
 
-| Component | Installed / declared version | Evidence |
-| --- | --- | --- |
-| PHP | runtime `8.3.29`; project constraint `^8.3` | `php -v`; `composer.json` → `require.php` |
-| Laravel | `v13.31.0` | `composer.lock` → `laravel/framework` |
-| Filament | `v5.8.1` | `composer.lock` → `filament/filament` |
-| Livewire | `v4.4.5` | `composer.lock` → `livewire/livewire` |
-| Pest | `v4.7.5` | `composer.lock` → `pestphp/pest` |
-| Filament Shield | `4.2.0` | `composer.lock` → `bezhansalleh/filament-shield` |
-| Laravel Sanctum | `v4.3.3` | `composer.lock` → `laravel/sanctum` |
-| Composer merge plugin | `v2.1.0` | `composer.lock` → `wikimedia/composer-merge-plugin` |
+Expected major/minor ranges for the platform stack (PHP `^8.3`, Laravel `v13.x`, Filament `v5.x`, Livewire `v4.x`, Pest `v4.x`, Filament Shield `v4.x`, Laravel Sanctum `v4.x`, and `wikimedia/composer-merge-plugin` `v2.x`) are defined in [`AGENTS.md` (Technology Baseline)](../../AGENTS.md#technology-baseline). Do not maintain a duplicate pinned version table here; always verify exact installed package versions directly against [`composer.lock`](../../composer.lock) and [`composer.json`](../../composer.json).
 
 [VERIFIED]
-Evidence: `composer.lock` → `livewire/livewire`, `laravel/sanctum`
-Note: Always verify exact versions against `composer.lock`. Direct inspection of `composer.lock` (lines 4135–4148) confirms `laravel/sanctum` is installed at `v4.3.3`.
+Evidence: `composer.json`; `composer.lock`
 
 ## Repository map
 
@@ -58,24 +50,14 @@ Evidence: `bootstrap/app.php`; `bootstrap/providers.php`; `app/Providers/Filamen
 2. **Plugin lifecycle boundary.** A plugin service provider configures a `Webkul\PluginManager\Package`. Core status, runtime installation state, migrations/routes, dependencies, and UI registration are related but distinct. Read `docs/architecture/plugin-registry.md` and the affected provider before changing any of them.
 3. **Panel boundary.** There are two configured Filament panels: `admin` at `admin` and `customer` at `/`. A Filament plugin may register different discovery paths for each panel, so inspect its `register(Panel $panel)` method rather than assuming an admin-only feature.
 4. **Cross-plugin boundary.** Search the affected plugin and its dependencies for service-provider hooks, events/listeners, model relation extensions, and references to the changed symbol. Do not infer ownership from a class's directory alone.
-5. **Scope boundary.** Security, database design, workflow, business-rule, event-catalog, and change-impact documentation are later-phase concerns. Their presence in the repository is not evidence that those phases are complete. Inspect code directly when a current task touches one of those areas.
+5. **Scope boundary.** Security, database design, workflow, business-rule, event-catalog, and change-impact documentation live in their respective domain directories under `docs/`. Their presence in the repository does not replace source verification; inspect code directly when a task touches one of those areas.
 
 [VERIFIED]
 Evidence: `app/Providers/Filament/AdminPanelProvider.php` → `AdminPanelProvider::panel()`; `app/Providers/Filament/CustomerPanelProvider.php` → `CustomerPanelProvider::panel()`; `plugins/webkul/plugin-manager/src/PackageServiceProvider.php`; `plugins/webkul/plugin-manager/src/Package.php`
 
 ## Terms used in this repository
 
-- **Plugin package:** a local package under `plugins/webkul/<plugin>`, configured by a class extending `Webkul\PluginManager\PackageServiceProvider`.
-- **Package:** `Webkul\PluginManager\Package`, the runtime metadata object configured by each plugin provider.
-- **Core plugin:** a package whose provider calls `Package::isCore()`. This affects the base provider's route/migration loading gates; it is not a Composer dependency classification.
-- **Installed plugin:** a plugin whose database record has `is_installed` truthy as read by `Package::isPluginInstalled()`. The method returns false when the database cannot be reached or the `plugins` table is absent.
-- **Filament plugin class:** a local `*Plugin.php` class implementing `Filament\Contracts\Plugin`; its `register()` method contributes discovery/configuration to a `Panel`.
-- **Runtime plugin dependency:** a name declared with `Package::hasDependencies()`. It is consumed by the plugin-manager installation command; it is not a Composer `require` relationship.
-- **Company trait terminology:** `BelongsToCompany` is an existing trait. Do not invent a `HasCompanyScope` trait.
-- **Bouncer terminology:** `Webkul\Security\Bouncer` is a local Aureus class, not the `silber/bouncer` package. Its behaviour is outside this phase's scope.
-
-[VERIFIED]
-Evidence: `plugins/webkul/plugin-manager/src/Package.php` → `Package::isCore()`, `Package::isPluginInstalled()`, `Package::hasDependencies()`; `plugins/webkul/support/src/Traits/BelongsToCompany.php`; `plugins/webkul/security/src/Bouncer.php`
+Canonical project terminology, class mappings, and misconception corrections (including multi-company isolation traits, `Webkul\Security\Bouncer`, plugin lifecycle states, dependency taxonomy, and Filament panels) are defined solely in [`docs/ai/terminology.md`](terminology.md). Read [`docs/ai/terminology.md`](terminology.md) before naming, creating, or changing a model, trait, service, table, policy, or documentation term.
 
 ## Investigation method
 

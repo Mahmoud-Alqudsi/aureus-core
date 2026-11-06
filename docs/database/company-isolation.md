@@ -80,4 +80,4 @@ Evidence: `database/migrations/2026_07_21_100000_add_company_id_to_settings_tabl
 
 Evidence: `plugins/webkul/support/src/Models/Scopes/CompanyScope.php`; `plugins/webkul/support/src/Models/Scopes/CompaniesScope.php`
 
-This document intentionally does not analyze authorization or scope-bypass security behavior; that belongs to Phase 3.
+This document intentionally does not analyze authorization or scope-bypass security behavior; see `docs/security/multi-company.md` and `docs/security/authorization.md`.

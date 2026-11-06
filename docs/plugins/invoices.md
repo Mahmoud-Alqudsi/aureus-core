@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/invoices
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered explicitly in `bootstrap/providers.php:49` as `Webkul\Invoice\InvoiceServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `InvoicePlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/invoices/src/InvoicePlugin.php:23-25`). When uninstalled, the entire `Invoices` navigation group, including customer invoicing, vendor bills, configuration, and settings screens, remains dormant without registering UI components.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular operational invoicing and vendor billing presentation layer without calling `$package->isCore()` (`plugins/webkul/invoices/src/InvoiceServiceProvider.php:17-31`). Execution, Filament resource auto-discovery, cluster mounting, and page registration are gated by runtime installation verification via `Package::isPluginInstalled('invoices')` (`plugins/webkul/invoices/src/InvoicePlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `InvoicePlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/invoices/src/InvoicePlugin.php:23-25`). When uninstalled, the entire `Invoices` navigation group, including customer invoicing, vendor bills, configuration, and settings screens, remains dormant without registering UI components.
 
 ## Purpose
 [VERIFIED]
@@ -54,7 +52,7 @@ The `invoices` plugin serves as the dedicated operational invoicing, vendor bill
   - `configureCustomPackage(Package $package)`:
     - Sets package name to `invoices` (`InvoiceServiceProvider::$name = 'invoices'`).
     - Registers translation namespace (`hasTranslations()`).
-    - Declares runtime plugin dependency on `accounts` (`hasDependencies(['accounts'])`).
+    - Declares an Install Plugins Dependency on `accounts` (`hasDependencies(['accounts'])`).
     - Configures install command: runs dependency installation and seeders (`$command->installDependencies()->runsSeeders()`).
     - Configures uninstall command: empty closure.
     - Configures plugin icon: `invoices`.
@@ -65,7 +63,7 @@ The `invoices` plugin serves as the dedicated operational invoicing, vendor bill
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Invoice\InvoicePlugin` (`plugins/webkul/invoices/src/InvoicePlugin.php:9`)
 - **Plugin Identifier**: `'invoices'` (`getId(): string`)
@@ -91,7 +89,7 @@ The `invoices` plugin serves as the dedicated operational invoicing, vendor bill
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 - **`accounts`**: Declared in `InvoiceServiceProvider::configureCustomPackage()` via `->hasDependencies(['accounts'])` (`plugins/webkul/invoices/src/InvoiceServiceProvider.php:21-23`). The `invoices` plugin cannot operate without `accounts`, as it owns no physical tables and derives its entire data model, calculations, transactions, and settings from `accounts`.
 
@@ -224,14 +222,14 @@ The `invoices` plugin **owns zero physical database tables** and registers **zer
 
 All physical schemas (`accounts_account_moves`, `accounts_account_move_lines`, `accounts_accounts`, `accounts_journals`, `accounts_taxes`, `accounts_tax_groups`, `accounts_tax_repartition_lines`, `accounts_fiscal_positions`, `accounts_payment_terms`, `accounts_account_payments`, `accounts_accounts_move_payment`, `accounts_partial_reconciles`, `accounts_full_reconciles`), foreign key constraints, indexes, and company isolation scopes are physically defined and owned by `accounts`.
 
-For comprehensive database schema diagrams, column definitions, foreign keys, indexes, and multi-company scoping rules, refer to the verified Phase 4 ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md) and the plugin documentation: [`docs/plugins/accounts.md`](accounts.md).
+For comprehensive database schema diagrams, column definitions, foreign keys, indexes, and multi-company scoping rules, refer to the verified financial domain ERD document: [`docs/database/erds/finance.md`](../database/erds/finance.md) and the plugin documentation: [`docs/plugins/accounts.md`](accounts.md).
 
 - **Seeders**: `DatabaseSeeder` (`plugins/webkul/invoices/database/seeders/DatabaseSeeder.php:7`) defines an empty run method (`$this->call([])`).
 - **Factories**: `CategoryFactory` (`plugins/webkul/invoices/database/factories/CategoryFactory.php:11`) extends `AccountCategoryFactory` with `product_properties_definition` state management.
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 The `invoices` plugin organizes its user interface into 4 clusters under `NavigationGroup::Invoice`, providing 18 resources, 1 settings page, and 1 specialized Livewire summary component:
 
@@ -400,7 +398,7 @@ Registers on the **`admin`** panel only (`plugins/webkul/invoices/src/InvoicePlu
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 The `invoices` plugin defines **zero custom service classes**. All financial computation, move state transitions, tax calculations, payment registration, and sequence evaluations are executed by services defined in `accounts` (`Webkul\Account\Services\MoveWorkflow`, `TaxManager`, `AccountManager`, `PaymentRegistrar`) and `support` (`Webkul\Support\Services\SequenceService`).
 
@@ -424,7 +422,7 @@ The `invoices` plugin defines **zero model observers**.
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The `invoices` module registers 16 authorization policies under `plugins/webkul/invoices/src/Policies/`. Each policy enforces granular Filament Shield permissions prefixed with `..._invoice_...`:
 
@@ -479,12 +477,21 @@ The `invoices` module registers the translation namespace `invoices` (`resources
 [VERIFIED]
 - **Test Presence**: The `invoices` plugin **has zero test files** (no `tests/` directory exists).
 - **Testing Rationale**: The `invoices` module is a pure Filament presentation and cluster routing layer over `accounts`. All business logic, tax calculation formulas, move workflow state machines, and payment registration flows are thoroughly tested in `plugins/webkul/accounts/tests/` and downstream integration tests in `plugins/webkul/sales/tests/` and `plugins/webkul/purchases/tests/`.
+- **Cross-plugin Playwright coverage**: Sales and purchase flow specs exercise invoice or bill creation as part of broader journeys. No standalone invoices spec exists; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the integration boundary.
 
 ---
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-- **`accounts`**: Required runtime dependency declared via `->hasDependencies(['accounts'])`. Provides all physical database tables, Eloquent models, general ledger posting workflows, payment allocation engines, and base Filament schemas.
+This section records code-level consumption; the installation-order declaration remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `InvoiceServiceProvider` extends `PackageServiceProvider` (`plugins/webkul/invoices/src/InvoiceServiceProvider.php`).
+- **`accounts`**: Declared Install Plugins Dependency via `->hasDependencies(['accounts'])`. Provides all physical database tables, Eloquent models, general ledger posting workflows, payment allocation engines, and base Filament schemas (`plugins/webkul/invoices/src/`).
+- **`partners`**: Customer/vendor proxy models, addresses, and bank-account relations are inherited from the accounts/partners integration (`plugins/webkul/invoices/src/Models/`).
+- **`products`**: Invoice and bill line items resolve products, categories, variants, and units of measure (`plugins/webkul/invoices/src/Filament/`, `plugins/webkul/invoices/src/Models/`).
+- **`support`**: Sequence, currency, navigation, and company-scoping services are consumed by the invoice/bill presentation layer (`plugins/webkul/invoices/src/`).
+- **`security`**: Invoice policies and permission keys use the security authorization boundary (`plugins/webkul/invoices/config/filament-shield.php`, `plugins/webkul/invoices/src/Policies/`).
+- **`chatter`**: Invoice moves and categories expose shared activity and audit behavior (`plugins/webkul/invoices/src/Models/`).
 
 ---
 
@@ -493,8 +500,8 @@ The `invoices` module registers the translation namespace `invoices` (`resources
 1. **`accounts`**: Host foundation. `invoices` subclasses `accounts` models (`Move`, `Payment`, `Tax`, `PaymentTerm`, `Category`), extends its base Filament resources, and consumes its business services (`MoveWorkflow`, `PaymentRegister`).
 2. **`partners`**: Supplies `Customer` and `Vendor` proxy base models, addresses, and bank accounts.
 3. **`products`**: Supplies line-item product models, category hierarchy, variant attributes, and unit-of-measure configuration.
-4. **`support`**: Provides multi-company tenant scoping (`CompanyContext`), document sequence numbering (`SequenceService`), currency formatting, and navigation enums (`NavigationGroup::Invoice`).
-5. **`security`**: Provides `User` model, Filament Shield permission policies (`..._invoice_...`), and Bouncer authorization integration.
+4. **`support`**: `invoices` consumes `SequenceService`, currency formatting, navigation enums, and the shared company boundary; the company-context and scope contract is owned by [`support.md`](support.md) and [`multi-company.md`](../security/multi-company.md).
+5. **`security`**: Invoice policies and `..._invoice_...` permission keys are plugin-local integration facts; shared Bouncer, ownership, and authorization semantics are owned by [`security.md`](security.md), [`authorization.md`](../security/authorization.md), and [`ownership-scopes.md`](../security/ownership-scopes.md).
 6. **`chatter`**: Supplies `HasChatter` trait for activity planning and message audit trails on `Category` and invoice moves.
 7. **`sales` (Downstream Dependant)**: Upstream sales order workflows link directly to `invoices` customer invoicing resources via `sales_order_invoices` junction table.
 8. **`purchases` (Downstream Dependant)**: Upstream purchase order workflows link directly to `invoices` vendor bill resources via `purchases_order_account_moves` junction table.
@@ -503,7 +510,7 @@ The `invoices` module registers the translation namespace `invoices` (`resources
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid
@@ -583,7 +590,7 @@ sequenceDiagram
 ## Change Impact
 [VERIFIED]
 - **Downstream Module Breakages**:
-  - The `sales` and `purchases` plugins declare runtime dependencies on `invoices` (`hasDependencies(['invoices'])`). Modifying resource URLs, model classes, or cluster slug structures in `invoices` directly impacts sales order invoice generation and purchase order bill generation.
+  - The `sales` and `purchases` plugins declare an Install Plugins Dependency on `invoices` (`hasDependencies(['invoices'])`). Modifying resource URLs, model classes, or cluster slug structures in `invoices` directly impacts sales order invoice generation and purchase order bill generation.
 - **Filament Shield Role Permissions**:
   - Modifying model class names under `Webkul\Invoice\Models\` will alter generated Shield permission keys (`..._invoice_...`), requiring role permission resets in production environments.
 
@@ -594,10 +601,10 @@ sequenceDiagram
 - **Package Configuration & Dependency**: `plugins/webkul/invoices/src/InvoiceServiceProvider.php:13-44`
 - **Plugin Lifecycle & Discovery**: `plugins/webkul/invoices/src/InvoicePlugin.php:9-53`
 - **Navigation Groups & Clusters**:
-  - `plugins/webkul/invoices/src/Filament/Clusters/Customers.php:8-21`
-  - `plugins/webkul/invoices/src/Filament/Clusters/Vendors.php:8-21`
-  - `plugins/webkul/invoices/src/Filament/Clusters/Configuration.php:8-23`
-  - `plugins/webkul/invoices/src/Filament/Clusters/PluginSettings.php:8-23`
+  - `plugins/webkul/invoices/src/Filament/Clusters/Customers.php:9-21`
+  - `plugins/webkul/invoices/src/Filament/Clusters/Vendors.php:9-21`
+  - `plugins/webkul/invoices/src/Filament/Clusters/Configuration.php:9-23`
+  - `plugins/webkul/invoices/src/Filament/Clusters/PluginSettings.php:9-23`
 - **Customer Invoicing Suite**:
   - `plugins/webkul/invoices/src/Filament/Clusters/Customers/Resources/InvoiceResource.php:19-80`
   - `plugins/webkul/invoices/src/Filament/Clusters/Customers/Resources/CreditNoteResource.php:19-87`

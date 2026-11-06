@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:38` as `Webkul\Support\SupportServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `support` module executes unconditionally at boot time across the application.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `SupportServiceProvider::configureCustomPackage()` (`plugins/webkul/support/src/SupportServiceProvider.php:43`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `support` module executes unconditionally at boot time across the application.
 
 ## Purpose
 [VERIFIED]
@@ -38,7 +36,8 @@ The `support` module is the primary architectural bedrock and shared foundation 
    - Houses foundational entity definitions: `Company`, `Currency`, `CurrencyRate`, `Country`, `State`, `Bank`, `UOMCategory`, `UOM`, `Calendar`, `CalendarAttendance`, `CalendarLeave`, `ActivityPlan`, `ActivityPlanTemplate`, `ActivityType`, `ActivityTypeSuggestion`, `UtmStage`, `UTMMedium`, `UTMSource`, `UtmCampaign`, `QuickNavigationFavorite`, and `EmailLog`.
 
 4. **Dynamic Schema Extension Engine**:
-   - Implements `SchemaRegistry` (`plugins/webkul/support/src/Services/SchemaRegistry.php`) allowing third-party and optional plugins to inject, modify, or reorder Filament form and infolist schemas without modifying core resource files.
+   - Provides two distinct extension mechanisms: the service registry (`Webkul\Support\Services\SchemaRegistry`) applies registered form and infolist modifiers, while `Webkul\Support\Filament\Contributions\SchemaRegistry` stores typed contributions exposed through `AbstractSchemaRegistry`.
+   - Resource-specific registries such as `PartnerSchemaRegistry` and `ProductSchemaRegistry` use the contribution mechanism for forms, infolists, tables, actions, preset views, eager loads, and company-dependent fields. Do not confuse these registries with the service registry.
 
 5. **Cross-Database Dialect Abstraction**:
    - Provides `DatabaseDialect` interface (`plugins/webkul/support/src/Database/Dialects/DatabaseDialect.php`) with driver-specific implementations for MySQL/MariaDB (`MySqlDialect`) and PostgreSQL (`PostgresDialect`) covering JSON array aggregation, month bucketing, case-insensitive comparison, column type alteration, and PostgreSQL sequence synchronization.
@@ -59,6 +58,16 @@ The `support` module is the primary architectural bedrock and shared foundation 
 9. **REST API Infrastructure**:
    - Provides versioned REST API v1 endpoints for currencies, currency rates, banks, countries, states, UOM categories, and UOMs, documented via Scribe with custom OpenAPI generator `ScalarOpenApiGenerator` (`plugins/webkul/support/src/ScalarOpenApiGenerator.php`).
 
+## Documentation Ownership Boundary
+[VERIFIED]
+
+This document owns the implementation facts for the `support` plugin's shared infrastructure, including `CompanyContext`, company scopes, company-isolation traits, company-consistency guards, sequence generation, shared reference data, and the provider registrations that make those capabilities available.
+
+- The system-wide multi-company security contract, limitations, and bypass conditions are canonical in [`docs/security/multi-company.md`](../security/multi-company.md).
+- Plugin-specific models, fields, guards, and cross-company risks remain in the consuming plugin documents; they must not be replaced by a generic statement that a plugin is “company scoped”.
+- Plugin registration and Install Plugins Dependency semantics are canonical in [`docs/architecture/plugin-registry.md`](../architecture/plugin-registry.md); the `support` document retains only its verified provider configuration and the fact that it declares no Install Plugins Dependency.
+- Test strategy and the complete Playwright atlas are canonical in [`docs/development/testing-strategy.md`](../development/testing-strategy.md); this document retains only direct `support` coverage and known support-specific gaps.
+
 ## Service Provider
 [VERIFIED]
 - **Class**: `Webkul\Support\SupportServiceProvider` (`plugins/webkul/support/src/SupportServiceProvider.php:30`)
@@ -72,7 +81,7 @@ The `support` module is the primary architectural bedrock and shared foundation 
     - Sets package name to `'support'`
     - Declares package as core (`$package->isCore()`)
     - Configures views (`hasViews()`), translations (`hasTranslations()`), and routes (`hasRoutes(['api', 'web'])`)
-    - Registers 35 database migrations via `hasMigrations([...])` and enables execution via `runsMigrations()`
+    - Registers 35 database migration entries via `hasMigrations([...])` (`34` physical migration files on disk in `plugins/webkul/support/database/migrations/`) and enables execution via `runsMigrations()`
     - Registers settings migration `'2026_06_12_000001_create_brand_settings'` via `hasSettings([...])` and enables execution via `runsSettings()`
     - Registers root seeder `'Webkul\Support\Database\Seeders\DatabaseSeeder'` via `hasSeeder()`
   - `packageRegistered()`:
@@ -95,7 +104,7 @@ The `support` module is the primary architectural bedrock and shared foundation 
     - Configures Filament form defaults (forcing `columnSpanFull()` on `Fieldset`, `Grid`, `Section`)
     - Configures RTL view composers, Blade directives (`@rtl`, `@direction`), and render hooks (`PanelsRenderHook::BODY_START`, `PanelsRenderHook::HEAD_END`)
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Support\SupportPlugin` (`plugins/webkul/support/src/SupportPlugin.php:12`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -111,7 +120,7 @@ The `support` module is the primary architectural bedrock and shared foundation 
 - **Boot**:
   - `boot(Panel $panel)` registers render hook `'panels::scripts.before'` with inline JavaScript listening to `'livewire:navigated'` to auto-scroll the active sidebar menu item (`nav .fi-sidebar-item-active`) into view.
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/support/composer.json`
   - Name: `webkul/support`
@@ -131,11 +140,11 @@ The `support` module is the primary architectural bedrock and shared foundation 
   - `knuckleswtf/scribe` (`v5.2.0`): Powers REST API documentation generation with `ScalarOpenApiGenerator`.
   - `khaled.alshamaa/ar-php` (`6.4.4`): Used in `prepare_rtl_html()` helper for Arabic glyph reshaping and RTL table restructuring.
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `SupportServiceProvider::configureCustomPackage()` does not declare any runtime dependencies via `hasDependencies()` or `hasDependency()`.
+None (`—`). `SupportServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()` or `hasDependency()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/support/`:
 
@@ -295,6 +304,7 @@ plugins/webkul/support/
 │   │   │   ├── CanBeHidden.php
 │   │   │   ├── CanBeSummarized.php
 │   │   │   ├── HandlesCrossCompanyException.php
+│   │   │   ├── HasNavigationLabelTitles.php
 │   │   │   ├── HasRepeatableEntryColumnManager.php
 │   │   │   ├── HasRepeaterColumnManager.php
 │   │   │   ├── HasTranslationFallback.php
@@ -449,6 +459,7 @@ plugins/webkul/support/
 │       ├── BelongsToCompanies.php
 │       ├── BelongsToCompany.php
 │       ├── ChecksCompanyConsistency.php
+│       ├── HasClusterBreadcrumbs.php
 │       ├── HasFilamentDefaults.php
 │       ├── HasRecordNavigationTabs.php
 │       ├── HasRouterMacros.php
@@ -467,13 +478,16 @@ plugins/webkul/support/
     │   │   ├── UOMCategoryTest.php
     │   │   └── UOMTest.php
     │   ├── Filament/
+    │   │   ├── HasClusterBreadcrumbsTest.php
+    │   │   ├── HasNavigationLabelTitlesTest.php
     │   │   └── ResourceGlobalSearchSmokeTest.php
     │   ├── Locale/
     │   │   ├── ProfileLanguageUpdateTest.php
     │   │   └── SetLocaleMiddlewareTest.php
     │   └── Workflows/
     │       ├── CompanyIsolationTest.php
-    │       └── CompanyScopingInvariantsTest.php
+    │       ├── CompanyScopingInvariantsTest.php
+    │       └── DefaultCurrencyResolutionTest.php
     └── Helpers/
         ├── CompanyHelper.php
         ├── CompanyScopeHelper.php
@@ -561,7 +575,7 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
   `plugins/webkul/support/database/migrations/2026_03_09_000001_add_unique_index_to_companies_name.php` exists on disk but is not listed in `SupportServiceProvider::hasMigrations()`.
   [UNKNOWN] Whether this omission was an unintentional oversight during migration staging or a deliberate design decision to allow duplicate branch names under distinct parent companies remains unknown from repository git history.
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 ### Resources (9 Resources in `src/Filament/Resources/`):
 1. `CompanyResource` (`Webkul\Support\Filament\Resources\CompanyResource`):
@@ -619,6 +633,19 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
 - **Table Columns**: `ProgressBarEntry`.
 - **Table Summarizers**: `Sum`, `Average`, `Count`, `Range`, `Summarizer`.
 
+### Shared Navigation & Breadcrumb Traits:
+- **`HasNavigationLabelTitles`** (`Webkul\Support\Filament\Concerns\HasNavigationLabelTitles`):
+  Harmonizes resource breadcrumbs, list page titles, relation tab titles, and top navigation labels with `getNavigationLabel()`. Delegates `getTitleCasePluralModelLabel()` to `getNavigationLabel()`, falling back to `Str::ucwords(static::getPluralModelLabel())`. Eliminates duplicate Arabic translation templates and definite/indefinite mismatches. Invariant: MUST only be attached to the top-most resource in an inheritance chain. Consumed by 19 plugins across 119 files.
+- **`HasClusterBreadcrumbs`** (`Webkul\Support\Traits\HasClusterBreadcrumbs`):
+  Ensures child pages and resources inside a cluster display the localized, translated cluster label in their breadcrumb path (`getClusterBreadcrumb()` returns `static::getNavigationLabel()`). Consumed across 14 plugins in 47 cluster files.
+
+### Reusable Filament Concerns:
+- **`HandlesCrossCompanyException`** (`Webkul\Support\Filament\Concerns\HandlesCrossCompanyException`): Catches `CrossCompanyException` thrown during a page's parent `create()` or `save()` call and presents a Filament danger notification. Use it on write pages whose model operation can throw this exception. It is UI error handling, not a replacement for `ChecksCompanyConsistency` or other server-side validation.
+- **`HasRepeaterColumnManager`** and **`HasRepeatableEntryColumnManager`** (`Webkul\Support\Filament\Concerns\`): Connect the custom table-style Repeater and RepeatableEntry components to their column visibility and ordering controls. The form concern exposes `applyRepeaterColumnManager()` and `resetRepeaterColumnManager()` for a named repeater.
+- **`HasRecordNavigationTabs`** (`Webkul\Support\Traits\HasRecordNavigationTabs`): Renders resource record sub-navigation as a header widget and allows pages to add further header widgets through `getAdditionalHeaderWidgets()`.
+- **`RefreshesRecordState`** (`Webkul\Support\Traits\RefreshesRecordState`): Refreshes the saved model, clears loaded relations, refills the form, and remembers form data after `afterSave()`. Use when a save can update persisted values or relations that the page must immediately display; it is not required on every edit page.
+- **Translatable page concerns** (`TranslatableCreateRecord`, `TranslatableEditRecord`, `TranslatableListRecords`, `TranslatableManageRecords`, and `TranslatableViewRecord`): Adapt the corresponding Filament page lifecycles for translated content and locale switching. The edit concern also applies the active-locale fallback when filling translated attributes. See the `blogs` and `website` plugin documents for consumers.
+
 ## Panels
 [VERIFIED]
 - **`admin` Panel**:
@@ -630,7 +657,7 @@ The `support` plugin defines 23 Eloquent models under `plugins/webkul/support/sr
   - No resources or admin pages registered.
   - Multi-company scoping rules, database dialects, and helpers remain active at runtime.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 
 ### Global Helper Functions (`src/helpers.php`)
@@ -641,6 +668,12 @@ The `support` plugin provides foundational utility functions loaded globally at 
 4. **`money(...)`**: Localized currency formatter supporting standard Latin and Arabic numerals, locale handling, and division factors.
 5. **`allowed_companies(): Collection`**: Resolves the collection of allowed `Company` models accessible to the current user via `app(CompanyContext::class)->allowedCompanies()`.
 6. **`allowed_company_ids(): array`**: Resolves the array of allowed company IDs via `app(CompanyContext::class)->allowedIds()`. Used for multi-tenant authorization guards and cross-company form querying.
+7. **`settings(string $settings): object`**: Resolves a registered settings object through `SettingsRegistry`.
+8. **`current_company(): ?Company`** and **`current_company_id(): ?int`**: Resolve the active company model or ID through `CompanyContext`.
+9. **`db_dialect(): DatabaseDialect`**: Resolves the registered database dialect abstraction. Driver-specific SQL behavior belongs in `DatabaseDialect` implementations rather than inline driver checks.
+10. **`owned_by_company($companyId = null): Closure`**: Builds a query constraint for company-owned or shared records. Form helpers **`clear_foreign_company_values()`** and **`reapply_company_defaults()`** clear invalid relationship selections and restore company-dependent field defaults when the form's company changes; these UI helpers do not replace model-level company consistency checks.
+11. **Numeric and time helpers**: `float_round()`, `float_compare()`, `float_is_zero()`, and `float_check_precision()` support precision-aware numeric operations; `format_float_time()` and `parse_float_time()` convert between decimal time and `HH:MM` form. See [`docs/business-rules/accounting.md`](../business-rules/accounting.md) and [`docs/plugins/maintenance.md`](maintenance.md) for domain usage.
+12. **Other helpers**: `random_color()` generates a color value; `make_aware()` returns the original date-time value and a timezone conversion callback; `prepare_rtl_html()` applies RTL-oriented HTML normalization. Their implementation in `src/helpers.php` remains authoritative.
 
 ### 1. `SequenceService` (`plugins/webkul/support/src/Services/SequenceService.php`)
 The centralized document numbering service.
@@ -710,7 +743,7 @@ None (`—`). There are zero dedicated Listener classes defined in `plugins/webk
 [VERIFIED]
 None (`—`). There are zero dedicated Eloquent Observer classes defined in `plugins/webkul/support/src`. Model lifecycle hooks are registered directly inside model `boot()` methods (e.g. `creator_id` assignment on `creating`, `Sequence` reset frequency cache invalidation on `saving`).
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The `support` plugin defines 10 Policy classes under `plugins/webkul/support/src/Policies/`, enforcing standard Filament Shield permission keys (`view_any_*`, `view_*`, `create_*`, `update_*`, `delete_*`, `delete_any_*`, `force_delete_*`, `restore_*`):
 
@@ -777,7 +810,7 @@ Prefix: `admin/api/v1/support`, Middleware: `['auth:sanctum']`, Route Name Prefi
 ## Tests
 [VERIFIED]
 **Test Coverage Status: HAS TESTS.**
-The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/support/tests/` comprising 13 feature test files and 5 test helper classes:
+The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/support/tests/` comprising **15 `*Test.php` feature test files and 5 test helper classes** (`20` total files; see [`docs/plugins/README.md`](README.md)):
 
 ### Feature Tests:
 1. `plugins/webkul/support/tests/Feature/API/V1/BankTest.php`: CRUD, soft delete, restore, force delete, Spatie query builder filtering/sorting on banks API.
@@ -787,12 +820,14 @@ The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/
 5. `plugins/webkul/support/tests/Feature/API/V1/StateTest.php`: State index, create, update, delete endpoints.
 6. `plugins/webkul/support/tests/Feature/API/V1/UOMCategoryTest.php`: Unit of measure category management.
 7. `plugins/webkul/support/tests/Feature/API/V1/UOMTest.php`: Nested unit of measure endpoints with ratio precision.
-8. `plugins/webkul/support/tests/Feature/Filament/ResourceGlobalSearchSmokeTest.php`: Verifies global search provider across resources.
-9. `plugins/webkul/support/tests/Feature/Locale/ProfileLanguageUpdateTest.php`: Verifies user locale updates.
-10. `plugins/webkul/support/tests/Feature/Locale/SetLocaleMiddlewareTest.php`: Verifies application locale resolution.
-11. `plugins/webkul/support/tests/Feature/Workflows/CompanyIsolationTest.php`: Verifies multi-company tenant isolation invariants (record hiding across companies, active company switching, allowed company scoping).
-12. `plugins/webkul/support/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`: Verifies automated company assignment and shared model declarations (`ActivityPlan`, `Calendar`, `Sequence`, `UtmCampaign`).
-13. `plugins/webkul/support/tests/Feature/Workflows/DefaultCurrencyResolutionTest.php`: Verifies default currency resolution hierarchy (country currency -> app.currency config fallback -> first active currency), ISO code lookup via `findByCode()`, and company currency assignment activation.
+8. `plugins/webkul/support/tests/Feature/Filament/HasClusterBreadcrumbsTest.php`: Verifies cluster breadcrumb trail generation on clustered pages and resources.
+9. `plugins/webkul/support/tests/Feature/Filament/HasNavigationLabelTitlesTest.php`: Verifies navigation label title resolution on Filament pages.
+10. `plugins/webkul/support/tests/Feature/Filament/ResourceGlobalSearchSmokeTest.php`: Verifies global search provider across resources.
+11. `plugins/webkul/support/tests/Feature/Locale/ProfileLanguageUpdateTest.php`: Verifies user locale updates.
+12. `plugins/webkul/support/tests/Feature/Locale/SetLocaleMiddlewareTest.php`: Verifies application locale resolution.
+13. `plugins/webkul/support/tests/Feature/Workflows/CompanyIsolationTest.php`: Verifies multi-company tenant isolation invariants (record hiding across companies, active company switching, allowed company scoping).
+14. `plugins/webkul/support/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`: Verifies automated company assignment and shared model declarations (`ActivityPlan`, `Calendar`, `Sequence`, `UtmCampaign`).
+15. `plugins/webkul/support/tests/Feature/Workflows/DefaultCurrencyResolutionTest.php`: Verifies default currency resolution hierarchy (country currency -> app.currency config fallback -> first active currency), ISO code lookup via `findByCode()`, and company currency assignment activation.
 
 ### Test Helpers:
 - `CompanyHelper.php`: User authentication with company contexts and session state setup.
@@ -801,13 +836,19 @@ The `support` plugin contains a dedicated Pest test suite under `plugins/webkul/
 - `SecurityHelper.php`: Disables and restores user permission events during tests.
 - `TestBootstrapHelper.php`: Test environment initialization.
 
-## Runtime dependencies
-[VERIFIED]
-None (`—`).
+Company-scoped model factories may use `Webkul\Support\Database\Factories\Concerns\HasCompanyDefault` to assign a company during `afterMaking()` when the model allows automatic company assignment. Its `company(Company|int $company)` state helper provides an explicit company override; use the concern only on factories for models that follow this convention.
 
-## Cross-plugin relationships
+## Shared Infrastructure Dependencies
 [VERIFIED]
-The `support` plugin provides shared infrastructure consumed across core and optional plugins in the application (architectural and code-level consumption rather than declared `Package::hasDependencies()` runtime plugin dependencies):
+This section records code-level consumption; the declared Install Plugins Dependency remains empty because `SupportServiceProvider::configureCustomPackage()` does not call `hasDependencies()` or `hasDependency()`.
+
+- **`plugin-manager`**: `SupportServiceProvider` extends `PackageServiceProvider` and supplies the shared package lifecycle used by the core package (`plugins/webkul/support/src/SupportServiceProvider.php`).
+- **`security`**: Support resolves the security `Role`/`User` models, registers `RolePolicy`, and uses security-owned seed data for countries, states, and currencies (`plugins/webkul/support/src/SupportServiceProvider.php`, `plugins/webkul/support/database/seeders/`).
+- **`partners`**: Support relationships and company setup resolve partner master data, including `Partner`, `Bank`, and address geography relations (`plugins/webkul/support/src/Models/Company.php`, `plugins/webkul/support/src/Models/Bank.php`).
+
+## Cross-Plugin Relationships
+[VERIFIED]
+The `support` plugin provides shared infrastructure consumed across core and optional plugins in the application (architectural and code-level consumption rather than a declared `Package::hasDependencies()` Install Plugins Dependency):
 - **`security`**: `User` model defines `allowedCompanies()` and `defaultCompany()`. `SupportServiceProvider` registers `RolePolicy` and `AcceptInvitation` Livewire component.
 - **`partners`**: `Partner` model utilizes `BelongsToCompany` and links to `Bank`, `Country`, `State`, and `Currency`.
 - **`accounts`**: Uses `SequenceService` for invoice/bill/payment numbering (`nextFor($journal)`), `CompanyAwareSettingsRepository` for account/tax settings, and `Currency`/`CurrencyRate` for multi-currency general ledger accounting.
@@ -817,7 +858,7 @@ The `support` plugin provides shared infrastructure consumed across core and opt
 - **`inventories`**: Uses `SequenceService` for warehouse transfers (`OperationType`) and scraps (`inventories.scrap`), and `UOM`/`UOMCategory` for stock tracking.
 - **`chatter`**: Uses `ActivityType` and `ActivityPlan` models from `support` for scheduled activity management.
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 ```
                                  ┌───────────────────────────────┐
@@ -843,7 +884,7 @@ The `support` plugin provides shared infrastructure consumed across core and opt
      └───────────────────────┘       └───────────────────────┘
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Multi-Company Global Scoping**:
    - Models using `BelongsToCompany` automatically filter queries by active session companies (`whereIn('company_id', $activeIds)` or `whereNull('company_id')`).
@@ -860,7 +901,7 @@ The `support` plugin provides shared infrastructure consumed across core and opt
    - UOM categories enforce exactly one `Reference` UOM (`ratio = 1.0`). Larger units divide by ratio; smaller units multiply by ratio.
    - Precision comparisons are governed by `float_compare()`, `float_round()`, and `float_is_zero()`.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 1. **`SchemaRegistry::register()` and `registerGlobal()`**:
    Allows external plugins to inject fields, sections, tabs, or infolists into any Filament resource without modifying core files.
@@ -872,8 +913,14 @@ The `support` plugin provides shared infrastructure consumed across core and opt
    Provides uniform RESTful restore and force-delete endpoint registration for soft-deletable models.
 5. **`PDFHandler` Trait**:
    Can be used by any controller or page to generate and stream RTL-compliant PDF documents.
+6. **`HasNavigationLabelTitles` Concern**:
+   Applied to the top-most resource in an inheritance chain to harmonize navigation labels, list page titles, breadcrumbs, and relation tab titles with localized definite noun forms.
+7. **`HasClusterBreadcrumbs` Trait**:
+   Applied to Filament clusters to guarantee localized cluster breadcrumbs on child pages.
+8. **`HasContributedAttributes` Concern**:
+   Core models that use this concern can accept fillable attributes and casts contributed by other plugins through `contributeFillable()` and `contributeCasts()`. This lets plugins extend supported models without editing their base model classes; verify the owning model and contribution registration before adding a contribution.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 **Test Coverage Status: HAS TESTS.**
 
@@ -899,7 +946,7 @@ The `support` plugin provides shared infrastructure consumed across core and opt
 5. **Super Admin Scope Bypass Blast Radius**:
    - The global `bypass_company_scope` Gate rule bypasses `CompanyScope` queries for any user with the `super_admin` role. In multi-tenant deployments, super admins seeing cross-company records in dropdowns must exercise caution not to link foreign company entities together manually.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 - **Blast Radius**: Critical / System-Wide.
 - `support` is the foundation of the entire ERP. Any modification to `CompanyContext`, `SequenceService`, `BelongsToCompany`, `CompanyScope`, `DatabaseDialect`, or `SchemaRegistry` directly impacts the shared infrastructure consumed across core and optional plugins in the repository (see canonical architecture overview in [`docs/architecture/overview.md`](../architecture/overview.md)).
@@ -924,4 +971,6 @@ The `support` plugin provides shared infrastructure consumed across core and opt
 | Company Aware Settings | `plugins/webkul/support/src/Settings/CompanyAwareSettingsRepository.php` | Lines 9–204 (`CompanyAwareSettingsRepository`) |
 | Quick Navigator Palette | `plugins/webkul/support/src/Services/QuickNavigator.php` | Lines 11–278 (`groups()`, `createNodes()`, `flat()`) |
 | Soft Delete Router Macro | `plugins/webkul/support/src/Traits/HasRouterMacros.php` | Lines 9–35 (`registerRouterMacros()`) |
+| Navigation Label Harmonization Concern | `plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php` | Lines 19–30 (`HasNavigationLabelTitles`) |
+| Cluster Breadcrumb Localization Trait | `plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php` | Lines 5–11 (`HasClusterBreadcrumbs`) |
 | Missing EmailTemplate Migration | `plugins/webkul/support/src/SupportServiceProvider.php` | Line 60 (declared), `database/migrations/` (absent) |

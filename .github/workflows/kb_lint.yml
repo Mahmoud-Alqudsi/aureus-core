@@ -1,0 +1,34 @@
+name: Knowledge Base Validation
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  knowledge_base:
+    name: Knowledge Base Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test knowledge-base linter
+        run: python -m unittest discover -s scripts/tests -p 'test_*.py' -v
+
+      - name: Lint knowledge base
+        run: PYTHONDONTWRITEBYTECODE=1 python scripts/kb_lint.py --root . --strict --all

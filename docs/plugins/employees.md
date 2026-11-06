@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/employees
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:41` as `Webkul\Employee\EmployeeServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `EmployeeServiceProvider` registers package capabilities, but Filament admin panel resources, pages, and clusters are discovered and registered only when `Package::isPluginInstalled('employees')` returns true (`plugins/webkul/employees/src/EmployeePlugin.php:23-47`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without calling `$package->isCore()` (`plugins/webkul/employees/src/EmployeeServiceProvider.php:18-56`). Execution and Filament UI contribution are gated by runtime installation verification via `Package::isPluginInstalled('employees')` (`plugins/webkul/employees/src/EmployeePlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `EmployeeServiceProvider` registers package capabilities, but Filament admin panel resources, pages, and clusters are discovered and registered only when `Package::isPluginInstalled('employees')` returns true (`plugins/webkul/employees/src/EmployeePlugin.php:23-47`).
 
 ## Purpose
 [VERIFIED]
@@ -98,7 +96,7 @@ The `employees` module manages human capital, organizational structures, employe
   - `packageBooted()`:
     - Empty implementation (`//`).
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Employee\EmployeePlugin` (`plugins/webkul/employees/src/EmployeePlugin.php:9`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -124,9 +122,11 @@ Defined in `plugins/webkul/employees/composer.json`:
   - `Webkul\Employee\Tests\`: `tests/`
 - **Laravel Package Discovery**: Registers `Webkul\Employee\EmployeeServiceProvider`
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-**None (`—`)**. `EmployeeServiceProvider` does not invoke `Package::hasDependencies([...])`. It is a foundational optional plugin with no prerequisite optional modules.
+
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`):** None (`—`). `EmployeeServiceProvider` does not invoke `hasDependencies()` (`plugins/webkul/employees/src/EmployeeServiceProvider.php`).
+- The plugin is foundational for other HR modules, but its code-level consumption of shared infrastructure is recorded separately in [`Shared Infrastructure Dependencies`](#shared-infrastructure-dependencies).
 
 ## Directory Structure
 [VERIFIED]
@@ -617,7 +617,7 @@ Employment contract types.
 - `creator_id`: unsigned bigint, nullable, foreign key → `users.id` (onDelete: set null)
 - `created_at`, `updated_at`: timestamps
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 All UI resources belong to the `NavigationGroup::Employee` navigation group:
 
@@ -694,7 +694,7 @@ All UI resources belong to the `NavigationGroup::Employee` navigation group:
 - **Admin Panel (`admin`)**: Fully integrated. All 2 top-level resources, 2 clusters, 8 cluster resources, and relation managers register under the `admin` panel.
 - **Customer Panel (`customer`)**: Not registered. `EmployeePlugin::register` explicitly enforces `$panel->when($panel->getId() == 'admin', ...)`.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 - **`Webkul\Chatter\Services\ChatterCleanupService`**: Invoked upon plugin uninstallation in `EmployeeServiceProvider` (`plugins/webkul/employees/src/EmployeeServiceProvider.php:52`) to clean up chatter audit records and activity logs for `Department::class` and `Employee::class`.
 
@@ -714,7 +714,7 @@ None (`—`).
 [VERIFIED]
 None registered in `EmployeeServiceProvider`. All lifecycle hooks are encapsulated within model `boot()` methods.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The plugin implements 10 policy classes registered in `plugins/webkul/employees/src/Policies/`:
 
@@ -755,7 +755,7 @@ Structure per locale includes:
 
 ## Tests
 [VERIFIED]
-The plugin includes **5 Pest feature test files** and **1 test helper** located in `plugins/webkul/employees/tests/`:
+The plugin includes **5 `*Test.php` feature test files** and **1 test helper** (`6` total files; see [`docs/plugins/README.md`](README.md)) located in `plugins/webkul/employees/tests/`:
 
 1. **`tests/Feature/Filament/ManageResumeTest.php`**:
    - Tests rendering the Manage Resume page for an employee (`ManageResume::class`).
@@ -785,13 +785,22 @@ The plugin includes **5 Pest feature test files** and **1 test helper** located 
    - Asserts valid enum constraints on factory generation for `Gender`, `DistanceUnit`, and `MaritalStatus`.
    - Tests relationship resolution for `employmentType`.
 
-5. **`tests/Helpers/EmployeeHelper.php`**:
+6. **`tests/Helpers/EmployeeHelper.php`**:
    - Provides test utility methods `EmployeeHelper::employee()` and `EmployeeHelper::resume()`.
    - Explicitly avoids `Employee::factory()` to prevent infinite factory recursion caused by circular dependencies with `DepartmentFactory`.
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-**None (`—`)**. Does not declare runtime plugin dependencies (`Package::hasDependencies()`).
+
+This section records code-level consumption; the plugin declares no prerequisite optional plugins in `hasDependencies()`.
+
+- **`plugin-manager`**: `EmployeeServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/employees/src/EmployeeServiceProvider.php`).
+- **`support`**: Employee and department screens/models use company, calendar, activity-plan, navigation, and shared support services (`plugins/webkul/employees/src/Models/`, `plugins/webkul/employees/src/Filament/`).
+- **`security`**: Employees link to security users, companies, policies, and authorization resources (`plugins/webkul/employees/src/Models/`, `plugins/webkul/employees/src/Filament/`, `plugins/webkul/employees/config/filament-shield.php`).
+- **`partners`**: Employee records synchronize their individual partner relationship (`plugins/webkul/employees/src/Models/Employee.php`).
+- **`chatter`**: Employee and department records use shared activity/audit actions and cleanup (`plugins/webkul/employees/src/Models/`, `plugins/webkul/employees/src/Filament/`, `plugins/webkul/employees/src/EmployeeServiceProvider.php`).
+- **`fields`**: Employee and department resources/models consume dynamic custom fields (`plugins/webkul/employees/src/Models/`, `plugins/webkul/employees/src/Filament/`).
+- **`table-views`**: Employee, department, job-position, and skill list pages use preset table views (`plugins/webkul/employees/src/Filament/`).
 
 ## Cross-Plugin Relationships
 [VERIFIED]
@@ -845,10 +854,10 @@ graph TD
 - **`support`**: Models consume `BelongsToCompany`, `Company`, `Country`, `State`, and `ProgressBarEntry`. `Calendar`, `CalendarAttendance`, and `CalendarLeave` subclass Core Support working schedule entities.
 - **`chatter`**: `Employee` and `Department` use `HasChatter` and `HasLogActivity` for universal audit feeds, follower tracking, and activity planning.
 - **`fields`**: `Employee`, `Department`, `EmployeeJobPosition`, `WorkLocation`, `Skill`, `SkillType`, `DepartureReason`, `EmployeeCategory`, and `EmploymentType` use `HasCustomFields` for runtime custom schema additions.
-- **`recruitments`**: Declares `employees` as a runtime dependency. Converts hired candidates into active `Employee` records; links job applications to `EmployeeJobPosition` and `Department`; evaluates candidate skills against `Skill`, `SkillLevel`, and `SkillType`.
-- **`time-off`**: Declares `employees` as a runtime dependency. All leave requests (`time_off_leaves`) and balance allocations (`time_off_leave_allocations`) reference `Employee` and `Department`.
+- **`recruitments`**: Declares `employees` as an Install Plugins Dependency. Converts hired candidates into active `Employee` records; links job applications to `EmployeeJobPosition` and `Department`; evaluates candidate skills against `Skill`, `SkillLevel`, and `SkillType`.
+- **`time-off`**: Declares `employees` as an Install Plugins Dependency. All leave requests (`time_off_leaves`) and balance allocations (`time_off_leave_allocations`) reference `Employee` and `Department`.
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 ### 1. Employee Creation & Partner Master Synchronization
 ```mermaid

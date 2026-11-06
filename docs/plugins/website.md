@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/website
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:65` as `Webkul\Website\WebsiteServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `WebsiteServiceProvider` registers the package and configures panel integration via `Panel::configureUsing()`, but Filament admin and customer panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('website')` returns `true` (`plugins/webkul/website/src/WebsitePlugin.php:36-103`). When uninstalled, `WebsiteServiceProvider::packageBooted()` registers a fallback route at `/` redirecting unauthenticated requests directly to the admin login page (`plugins/webkul/website/src/WebsiteServiceProvider.php:54-60`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without calling `$package->isCore()` (`plugins/webkul/website/src/WebsiteServiceProvider.php:23-48`). Execution and Filament UI contribution are gated by runtime installation verification via `Package::isPluginInstalled('website')` (`plugins/webkul/website/src/WebsitePlugin.php:36`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `WebsiteServiceProvider` registers the package and configures panel integration via `Panel::configureUsing()`, but Filament admin and customer panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('website')` returns `true` (`plugins/webkul/website/src/WebsitePlugin.php:36-103`). When uninstalled, `WebsiteServiceProvider::packageBooted()` registers a fallback route at `/` redirecting unauthenticated requests directly to the admin login page (`plugins/webkul/website/src/WebsiteServiceProvider.php:54-60`).
 
 ## Purpose
 [VERIFIED]
@@ -68,7 +66,7 @@ The `website` module provides the public web portal, translatable Content Manage
     - Registers uninstallation hook via `hasUninstallCommand()`.
     - Sets package icon identifier to `website` (`icon('website')`).
     - Does **not** call `$package->isCore()` (confirming optional plugin status).
-    - Does **not** declare runtime dependencies (`hasDependencies()` is omitted).
+    - Does **not** declare an Install Plugins Dependency (`hasDependencies()` is omitted).
   - `packageBooted()`:
     - Registers custom stylesheet: `resources/dist/website.css` via `FilamentAsset::register()`.
     - Checks `Package::isPluginInstalled('website')`. If not installed, defines fallback route `Route::get('/', fn () => redirect()->route('filament.admin.auth.login'))` and returns early.
@@ -78,7 +76,7 @@ The `website` module provides the public web portal, translatable Content Manage
     - Registers `WebsitePlugin::make()` with all Filament panels via `Panel::configureUsing()`.
     - Binds `Filament\Auth\Http\Responses\Contracts\LogoutResponse` to `Webkul\Website\Http\Responses\LogoutResponse`.
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Website\WebsitePlugin` (`plugins/webkul/website/src/WebsitePlugin.php:22`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -118,15 +116,10 @@ Defined in `plugins/webkul/website/composer.json`:
   - `Webkul\Website\Tests\`: `tests/`
 - **Require Dependencies**: None declared in plugin `composer.json` (inherits root Laravel, Filament, Spatie Translatable, and Spatie LaravelSettings dependencies).
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-- **Declared Runtime Dependencies (`Package::hasDependencies([...])`)**: None (`—`). The plugin does not declare dependencies in `WebsiteServiceProvider`.
-- **Implicit Core Dependencies**:
-  - `partners`: Target of schema alterations on `partners_partners`, base `Partner` model, and `PartnerSchemaRegistry` extension hooks.
-  - `security`: Authenticated `User` model (`creator_id` foreign keys and audit tracking).
-  - `support`: Core settings infrastructure, `NavigationGroup` enums, and Translatable traits.
-  - `plugin-manager`: Base `PackageServiceProvider` and `Package::isPluginInstalled()` runtime gates.
-  - `table-views`: Preset table tab filtering on `PageResource` (`HasTableViews`).
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`)**: None (`—`). The plugin does not declare dependencies in `WebsiteServiceProvider`.
+- No optional plugin is declared through `Package::hasDependencies([...])`; code-level consumption and conditional downstream integrations are recorded separately below.
 
 ## Directory Structure
 [VERIFIED]
@@ -445,7 +438,7 @@ The `website` module provides the complete authentication backbone for Aureus ER
 - **Send Reset Link Action (`SendPortalPasswordResetAction`)**: Resends the customer password reset email.
 - **Revoke Access Action (`RevokePortalAccessAction`)**: Calls `PortalAccess::revoke($partner)`, deleting active reset tokens and setting `partners_partners.password = null`.
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### 1. Customer Panel Components (`src/Filament/Customer/`)
@@ -544,12 +537,12 @@ The `website` module provides the complete authentication backbone for Aureus ER
 - **`admin` Panel**: Fully registered. Discovers admin resources (`PageResource`, `PartnerResource`), admin pages (`WebsiteDashboard`), clusters (`Configurations`, `PluginSettings`), and dashboard widgets.
 - **`customer` Panel**: Fully registered. Configures auth overrides (`Login`, `Register`, `RequestPasswordReset`, `ResetPassword`), discovers customer resources (`PageResource`), customer pages (`Homepage`), customer clusters (`Account`), top navigation header items, auth links topbar hook, and customer footer hook.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 - **`Webkul\Website\Support\PortalAccess`**: Static domain helper managing customer portal accessibility, password generation, credential validation, reset link dispatching, and access revocation.
 - **`Webkul\Website\PortalContributions`**: Static UI registry wiring portal access columns, filter constraints, infolist sections, and action groups into `PartnerSchemaRegistry`.
 
-## Events & Listeners
+## Events, Listeners, and Observers
 [VERIFIED]
 - **`Illuminate\Auth\Events\Login`**: Intercepted in `WebsiteServiceProvider::packageBooted()`. When `$event->guard === 'customer'`, automatically records the timestamp to `partners_partners.last_login_at` via `$event->user->forceFill(['last_login_at' => now()])->saveQuietly()`.
 - **`Filament\Auth\Events\Registered`**: Dispatched by `Register::register()` upon successful customer registration.
@@ -559,7 +552,7 @@ The `website` module provides the complete authentication backbone for Aureus ER
 [NOT APPLICABLE]
 The `website` plugin does not define standalone Eloquent observer classes; lifecycle hooks (`creator_id` assignment on `Page`, last login timestamp tracking) are handled via model boot callbacks and Laravel event listeners.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 Authorization is governed by Filament Shield and dedicated model policy classes:
 - **`Webkul\Website\Policies\PagePolicy`**:
@@ -610,14 +603,19 @@ Translation structure:
 ## Tests
 [VERIFIED]
 - **Backend PHP Tests**: **0 test files**. No unit, feature, or integration Pest/PHPUnit test files exist in `plugins/webkul/website/tests/` or in the root `tests/` directory.
-- **Browser E2E Tests**: Playwright TypeScript test specs exist at `tests/e2e-pw/tests/06_website/01_websitePages.spec.ts` and `tests/e2e-pw/tests/06_website/02_websiteBlogs.spec.ts`.
+- **Browser E2E Tests**: Playwright TypeScript coverage exists in [`06_website/01_websitePages.spec.ts`](../../tests/e2e-pw/tests/06_website/01_websitePages.spec.ts) and [`06_website/02_websiteBlogs.spec.ts`](../../tests/e2e-pw/tests/06_website/02_websiteBlogs.spec.ts). See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the page-object mapping and coverage limits.
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-- **Mandatory Runtime Dependencies**: None declared in `PackageServiceProvider`.
-- **Required Core Modules**: `partners`, `security`, `support`, `plugin-manager`, `table-views`.
+- This section records code-level consumption; the plugin declares no prerequisite optional plugins in `hasDependencies()`.
+- **`plugin-manager`**: `WebsiteServiceProvider`, `WebsitePlugin`, and portal/dashboard components use the shared package lifecycle and installation checks (`plugins/webkul/website/src/WebsiteServiceProvider.php`, `plugins/webkul/website/src/WebsitePlugin.php`).
+- **`partners`**: Supplies the partner base model, partner schema registry, and partner resources extended by the website portal (`plugins/webkul/website/src/PortalContributions.php`, `plugins/webkul/website/src/Models/Partner.php`, `plugins/webkul/website/src/Filament/Admin/Resources/PartnerResource.php`).
+- **`security`**: Supplies authenticated users and policy authorization for pages and portal partners (`plugins/webkul/website/src/Models/Page.php`, `plugins/webkul/website/src/Policies/`).
+- **`support`**: Supplies navigation groups, settings/translation infrastructure, and shared Filament concerns (`plugins/webkul/website/src/Filament/`, `plugins/webkul/website/src/Settings/`).
+- **`fields`**: Supplies dynamic custom fields for website pages and their resource (`plugins/webkul/website/src/Models/Page.php`, `plugins/webkul/website/src/Filament/Admin/Resources/PageResource.php`).
+- **`table-views`**: Supplies preset table views for page listings (`plugins/webkul/website/src/Filament/Admin/Resources/PageResource/Pages/ListPages.php`).
 - **Optional Downstream Consumer Modules**:
-  - `blogs`: Declares runtime plugin dependency on `website` (`Package::hasDependencies(['website'])`). Consumes `WebsiteDashboard` to render blog analytics charts and tables.
+  - `blogs`: Declares an Install Plugins Dependency on `website` (`Package::hasDependencies(['website'])`). Consumes `WebsiteDashboard` to render blog analytics charts and tables.
   - `purchases`: Directly references `Webkul\Website\Filament\Customer\Clusters\Account` and `Webkul\Website\Models\Partner` for customer-side purchase order and quotation self-service.
 
 ## Cross-Plugin Relationships
@@ -630,10 +628,10 @@ Translation structure:
 | `support` [CORE] | UI Infrastructure & Settings Registry | Uses `NavigationGroup::Website`, `NavigationGroup::Dashboard`, `Translatable` traits, and Spatie `ContactSettings`. |
 | `table-views` [CORE] | Table Filtering Presets | Injects `HasTableViews` and `PresetView` (Archived tab) into `PageResource\Pages\ListPages`. |
 | `fields` [CORE] | Custom Field Injection | Uses `HasCustomFields` on `Page` model and `PageResource`. |
-| `blogs` [OPTIONAL] | Dashboard Analytics & Downstream Dependency | `blogs` declares `website` as a runtime dependency. `WebsiteDashboard` dynamically renders 6 blog widgets when `blogs` is installed. |
+| `blogs` [OPTIONAL] | Dashboard Analytics & Downstream Dependency | `blogs` declares `website` as an Install Plugins Dependency. `WebsiteDashboard` dynamically renders 6 blog widgets when `blogs` is installed. |
 | `purchases` [OPTIONAL] | Customer Portal Cluster Sharing | `purchases` places its customer-facing `PurchaseOrderResource` and `QuotationResource` inside `Webkul\Website\Filament\Customer\Clusters\Account`. |
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid
@@ -762,4 +760,4 @@ flowchart TD
 | E-WEB-019 | `plugins/webkul/website/src/Filament/Customer/Resources/PageResource.php` | Lines 1–26 | Customer page viewer resource with record route key `slug` and authorization bypass. |
 | E-WEB-020 | `plugins/webkul/website/src/Filament/Admin/Pages/WebsiteDashboard.php` | Lines 1–84 | Website dashboard with date/author filters, `StatsOverview`, and conditional `blogs` widget integration. |
 | E-WEB-021 | `plugins/webkul/website/src/Settings/ContactSettings.php` | Lines 1–38 | Spatie settings class defining 12 contact/social properties under group `website_contact`. |
-| E-WEB-022 | `plugins/webkul/blogs/src/BlogServiceProvider.php` | Lines 37–39 | Verification that `blogs` declares runtime dependency `hasDependencies(['website'])`. |
+| E-WEB-022 | `plugins/webkul/blogs/src/BlogServiceProvider.php` | Lines 37–39 | Verification that `blogs` declares Install Plugins Dependency `hasDependencies(['website'])`. |

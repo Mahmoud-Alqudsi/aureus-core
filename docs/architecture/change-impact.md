@@ -20,7 +20,7 @@ Change Impact Analysis in Aureus ERP establishes an authoritative, evidence-driv
 
 In an enterprise resource planning (ERP) platform comprising **28 modular plugins**, **2 distinct Filament panels**, **266 database tables**, **1,046 foreign keys**, **28 domain events**, **6 event listeners**, **8 model observers**, and **54 domain services**, changes are almost never strictly local. A one-line adjustment in a model trait, database migration, enum definition, or service method can propagate cascading failures across multi-company isolation boundaries, financial ledgers, transactional workflows, and customer-facing interfaces.
 
-This document transforms the empirical knowledge verified across Phases 0–10 into an operational decision-making framework. It equips developers and AI coding agents to answer six foundational questions before modifying any file:
+This document transforms the empirical knowledge verified across the repository into an operational decision-making framework. It equips developers and AI coding agents to answer six foundational questions before modifying any file:
 1. **What direct, indirect, and transitive components are affected by this change?**
 2. **What architectural, relational, or tenant boundaries are crossed?**
 3. **What business workflows, state transitions, or financial calculations are disturbed?**
@@ -65,7 +65,7 @@ An impact surface exists whenever a proposed modification alters:
 
 ### 3.1 The Foundational Axiom: Local Correctness ≠ System Safety
 
-The governing axiom of Phase 11 is:
+The governing axiom of change impact analysis is:
 
 > **«A change is not safe merely because the modified file is correct. It is safe only when its relevant impact surface has been identified and the appropriate verification has been performed.»**
 >
@@ -118,7 +118,7 @@ Developers and AI agents MUST strictly respect the following ten architectural d
 │ 6  │ Architectural Rationale ≠ Behavior   │ Inferred author intent or historical frequency cannot substitute │
 │    │                                      │ for verified runtime source execution paths.                     │
 ├────┼──────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
-│ 7  │ Composer Dep ≠ Runtime Plugin Dep    │ composer.json manages class autoloading; Package::hasDependencies│
+│ 7  │ Composer Req ≠ Install Plugins Dep   │ composer.json manages class autoloading; Package::hasDependencies│
 │    │ ≠ Code Consumption                   │ governs ERP migration order; code consumption is mere import.    │
 ├────┼──────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
 │ 8  │ Migration File ≠ Executed State      │ A file in database/migrations/ does NOT execute unless registered│
@@ -136,34 +136,7 @@ Developers and AI agents MUST strictly respect the following ten architectural d
 
 ## 4. Source of Truth Hierarchy
 
-When resolving conflicting claims, analyzing change impact, or designing verification procedures, the following strict hierarchy of authority MUST be enforced:
-
-```
-    1. Source Code               (Authoritative implementation reality)
-         │
-         ▼
-    2. Automated Tests           (Verified behavioral specifications)
-         │
-         ▼
-    3. Migrations & DB Schema    (Physical persistence structure)
-         │
-         ▼
-    4. Configuration Files       (Framework and package settings)
-         │
-         ▼
-    5. Composer Configuration    (Package dependencies & lockfile metadata)
-         │
-         ▼
-    6. Canonical Documentation   (docs/* verified knowledge base)
-         │
-         ▼
-    7. Previous AI Statements    (Heuristic statements; zero evidentiary weight)
-```
-
-### Operational Rules for Discrepancies
-- Source code evidence **always overrides** documentation, comments, or external expectations.
-- If existing documentation in `docs/` contradicts verified source code behavior, developers and AI agents MUST NOT silently edit the historical documentation. The discrepancy MUST be formally recorded as a `[PROPOSED CORRECTION]` while current source code dictates the change impact analysis.
-- Previous AI-generated explanations possess zero evidentiary weight unless corroborated by direct repository file and line citations.
+The authoritative source hierarchy and discrepancy rules are maintained in [`AGENTS.md`](../../AGENTS.md#source-of-truth-hierarchy). This impact guide does not define a competing hierarchy.
 
 ---
 
@@ -197,7 +170,7 @@ Developers and AI agents MUST NOT conflate dependency concepts:
 
 ```
 ┌───────────────────────────────┐     ┌────────────────────────────────┐     ┌───────────────────────────────┐
-│     Composer Dependency       │  ≠  │  Plugin Installation Dependency│  ≠  │    Code-Level Consumption     │
+│     Composer Requirement      │  ≠  │  Install Plugins Dependency    │  ≠  │    Code-Level Consumption     │
 ├───────────────────────────────┤     ├────────────────────────────────┤     ├───────────────────────────────┤
 │ • Declared in composer.json   │     │ • Declared in Package provider │     │ • PHP use statements          │
 │ • Governs class autoloading   │     │   via hasDependencies([...])   │     │ • Cross-plugin model calls    │
@@ -206,11 +179,11 @@ Developers and AI agents MUST NOT conflate dependency concepts:
 └───────────────────────────────┘     └────────────────────────────────┘     └───────────────────────────────┘
 ```
 
-1. **Composer Dependency**: Governs PSR-4 class discovery and package merge via `wikimedia/composer-merge-plugin`. Adding a package to `composer.json` does NOT install its database tables or run its seeders.
-2. **Runtime Installation Dependency (`Package::hasDependencies([...])`)**: Declared in `*ServiceProvider::configureCustomPackage()`. Consumed exclusively by `InstallCommand` to enforce database migration order and prerequisite checks.
+1. **Composer Requirement**: Governs PSR-4 class discovery and package merge via `wikimedia/composer-merge-plugin`. Adding a package to `composer.json` does NOT install its database tables or run its seeders.
+2. **Install Plugins Dependency (`Package::hasDependencies([...])`)**: Declared in `*ServiceProvider::configureCustomPackage()`. Consumed by `InstallCommand` to enforce installation order (including database migration order) and prerequisite checks, and read by the plugin-manager `Plugin` model.
 3. **Code-Level Consumption**: Mere PHP `use Webkul\...` imports. If Plugin A imports a model from optional Plugin B without declaring `hasDependencies(['B'])` or checking `Package::isPluginInstalled('B')`, Plugin A will crash at runtime if Plugin B is deactivated.
 
-### 5.3 Verified Runtime Dependency Map
+### 5.3 Verified Install Plugins Dependency Map
 
 The following baseline represents the verified installation-order dependency map:
 
@@ -329,7 +302,7 @@ $package
 - **`time-off` Unregistered Data Migration**: `2026_08_04_100000_share_default_time_off_leave_types.php` exists on disk but is omitted from `TimeOffServiceProvider::hasMigrations()`.
 - **`employees` Orphaned Calendar Migrations**: Three migration files exist on disk in `employees` but were omitted from `EmployeeServiceProvider::hasMigrations()` when calendar logic was centralized.
 
-[VERIFIED] Evidence: `docs/ai/database-rules.md:53-78`.
+[VERIFIED] Evidence: `docs/ai/database-rules.md#verified-repository-anomalies-emailtemplate--newly-discovered-sites`.
 
 ### 7.2 Foreign-Key Delete Behavior Decision Framework
 
@@ -375,7 +348,7 @@ Approximately **143 files** in Aureus ERP execute raw database operations (`DB::
 > 5. Aggregate calculations (`SUM`, `COUNT`) filter out foreign company rows.
 > 6. Results are verified against `CompanyContext` before output.
 
-[VERIFIED] Evidence: `docs/ai/security-rules.md:31-66`.
+[VERIFIED] Evidence: `docs/ai/security-rules.md#2-company-scoped-query-rule-raw-sql--query-builder`.
 
 ---
 
@@ -561,7 +534,7 @@ Whenever a workflow is altered, impact MUST be traced through all eight architec
 └──────────────────────────────┴───────────────┴─────────────────────────────────────────────────────────┘
 ```
 
-[VERIFIED] Evidence: `docs/architecture/events-catalog.md:17-25`.
+[VERIFIED] Evidence: `docs/architecture/events-catalog.md#1-overview--architectural-summary`.
 
 ### 12.2 Synchronous In-Transaction Hazard
 
@@ -602,39 +575,23 @@ Established deferred and reactive mechanisms in Aureus ERP:
 
 ## 13. Testing & Verification Impact
 
-### 13.1 The Coverage Baseline: 11 Tested vs. 17 Untested Plugins
+### 13.1 Current Plugin Test Coverage
 
-```
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 Automated Test Coverage Distribution                                  │
-├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ TESTED PLUGINS (11) — Automated Pest Tests Exist in plugins/webkul/<plugin>/tests/                     │
-│ Core (2):     partners (9 tests), support (17 tests)                                                   │
-│ Optional (9): accounting (9), accounts (42), employees (5), inventories (41), manufacturing (8),       │
-│               products (16), projects (8), purchases (15), sales (17)                                  │
-├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ UNTESTED PLUGINS (17) — Zero Automated Tests (tests/ directory does not exist)                         │
-│ Core (7):     analytics, chatter, fields, full-calendar, plugin-manager, security, table-views         │
-│ Optional (10):barcode, blogs, contacts, invoices, maintenance, payments, recruitments, time-off,       │
-│               timesheets, website                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
-[VERIFIED] Evidence: `docs/ai/testing-rules.md:31-86`.
+The current per-plugin coverage status and exact counts are maintained solely in the [plugin registry](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). Use that inventory to determine whether existing automated tests can verify an affected plugin; this impact guide owns the risk response, not the counts.
 
 ### 13.2 The Testing Governance Principle
 
 > **«Existing lack of tests describes the historical baseline; it does NOT define the future minimum standard.»**
 > **Passing Test Suite ≠ Complete Impact Verification**
 
-- Modifications to the 17 untested plugins (especially `security`, `payments`, `invoices`, and `plugin-manager`) CANNOT rely on existing CI tests to catch regressions.
+- Modifications to plugins without dedicated automated tests (especially `security`, `payments`, `invoices`, and `plugin-manager`) CANNOT rely on existing CI tests to catch regressions.
 - Future changes in critical zones require authoring new Pest tests or undergoing comprehensive manual verification.
 
 ---
 
 ## 14. AI Governance & Knowledge Base Impact
 
-Modifications to Phase 10 AI rule files in `docs/ai/` alter developer and AI coding agent behavior globally:
+Modifications to the AI rule files in `docs/ai/` alter developer and AI coding agent behavior globally:
 - `docs/ai/terminology.md`: Updates naming conventions and misconception boundaries.
 - `docs/ai/forbidden-patterns.md`: Codifies anti-patterns and operational guardrails.
 - `docs/ai/architecture-rules.md`: Governs plugin boundaries, panel separation, and zero-table layers.
@@ -701,13 +658,13 @@ The following comprehensive matrix details the impact surface, hazard level, man
 | **Security - Dual Panel Auth** | Modifying auth guards in `AdminPanelProvider` or `CustomerPanelProvider` | Admin panel (`web`) vs Customer portal (`customer`) authentication | **CRITICAL** | Customer portal accessing administrative models; admin routes exposed without MFA. | Security Specialist & Lead Arch. | Verify guard bindings: `web` -> `App\Models\User`; `customer` -> `Partner`. | Separate feature tests authenticating through admin and customer panels. | `docs/architecture/filament-architecture.md`, `docs/ai/terminology.md`. |
 | **Security - API Routes** | Modifying `routes/api.php` routes or middleware | Headless REST API endpoints, mobile integrations, external sync | **HIGH** | Unauthenticated endpoints exposing sensitive customer or financial data. | Security Specialist | Verify `auth:sanctum` and policy gate middleware on every declared API endpoint. | Pest API tests verifying HTTP 401 on unauthenticated access. | Owning plugin API docs, `docs/ai/security-rules.md`. |
 | **Plugin - Composer Dep** | Adding or altering dependencies in `composer.json` | Vendor package resolution, autoloading, merge-plugin discovery | **HIGH** | Package version conflicts; failed deployment; autoloader bloat. | Tech Lead | Verify `wikimedia/composer-merge-plugin` handles sub-package requirements. | Run `composer validate` and `composer update --dry-run`. | Root and package `composer.json`, `docs/ai/architecture-rules.md`. |
-| **Plugin - Runtime Dep** | Modifying `$package->hasDependencies([...])` array | Plugin installation ordering, prerequisite validation in CLI | **HIGH** | Plugin fails to install due to missing dependencies; migrations run out of order. | Core Architect | Trace `InstallCommand` dependency resolution DAG. | Test installing plugin on clean system via `php artisan plugin:install`. | `docs/architecture/plugin-registry.md`, `docs/ai/plugin-rules.md`. |
-| **Plugin - Code Consumption** | Importing classes from another plugin (`use Webkul\...`) | Cross-plugin coupling, optional module runtime dependencies | **HIGH** | Unhandled `ClassNotFoundException` if consuming plugin is active but provider inactive. | Architecture Lead | Verify consuming plugin guards execution via `Package::isPluginInstalled()`. | Integration test running consuming plugin with target plugin deactivated. | `docs/ai/architecture-rules.md`, `docs/ai/plugin-rules.md`. |
+| **Plugin - Install Plugins Dependency** | Modifying `$package->hasDependencies([...])` array | Plugin installation ordering, prerequisite validation in CLI | **HIGH** | Plugin fails to install due to missing dependencies; migrations run out of order. | Core Architect | Trace `InstallCommand` dependency resolution DAG. | Test installing plugin on clean system via `php artisan plugin:install`. | `docs/architecture/plugin-registry.md`, `docs/ai/plugin-rules.md`. |
+| **Plugin - Code Consumption** | Importing classes from another plugin (`use Webkul\...`) | Cross-plugin coupling, optional module availability at runtime | **HIGH** | Unhandled `ClassNotFoundException` if consuming plugin is active but provider inactive. | Architecture Lead | Verify consuming plugin guards execution via `Package::isPluginInstalled()`. | Integration test running consuming plugin with target plugin deactivated. | `docs/ai/architecture-rules.md`, `docs/ai/plugin-rules.md`. |
 | **Plugin - ServiceProvider** | Modifying `*ServiceProvider.php` methods (`packageBooted`, etc.) | Service bindings, event registrations, render hooks, routes | **CRITICAL** | Core plugin services fail to bind; listeners not registered; application crash. | Core Architect | Verify `configureCustomPackage()`, `packageRegistered()`, and `packageBooted()`. | Smoke test booting application and resolving registered services. | Owning plugin docs, `docs/architecture/overview.md`. |
 | **Plugin - bootstrap/providers** | Adding, removing, or reordering providers in `bootstrap/providers.php` | Laravel framework package auto-discovery and boot order | **CRITICAL** | Entire plugin ceases to load; classes unresolvable; application boot failure. | Core Architect | Verify all 28 plugin service providers are present in the array. | Run `php artisan package:discover` and verify clean framework boot. | `docs/architecture/plugin-registry.md`, `docs/ai/architecture-rules.md`. |
 | **Plugin - Filament Plugin** | Modifying `*Plugin.php` class implementing `Filament\Contracts\Plugin` | Filament panel resource discovery, panel configuration injection | **HIGH** | Resources, pages, and clusters fail to mount in the target Filament panel. | Presentation Lead | Verify `getId()`, `register()`, and `boot()` implementations. | Test panel loading in browser and verify navigation items render correctly. | `docs/architecture/filament-architecture.md`, owning plugin docs. |
 | **Plugin - Zero-Table Layer** | Modifying one of the 6 zero-table presentation plugins | Presentation layers (`accounting`, `barcode`, `contacts`, `invoices`, etc.) | **HIGH** | Violating architectural boundary by adding migrations; schema duplication. | Lead Architect | Verify that zero-table plugins do NOT define `database/migrations/`. | Test presentation features against underlying shared domain tables. | `docs/architecture/overview.md`, `docs/ai/terminology.md`. |
-| **Plugin - New Plugin** | Creating a completely new domain plugin in `plugins/webkul/` | Global ERP architecture, composer merge, installation commands | **CRITICAL** | Non-standard directory structure; missing registration; un-scoped tenancy. | Architecture & Core Board | Execute Phase 10 Plugin Creation Checklist (all 13 structural requirements). | Author full Pest test suite for the new plugin; verify installation CLI. | `docs/architecture/plugin-registry.md`, `docs/ai/plugin-rules.md`. |
+| **Plugin - New Plugin** | Creating a completely new domain plugin in `plugins/webkul/` | Global ERP architecture, composer merge, installation commands | **CRITICAL** | Non-standard directory structure; missing registration; un-scoped tenancy. | Architecture & Core Board | Execute the Plugin Creation Checklist (all 13 structural requirements). | Author full Pest test suite for the new plugin; verify installation CLI. | `docs/architecture/plugin-registry.md`, `docs/ai/plugin-rules.md`. |
 | **UI - Resource Form** | Modifying Form schema in Filament Resource | Admin/Customer data entry, validation, Livewire reactivity | **MEDIUM** | Validation errors blocking save; missing required tenant fields; broken reactivity. | Frontend / UI Lead | Verify Form component schema, validation rules, and Livewire hooks. | Livewire component test asserting form filling and record creation. | Owning plugin Filament docs. |
 | **UI - Resource Table** | Modifying Table columns, filters, or actions in Resource | Record browsing, sorting, searching, bulk actions, data export | **MEDIUM** | Slow query performance on unindexed search columns; broken table actions. | Frontend / UI Lead | Verify eager loading on relational columns to prevent N+1 query loops. | Filament table test verifying search, column display, and action triggers. | Owning plugin Filament docs. |
 | **UI - Resource Pages** | Modifying `List*`, `Create*`, `Edit*`, or `View*` page classes | Resource lifecycle hooks, mutateFormDataBeforeSave, redirect paths | **MEDIUM** | Broken post-save redirects; un-mutated form attributes; broken modal actions. | Frontend / UI Lead | Trace page lifecycle hooks (`mutateFormDataBeforeCreate`, `beforeSave`). | Livewire page test verifying record creation and lifecycle hooks. | Owning plugin Filament docs. |
@@ -736,7 +693,7 @@ The following comprehensive matrix details the impact surface, hazard level, man
 | **Reactive - Console Cron** | Modifying scheduled commands in `routes/console.php` | Background maintenance, automated recurring tasks | **MEDIUM** | Missed execution of scheduled recurring jobs; cron command failures. | DevOps / Core Lead | Verify command signature, parameters, and schedule interval (`daily`, `hourly`). | Test executing command directly via `php artisan` in terminal. | `docs/architecture/overview.md`, `routes/console.php`. |
 | **Services - Domain Service** | Modifying method signatures or logic in Domain Services | Core business calculations, stock moves, invoice posting | **HIGH** | Broken cross-plugin service calls; invalid calculations propagated to models. | Domain Lead | Identify all 54 domain services and audit consuming callers across plugins. | Service unit and integration tests asserting calculation accuracy. | Owning plugin docs, `docs/architecture/overview.md`. |
 | **Services - Cross-Plugin Calls** | Calling an optional plugin service from another plugin | Modularity boundaries, runtime decoupling, optionality | **HIGH** | Application crashes when target optional plugin is disabled in production. | Architecture Lead | Verify existence check: `Package::isPluginInstalled('plugin-name')` before call. | Test executing workflow with target plugin enabled vs deactivated. | `docs/ai/architecture-rules.md`, `docs/ai/plugin-rules.md`. |
-| **Testing - Untested Plugin** | Adding automated tests to one of the 17 untested plugins | Test suite coverage, CI verification reliability | **LOW** *(Positive)* | Test failures caused by incomplete test environment setup or missing factories. | QA / Testing Lead | Follow Phase 10 Testing Rules: create isolated test suite with proper fixtures. | Run `vendor/bin/pest plugins/webkul/<plugin>/tests/`. | `docs/ai/testing-rules.md`. |
+| **Testing - Untested Plugin** | Adding automated tests to one of the 17 untested plugins | Test suite coverage, CI verification reliability | **LOW** *(Positive)* | Test failures caused by incomplete test environment setup or missing factories. | QA / Testing Lead | Follow Testing Rules: create isolated test suite with proper fixtures. | Run `vendor/bin/pest plugins/webkul/<plugin>/tests/`. | `docs/ai/testing-rules.md`. |
 | **Testing - Existing Tests** | Modifying existing Pest tests in the 11 tested plugins | Regression suite validity, continuous integration pipeline | **MEDIUM** | Relaxing assertions weakens quality gate; deleting tests masks regressions. | QA / Testing Lead | Verify assertions remain strict; avoid testing mock data instead of real behavior. | Run full test suite: `php artisan test --compact`. | `docs/ai/testing-rules.md`. |
 | **Testing - Shared Helpers** | Modifying shared test helpers, traits, or factories | All automated tests across plugins using the helper | **HIGH** | Widespread cascading test failures across previously green test suites. | QA / Testing Lead | Run test suites across all 11 tested plugins before committing helper changes. | Run full test runner across all plugins to confirm zero regressions. | `docs/ai/testing-rules.md`. |
 | **AI Rule - terminology.md** | Modifying canonical terms or misconception definitions | AI assistant vocabulary, developer conventions, code generation | **HIGH** | AI agents introducing forbidden terms (`HasCompanyScope`, `self`, `silber/bouncer`). | AI Governance Lead | Verify source code evidence before updating canonical definitions. | Lint living documentation for compliance with terminology rules. | `docs/ai/terminology.md`, all rule files. |
@@ -761,9 +718,9 @@ The Master Change-Impact Matrix synthesizes the complete empirical reality of th
 │ Metric Description                                          │ Value  │
 ├─────────────────────────────────────────────────────────────┼────────┤
 │ Total Change-Impact Matrix Rows                             │ 93     │
-│ Baseline Categories (Prompt Section 8 Seed Rows)            │ 12     │
+│ Baseline Architectural Categories                           │ 12     │
 │ Expanded Rows (Refined from Section 8 Baseline)             │ 36     │
-│ Entirely New Rows (Discovered across Sections 9–21 Audits)  │ 45     │
+│ Entirely New Rows (Discovered across Sections 9–20 Audits)  │ 45     │
 └─────────────────────────────────────────────────────────────┴────────┘
 ```
 
@@ -778,7 +735,7 @@ The 45 entirely new rows introduced beyond the initial baseline cover vital oper
 6. **Asynchronous Runtime Reality**: Explicit governance for queued notifications (`ChatterDatabaseNotification`), client-side polling (`30s`), and scheduled console cron jobs in the absence of queue Job classes.
 7. **Document Locking Duality**: Explicit distinction between sales order boolean locking (`is_locked`) and purchase order state locking (`OrderState::DONE`).
 8. **Testing Governance**: Distinct impact rules for changes in the 11 tested plugins vs changes in the 17 untested plugins.
-9. **AI Rule Governance**: Full blast radius mapping for all 8 Phase 10 AI rule files in `docs/ai/`.
+9. **AI Rule Governance**: Full blast radius mapping for all 8 AI rule files in `docs/ai/`.
 
 ---
 
@@ -833,20 +790,20 @@ Before proposing or applying any code modification, AI agents MUST verify:
 
 ## 19. Known Proposed Corrections & Unresolved Items
 
-The following historical discrepancies identified during Phases 0–10 are preserved here as authoritative context. They MUST NOT be silently altered:
+The following repository discrepancies identified during codebase audits are preserved here as authoritative context. They MUST NOT be silently altered:
 
 ```
 ┌────┬──────────────┬──────────────────────────────┬─────────────────────────────────────────────────────┬──────────────────┐
-│ ID │ Source Phase │ Affected Document / Symbol   │ Documented Discrepancy                              │ Current Status   │
+│ ID │ Domain       │ Affected Document / Symbol   │ Documented Discrepancy                              │ Current Status   │
 ├────┼──────────────┼──────────────────────────────┼─────────────────────────────────────────────────────┼──────────────────┤
-│ C1 │ Phase 10     │ AGENTS.md                    │ Historical Livewire v3 claim; current file states v4 │ Resolved         │
-│ C2 │ Phase 4      │ SupportServiceProvider.php   │ Declares missing migration 'email_templates'        │ Pending fix      │
-│ C3 │ Phase 4      │ SupportServiceProvider.php   │ Missing registration for companies unique index     │ Pending fix      │
-│ C4 │ Phase 4      │ TimeOffServiceProvider.php   │ Missing registration for default leave types        │ Pending fix      │
-│ C5 │ Phase 4      │ EmployeeServiceProvider.php  │ 3 orphaned calendar migration files on disk         │ Pending clean up │
-│ C6 │ Phase 3      │ Webkul\Security\Bouncer      │ Historically conflated with silber/bouncer          │ Documented       │
-│ C7 │ Phase 10     │ Historical Audits            │ Historical claim of 6 observers (actually 7)        │ Documented       │
-│ C8 │ Phase 10     │ Historical Audits            │ Historical claim of 52 services (actually 53)       │ Documented       │
+│ C1 │ AI Context   │ AGENTS.md                    │ Historical Livewire v3 claim; current file states v4 │ Resolved         │
+│ C2 │ Database     │ SupportServiceProvider.php   │ Declares missing migration 'email_templates'        │ Pending fix      │
+│ C3 │ Database     │ SupportServiceProvider.php   │ Missing registration for companies unique index     │ Pending fix      │
+│ C4 │ Database     │ TimeOffServiceProvider.php   │ Missing registration for default leave types        │ Pending fix      │
+│ C5 │ Database     │ EmployeeServiceProvider.php  │ 3 orphaned calendar migration files on disk         │ Pending clean up │
+│ C6 │ Security     │ Webkul\Security\Bouncer      │ Historically conflated with silber/bouncer          │ Documented       │
+│ C7 │ Architecture │ Historical Audits            │ Historical claim of 6 observers (actually 8)        │ Documented       │
+│ C8 │ Architecture │ Historical Audits            │ Historical claim of 52 services (actually 54)       │ Documented       │
 └────┴──────────────┴──────────────────────────────┴─────────────────────────────────────────────────────┴──────────────────┘
 ```
 
@@ -914,50 +871,3 @@ Every rule, catalog entry, and architectural constraint in this document is back
   - `docs/architecture/events-catalog.md`
   - `docs/database/company-isolation.md`
   - `docs/database/schema-conventions.md`
-
----
-
-## 21. Upstream Synchronization Record — 2026-09-18
-
-**Status:** [VERIFIED]
-
-**Accepted range and topology:** `upstream/master` target `d7d471894d91f153633242ce802c464e0414d9bc` was merged into the synchronization commit `dcd449b965dfcdab6cf6f8db54fedb7ef8f05f6a`, then entered `develop` through merge commit `ddbd24ba416d64f8eef81dd8be439ad7105489b2` (PR #10). Both commits preserve merge parents, and the upstream target is reachable from `origin/develop`.
-
-**Observed impact:** The accepted range changes 382 files, including eight plugin migrations and cross-plugin product price-list, sales, purchasing, accounting, support, and installer behavior. No `composer.json` or `composer.lock` change is present in the accepted range. The service providers register all eight migrations. PR #10 CI successfully exercised fresh schema/install behavior through Pest on MySQL and PostgreSQL; the synchronization was reviewed for a development environment without operational data.
-
-**Explicit downstream decisions:**
-
-- The incoming `.github/workflows/playwright_report.yml` and its companion changes to `.github/workflows/playwright_tests.yml` were excluded. The rejected workflow requested `contents: write` and `pull-requests: write`, force-pushed failure reports to `gh-pages`, and created or updated pull-request comments.
-- The resulting installer code retains the downstream privacy behavior: it does not prompt to open GitHub for starring a repository in `InstallCommand` or `InstallERP`.
-
-**Verification record:** Git parent topology, upstream reachability, protected-branch integration, and `git diff --check` were verified. GitHub Actions on synchronization commit `dcd449b96` completed successfully: Pest against MySQL and PostgreSQL, all twelve Playwright database/shard jobs and both report jobs, and the translation check. The local PHP/Composer runtime could not be used for an independent rerun because of a WSL socket failure. Pint and an explicit PHP syntax-only pass were not separate CI jobs. A rehearsal against operational production data is not established by fresh-install CI and remains outside this repository-only verification.
-
-**Evidence:** `git show dcd449b96`; `git show ddbd24ba4`; `git merge-base --is-ancestor d7d471894 origin/develop`; `git diff c2b4ddaa2..origin/develop`; `plugins/webkul/{accounts,inventories,manufacturing,products,purchases,sales}/src/*ServiceProvider.php`; `.github/workflows/{pest_tests,playwright_tests,translations_check}.yml`; GitHub Actions runs `35284954990`, `35284955122`, and `35284955199`; `.github/workflows/playwright_report.yml` at `upstream/master`; `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`; `plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php`.
-
----
-
-## 22. Upstream Synchronization Record — 2026-09-23
-
-**Status:** [VERIFIED]
-
-**Accepted range and topology:** `upstream/master` target `4033c70554ee5d13daeaee52ff14ecf46f365314` (27 commits beyond merge-base `d7d471894d91f153633242ce802c464e0414d9bc`) was merged into synchronization branch `chore/upstream-sync-20260923-2942d1cb8` at merge commit `a0c11c67b56d0974418cb8d6ab50648cddbaeb5a`. Both parent lineages (`2942d1cb8` from `origin/develop` and `4033c7055` from `upstream/master`) are preserved.
-
-**Observed impact:**
-- **Blast radius:** 101 files modified (985 insertions, 705 deletions across `plugins/webkul/*`, `composer.lock`, and precompiled assets).
-- **Database & Schema:** Zero migrations added or modified. The database schema remains unchanged across all 266 tables.
-- **Dependencies:** Filament upgraded from `v5.7.6` to `v5.8.1` in `composer.lock` with updated vendor assets in `public/css/filament/`, `public/fonts/filament/`, and `public/js/filament/`. `composer.json` remained untouched.
-- **Automation & Security:** Zero modifications to `.github/workflows/`. Downstream CI governance and Fast-Track optimizations remain 100% intact.
-- **Domain Bugfixes:**
-  - `accounts`: XSS sanitization on `PaymentTerm` notes, document preview blade templates alignment, purchase order bill confirmation fix via `ConfirmAction`, and relationship query refactoring for soft-deletes.
-  - `fields`: Custom field validation handling improvements (`FieldForm`).
-  - `plugin-manager`: Settings migration automated `--force` flag and Spatie settings cache clearing in `InstallCommand`.
-  - `inventories`: `ProductQuantity` quantities calculations and stock move soft-delete filtering.
-  - `sales`: `OrderLine` fixes and price list navigation layout resolution.
-
-**Explicit downstream decisions:**
-- Downstream privacy and branding preservation retained: the GitHub starring prompt in `InstallCommand` remains removed.
-- CI workflows and AI governance files are preserved as Downstream-Owned assets with zero regression.
-
-**Verification record:** Git parent topology, zero-conflict merge resolution, `git diff --check`, and strict Composer manifest validation (`composer validate --strict`) were verified locally.
-
-**Evidence:** `git show a0c11c67b`; `git rev-parse upstream/master` (`4033c7055`); `git diff 2942d1cb8..HEAD`; `composer validate --strict`.

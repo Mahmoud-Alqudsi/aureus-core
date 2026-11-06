@@ -61,12 +61,12 @@ Evidence: `composer.json` → `extra.merge-plugin.include`; `bootstrap/providers
 [VERIFIED]
 Evidence: `plugins/webkul/plugin-manager/src/Package.php` → `Package::isPluginInstalled()`; `plugins/webkul/plugin-manager/src/Models/Plugin.php`
 
-`Package::hasDependencies([...])` populates the package's in-memory `dependencies` list. It is a runtime plugin dependency declaration, not a Composer dependency. The plugin-manager `InstallCommand` can recursively invoke each dependency's `:install` command before installing the requested package; after installation it persists relationships in `plugin_dependencies`. It does not alter Composer's dependency resolver.
+`Package::hasDependencies([...])` populates the package's in-memory `dependencies` list. It is an Install Plugins Dependency declaration, not a Composer requirement. The plugin-manager `InstallCommand` can recursively invoke each dependency's `:install` command before installing the requested package; after installation it persists relationships in `plugin_dependencies`. It does not alter Composer's dependency resolver.
 
 [VERIFIED]
 Evidence: `plugins/webkul/plugin-manager/src/Package.php` → `Package::hasDependencies()`; `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php` → `InstallCommand::handle()`; `plugins/webkul/plugin-manager/src/Models/Plugin.php` → `Plugin::dependencies()`
 
-The core flag is set by `Package::isCore()`. It is separate from both Composer metadata and the installation-table state. See the complete verified list and declared runtime dependencies in `docs/architecture/plugin-registry.md`.
+The core flag is set by `Package::isCore()`. It is separate from both Composer metadata and the installation-table state. See the complete verified list and the declared Install Plugins Dependency in `docs/architecture/plugin-registry.md`.
 
 ## Filament panel architecture
 
@@ -94,7 +94,7 @@ Evidence: `plugins/webkul/analytics/src/AnalyticServiceProvider.php`; `plugins/w
 
 ## Cross-plugin investigation boundary
 
-Plugins can couple through provider hooks, Laravel events/listeners, and dynamically registered Eloquent relations. These mechanisms mean that a class's directory is not a complete dependency boundary. Before changing a shared model or an event, search for its direct consumers and `resolveRelationUsing` registrations. Detailed event, workflow, database, and security behaviour remains outside this phase.
+Plugins can couple through provider hooks, Laravel events/listeners, and dynamically registered Eloquent relations. These mechanisms mean that a class's directory is not a complete dependency boundary. Before changing a shared model or an event, search for its direct consumers and `resolveRelationUsing` registrations. Detailed event, workflow, database, and security behaviour is covered in the dedicated domain specifications.
 
 [VERIFIED]
 Evidence: `plugins/webkul/sales/src/SaleServiceProvider.php` → `SaleServiceProvider::packageBooted()`; repository search for `resolveRelationUsing`

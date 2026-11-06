@@ -15,7 +15,7 @@ Read [`AGENTS.md`](../../../AGENTS.md), [`docs/ai/context.md`](../../../docs/ai/
 
 Documentation narrows search; source code, tests, schema, configuration, and lockfiles remain authoritative in that order. Use `[VERIFIED]`, `[PARTIALLY VERIFIED]`, `[INFERRED]`, and `[UNKNOWN]` accurately. Do not invent owners, classes, conventions, dates, commits, releases, or runtime behavior.
 
-Keep the root `CHANGELOG.md` for application releases and `docs/CHANGELOG.md` for material knowledge-base evolution. Do not rewrite locked historical phase narratives to make current work appear historical.
+Keep the root `CHANGELOG.md` for application releases and `docs/CHANGELOG.md` for material knowledge-base evolution. Do not rewrite historical changelog entries to make current work appear historical.
 
 ## Deliver the change safely
 

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-08-31
+last_verified: 2026-10-23
 scope: plugins/webkul/timesheets
 confidence: high
 ---
@@ -12,20 +12,18 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:32` as `Webkul\Timesheet\TimesheetServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `TimesheetServiceProvider` registers the package and binds `TimesheetPlugin` to Filament panels via `Panel::configureUsing()`, but admin panel resources and pages are discovered and mounted only if `Package::isPluginInstalled('timesheets')` returns `true` (`plugins/webkul/timesheets/src/TimesheetPlugin.php:23-47`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional module without declaring `$package->isCore()` (`plugins/webkul/timesheets/src/TimesheetServiceProvider.php:15-28`). Execution and Filament UI registration are gated at runtime via `Package::isPluginInstalled('timesheets')` (`plugins/webkul/timesheets/src/TimesheetPlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `TimesheetServiceProvider` registers the package and binds `TimesheetPlugin` to Filament panels via `Panel::configureUsing()`, but admin panel resources and pages are discovered and mounted only if `Package::isPluginInstalled('timesheets')` returns `true` (`plugins/webkul/timesheets/src/TimesheetPlugin.php:23-47`).
 
 ## Purpose
 [VERIFIED]
 The `timesheets` module provides dedicated standalone administrative time tracking, employee work logging, and project task duration management within Aureus ERP. It functions as a lightweight UI, policy, and custom fields layer extending the Project management and Core Analytics infrastructure:
 
 1. **Centralized Time Tracking UI (`TimesheetResource`)**:
-   - Surfaces a top-level administrative timesheet management interface (`admin/timesheets`) under navigation group `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:28-31`).
+   - Surfaces a top-level administrative timesheet management interface (`admin/timesheets`) under navigation group `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:34-36`).
    - Uses a single-page modal-driven table UI (`ManageTimesheets`) utilizing Filament's `ManageRecords` flow for creating, editing, and deleting timesheet entries without leaving the list view.
 2. **Unified Financial/Operational Ledger Reuse**:
    - Rather than creating redundant physical tables, the module extends `Webkul\Project\Models\Timesheet`, which directly extends `Webkul\Analytic\Models\Record` on the Core `analytic_records` database table.
@@ -45,7 +43,7 @@ The `timesheets` module provides dedicated standalone administrative time tracki
   - `configureCustomPackage(Package $package)`:
     - Sets package name: `timesheets` (`TimesheetServiceProvider::$name = 'timesheets'`).
     - Registers translations: `hasTranslations()`.
-    - Declares runtime plugin dependency on `projects`: `hasDependencies(['projects'])` (`plugins/webkul/timesheets/src/TimesheetServiceProvider.php:19-21`).
+    - Declares an Install Plugins Dependency on `projects`: `hasDependencies(['projects'])` (`plugins/webkul/timesheets/src/TimesheetServiceProvider.php:19-21`).
     - Configures CLI installer: `hasInstallCommand(fn (InstallCommand $command) => $command->installDependencies())`.
     - Configures CLI uninstaller: `hasUninstallCommand(fn (UninstallCommand $command) => null)`.
     - Sets package icon: `icon('timesheet')`.
@@ -56,7 +54,7 @@ The `timesheets` module provides dedicated standalone administrative time tracki
   - `packageBooted()`:
     - Empty implementation stub (`//`).
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Timesheet\TimesheetPlugin` (`plugins/webkul/timesheets/src/TimesheetPlugin.php:9`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -84,18 +82,10 @@ Defined in `plugins/webkul/timesheets/composer.json`:
   - `Webkul\Timesheet\Tests\`: `tests/`
 - **Require Dependencies**: None declared in `composer.json` (relies on root workspace Composer manifest and required parent plugins).
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-- **Declared Runtime Dependencies (`Package::hasDependencies([...])`)**:
-  - `projects` (`plugins/webkul/timesheets/src/TimesheetServiceProvider.php:19-21`): Required for project and task base models (`Webkul\Project\Models\Project`, `Webkul\Project\Models\Task`), base timesheet class (`Webkul\Project\Models\Timesheet`), and schema alterations on `analytic_records`.
-- **Implicit Core Plugin Dependencies**:
-  - `analytics`: Underlying database table `analytic_records` and base model `Webkul\Analytic\Models\Record`.
-  - `fields`: Custom fields integration via `Webkul\Field\Traits\HasCustomFields` and `Webkul\Field\Filament\Traits\HasCustomFields`.
-  - `table-views`: Filter preset tabs via `Webkul\TableViews\Filament\Concerns\HasTableViews` and `PresetView`.
-  - `security`: Authentication, authorization policies, and ownership scopes via `Webkul\Security\Traits\HasScopedPermissions` and `Webkul\Security\Models\User`.
-  - `partners`: Partner relationship on the underlying `analytic_records` schema.
-  - `support`: Navigation groupings via `Webkul\Support\Enums\NavigationGroup`, company scope via `Webkul\Support\Traits\BelongsToCompany`, and helper `owned_by_company()`.
-  - `plugin-manager`: Local package lifecycle management and `Package::isPluginInstalled()`.
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`):** `projects` (`plugins/webkul/timesheets/src/TimesheetServiceProvider.php:19-21`). It supplies the project/task base models, the base timesheet model, and the `analytic_records` integration used by this plugin.
+- No other optional plugin is declared through `Package::hasDependencies([...])`; code-level shared-plugin consumption is recorded separately below.
 
 ## Directory Structure
 [VERIFIED]
@@ -241,13 +231,13 @@ classDiagram
   - Created by Core `analytics` plugin: `plugins/webkul/analytics/database/migrations/2024_12_18_131844_create_analytic_records_table.php:14`.
   - Mutated by `projects` plugin: `plugins/webkul/projects/database/migrations/2024_12_18_145142_add_columns_to_analytic_records_table.php:14` (adds foreign keys `project_id` referencing `projects_projects.id` `nullOnDelete` and `task_id` referencing `projects_tasks.id` `nullOnDelete`).
 
-## Filament Resources, Pages, Schemas & Tables
+## Filament Components
 [VERIFIED]
 
 ### 1. `TimesheetResource`
-- **Class**: `Webkul\Timesheet\Filament\Resources\TimesheetResource` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:17`)
+- **Class**: `Webkul\Timesheet\Filament\Resources\TimesheetResource` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:18`)
 - **Model**: `Webkul\Timesheet\Models\Timesheet`
-- **Navigation Group**: `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:30`)
+- **Navigation Group**: `NavigationGroup::Project` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:34-36`)
 - **Navigation Label**: `timesheets::filament/resources/timesheet.navigation.title` ("Timesheets")
 - **Global Search Attributes**: `['user.name', 'project.name', 'task.title', 'date']` (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php:40`)
 - **Global Search Result Title**: `$record->user->name`
@@ -317,11 +307,11 @@ The `timesheets` plugin defines 0 Filament Clusters and 0 Filament Widgets.
 - **Admin Panel (`admin`)**: **Active**. All resources and pages are registered strictly when `$panel->getId() == 'admin'` (`plugins/webkul/timesheets/src/TimesheetPlugin.php:28`).
 - **Customer Panel (`customer`)**: **Excluded**. No resources, pages, or widgets are registered for the customer portal.
 
-## Services
+## Services and Support Classes
 [NOT APPLICABLE]
 The `timesheets` plugin defines 0 dedicated service classes. All calculation logic is handled by model hooks on `Webkul\Project\Models\Timesheet::updateTaskTimes()`.
 
-## Events, Listeners & Observers
+## Events, Listeners, and Observers
 [VERIFIED]
 - **Events**: Zero dedicated custom Event classes declared in this plugin.
 - **Model Lifecycle Events (Inherited from `Webkul\Project\Models\Timesheet`)**:
@@ -330,7 +320,7 @@ The `timesheets` plugin defines 0 dedicated service classes. All calculation log
   - `Timesheet::deleted` → invokes `$timesheet->updateTaskTimes()`
 - **Listeners & Observers**: Zero dedicated Listener and Observer classes declared in this plugin.
 
-## Policies & Security
+## Policies and Authorization
 [VERIFIED]
 
 ### 1. `TimesheetPolicy`
@@ -374,6 +364,20 @@ Key language files:
 - **Test Coverage**: **0 test files**.
 - The `timesheets` plugin contains no `tests/` directory and no feature/unit test cases exist in the workspace for `Webkul\Timesheet\*`.
 
+## Shared Infrastructure Dependencies
+[VERIFIED]
+
+This section records code-level consumption; the installation-order declaration remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `TimesheetServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/timesheets/src/TimesheetServiceProvider.php`).
+- **`projects`**: Supplies the parent `Timesheet` model, project/task relationships, and the declared Install Plugins Dependency (`plugins/webkul/timesheets/src/Models/Timesheet.php`, `plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource/Pages/ManageTimesheets.php`).
+- **`analytics`**: Supplies the `analytic_records` storage and base record model through the `projects` timesheet model (`plugins/webkul/timesheets/src/Models/Timesheet.php`, `plugins/webkul/projects/src/Models/Timesheet.php`).
+- **`fields`**: Supplies custom fields for the timesheet model and Filament resource (`plugins/webkul/timesheets/src/Models/Timesheet.php`, `plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php`).
+- **`table-views`**: Supplies preset table views for timesheet listings (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource/Pages/ManageTimesheets.php`).
+- **`security`**: Supplies the timesheet policy, authenticated user model, and scoped permission checks (`plugins/webkul/timesheets/src/Policies/TimesheetPolicy.php`).
+- **`support`**: Supplies navigation grouping and the company-scoping behavior inherited from the project/analytic model (`plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php`, `plugins/webkul/projects/src/Models/Timesheet.php`).
+- **`partners`**: Partner linkage is inherited through the project/analytic record model used by timesheets (`plugins/webkul/projects/src/Models/Timesheet.php`, `plugins/webkul/analytics/src/Models/Record.php`).
+
 ## Cross-Plugin Relationships
 [VERIFIED]
 
@@ -400,11 +404,11 @@ graph TD
 4. **`table-views` [CORE]**:
    - Preset table view filtering tabs ("My Timesheets") via `HasTableViews`.
 5. **`security` [CORE]**:
-   - User authentication, permission checks (`TimesheetPolicy`), and permission scoping (`HasScopedPermissions`).
+   - `TimesheetPolicy` uses `HasScopedPermissions` for the plugin-local owner check; shared authorization limits and declaration/enforcement boundaries are defined in [`authorization.md`](../security/authorization.md) and [`security.md`](security.md).
 6. **`support` [CORE]**:
-   - `NavigationGroup::Project` enum, `BelongsToCompany` multi-tenancy trait, and `owned_by_company()` scope helper.
+   - `Timesheet` inherits `BelongsToCompany` through its analytics base model and consumes `owned_by_company()`; shared company-context and scope behavior is defined in [`support.md`](support.md) and [`multi-company.md`](../security/multi-company.md). `NavigationGroup::Project` remains a local integration fact.
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### Timesheet Entry & Task Rollup Data Flow

@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-25
 scope: documentation-index
 confidence: high
 ---
@@ -23,29 +23,15 @@ This index enables engineers and AI agents to quickly orient themselves, locate 
 ## Documentation Philosophy
 
 1. **Evidence-First Truth**: Documentation narrows the search space; verified repository source code, automated tests, and database schema decide the result.
-2. **Strict Source-of-Truth Hierarchy**:
-   $$\text{Source Code} > \text{Automated Tests} > \text{Migrations \& DB Schema} > \text{Configuration} > \text{Composer Manifests} > \text{Documentation} > \text{AI Summaries}$$
+2. **Single Authority**: The source-of-truth hierarchy is maintained in [`AGENTS.md`](../AGENTS.md#source-of-truth-hierarchy); this index does not duplicate it.
 3. **No Phantom Architecture**: Every documented class, method, trait, and convention must be grounded in verified repository files. Assumed or third-party shorthand is prohibited.
 4. **Separation of Concerns**: Documentation describes system invariants and verified behavior; software release history is strictly separated from documentation evolution history.
 
 ---
 
-## Source of Truth
+## Resolving Conflicts
 
-When verifying behavior, resolving conflicting statements, or implementing features, adhere strictly to the established evidence hierarchy:
-
-| Level | Evidentiary Tier | Primary Locations | Authority |
-| :---: | :--- | :--- | :--- |
-| **1** | **Source Code** | `plugins/webkul/*/src/`, `app/`, `bootstrap/` | Absolute authority on executable behavior |
-| **2** | **Automated Tests** | `plugins/webkul/*/tests/` (Pest v4 / PHPUnit 12) | Authoritative on intended behavior and contracts |
-| **3** | **Database Schema** | `plugins/webkul/*/database/migrations/`, `database/` | Absolute authority on physical persistence & FKs |
-| **4** | **Configuration** | `config/*`, `plugins/webkul/*/config/` | Authoritative on runtime environment settings |
-| **5** | **Composer Manifests** | `composer.json`, `composer.lock`, plugin `composer.json` | Authoritative on packages & dependency versions |
-| **6** | **Canonical Docs** | `docs/*` | Authoritative synthesis of verified phases |
-| **7** | **AI Inference** | Model inference, previous conversational transcripts | Non-authoritative; requires code verification |
-
-> [!IMPORTANT]
-> **Escalation Rule**: If a claim in this documentation conflicts with active repository source code, the source code governs. Do not assume documentation is correct over executable code.
+Use the authoritative source hierarchy and discrepancy rules in [`AGENTS.md`](../AGENTS.md#source-of-truth-hierarchy). This documentation index is navigational; it does not establish a competing hierarchy.
 
 ---
 
@@ -58,6 +44,7 @@ When verifying behavior, resolving conflicting statements, or implementing featu
 4. **Enforce Canonical Vocabulary**: Check [`docs/ai/terminology.md`](ai/terminology.md) before authoring code, models, or documentation to avoid known architectural pitfalls.
 5. **Assess Blast Radius**: Review [`docs/architecture/change-impact.md`](architecture/change-impact.md) before altering cross-cutting services, traits, or database tables.
 6. **Verify Against Matrix**: Corroborate critical claims against [`docs/verification-matrix.md`](verification-matrix.md).
+7. **Find the Knowledge Owner**: Use [`docs/ai/knowledge-ownership.md`](ai/knowledge-ownership.md) before adding or moving cross-cutting guidance.
 
 ### For Human Developers
 1. **System Overview**: Read [`docs/architecture/overview.md`](architecture/overview.md) to understand provider registration and package architecture.
@@ -85,9 +72,11 @@ After cloning, activate the versioned pre-commit KB lint hook once:
 git config core.hooksPath scripts/hooks
 ```
 
-Every commit touching `docs/`, `AGENTS.md`, or `agents/**` then
+Every commit touching `docs/`, the root assistant entrypoints, `.github/copilot-instructions.md`, or `agents/**` then
 runs `scripts/kb_lint.py --root . --strict` and blocks on any
-finding. See
+finding. The same check and its regression tests also run in the
+`Knowledge Base Validation` GitHub Actions workflow, which is not yet a
+server-side required status check. See
 [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md)
 for details. The config is local per clone; it is not pushed.
 
@@ -95,53 +84,13 @@ for details. The config is local per clone; it is not pushed.
 
 ## Technology Baseline
 
-Verified runtime environment and framework versions:
-
-| Component | Installed Version | Verification Evidence |
-| :--- | :--- | :--- |
-| **PHP** | `8.3.29` | Source baseline (`composer.json` platform constraint `^8.3`) |
-| **Laravel Framework** | `13.31.0` | `composer.lock` (`laravel/framework`) |
-| **Filament Admin Engine** | `5.8.1` | `composer.lock` (`filament/filament`) |
-| **Livewire** | `4.4.5` | `composer.lock` (`livewire/livewire`) — *Adhere to v4 specifications* |
-| **Testing Framework** | Pest `4.7.5` / PHPUnit `12` | `composer.lock` (`pestphp/pest`) |
-| **Permissions / RBAC** | Filament Shield `4.2.0` | `composer.lock` (`bezhansalleh/filament-shield`) |
-| **API Authentication** | Laravel Sanctum `4.3.3` | `composer.lock` (`laravel/sanctum`) |
-| **Query Filtering** | Spatie Query Builder | `composer.lock` (`spatie/laravel-query-builder`) |
-| **Package Autoloading** | `composer-merge-plugin` | Root `composer.json` (`wikimedia/composer-merge-plugin`) |
+The canonical technology baseline (PHP `^8.3`, Laravel `v13.x`, Filament `v5.x`, Livewire `v4.x`, Pest `v4.x`, Filament Shield `v4.x`, and Laravel Sanctum `v4.x`) is maintained in [`AGENTS.md` (Technology Baseline)](../AGENTS.md#technology-baseline). Always verify exact installed package versions directly against [`composer.lock`](../composer.lock) and [`composer.json`](../composer.json).
 
 ---
 
 ## Critical Project Terminology
 
-The following architectural distinctions are binding across the entire repository:
-
-### 1. Multi-Company Isolation (No `HasCompanyScope`)
-- **No `HasCompanyScope` Trait**: The trait `HasCompanyScope` does not exist in Aureus ERP.
-- **Actual Suite**:
-  - `Webkul\Support\Services\CompanyContext`: Resolves active company from session/header.
-  - `Webkul\Support\Models\Scopes\CompanyScope`: Global query scope filtering by single `company_id`.
-  - `Webkul\Support\Models\Scopes\CompaniesScope`: Global query scope filtering across many-to-many company pivots.
-  - `Webkul\Support\Traits\BelongsToCompany`: Model trait attaching `CompanyScope` and auto-setting `company_id`.
-  - `Webkul\Support\Traits\BelongsToCompanies`: Model trait for entities belonging to multiple companies.
-  - `Webkul\Support\Traits\ChecksCompanyConsistency`: Validates foreign key relational consistency across company boundaries.
-  - `Webkul\Support\Traits\RestrictToAllowedCompanies`: Model trait applying `AllowedCompanyScope` to restrict company queries to user-assigned companies (unauthorized company switching sanitized via `CompanyContext`).
-
-### 2. Authorization Service (Custom Bouncer)
-- `Webkul\Security\Bouncer` (and its facade `Webkul\Security\Facades\Bouncer`) is an **internal Aureus implementation** (`plugins/webkul/security/src/Bouncer.php`).
-- It is **NOT** the open-source `silber/bouncer` package. Third-party Bouncer methods or database tables do not exist.
-
-### 3. Dependency Taxonomy
-Always distinguish between:
-- **Composer Dependencies**: Declared in `composer.json` packages; loaded via Composer.
-- **Runtime Plugin Dependencies**: Declared via `Package::hasDependencies([...])` in service providers; enforced during installation.
-- **Code-Level Consumption**: Actual symbol imports, class references, services, observers, or dynamic relationships.
-
-### 4. Queue Jobs
-- **Precise Invariant**: The repository contains **zero PHP queue Job classes**. Asynchronous work is handled via alternative mechanisms (such as database notifications or command triggers); do not assume queue workers exist.
-
-### 5. Filament Panels
-- **Admin Panel**: Accessible at `/admin` (`App\Providers\Filament\AdminPanelProvider`), using default auth guard.
-- **Customer Panel**: Accessible at `/` (`App\Providers\Filament\CustomerPanelProvider`), using a separate dedicated customer guard.
+Canonical terminology, class mappings, and misconception corrections (including multi-company isolation traits, `Webkul\Security\Bouncer`, dependency taxonomy, zero queue `Job` classes, and Filament panels) are defined solely in [`docs/ai/terminology.md`](ai/terminology.md). Refer directly to that file rather than duplicating definitions across entry documents.
 
 ---
 
@@ -186,18 +135,18 @@ $$\begin{aligned}
 
 ## Documentation Map
 
-The repository documentation consists of **80 verified files** organized into 10 functional domains:
+The repository documentation consists of **79 verified files** organized into 10 functional domains:
 
 ```
 docs/
 ├── README.md                                 # Canonical documentation entry point (this file)
-├── verification-matrix.md                    # Central verification tracking ledger (Phase 11)
+├── verification-matrix.md                    # Central verification tracking ledger
 ├── ai/                                       # AI developer guidance & canonical rules (10 files)
 ├── application/                              # Application foundation layer (1 file)
 ├── architecture/                             # Core system architecture & change impact (6 files)
 ├── business-rules/                           # Domain calculation & operational rules (5 files)
 ├── database/                                 # Persistence, isolation, schema & ERDs (8 files)
-├── development/                              # Development workflow, Git operations, maintenance, AI skills & readiness (7 files)
+├── development/                              # Development workflow, Git operations, maintenance & AI skills (6 files)
 ├── plugins/                                  # 28 local plugin architectural specifications (29 files)
 ├── security/                                 # Authentication, authorization & tenancy (4 files)
 └── workflows/                                # End-to-end transactional business workflows (7 files)
@@ -236,7 +185,7 @@ Foundational frameworks and cross-cutting architectural mechanisms:
 | [`docs/architecture/dynamic-schema.md`](architecture/dynamic-schema.md) | Custom fields dynamic schema mutation, DDL operations, and UI injection |
 | [`docs/architecture/events-catalog.md`](architecture/events-catalog.md) | Complete catalog of 28 domain events, 6 listeners, 8 observers, and 54 services |
 | [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md) | Plugin discovery, registration, lifecycle, installation, and dependency handling |
-| [`docs/architecture/change-impact.md`](architecture/change-impact.md) | Change Impact Analysis master control guide, blast radius assessment (Phase 11) |
+| [`docs/architecture/change-impact.md`](architecture/change-impact.md) | Change Impact Analysis master control guide and blast radius assessment |
 
 ### 4. Database & Persistence Domain (`docs/database/`)
 Single-database multi-company persistence models, conventions, and ERDs:
@@ -293,11 +242,10 @@ Repository topology, branch hierarchy, commit conventions, merge strategy, GitHu
 | :--- | :--- |
 | [`docs/development/git-workflow.md`](development/git-workflow.md) | Git branching, commits, merge strategy, and high-level upstream relationship |
 | [`docs/development/github-governance.md`](development/github-governance.md) | GitHub governance, PR controls, branch protection reality, merge rules, and issue templates |
-| [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and governance findings |
+| [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md) | CI architecture, GitHub Actions workflows, test suites, runtime matrices, and status check gates |
 | [`docs/development/upstream-sync.md`](development/upstream-sync.md) | Operational runbook for upstream synchronization, 3-layer safety preflight, conflict resolution, and rollback |
-| [`docs/development/change-management.md`](development/change-management.md) | Change lifecycle, knowledge-maintenance triggers, evidence discipline, review cadence, and PR documentation record |
+| [`docs/development/change-management.md`](development/change-management.md) | Change lifecycle, knowledge-maintenance triggers, evidence discipline, review cadence, PR documentation record, and routing verification scenarios |
 | [`docs/development/ai-skills.md`](development/ai-skills.md) | Repository-scoped AI skill index, automation boundaries, and maintenance rules |
-| [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) | Scenario-based O10 readiness evidence, deferred controls, and final-revalidation procedure |
 
 ### 8. Verification & Control Domain
 Cross-cutting verification tracking and change-impact controls:
@@ -311,47 +259,11 @@ Cross-cutting verification tracking and change-impact controls:
 
 ## Plugin Ecosystem Overview
 
-Aureus ERP contains **28 domain plugins** located under `plugins/webkul/`. Plugins are classified as **Core** (system-critical, cannot be uninstalled) or **Optional** (runtime installable).
+Aureus ERP contains **28 domain plugins** located under `plugins/webkul/` (9 Core and 19 Optional).
 
-- **Core Status**: Defined by `Package::isCore()` in the plugin's `PackageServiceProvider`.
-- **Runtime Dependencies**: Declared via `Package::hasDependencies([...])`.
-- **Test Coverage Status**: Sourced authoritatively from the audit in [`docs/ai/testing-rules.md`](ai/testing-rules.md) (11 Tested / 17 Untested).
-
-### Complete Plugin Directory & Status Index
-
-| Plugin Slug | Type | Runtime Dependencies | Test Coverage Status | Documentation Link |
-| :--- | :---: | :---: | :---: | :--- |
-| `plugin-manager` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/plugin-manager.md`](plugins/plugin-manager.md) |
-| `analytics` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/analytics.md`](plugins/analytics.md) |
-| `chatter` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/chatter.md`](plugins/chatter.md) |
-| `fields` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/fields.md`](plugins/fields.md) |
-| `full-calendar` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/full-calendar.md`](plugins/full-calendar.md) |
-| `partners` | **Core** | None | **Tested** (10 test files) | [`docs/plugins/partners.md`](plugins/partners.md) |
-| `security` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/security.md`](plugins/security.md) |
-| `support` | **Core** | None | **Tested** (18 test files) | [`docs/plugins/support.md`](plugins/support.md) |
-| `table-views` | **Core** | None | Untested (`tests/` absent) | [`docs/plugins/table-views.md`](plugins/table-views.md) |
-| `accounting` | **Optional** | `accounts` | **Tested** (9 test files) | [`docs/plugins/accounting.md`](plugins/accounting.md) |
-| `accounts` | **Optional** | `products` | **Tested** (44 test files) | [`docs/plugins/accounts.md`](plugins/accounts.md) |
-| `barcode` | **Optional** | `inventories` | Untested (`tests/` absent) | [`docs/plugins/barcode.md`](plugins/barcode.md) |
-| `blogs` | **Optional** | `website` | Untested (`tests/` absent) | [`docs/plugins/blogs.md`](plugins/blogs.md) |
-| `contacts` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/contacts.md`](plugins/contacts.md) |
-| `employees` | **Optional** | None | **Tested** (6 test files) | [`docs/plugins/employees.md`](plugins/employees.md) |
-| `inventories` | **Optional** | `products` | **Tested** (41 test files) | [`docs/plugins/inventories.md`](plugins/inventories.md) |
-| `invoices` | **Optional** | `accounts` | Untested (`tests/` absent) | [`docs/plugins/invoices.md`](plugins/invoices.md) |
-| `maintenance` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/maintenance.md`](plugins/maintenance.md) |
-| `manufacturing` | **Optional** | `products`, `inventories` | **Tested** (8 test files) | [`docs/plugins/manufacturing.md`](plugins/manufacturing.md) |
-| `payments` | **Optional** | `accounts` | Untested (`tests/` absent) | [`docs/plugins/payments.md`](plugins/payments.md) |
-| `products` | **Optional** | None | **Tested** (19 test files) | [`docs/plugins/products.md`](plugins/products.md) |
-| `projects` | **Optional** | None | **Tested** (8 test files) | [`docs/plugins/projects.md`](plugins/projects.md) |
-| `purchases` | **Optional** | `invoices` | **Tested** (16 test files) | [`docs/plugins/purchases.md`](plugins/purchases.md) |
-| `recruitments` | **Optional** | `employees` | Untested (`tests/` absent) | [`docs/plugins/recruitments.md`](plugins/recruitments.md) |
-| `sales` | **Optional** | `invoices`, `payments` | **Tested** (20 test files) | [`docs/plugins/sales.md`](plugins/sales.md) |
-| `time-off` | **Optional** | `employees` | Untested (`tests/` absent) | [`docs/plugins/time-off.md`](plugins/time-off.md) |
-| `timesheets` | **Optional** | `projects` | Untested (`tests/` absent) | [`docs/plugins/timesheets.md`](plugins/timesheets.md) |
-| `website` | **Optional** | None | Untested (`tests/` absent) | [`docs/plugins/website.md`](plugins/website.md) |
-
-> [!TIP]
-> For detailed plugin architectural overviews, panel participation, database table allocations, and cross-plugin dependency graphs, consult [`docs/plugins/README.md`](plugins/README.md).
+- **Complete Plugin Directory, Classification & Dependency Matrix**: Maintained solely in [`docs/plugins/README.md`](plugins/README.md).
+- **Per-Plugin Test Coverage Inventory**: Maintained solely in [`docs/plugins/README.md`](plugins/README.md#plugin-registry-dependencies-migrations--test-coverage).
+- **Plugin Lifecycle & Registration Rules**: Maintained in [`docs/ai/plugin-rules.md`](ai/plugin-rules.md) and [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md).
 
 ---
 
@@ -373,27 +285,6 @@ Quick links to primary architectural mechanisms:
 
 ---
 
-## Documentation History
-
-The Aureus ERP Living Documentation & AI Knowledge Base evolved across structured phases:
-
-- **Phase 0 — Repository Audit**: Established the initial repository baseline, inventory of 28 plugins, and structural audit.
-- **Phase 1 — AI Context**: Established the core AI context, technical stack baseline, and foundational instructions.
-- **Phase 2 — Architecture Overview**: Established high-level architecture documentation, provider integration, and packaging model.
-- **Phase 3 — Security**: Documented security architecture, proprietary Bouncer service, and multi-company isolation mechanisms.
-- **Phase 4 — Database Architecture & Data Model**: Documented persistence conventions, models catalog, and domain ERDs (`core`, `finance`, `operations`).
-- **Phase 5 — Core Plugin Documentation**: Documented individual architectural specifications for all 9 core plugins.
-- **Phase 6 — Optional Plugin Documentation**: Documented individual architectural specifications for all 19 optional plugins.
-- **Phase 7 — Cross-Cutting Architecture**: Documented Filament panels, dynamic custom fields schema, events catalog, observers, and services.
-- **Phase 8 — Workflows**: Documented 7 major transactional workflows and state transitions with concrete source evidence.
-- **Phase 9 — Business Rules**: Documented mathematical calculation engines and business rules across accounting, inventory, sales, and purchasing.
-- **Phase 10 — AI Rules**: Established canonical AI rules covering terminology, architecture, plugins, database, security, coding, testing, and forbidden patterns.
-- **Phase 11 — Change Impact & Verification Matrix**: Established change-impact blast radius assessment and the centralized verification tracking ledger (**COMPLETE / LOCKED**).
-- **Phase 12 — Documentation Knowledge-Base Index, Navigation & Documentation Changelog**: Created the canonical documentation entry point (`docs/README.md`) and separated knowledge-base history from application release history (**COMPLETE**).
-- **Phase 13 — Read-Only / Final Documentation Audit**: Comprehensive read-only verification across all documentation assets (**COMPLETE / LOCKED**).
-
----
-
 ## Documentation Changelog vs Project Changelog
 
 Aureus ERP strictly separates documentation system history from software application release history:
@@ -411,7 +302,7 @@ Aureus ERP Repository
         ├── Specialized Knowledge Domains (ai, architecture, database, security, etc.)
         │
         └── Documentation Changelog (docs/CHANGELOG.md)
-            └── Tracks knowledge-base evolution, phase completion, terminology corrections,
+            └── Tracks knowledge-base evolution, terminology corrections,
                 reconciliation milestones, and documentation maintenance.
                 Answers: "How did this documentation system evolve?"
 ```
@@ -419,7 +310,7 @@ Aureus ERP Repository
 - **Project Changelog ([`CHANGELOG.md`](../CHANGELOG.md))**:
   Records actual software releases (e.g. `v1.5.0`), software features, code improvements, bug fixes, and deployment changes.
 - **Documentation Changelog ([`docs/CHANGELOG.md`](CHANGELOG.md))**:
-  Records changes to the Living Documentation itself (phases, structural reorganizations, terminology fixes, verification audits).
+  Records changes to the Living Documentation itself (structural reorganizations, terminology fixes, verification audits, and historical milestones).
 
 > [!WARNING]
 > **Do Not Merge**: The Documentation Changelog must never masquerade as the software project changelog, and software release notes must not overwrite the documentation changelog.
@@ -434,38 +325,5 @@ To maintain the integrity and stability of the Living Documentation and the repo
 2. **Strict Write Scope**: Only modify files explicitly within the approved task scope. Do not update unrelated documentation or code files opportunistically.
 3. **Repository Cleanliness**: Verify working directory state with `git status` before starting and after finishing work. Ensure zero unintended file modifications exist.
 4. **Link Integrity**: Every referenced path in documentation must exist in the repository. Never invent documentation files, classes, or paths.
-
----
-
-## Historical Documentation Status
-
-The phases in this section are the closed historical documentation program. They describe how the knowledge base was built; they do not assign work in the active governance roadmap below.
-
-| Phase | Description | Status |
-| :---: | :--- | :---: |
-| **Phases 0–10** | Foundation, Architecture, Security, DB, Plugins, Workflows, Rules | **Complete** |
-| **Phase 11** | Change Impact Analysis & Verification Matrix | **Complete / Locked** |
-| **Phase 12** | Documentation Entry Point (`docs/README.md`) & Documentation Changelog (`docs/CHANGELOG.md`) | **Complete** |
-| **Phase 13** | Read-Only Final Documentation Audit | **Complete / Locked** |
-
----
-
-## Operational Remediation Roadmap
-
-The active governance and remediation program uses **Operational Stages `O0`–`O10`**. It is intentionally separate from the historical documentation phases above. A stage status describes this branch's implementation state; it does not imply that a control is enforced on GitHub or merged into `develop`.
-
-| Stage | Scope | Branch status | Completion boundary |
-| :---: | :--- | :--- | :--- |
-| **O0** | Scope control and working-tree inventory | **Complete** | Read-only inventory completed; no source or configuration changes found. |
-| **O1** | Documentation baseline reconciliation | **Complete / Committed** | Platform facts, stale Livewire references, and internal links reconciled against repository evidence. |
-| **O2** | Operational terminology and status model | **Complete / Committed** | Historical phases and operational stages are explicitly separated. |
-| **O3** | AI knowledge architecture and operating protocol | **Complete / Committed** | Plugin, company-scoped, API, security, and upstream synchronization routes are available from the canonical navigation set. |
-| **O4** | Git operating model | **Complete / Committed — Release-branch transition pending** | `develop` is the integration branch; verified `develop`-to-`master` PRs create releases and tags originate from `master`. No `hotfix/*` or `release/*` branches are used. The first release promotion completes the transition. |
-| **O5** | GitHub governance | **Complete / Verified — Solo-maintainer mode** | Active no-bypass rulesets protect `develop` and release `master`; self-reviewed PRs, conversation resolution, deletion, and force-push controls are verified. Both rulesets require zero approvals and enforce the selected O6 status checks. |
-| **O6** | CI, testing, and quality gates | **Complete / Verified — Selected gate set** | Both protected branches strictly require Pest on MySQL/PostgreSQL, translation consistency, and the stable `Playwright E2E Gate`; further CI maturity findings remain follow-up work. |
-| **O7** | Upstream integration runbook | **Complete / Executed — Release-branch transition pending** | Upstream target `d7d471894` entered `develop` through PR #10; Pest (MySQL/PostgreSQL), Playwright, and translation CI succeeded. A separate verified release PR still promotes `develop` to `master`. |
-| **O8** | Change management and knowledge maintenance | **Complete / Committed** | Event-driven lifecycle, documentation-impact triggers, evidence discipline, ownership-by-role, quarterly review, and PR recording requirements are adopted. |
-| **O9** | AI skills and developer automation | **Complete / Committed** | Six repository-scoped, instruction-only skills route plugin, API, schema, testing/CI, documentation, and upstream work to canonical controls without creating parallel policy. |
-| **O10** | Final knowledge-base readiness audit | **Complete / Verified** | Seven scenario routes pass read-only evidence checks; upstream execution, workflow review, O6 enforcement, domain alignment, metrics reconciliation, post-merge branch cleanup, and final scenario revalidation are complete. Initial knowledge base and AI governance baseline are verified and closed. |
 
 

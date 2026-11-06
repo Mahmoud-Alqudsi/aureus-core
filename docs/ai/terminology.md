@@ -15,7 +15,7 @@ This glossary defines the authoritative terminology, system concepts, and miscon
 Every entry in this glossary is backed by verified source code, tests, migrations, configuration, Composer metadata, and verified repository documentation (covering architecture, security, database, workflows, and business rules).
 
 > **Operational Principle:**
-> The glossary guides vocabulary and interpretation, but MUST NEVER override source-code evidence when implementation behavior is being verified.
+> The glossary guides vocabulary and interpretation, but MUST NEVER override the repository's [source-of-truth hierarchy](../../AGENTS.md#source-of-truth-hierarchy) when implementation behavior is being verified.
 
 When writing code, developing plugins, generating migrations, configuring security, or authoring documentation:
 1. Developers and AI agents MUST adhere to the canonical terms, class namespaces, and architectural distinctions defined herein.
@@ -73,7 +73,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Common misconception**: Believing Livewire is on version 3 based on historical or stale repository documentation or configuration notes.
 - **Evidence**:
   - `composer.lock` (package `livewire/livewire` installed version: `v4.4.5`)
-  - `docs/ai/context.md:34, 42`
+  - `docs/ai/context.md#purpose-and-source-of-truth-rule`
   - [`AGENTS.md`](../../AGENTS.md) and this documentation now align with the installed v4 baseline.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST adhere to Livewire 4.4.5 APIs and conventions when authoring or debugging Livewire components.
@@ -124,21 +124,22 @@ When writing code, developing plugins, generating migrations, configuring securi
 
 ### 6. Plugin Dependencies (Three Distinct Concepts)
 
-- **Term / Class**: Plugin Dependencies (Composer Require vs `Package::hasDependencies()` vs Code-Level Consumption)
+- **Term / Class**: Plugin Dependencies (Composer Requirement vs Install Plugins Dependency vs Code-Level Consumption)
 - **What it actually is**: Three completely distinct dependency tiers within the Aureus ERP ecosystem:
-  1. **Composer Dependency** (`require` in `plugins/webkul/<plugin>/composer.json` or root `composer.json`): Governs PHP class autoloading and external package distribution.
-  2. **Runtime / Installation-Order Dependency** (`Package::hasDependencies([...])`): Declared inside a plugin's `*ServiceProvider::configureCustomPackage()`. Consumed exclusively by `InstallCommand` to orchestrate database migration, seed order, and dependency verification.
-  3. **Code-Level Consumption**: Mere PHP imports (`use Webkul\...`) or cross-plugin model references in code without any formal runtime declaration.
-- **Common misconception**: Believing that adding a dependency to `composer.json` establishes Aureus plugin installation ordering, or assuming that importing a class from another plugin automatically makes it a registered runtime plugin dependency.
+  1. **Composer Requirement** (`require` in `plugins/webkul/<plugin>/composer.json` or root `composer.json`): Governs PHP class autoloading and external package distribution.
+  2. **Install Plugins Dependency** (`Package::hasDependencies([...])`): The plugin names that must be installed before this plugin. Declared inside a plugin's `*ServiceProvider::configureCustomPackage()`. `InstallCommand` installs them first when `installDependencies()` is enabled, or offers Install / Skip / Show Dependencies in prompt mode; the plugin-manager `Plugin` model also reads the list to expose a plugin's dependencies and dependents. It is an install-order declaration: it is neither a Composer requirement nor proof that the plugin's code imports the dependency. Do not call this tier a "runtime dependency".
+  3. **Code-Level Consumption**: PHP imports (`use Webkul\...`) or cross-plugin model references in code. Each consumption of an optional plugin is in one of three states: **declared** (the target is in the consuming plugin's Install Plugins Dependency chain), **guarded** (protected at runtime by `Package::isPluginInstalled()`), or **unguarded** (neither; forbidden by [`architecture-rules.md`](architecture-rules.md)).
+- **Common misconception**: Believing that adding a dependency to `composer.json` establishes Aureus plugin installation ordering, assuming that importing a class from another plugin automatically registers an Install Plugins Dependency, or describing `hasDependencies()` as a "runtime dependency" when it only orders installation.
 - **Evidence**:
   - `plugins/webkul/plugin-manager/src/Package.php:111` (`hasDependencies()`)
   - `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php`
   - `docs/architecture/plugin-registry.md`
-  - None of the 9 Core Plugins declare runtime plugin dependencies (`hasDependencies()`), yet they consume code across packages.
+  - None of the 9 Core Plugins declare an Install Plugins Dependency (`hasDependencies()`), yet they consume code across packages.
 - **Prescriptive Rule**:
   - A plugin MUST declare Aureus plugin installation-order dependencies exclusively through `Package::hasDependencies([...])`.
-  - A Composer dependency MAY exist when technically required, but `composer.json` MUST NOT be treated as the source of truth for Aureus plugin installation-order dependencies.
-  - Mere code-level consumption MUST NOT be treated as equivalent to a declared runtime plugin installation dependency.
+  - A Composer requirement MAY exist when technically required, but `composer.json` MUST NOT be treated as the source of truth for Aureus plugin installation-order dependencies.
+  - Mere code-level consumption MUST NOT be treated as equivalent to a declared Install Plugins Dependency.
+  - Documentation MUST use the exact term **Install Plugins Dependency** for tier 2; it MUST NOT use "Runtime Dependencies" or "Runtime Plugin Dependencies" for it.
 
 ---
 
@@ -270,7 +271,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/products/src/Models/Product.php`
   - `plugins/webkul/products/database/migrations/2024_11_25_091807_create_products_products_table.php`
-  - `docs/database/erds/operations.md:1155`
+  - `docs/database/erds/operations.md#architectural-observations`
   - No `ProductTemplate` model class or `products_templates` table exists in the repository.
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT create a separate `ProductTemplate` model or migration.
@@ -303,7 +304,7 @@ When writing code, developing plugins, generating migrations, configuring securi
   - `table-views` (`Webkul\TableViews`): Defines ZERO `*Plugin.php` classes (`TableViewsPlugin.php` does not exist). Instead, it hooks into Filament globally via render hooks registered in `TableViewsServiceProvider::packageRegistered()`.
 - **Common misconception**: Assuming every plugin in Aureus ERP must define a `*Plugin.php` implementing `Filament\Contracts\Plugin` registered via `$panel->plugin(...)`.
 - **Evidence**:
-  - `docs/architecture/overview.md:90-93`
+  - `docs/architecture/overview.md#filament-panel-architecture`
   - `plugins/webkul/analytics/src/AnalyticServiceProvider.php`
   - `plugins/webkul/table-views/src/TableViewsServiceProvider.php:37-48`
 - **Prescriptive Rule**:
@@ -339,8 +340,8 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php:11` implements `ShouldQueue`
   - Zero traditional queue Job classes in `app/` or `plugins/webkul/*/src/`
-  - `docs/architecture/change-impact.md:559, 596`
-  - `docs/verification-matrix.md:95` (`TERM-011`)
+  - `docs/architecture/change-impact.md#121-reactive-infrastructure-summary`
+  - `docs/verification-matrix.md#3-the-master-verification-matrix` (`TERM-011`)
 - **Prescriptive Rule**:
   - Developers and AI agents MUST NOT assume background processing is handled by queued Job classes.
   - Developers and AI agents MUST NOT treat "zero queue Job classes" and "zero asynchronous behavior" as equivalent, as `ChatterDatabaseNotification` implements `ShouldQueue`.
@@ -410,7 +411,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/sales/src/Models/Order.php` (`is_locked` boolean)
   - `plugins/webkul/purchases/src/Models/Order.php` (`OrderState::DONE`)
-  - `docs/workflows/purchasing.md:403`
+  - `docs/workflows/purchasing.md#15-business-rules-observed`
 - **Prescriptive Rule**:
   - Code evaluating sales order lock states MUST check the `is_locked` boolean attribute.
   - Code evaluating purchase order lock states MUST check whether `state === OrderState::DONE`.
@@ -444,7 +445,7 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **Evidence**:
   - `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`
   - `plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`
-  - `docs/architecture/filament-architecture.md:293-298`
+  - `docs/architecture/filament-architecture.md#deliberately-hidden-resources-shouldregisternavigation--false`
 - **Prescriptive Rule**:
   - Developers MUST NOT change `shouldRegisterNavigation` to `true` on foundational core resources without verifying whether a presentation plugin owns user-facing navigation.
   - When exposing customized or clustered views of core resources, presentation plugins MUST control navigation registration.
@@ -472,9 +473,9 @@ When writing code, developing plugins, generating migrations, configuring securi
 - **What it actually is**: The foundational architectural truth that declaring a capability in a Policy, Filament Shield permission, model `$fillable` array, PHP enum case, Form Request rule, or UI component toggle does NOT guarantee active enforcement across all execution paths (e.g., raw SQL queries, API endpoints, console commands, or internal service workflows).
 - **Common misconception**: Assuming that because a permission, validation rule, or state restriction is declared in a Filament form or Policy, the backend logic and database are automatically protected from unauthorized or inconsistent state transitions.
 - **Evidence**:
-  - `docs/security/authorization.md:25-28`
-  - `docs/ai/security-rules.md:148-155`
-  - `docs/ai/forbidden-patterns.md:29-43`
+  - `docs/security/authorization.md#security-mechanisms-are-not-a-universal-request-pipeline`
+  - `docs/ai/security-rules.md#the-foundational-architectural-truth`
+  - `docs/ai/forbidden-patterns.md#1-declaration--enforcement`
 - **Prescriptive Rule**:
   - Future documentation and code MUST distinguish between a capability being declared and that capability actually being enforced on the relevant execution path.
   - Security-critical constraints, financial balances, and company boundaries MUST be enforced at the service or model level, NOT solely in UI schemas or form requests.

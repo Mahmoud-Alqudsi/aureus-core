@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/plugin-manager
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:66` as the terminal service provider in the application provider stack (`Webkul\PluginManager\PluginManagerServiceProvider::class`).
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). While the `plugins` database table initializes records with `is_installed = 0` and `is_active = 0` by default (`plugins/webkul/plugin-manager/database/migrations/2024_11_05_105102_create_plugins_table.php:22-23`), the underlying package management engine executes unconditionally at boot time once registered in `bootstrap/providers.php`.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `PluginManagerServiceProvider::configureCustomPackage()` (`plugins/webkul/plugin-manager/src/PluginManagerServiceProvider.php:21`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). While the `plugins` database table initializes records with `is_installed = 0` and `is_active = 0` by default (`plugins/webkul/plugin-manager/database/migrations/2024_11_05_105102_create_plugins_table.php:22-23`), the underlying package management engine executes unconditionally at boot time once registered in `bootstrap/providers.php`.
 
 ## Purpose
 [VERIFIED]
@@ -53,7 +51,7 @@ The `plugin-manager` module is the central packaging foundation and module lifec
     - Executes `PermissionManager::managePermissions()`
     - Registers listener `Event::listen('aureus.installed', 'Webkul\PluginManager\Listeners\Installer@installed')`
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\PluginManager\PluginManagerPlugin` (`plugins/webkul/plugin-manager/src/PluginManagerPlugin.php:8`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -66,7 +64,7 @@ The `plugin-manager` module is the central packaging foundation and module lifec
   - Discovers widgets in `src/Filament/Widgets` under namespace `Webkul\PluginManager\Filament\Widgets`.
 - **Boot**: `boot(Panel $panel)` is defined as an empty method stub.
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/plugin-manager/composer.json`
   - Name: `webkul/plugin-manager`
@@ -82,11 +80,11 @@ The `plugin-manager` module is the central packaging foundation and module lifec
   - `laravel/prompts` (`v0.3.10`): Interactive text and password input in `InstallERP`.
   - `guzzlehttp/guzzle` (`7.10.0`): Imported in `Installer` listener.
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `PluginManagerServiceProvider::configureCustomPackage()` does not declare any runtime dependencies via `hasDependencies()` or `hasDependency()`.
+None (`—`). `PluginManagerServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()` or `hasDependency()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/plugin-manager/`:
 
@@ -207,7 +205,7 @@ plugins/webkul/plugin-manager/
   - Reads `composer.json` from each package directory.
   - Executes `Plugin::updateOrCreate(['name' => $pluginName], [...])` to seed initial metadata with `author`, `summary`, `description`, `latest_version`, `license`, `is_active = true`, `is_installed = false`, and `sort = 1`.
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 ### Resources
 - **`Webkul\PluginManager\Filament\Resources\PluginResource`** (`plugins/webkul/plugin-manager/src/Filament/Resources/PluginResource.php:15`):
@@ -259,7 +257,7 @@ plugins/webkul/plugin-manager/
 - **Admin Panel**: Exclusively registered on the `admin` panel (`app/Providers/Filament/AdminPanelProvider.php`). `PluginManagerPlugin::register(Panel $panel)` validates `$panel->getId() == 'admin'`.
 - **Customer Panel**: Not registered. `CustomerPanelProvider` (`app/Providers/Filament/CustomerPanelProvider.php`) contains no plugin manager discovery or resources.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 
 ### Cross-Platform CLI & System Utilities (`Webkul\PluginManager\Package`)
@@ -305,7 +303,7 @@ The static `Package` manifest and runtime class provides system execution utilit
 [NOT APPLICABLE]
 No Eloquent observers are registered in `plugin-manager`.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 - **`Webkul\PluginManager\Policies\PluginPolicy`** (`plugins/webkul/plugin-manager/src/Policies/PluginPolicy.php:9`):
   - Implements authorization checks using `$user->can()` for the `Plugin` model:
@@ -346,13 +344,17 @@ No HTTP web or API route files are defined or loaded by `plugin-manager`.
 ## Tests
 [VERIFIED]
 - **Explicit Test Coverage Status**: The `plugin-manager` plugin currently contains **zero PHP test files** (0 unit tests, 0 feature tests under `plugins/webkul/plugin-manager/tests/`). Although `composer.json` declares an `autoload-dev` mapping for `Webkul\PluginManager\Tests\` to `tests/`, no `tests/` directory exists in the plugin.
-- **Root E2E Coverage**: Playwright browser tests exist in `tests/e2e-pw/tests/01_plugins/01_plugins.spec.ts` using page model `tests/e2e-pw/pages/01_pluginManagement.ts` to test admin login, navigation to the Plugins page, tab switching (`Apps`, `Extra`, `Installed`, `Not Installed`), search filtering, and plugin synchronization.
+- **Root E2E Coverage**: Playwright browser tests exist in [`01_plugins/01_plugins.spec.ts`](../../tests/e2e-pw/tests/01_plugins/01_plugins.spec.ts) using [`01_pluginManagement.ts`](../../tests/e2e-pw/pages/01_pluginManagement.ts) to test admin login, navigation to the Plugins page, tab switching (`Apps`, `Extra`, `Installed`, `Not Installed`), search filtering, and plugin synchronization. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the maintained coverage boundary.
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-None (`—`).
+This section records code-level consumption; any declared Install Plugins Dependency remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
 
-## Cross-plugin relationships
+- **`plugin-manager` (self/base layer)**: The package lifecycle is implemented through `PackageServiceProvider`, `Package`, and the install/uninstall command contracts in [`plugins/webkul/plugin-manager/src/PackageServiceProvider.php`](../../plugins/webkul/plugin-manager/src/PackageServiceProvider.php) and [`plugins/webkul/plugin-manager/src/Package.php`](../../plugins/webkul/plugin-manager/src/Package.php).
+- **`support`**: `InstallERP` resolves `Company`, `Country`, and `Currency`, while `PluginResource` uses `NavigationGroup::Plugin` (`plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php`, `plugins/webkul/plugin-manager/src/Filament/Resources/PluginResource.php`).
+- **`security`**: `InstallERP` resolves the configured auth user through Shield utilities and assigns the administrator role; `PluginPolicy` authorizes access against the security user model (`plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php`, `plugins/webkul/plugin-manager/src/Policies/PluginPolicy.php`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 1. **Architectural Parent to All Plugins**: All 28 plugins extend `Webkul\PluginManager\PackageServiceProvider` and configure `Webkul\PluginManager\Package`.
 2. **Support Plugin**:
@@ -367,7 +369,7 @@ None (`—`).
    - `InstallCommand` and `PluginsTable` trigger the installation of dependent modules by calling `{dependency}:install`.
    - `PluginsTable` and `UninstallCommand` inspect dependent declarations and reverse migrations for domain modules upon uninstallation.
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 ### 1. ERP System Installation Flow (`artisan erp:install`)
 ```mermaid
@@ -453,7 +455,7 @@ sequenceDiagram
     end
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Core Plugin Immutability**:
    - Plugins flagged with `Package::$isCore = true` cannot be uninstalled via the Filament UI or CLI uninstall commands.
@@ -467,14 +469,14 @@ sequenceDiagram
 5. **Postgres Sequence Alignment**:
    - Whenever seeders insert explicit primary keys, `Package::syncPostgresSequences()` (`db_dialect()->syncSequences()`) must be invoked to avoid sequence collision on subsequent auto-increment inserts.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 1. **`PackageServiceProvider::configureCustomPackage(Package $package)`**: Abstract method implemented by every plugin service provider to declare its name, core status, dependencies, migrations, settings, seeders, commands, and views.
 2. **`PackageServiceProvider::packageRegistered()` & `packageBooted()`**: Lifecycle hooks executed during provider registration and boot for custom singletons, assets, event listeners, and panel plugins.
 3. **`Package::hasInstallCommand(Closure $callable)` & `Package::hasUninstallCommand(Closure $callable)`**: Allows domain plugins to inject custom callbacks (`startWith`, `endWith`), publishable tags, or confirmation steps into their dedicated `{shortName}:install` and `{shortName}:uninstall` commands.
 4. **`FilamentShield::buildPermissionKeyUsing(Closure)`**: Configured by `PermissionManager` to enforce uniform permission key generation across all Filament resources, pages, and widgets.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 1. **Zero PHP Unit/Feature Test Coverage**:
    - **Critical Fact**: `plugins/webkul/plugin-manager/` contains **zero PHP test files**. Any regression in base provider lifecycle, package loading, migration gates, or command execution can silently break all 28 plugins without automated test detection.
@@ -491,7 +493,7 @@ sequenceDiagram
 6. **Reflection Overhead on Plugin Scanning**:
    - `Plugin::getAllPluginPackages()` instantiates service provider reflection objects across all configured panels during table queries and infolist rendering.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 - **Architectural Scope**: **Critical / System-Wide**.
 - **Blast Radius**: Modifying `PackageServiceProvider` or `Package` directly affects all 28 plugins in Aureus ERP.
@@ -500,7 +502,7 @@ sequenceDiagram
 
 ---
 
-## Evidence Index
+## Evidence
 
 | Evidence ID | Source File | Symbol / Method | Purpose / Claim Verified |
 |---|---|---|---|

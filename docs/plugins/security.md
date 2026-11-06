@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-25
+last_verified: 2026-10-23
 scope: plugins/webkul/security
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:28` as `Webkul\Security\SecurityServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `security` module executes unconditionally at boot time across the application.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `SecurityServiceProvider::configureCustomPackage()` (`plugins/webkul/security/src/SecurityServiceProvider.php:21`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `security` module executes unconditionally at boot time across the application.
 
 ## Purpose
 [VERIFIED]
@@ -55,6 +53,17 @@ The `security` module is the primary identity, authentication, authorization, an
 7. **System & Security Configuration**:
    - Manages global security settings via `UserSettings` (`plugins/webkul/security/src/Settings/UserSettings.php`) and `CurrencySettings` (`plugins/webkul/security/src/Settings/CurrencySettings.php`), surfaced in the Admin Panel Settings cluster via `ManageUsers`, `ManageCurrency`, and `ManageActivity` pages.
 
+## Documentation Ownership Boundary
+[VERIFIED]
+
+This document owns the implementation facts for the `security` plugin: runtime identity and authentication bindings, `Bouncer`, `OwnershipScope`, `HasOwnershipScope`, `HasScopedPermissions`, RBAC/Shield integration, MFA, invitations, teams, and API token authentication.
+
+- The general authorization execution model and the distinction between authentication, authorization, ownership filtering, and company isolation are canonical in [`docs/security/authorization.md`](../security/authorization.md).
+- The `OwnerSource` kinds and ownership-query contract are canonical in [`docs/security/ownership-scopes.md`](../security/ownership-scopes.md); consumer plugin documents retain only their verified owner-source configuration and policy interaction.
+- The company-context and company-scope implementation is owned by [`docs/plugins/support.md`](support.md), while the system-wide company-isolation contract is owned by [`docs/security/multi-company.md`](../security/multi-company.md).
+- A policy, permission declaration, UI control, or scope registration must not be described as universal enforcement unless the relevant execution path is verified. This boundary follows [`docs/security/authorization.md`](../security/authorization.md) and [`docs/ai/security-rules.md`](../ai/security-rules.md).
+- The test strategy and complete browser coverage atlas are owned by [`docs/development/testing-strategy.md`](../development/testing-strategy.md); this document retains only direct security coverage and explicit security gaps.
+
 ## Service Provider
 [VERIFIED]
 - **Class**: `Webkul\Security\SecurityServiceProvider` (`plugins/webkul/security/src/SecurityServiceProvider.php:12`)
@@ -76,7 +85,7 @@ The `security` module is the primary identity, authentication, authorization, an
     - Requires global helper functions file `plugins/webkul/security/src/Helpers/helpers.php`
     - Registers global Gate before-rule: intercepts ability `'bypass_ownership_scope'` and returns `true` if the authenticated user has the `super_admin` role or the role name configured in `config('filament-shield.super_admin.name')` (`plugins/webkul/security/src/SecurityServiceProvider.php:50-63`)
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Security\SecurityPlugin` (`plugins/webkul/security/src/SecurityPlugin.php:9`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -91,7 +100,7 @@ The `security` module is the primary identity, authentication, authorization, an
     - Evaluates `UserSettings::class->enable_reset_password`: if disabled and not running in console, disables password reset on the panel (`$panel->passwordReset(false)`).
 - **Boot**: `boot(Panel $panel)` is defined as an empty method stub (`plugins/webkul/security/src/SecurityPlugin.php:52-55`).
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/security/composer.json`
   - Name: `webkul/security`
@@ -106,11 +115,11 @@ The `security` module is the primary identity, authentication, authorization, an
   - `filament/filament` (`v5.8.1`): Filament resources, pages, clusters, tables, forms, infolists, and MFA app authentication (`AppAuthentication`).
   - `knuckleswtf/scribe` (`v4.44.0`): API documentation annotations on `AuthController`.
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `SecurityServiceProvider::configureCustomPackage()` does not declare any runtime dependencies via `hasDependencies()` or `hasDependency()`.
+None (`—`). `SecurityServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()` or `hasDependency()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/security/`:
 
@@ -395,7 +404,7 @@ The plugin houses static reference JSON files in `src/Data/`:
 - `currencies.json`
 *Note*: These datasets are read directly by `CountrySeeder`, `StateSeeder`, and `CurrencySeeder` in the `support` plugin.
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 
 ### Resources (Admin Panel)
@@ -472,7 +481,7 @@ None. `plugins/webkul/security/src/Filament/` contains zero widget classes.
 - **Customer Panel (`customer`)**:
   - `SecurityPlugin::register()` checks `$panel->getId() == 'admin'` and contributes zero resources, pages, or widgets to the customer panel. (The customer panel operates under guard `customer` mapped to `Webkul\Website\Models\Partner`).
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 1. **`Webkul\Security\Bouncer`** (`plugins/webkul/security/src/Bouncer.php`):
    - Registered as container singleton `'bouncer'` in `SecurityServiceProvider:76` and aliased via facade `Webkul\Security\Facades\Bouncer`.
@@ -501,7 +510,7 @@ None defined in this plugin.
 [VERIFIED]
 None defined. Model lifecycle hooks are implemented directly within model `boot()` / `booted()` methods.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The plugin defines 4 policy classes under `plugins/webkul/security/src/Policies/`:
 
@@ -611,11 +620,21 @@ While feature tests in optional domain plugins (such as `accounts`, `purchases`,
 - `AcceptInvitation` Livewire registration flow and signed URL verification
 - Multi-factor authentication contracts and recovery flows
 
-## Runtime dependencies
-[VERIFIED]
-None (`—`). The plugin provider does not declare runtime dependencies via `hasDependencies()`.
+The administrative user journey has browser coverage in [`03_users/01_users.spec.ts`](../../tests/e2e-pw/tests/03_users/01_users.spec.ts), but that spec does not replace direct security-plugin authorization, policy, or authentication tests. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the exact boundary.
 
-## Cross-plugin relationships
+## Shared Infrastructure Dependencies
+[VERIFIED]
+This section records code-level consumption; the provider declares no Install Plugins Dependency through `hasDependencies()` or `hasDependency()`.
+
+- **`plugin-manager`**: `SecurityServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/security/src/SecurityServiceProvider.php`).
+- **`support`**: Security users relate to companies, support registers `RolePolicy`, and support seeders consume security data files (`plugins/webkul/security/src/Models/User.php`, `plugins/webkul/support/src/SupportServiceProvider.php`, `plugins/webkul/support/database/seeders/`).
+- **`partners`**: `User` maintains the optional partner relation and avatar delegation (`plugins/webkul/security/src/Models/User.php`).
+- **`fields`**: `Team` uses `HasCustomFields`, making the security team model a consumer of the fields engine (`plugins/webkul/security/src/Models/Team.php`).
+- **`chatter`**: Ownership-by-followers resolves partner IDs from `chatter_followers` (`plugins/webkul/security/src/Models/Scopes/OwnershipScope.php`).
+- **`employees`**: `User` defines optional employee and department relations (`plugins/webkul/security/src/Models/User.php`).
+- **`projects`**: `AcceptInvitation` redirects to the projects dashboard after invitation acceptance; this is a documented optional-plugin coupling and a dangerous area (`plugins/webkul/security/src/Livewire/AcceptInvitation.php`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 
 1. **`support` (`Webkul\Support`)**:
@@ -644,7 +663,7 @@ None (`—`). The plugin provider does not declare runtime dependencies via `has
    - Every domain plugin that restricts records by user or team ownership applies `HasOwnershipScope` and `OwnerSource`, querying through `Bouncer`.
    - Policies across all domain plugins extend `HasScopedPermissions` to evaluate `hasAccess($user, $record)`.
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### 1. Ownership Filtering Data Flow
@@ -707,7 +726,7 @@ Deletes Invitation record
 Redirects to Dashboard (coupled to Webkul\Project\Filament\Pages\Dashboard)
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 
 1. **System Role Immutability**:
@@ -729,7 +748,7 @@ Redirects to Dashboard (coupled to Webkul\Project\Filament\Pages\Dashboard)
 5. **Super Admin Scope Bypass**:
    - Users possessing the `super_admin` role automatically pass the `bypass_ownership_scope` Gate check, granting unrestricted visibility across all records regardless of individual or group ownership settings.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 
 1. **Custom Ownership Sources**:
@@ -739,7 +758,7 @@ Redirects to Dashboard (coupled to Webkul\Project\Filament\Pages\Dashboard)
 3. **Role & Permission Customization**:
    - System administrators can define granular roles and assign resource-, page-, and widget-level permissions via the customized `RoleResource` with Shield integration.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 
 1. **Absence of Plugin-Local Test Suite for Core Security Primitives**:
@@ -764,7 +783,7 @@ Redirects to Dashboard (coupled to Webkul\Project\Filament\Pages\Dashboard)
 7. **Dead Code / Leftover Class**:
    - `Webkul\Security\Package` (`plugins/webkul/security/src/Package.php`) is an obsolete local class extending Spatie Package that is never imported or utilized by `SecurityServiceProvider`.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 Changes to the `security` plugin have maximum systemic blast radius:
 - **Tenant & Ownership Security**: Modifying `Bouncer`, `OwnershipScope`, or `HasScopedPermissions` directly alters data filtering and record access rules across all 28 plugins in the ERP.

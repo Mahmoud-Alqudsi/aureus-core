@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:42` as `Webkul\Barcode\BarcodeServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `BarcodeServiceProvider` registers the package and binds `BarcodePlugin` to Filament panels via `Panel::configureUsing()`, but Filament pages are discovered and registered only when `Package::isPluginInstalled('barcode')` returns `true` (`plugins/webkul/barcode/src/BarcodePlugin.php:23-33`). Standalone web and mobile routes defined in `plugins/webkul/barcode/routes/web.php` are registered at boot.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without declaring `$package->isCore()` (`plugins/webkul/barcode/src/BarcodeServiceProvider.php:25-39`). Execution and Filament UI registration are gated at runtime via `Package::isPluginInstalled('barcode')` (`plugins/webkul/barcode/src/BarcodePlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `BarcodeServiceProvider` registers the package and binds `BarcodePlugin` to Filament panels via `Panel::configureUsing()`, but Filament pages are discovered and registered only when `Package::isPluginInstalled('barcode')` returns `true` (`plugins/webkul/barcode/src/BarcodePlugin.php:23-33`). Standalone web and mobile routes defined in `plugins/webkul/barcode/routes/web.php` are registered at boot.
 
 ## Purpose
 [VERIFIED]
@@ -66,7 +64,7 @@ The `barcode` module functions as a mobile-first, handheld camera/scanner workfl
     - Registers Blade views: `hasViews()`.
     - Registers translations: `hasTranslations()`.
     - Registers web routes: `hasRoute('web')`.
-    - Declares runtime plugin dependency on `inventories`: `hasDependencies(['inventories'])` (`plugins/webkul/barcode/src/BarcodeServiceProvider.php:31-33`).
+    - Declares an Install Plugins Dependency on `inventories`: `hasDependencies(['inventories'])` (`plugins/webkul/barcode/src/BarcodeServiceProvider.php:31-33`).
     - Configures CLI installer: `hasInstallCommand(fn (InstallCommand $command) => $command->installDependencies())`.
     - Configures CLI uninstaller: `hasUninstallCommand(fn (UninstallCommand $command) => null)`.
     - Sets package icon: `icon('barcode')`.
@@ -85,7 +83,7 @@ The `barcode` module functions as a mobile-first, handheld camera/scanner workfl
   - `packageRegistered()`:
     - Binds `BarcodePlugin::make()` to Filament panels via `Panel::configureUsing()` (`plugins/webkul/barcode/src/BarcodeServiceProvider.php:57-59`).
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Barcode\BarcodePlugin` (`plugins/webkul/barcode/src/BarcodePlugin.php:9`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -112,17 +110,11 @@ Defined in `plugins/webkul/barcode/composer.json`:
   - `laravel.providers`: `Webkul\Barcode\BarcodeServiceProvider`
 - **Require Dependencies**: None declared in `composer.json` (relies on root workspace Composer packages and required plugin modules).
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-- **Declared Runtime Dependencies (`Package::hasDependencies([...])`)**:
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`)**:
   - `inventories` (`plugins/webkul/barcode/src/BarcodeServiceProvider.php:31-33`): Required for core warehouse models (`Operation`, `OperationType`, `Move`, `MoveLine`, `Location`, `Lot`, `Package`, `Packaging`, `ProductQuantity`), enums (`OperationState`, `LocationType`, `ProductTracking`, `CreateBackorder`), and operational execution service (`Inventory` facade).
-- **Implicit Core Plugin Dependencies**:
-  - `products`: Product master catalog (`Webkul\Product\Models\Product`), barcodes, internal references, stock scoping methods (`resolveStockScopes()`), and units of measure.
-  - `security`: Authentication check (`Filament::auth()`), user authorization (`$user->canAccessPanel()`), and session management.
-  - `support`: Navigation enum `NavigationGroup::Barcode`, cross-database SQL dialect helper `db_dialect()` (`caseInsensitiveEquals()`), and layout helpers.
-  - `plugin-manager`: Package service provider infrastructure and `Package::isPluginInstalled()`.
-- **External Package Dependencies**:
-  - `nativephp-remote` / `Webkul\NativephpRemote`: Provides middleware `PersistNativeShell`, `RenderHostedNativeUi`, and base class `NativeRemote` for native mobile shell integration.
+No other Aureus Install Plugins Dependency entries are declared with `hasDependencies()`. The code-level consumption and external package integration are documented below.
 
 ## Directory Structure
 [VERIFIED]
@@ -207,7 +199,7 @@ plugins/webkul/barcode/
 ## Database
 [NOT APPLICABLE]
 - [VERIFIED] Verified from source code and migrations: contains **0 database tables, 0 migrations, 0 seeders, and 0 factories** (no `database/` directory exists).
-- Cross-references verified in `docs/database/erds/operations.md:46, 512-524, 1131`.
+- Cross-references verified in `docs/database/erds/operations.md#core-supply-chain--manufacturing-execution-6-plugins`.
 - Barcode lookups operate entirely against physical columns owned by other modules:
   - `products_products.barcode` & `products_products.reference` (owned by `products`)
   - `products_packagings.barcode` (owned by `products`)
@@ -216,7 +208,7 @@ plugins/webkul/barcode/
   - `inventories_packages.name` (owned by `inventories`)
   - `inventories_operations.name`, `inventories_operations.origin`, `inventories_operations.id` (owned by `inventories`)
 
-## Filament Resources / Pages / Widgets / Clusters
+## Filament Components
 [VERIFIED]
 - **Filament Resources**: None (`0`).
 - **Filament Clusters**: None (`0`).
@@ -239,7 +231,7 @@ plugins/webkul/barcode/
 - **Customer Panel (`customer`)**:
   - `[NOT APPLICABLE]`. Zero customer portal participation.
 
-## Services & Support Classes
+## Services and Support Classes
 [VERIFIED]
 1. **`Webkul\Barcode\Support\Navigation`** (`plugins/webkul/barcode/src/Support/Navigation.php:5`):
    - Generates structured navigation items for both web and native sidebars (`Navigation::items()`):
@@ -368,7 +360,7 @@ The barcode plugin's runtime execution is structured across 5 Livewire component
 [NOT APPLICABLE]
 - [VERIFIED] 0 Eloquent observer classes defined.
 
-## Policies
+## Policies and Authorization
 [NOT APPLICABLE]
 - [VERIFIED] 0 model policy classes defined (0 models).
 - Page access control on `LaunchBarcode` is managed via `BezhanSalleh\FilamentShield\Traits\HasPageShield`.
@@ -403,6 +395,17 @@ Defined in `plugins/webkul/barcode/routes/web.php`:
 - [VERIFIED] **Zero test files exist** for the `barcode` plugin.
 - The directory `plugins/webkul/barcode/tests/` does not exist, and no feature or unit test cases reference `Webkul\Barcode` in the root `tests/` directory.
 
+## Shared Infrastructure Dependencies
+[VERIFIED]
+This section records code-level consumption; only `inventories` is declared as an installation-order dependency.
+
+- **`plugin-manager`**: Package lifecycle and installation checks use `PackageServiceProvider` and `Package::isPluginInstalled()` (`plugins/webkul/barcode/src/BarcodeServiceProvider.php`, `plugins/webkul/barcode/src/BarcodePlugin.php`).
+- **`inventories`**: Declared Install Plugins Dependency and the source of warehouse models, enums, and transfer execution (`plugins/webkul/barcode/src/BarcodeServiceProvider.php`, `plugins/webkul/barcode/src/Livewire/`).
+- **`products`**: Barcode scanning resolves product barcodes, internal references, tracking modes, and stock scopes (`plugins/webkul/barcode/src/`).
+- **`security`**: Scanner access uses Filament authentication, session validation, and panel-access checks (`plugins/webkul/barcode/src/`).
+- **`support`**: Navigation grouping, layout helpers, and cross-database barcode matching use support infrastructure (`plugins/webkul/barcode/src/`).
+- **`nativephp-remote`**: Native shell middleware, bridge scripts, and the `NativeRemote` base class support mobile scanner integration (`plugins/webkul/barcode/src/`).
+
 ## Cross-Plugin Relationships
 [VERIFIED]
 - **`inventories`**:
@@ -420,7 +423,7 @@ Defined in `plugins/webkul/barcode/routes/web.php`:
 - **`nativephp-remote`**:
   - Provides native app shell integration and bridge scripts for iOS and Android hardware interaction.
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```text
@@ -534,4 +537,4 @@ Defined in `plugins/webkul/barcode/routes/web.php`:
 | `E-BAR-015` | `plugins/webkul/barcode/src/Support/NativeApp.php` | `NativeApp` | Native mobile shell bridge, dynamic titles, and deep-link generation |
 | `E-BAR-016` | `plugins/webkul/barcode/resources/dist/barcode.js` | `barcode.js` | Client-side Alpine.js barcodeScanner component and event handlers |
 | `E-BAR-017` | `plugins/webkul/barcode/resources/dist/html5-qrcode.min.js` | `html5-qrcode.min.js` | Bundled local QR/barcode camera scanning JavaScript library |
-| `E-BAR-018` | `docs/database/erds/operations.md` | `operations.md:46, 512-524, 1131` | Phase 4 ERD verification of 0 database tables and 0 migrations |
+| `E-BAR-018` | `docs/database/erds/operations.md` | `operations.md#core-supply-chain--manufacturing-execution-6-plugins` | Operations ERD verification of 0 database tables and 0 migrations |

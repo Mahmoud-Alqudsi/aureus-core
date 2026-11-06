@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/maintenance
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:50` as `Webkul\Maintenance\MaintenanceServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `MaintenanceServiceProvider` registers package capabilities, migrations, seeders, and translations, but Filament admin panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('maintenance')` returns `true` (`plugins/webkul/maintenance/src/MaintenancePlugin.php:24-53`).
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as an optional domain module without calling `$package->isCore()` (`plugins/webkul/maintenance/src/MaintenanceServiceProvider.php:19-45`). Execution and Filament UI contribution are gated by runtime installation verification via `Package::isPluginInstalled('maintenance')` (`plugins/webkul/maintenance/src/MaintenancePlugin.php:24`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `MaintenanceServiceProvider` registers package capabilities, migrations, seeders, and translations, but Filament admin panel resources, pages, clusters, and widgets are discovered and registered only when `Package::isPluginInstalled('maintenance')` returns `true` (`plugins/webkul/maintenance/src/MaintenancePlugin.php:24-53`).
 
 ## Purpose
 [VERIFIED]
@@ -76,7 +74,7 @@ The `maintenance` module provides physical equipment asset lifecycle management,
   - `packageBooted()`:
     - Empty implementation (`//`).
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Maintenance\MaintenancePlugin` (`plugins/webkul/maintenance/src/MaintenancePlugin.php:10`)
 - **Implements**: `Filament\Contracts\Plugin`
@@ -105,17 +103,11 @@ Defined in `plugins/webkul/maintenance/composer.json`:
   - `Webkul\Maintenance\Tests\`: `tests/`
 - **Require Dependencies**: None declared in local `composer.json` (relies on root application packages and Core plugins).
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
-- **Declared Runtime Dependencies (`Package::hasDependencies([...])`)**: None (`—`). The plugin does not call `hasDependencies()` in `MaintenanceServiceProvider`.
-- **Implicit Core Plugin Dependencies**:
-  - `full-calendar`: Powers `FullCalendarPlugin`, `FullCalendarWidget`, and FullCalendar interactive schedule views.
-  - `chatter`: Provides `HasChatter`, `HasLogActivity`, `ChatterAction`, `ActivityTableAction`, `ActivityType` seeding, and `ChatterCleanupService`.
-  - `fields`: Provides `HasCustomFields` trait on models, schemas, tables, and infolists (`Equipment`, `EquipmentCategory`, `MaintenanceRequest`, `Stage`, `Team`), plus `ProgressStepper` components.
-  - `security`: Provides `User` model, role-based authorization policies via Filament Shield, and `HasOwnershipScope` on requests.
-  - `support`: Provides `Company` multi-tenancy model, `BelongsToCompany` trait, `NavigationGroup::Maintenance`, `ActivityType` model and enums, and time formatting helpers (`format_float_time()`, `parse_float_time()`).
-  - `partners`: Provides `Partner` vendor references on equipment assets (`partners_partners`).
-  - `table-views`: Provides `HasTableViews` concern and `PresetView` tabbed filter presets on equipment and request list pages.
+
+- **Declared Install Plugins Dependency (`Package::hasDependencies([...])`)**: None (`—`). `MaintenanceServiceProvider::configureCustomPackage()` does not call `hasDependencies()` (`plugins/webkul/maintenance/src/MaintenanceServiceProvider.php:19-44`).
+- The Install Plugins Dependency declaration is intentionally separate from the code-level plugin consumption listed in [`Shared Infrastructure Dependencies`](#shared-infrastructure-dependencies).
 
 ## Directory Structure
 [VERIFIED]
@@ -436,7 +428,7 @@ plugins/webkul/maintenance/
 - `StageSeeder`: Seeds 4 standard workflow stages: `New Request` (sort 1, done: false), `In Progress` (sort 2, done: false), `Repaired` (sort 3, done: true), `Scrap` (sort 4, done: true).
 - `TeamSeeder`: Seeds default team `Internal Maintenance` assigned to initial company.
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### 1. Top-Level Resource: `EquipmentResource` (`Webkul\Maintenance\Filament\Resources\EquipmentResource`)
@@ -535,7 +527,7 @@ plugins/webkul/maintenance/
 - **Admin Panel (`admin`)**: Full participation. All resources, clusters, pages, and widgets are discovered and registered when `Package::isPluginInstalled('maintenance')` is true.
 - **Customer Panel (`customer`)**: No participation (`[NOT APPLICABLE]`). Maintenance is an internal operational asset and maintenance dispatching tool.
 
-## Services
+## Services and Support Classes
 [NOT APPLICABLE]
 The plugin does not declare standalone domain service classes. Business logic is encapsulated in Eloquent model lifecycle hooks (`Equipment::boot()`, `MaintenanceRequest::boot()`, `Stage::boot()`, `Team::boot()`), FullCalendar widget actions, and Filament schemas.
 
@@ -551,7 +543,7 @@ No custom Laravel Event Listener classes are declared in this plugin.
 [NOT APPLICABLE]
 No standalone Eloquent Observer classes are registered; model event handling is registered via closure callbacks inside `boot()` on `Equipment`, `EquipmentCategory`, `MaintenanceRequest`, `Stage`, and `Team`.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 Managed via Filament Shield permissions (`config/filament-shield.php`):
 
@@ -590,18 +582,19 @@ Includes localization keys for models (`equipment`, `equipment-category`, `maint
 - **Automated Test Suite Status**: **Zero Test Files (`0`)**.
 - The plugin directory contains **0 test files** (the `plugins/webkul/maintenance/tests/` directory is not present), and the root application test suite (`tests/`) contains **0 tests** targeting `Webkul\Maintenance`.
 
-## Runtime Dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-- **Declared Dependencies**: None (`—`).
-- **Core Package Dependencies**:
-  - `plugin-manager`: Package discovery and lifecycle orchestration.
-  - `full-calendar`: FullCalendar calendar engine and JavaScript multi-month calendar plugin.
-  - `chatter`: Audit logging (`HasChatter`, `HasLogActivity`), Chatter activity dispatching, and cleanup service.
-  - `fields`: Custom fields engine (`HasCustomFields`) and progress stepper components.
-  - `security`: Authenticated user resolution (`Auth::id()`), ownership scope (`HasOwnershipScope`), and authorization policies.
-  - `support`: Multi-tenant isolation (`CompanyContext`, `BelongsToCompany`), navigation enums (`NavigationGroup::Maintenance`), and activity type catalog.
-  - `partners`: Vendor master entity (`Partner`) on equipment records.
-  - `table-views`: Table view customization and preset filter tabs (`HasTableViews`, `PresetView`).
+
+This section records code-level consumption of shared plugins. It is distinct from the declared Install Plugins Dependency list in [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: Package discovery and lifecycle orchestration through the shared `PackageServiceProvider` contract.
+- **`full-calendar`**: FullCalendar calendar engine and JavaScript multi-month calendar plugin.
+- **`chatter`**: Audit logging (`HasChatter`, `HasLogActivity`), Chatter activity dispatching, and cleanup service.
+- **`fields`**: Custom fields engine (`HasCustomFields`) and progress stepper components.
+- **`security`**: `MaintenanceRequest` opts into `HasOwnershipScope`, while the plugin-local policy and owner fields remain documented in this specification; shared ownership and authorization semantics are defined in [`security.md`](security.md), [`authorization.md`](../security/authorization.md), and [`ownership-scopes.md`](../security/ownership-scopes.md).
+- **`support`**: `Equipment`, `EquipmentCategory`, `MaintenanceRequest`, and `Team` use the local `BelongsToCompany` boundary described in the Models section; shared company context and scope behavior are defined in [`support.md`](support.md) and [`multi-company.md`](../security/multi-company.md). Navigation and activity-type consumption remains local to this dependency record.
+- **`partners`**: Vendor master entity (`Partner`) on equipment records.
+- **`table-views`**: Table view customization and preset filter tabs (`HasTableViews`, `PresetView`).
 
 ## Cross-Plugin Relationships
 [VERIFIED]
@@ -641,7 +634,7 @@ erDiagram
     MAINTENANCE_REQUESTS ||--o{ CHATTER_ACTIVITIES : "polymorphic activity"
 ```
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ```mermaid
@@ -734,7 +727,7 @@ sequenceDiagram
 - **Upstream Dependencies**: Depends on `plugin-manager`, `support`, `security`, `partners`, `chatter`, `fields`, `full-calendar`, and `table-views`.
 - **Downstream Dependents**: None. No downstream plugins currently depend on `maintenance` (verified: `manufacturing` operates independently with 0 foreign keys to maintenance equipment).
 
-## Evidence Index
+## Evidence
 [VERIFIED]
 - `plugins/webkul/maintenance/src/MaintenanceServiceProvider.php`
 - `plugins/webkul/maintenance/src/MaintenancePlugin.php`

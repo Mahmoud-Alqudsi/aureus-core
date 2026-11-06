@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:41` as `Webkul\Analytic\AnalyticServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when registering migrations (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The unified analytic records schema and base model execute unconditionally at boot time once registered in `bootstrap/providers.php`.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `AnalyticServiceProvider::configureCustomPackage()` (`plugins/webkul/analytics/src/AnalyticServiceProvider.php:15`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when registering migrations (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The unified analytic records schema and base model execute unconditionally at boot time once registered in `bootstrap/providers.php`.
 
 ## Purpose
 [VERIFIED]
@@ -41,11 +39,11 @@ The `analytics` plugin serves as the foundational analytic ledger and metric dis
     - Enables automatic migration execution (`$package->runsMigrations()`)
   - `packageBooted()`: Defined as an empty method stub (`//`).
 
-## Filament Plugin class
+## Filament Integration
 [NOT APPLICABLE]
-The `analytics` plugin defines **zero Filament plugin classes** (no `AnalyticPlugin.php` exists; confirmed architectural exception in `docs/architecture/overview.md:90` and `docs/architecture/plugin-registry.md:89`). It contributes zero direct Filament resources, pages, clusters, or widgets, and registers no UI components on either the `admin` or `customer` panel. All user interfaces interacting with `analytic_records` are provided by consuming downstream plugins (such as `timesheets` and `projects`).
+The `analytics` plugin defines **zero Filament plugin classes** (no `AnalyticPlugin.php` exists; confirmed architectural exception in `docs/architecture/overview.md#filament-panel-architecture` and `docs/architecture/plugin-registry.md#filament-registration-lifecycle`). It contributes zero direct Filament resources, pages, clusters, or widgets, and registers no UI components on either the `admin` or `customer` panel. All user interfaces interacting with `analytic_records` are provided by consuming downstream plugins (such as `timesheets` and `projects`).
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/analytics/composer.json`
   - Name: `webkul/analytics`
@@ -63,11 +61,11 @@ The `analytics` plugin defines **zero Filament plugin classes** (no `AnalyticPlu
   - `Webkul\Partner`: Consumes `Partner` model and `PartnerResource`.
   - `Webkul\Security`: Consumes `User` model and `UserResource`.
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-None (`—`). `AnalyticServiceProvider::configureCustomPackage()` does not declare any runtime plugin dependencies via `hasDependencies()`.
+None (`—`). `AnalyticServiceProvider::configureCustomPackage()` does not declare an Install Plugins Dependency via `hasDependencies()`.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 Full verified tree of `plugins/webkul/analytics/`:
 
@@ -154,7 +152,7 @@ plugins/webkul/analytics/
 
 ### Resolution of Prior Documentation Discrepancy: Table Ownership (1 vs 3 Tables)
 [VERIFIED]
-- **Discrepancy**: An earlier planning note (recorded in `docs/database/schema-conventions.md:63`) claimed that `analytics` owned three tables: `analytic_records`, `analytic_plans`, and `analytic_accounts`. Conversely, the verified Core Entity Inventory in `docs/database/erds/core.md:129` listed only `analytic_records`.
+- **Discrepancy**: An earlier planning note (recorded in `docs/database/schema-conventions.md#4-non-universal-plugin-exceptions`) claimed that `analytics` owned three tables: `analytic_records`, `analytic_plans`, and `analytic_accounts`. Conversely, the verified Core Entity Inventory in `docs/database/erds/core.md#core-entity-inventory` listed only `analytic_records`.
 - **Definitive Verification**:
   1. Direct inspection of `plugins/webkul/analytics/database/migrations/` confirms that **only one migration exists** (`2024_12_18_131844_create_analytic_records_table.php`), creating exclusively `analytic_records`.
   2. A comprehensive search across all 28 plugins in the repository confirms that **neither `analytic_plans` nor `analytic_accounts` exists anywhere in migrations, models, or database schemas**.
@@ -163,7 +161,7 @@ plugins/webkul/analytics/
      - `analytic_records` serves as the sole flat unified analytic ledger.
      - Flexible financial distribution is handled via JSONB / string payload columns (e.g. `accounts_account_move_lines.analytic_distribution` and `sales_order_lines.analytic_distribution`).
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [NOT APPLICABLE]
 No Filament resources, pages, clusters, or widgets are defined in `plugins/webkul/analytics`.
 
@@ -171,7 +169,7 @@ No Filament resources, pages, clusters, or widgets are defined in `plugins/webku
 [NOT APPLICABLE]
 No direct Filament panel registration is performed by this plugin.
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 - **`Webkul\Analytic\Http\Resources\V1\RecordResource`** (`plugins/webkul/analytics/src/Http/Resources/V1/RecordResource.php:10`):
   - Transforms `Record` model instances into JSON API structures:
@@ -194,7 +192,7 @@ No Laravel event listeners are defined in `analytics`.
 [NOT APPLICABLE]
 No standalone Eloquent observer classes are defined in `analytics`. Model boot events (`creating`) are registered inline within `Record::boot()`.
 
-## Policies
+## Policies and Authorization
 [NOT APPLICABLE]
 - No dedicated policy class exists in `analytics`.
 - Authorization for operations on `analytic_records` is governed by downstream consuming policies (such as `Webkul\Timesheet\Policies\TimesheetPolicy`).
@@ -218,11 +216,16 @@ No plugin-specific settings schema exists under `database/settings/`.
 - **Root Test Coverage**: Zero tests in `tests/Feature/` or `tests/Unit/` directly test `Webkul\Analytic\Models\Record` or `RecordResource`.
 - **Indirect Operational Coverage**: Records in `analytic_records` are created and queried indirectly during integration tests for downstream modules (`projects` and `timesheets`).
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-None (`—`).
+This section records code-level consumption; any declared Install Plugins Dependency remains owned by [`Install Plugins Dependency`](#install-plugins-dependency).
 
-## Cross-plugin relationships
+- **`plugin-manager`**: `AnalyticServiceProvider` extends `PackageServiceProvider` and uses `Package` lifecycle registration (`plugins/webkul/analytics/src/AnalyticServiceProvider.php`).
+- **`support`**: `Record` uses `BelongsToCompany` and relates each analytic record to `Company` (`plugins/webkul/analytics/src/Models/Record.php`).
+- **`security`**: `Record` relates `user_id` and `creator_id` to `Webkul\Security\Models\User`, and the model boot hook uses the authenticated user for `creator_id` (`plugins/webkul/analytics/src/Models/Record.php`).
+- **`partners`**: `Record::partner()` owns the `partner_id` relation to `Webkul\Partner\Models\Partner` (`plugins/webkul/analytics/src/Models/Record.php`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 The `analytics` plugin relies on 3 upstream core infrastructure plugins and is consumed by downstream domain modules across code, schema, and UI layers:
 
@@ -289,7 +292,7 @@ The `analytics` plugin relies on 3 upstream core infrastructure plugins and is c
      - `TopAssigneesWidget` (`plugins/webkul/projects/src/Filament/Widgets/TopAssigneesWidget.php:51-70`): Joins `users` on `analytic_records.user_id` and filters by partner and date ranges.
      - `TopProjectsWidget` (`plugins/webkul/projects/src/Filament/Widgets/TopProjectsWidget.php:47-78`): Joins `projects_projects` on `analytic_records.project_id`, aggregating `SUM(analytic_records.unit_amount)` and `COUNT(DISTINCT analytic_records.task_id)`.
 2. **`timesheets` Plugin (Optional — Code-Level & UI Consumer)**:
-   - Owns **0 dedicated physical tables and 0 migrations** (`docs/database/erds/operations.md:53, 1132`).
+   - Owns **0 dedicated physical tables and 0 migrations** (`docs/database/erds/operations.md#human-resources-collaboration--extended-operations-9-plugins`).
    - Defines `Webkul\Timesheet\Models\Timesheet` (`plugins/webkul/timesheets/src/Models/Timesheet.php:8`) extending `Webkul\Project\Models\Timesheet` (which extends `Webkul\Analytic\Models\Record`), attaching `HasCustomFields`.
    - Provides administrative UI via `TimesheetResource` for managing time records stored in `analytic_records`.
 3. **`accounts` Plugin (Optional — Schema/Concept Field Consumer)**:
@@ -299,7 +302,7 @@ The `analytics` plugin relies on 3 upstream core infrastructure plugins and is c
 4. **`sales` Plugin (Optional — Schema/Concept Field Consumer)**:
    - `OrderLine` (`plugins/webkul/sales/src/Models/OrderLine.php:61`) contains an `analytic_distribution` string column (`plugins/webkul/sales/database/migrations/2025_02_05_102851_create_sales_order_lines_table.php:33`).
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 
 ### 1. Model Inheritance & Physical Persistence Hierarchy
@@ -360,7 +363,7 @@ sequenceDiagram
     UI-->>Employee: Timesheet saved and task progress updated
 ```
 
-## Business rules
+## Business Rules
 [VERIFIED]
 1. **Multi-Unit / Multi-Type Ledger Architecture**:
    - `analytic_records` supports both financial amounts (`amount` decimal) and physical units/duration (`unit_amount` decimal).
@@ -374,13 +377,13 @@ sequenceDiagram
 5. **Shared Physical Ledger Optimization**:
    - Rather than maintaining separate tables for timesheets and financial analytic lines, Aureus ERP consolidates operational time-tracking directly on `analytic_records` through class inheritance and schema mutation (`projects` migration).
 
-## Extension points
+## Extension Points
 [VERIFIED]
 1. **Eloquent Subclassing**: Downstream packages can extend `Webkul\Analytic\Models\Record` to build specialized ledger entities without recreating base company-scoping or partner/user relationship infrastructure (e.g. `Webkul\Project\Models\Timesheet`).
 2. **Database Schema Mutation**: Downstream modules can alter `analytic_records` via migrations to attach domain-specific foreign keys (as demonstrated by `projects` adding `project_id` and `task_id`).
 3. **REST API Serialization**: `RecordResource` provides a standard transformation layer that downstream controllers can extend or embed.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 1. **Zero Automated Test Coverage in Plugin**:
    - **Critical Fact**: `plugins/webkul/analytics/` contains **0 test files** (0 unit tests, 0 feature tests under `tests/`).
@@ -393,7 +396,7 @@ sequenceDiagram
 4. **Absence of Automated Analytic Line Posting Engine**:
    - [INFERRED] While `accounts_account_move_lines` and `sales_order_lines` contain `analytic_distribution` columns, there is no active event listener or observer in `analytics` or `accounts` that automatically synchronizes posted account move lines into individual `analytic_records` rows.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 - **Architectural Scope**: **Low Code Footprint / High Foundational Data Layer**.
 - **Blast Radius**: Modifying `Record` or `analytic_records` directly impacts operational timesheets in `projects` and `timesheets`, as well as analytical dashboard widgets.
@@ -402,7 +405,7 @@ sequenceDiagram
 
 ---
 
-## Evidence Index
+## Evidence
 
 | Evidence ID | Source File | Symbol / Method | Purpose / Claim Verified |
 |---|---|---|---|

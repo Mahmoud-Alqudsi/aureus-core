@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-09-25
+last_verified: 2026-11-06
 scope: documentation-changelog
 confidence: high
 ---
@@ -25,6 +25,115 @@ In accordance with the repository's documentation accuracy rules, historical eve
 1. **Git-Verified History**: Backed directly by immutable Git commit hashes, author timestamps, and repository diffs (`git log -- docs/`).
 2. **Documented Execution History**: Backed by documented phase execution reports, verification matrices, and structured project logs where exact commit hashes were synthesized or consolidated.
 3. **Reconstructed / Active History**: Actively in progress or reconstructed from conversational context; explicitly flagged to prevent false claims of Git verification.
+
+## Knowledge Ownership, Assistant Entry Points & CI Validation (2026-11-06)
+
+- **Evidentiary Tier**: Documented Execution History; verified against the current repository files and local validation commands.
+- Established [`docs/ai/knowledge-ownership.md`](ai/knowledge-ownership.md) as the map for canonical documentation owners and centralized the source-of-truth hierarchy in [`AGENTS.md`](../AGENTS.md).
+- Added a thin Copilot repository-instructions adapter and documented the shared `AGENTS.md` entry route for Copilot, Gemini CLI, and Codex. The adapters point to shared rules rather than copying them.
+- Extended [`scripts/kb_lint.py`](../scripts/kb_lint.py) to validate ownership-map uniqueness and paths, selected assistant entrypoints, duplicate source-hierarchy text, and workflow inventory parity; extended the local pre-commit trigger to those entrypoints.
+- Added standard-library regression tests and [`kb_lint.yml`](../.github/workflows/kb_lint.yml) for push, pull-request, and merge-group validation. The workflow is not configured as a required GitHub status check.
+- Resolved the per-plugin test-count owner to [`docs/plugins/README.md`](plugins/README.md). Historical stage and phase entries remain unchanged.
+- Verification: 4 linter regression tests passed; strict KB lint passed with 0 errors and 0 warnings; the hook path matcher, shell syntax, and workflow YAML were validated.
+
+---
+
+## Support & Root Application Documentation Corrections (2026-11-03)
+
+- **Evidentiary Tier**: Documented Execution History; updated claims were checked against the current source tree and existing tests. This entry is not a Git-history claim.
+- Clarified the two distinct support schema registries and documented reusable Filament concerns, translated page concerns, selected shared helpers, and company-aware factory defaults in [`docs/plugins/support.md`](plugins/support.md).
+- Added the `DatabaseDialect` call-site rule to [`docs/ai/database-rules.md`](ai/database-rules.md), company-aware factory guidance to [`docs/ai/testing-rules.md`](ai/testing-rules.md), and verified admin request/form settings to [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md).
+- Added Blade icon and NativePHP remote configuration ownership to [`docs/application/overview.md`](application/overview.md), linking the barcode-specific mobile integration rather than duplicating its description.
+- No application code, tests, migrations, dependencies, or CI workflows were changed. The `float_round()` rounding concern remains a separate unverified code investigation.
+
+## Post-PR #8 Code & Architecture Synchronization (2026-11-02)
+
+- **Evidentiary Tier**: Git-Verified History, verified against commit range `76aa5f9a6` (PR #8) through `develop` (`74c8b860c`) and active branch `docs/knowledge-base-restructure`.
+- **UI Architecture & Concerns**:
+  - Documented [`HasNavigationLabelTitles`](../plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php) concern in [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md), [`docs/ai/coding-rules.md`](ai/coding-rules.md), and [`docs/plugins/support.md`](plugins/support.md), governing standardized page/resource titles, breadcrumbs, and relation manager tabs across 119 files in 19 plugins, along with the strict architectural invariant requiring attachment to the top-most resource in the class hierarchy (`ARCH-009`).
+  - Documented [`HasClusterBreadcrumbs`](../plugins/webkul/support/src/Traits/HasClusterBreadcrumbs.php) trait in [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md), [`docs/ai/coding-rules.md`](ai/coding-rules.md), and [`docs/plugins/support.md`](plugins/support.md), establishing centralized cluster breadcrumb localization across 47 files in 14 plugins (`ARCH-010`).
+  - Documented `ManageRelatedRecords` Arabic template override (`lang/vendor/filament-panels/ar/resources/pages/manage-related-records.blade.php`) and `$relatedResource` declaration eliminating redundant action verbs across 13 plugins (`ARCH-011`).
+  - Documented `ProgressStepper` (Forms & Infolists) RTL geometry mirroring (`rotate(-45deg)` chevron rotation and CSS logical properties) and dark-mode styling in [`docs/plugins/fields.md`](plugins/fields.md).
+- **Infrastructure & Environment**:
+  - Documented local Docker development environment updates in [`docs/application/overview.md`](application/overview.md), including external Docker network `laravel-net`, port mapping `8081:8000`, supervisor execution of `php artisan serve`, `config/app.php` asset URL binding, and `config/database.php` `'strict' => false` MySQL session mode.
+- **Upstream Sync & Domain Extensions**:
+  - Documented REST API route controllers and resource transformers (`PriceListController`, `PriceListRequest`, and `PriceRuleItemResource`) in [`docs/plugins/products.md`](plugins/products.md).
+  - Documented manufacturing work center productivity loss and log language models (`work-center-loss-type`, `work-center-productivity-log`, `work-center-productivity-loss`) in [`docs/plugins/manufacturing.md`](plugins/manufacturing.md).
+  - Documented blog post filter partials (`partials/filters.blade.php`) and `Concerns/ListsBlogPosts.php` in [`docs/plugins/blogs.md`](plugins/blogs.md).
+- **Governance & Ledger Tracking**:
+  - Added claims `ARCH-009`, `ARCH-010`, and `ARCH-011` to [`docs/verification-matrix.md`](verification-matrix.md), updating global tracked claim rows to 75.
+
+---
+
+## Knowledge-Base Restructure — Stage 4: Domain & Plugin SSoT Consolidation & Numeric Reconciliation (2026-11-02)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Established [`docs/plugins/README.md`](plugins/README.md) as the Single Source of Truth (SSoT) for the 28-plugin catalog, `Migrations (Disk / hasMigrations)` counts, and `Test Coverage (*Test.php / Total tests/*.php)` metrics (`189` executable `*Test.php` files + `12` shared helpers under `tests/Helpers/*Helper.php` = `201` total PHP files in `plugins/webkul/*/tests/`), delegating per-plugin test counts from [`docs/ai/testing-rules.md`](ai/testing-rules.md), [`docs/architecture/change-impact.md`](architecture/change-impact.md), and [`docs/verification-matrix.md`](verification-matrix.md) (`COUNT-011`).
+- Reconciled all internal migration and test count discrepancies across individual plugin specifications to achieve `100%` alignment with live `plugins/webkul/*` directories: [`accounts.md`](plugins/accounts.md) (`71` migration files on disk / `70` in `hasMigrations`, `3` settings migrations, `43` `*Test.php` + `1` helper = `44` total), [`products.md`](plugins/products.md) (`19` `*Test.php` files, adding `PriceListResolverTest.php` and `PriceRuleItemScopeTest.php`), [`inventories.md`](plugins/inventories.md) (`57` migrations + `4` settings, `40` `*Test.php` + `1` helper = `41` total), [`purchases.md`](plugins/purchases.md) (`15` `*Test.php` + `1` helper = `16` total across all sections), [`manufacturing.md`](plugins/manufacturing.md) (`37` migration files on disk and in `hasMigrations`, `7` `*Test.php` + `1` helper = `8` total), [`support.md`](plugins/support.md) (`34` migration files on disk / `35` in `hasMigrations`, `15` `*Test.php` + `5` helpers = `20` total, adding `HasClusterBreadcrumbsTest.php` and `HasNavigationLabelTitlesTest.php`), [`time-off.md`](plugins/time-off.md) (`10` migration files on disk / `9` in `hasMigrations`), [`partners.md`](plugins/partners.md) (`10` `*Test.php` files), [`projects.md`](plugins/projects.md) (`8` `*Test.php` files), [`accounting.md`](plugins/accounting.md) (`8` `*Test.php` + `1` helper = `9` total), [`employees.md`](plugins/employees.md) (`5` `*Test.php` + `1` helper = `6` total), and [`sales.md`](plugins/sales.md) (`19` `*Test.php` + `1` helper = `20` total).
+- Decoupled duplicated state-machine diagrams, multi-step workflow narratives, and domain calculation formulas from the `## Data Flow and Workflows` and `## Business Rules` sections of [`sales.md`](plugins/sales.md), [`purchases.md`](plugins/purchases.md), [`inventories.md`](plugins/inventories.md), [`accounts.md`](plugins/accounts.md), and [`manufacturing.md`](plugins/manufacturing.md), replacing them with concise plugin-boundary summaries and direct `#heading-slug` links to their canonical owners in `docs/workflows/*.md` and `docs/business-rules/*.md`.
+
+---
+
+## Knowledge-Base Restructure : Plugin Dependency Terminology, Status Consolidation & Linter Enforcement (2026-11-02)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Standardized tier-2 plugin installation-order dependencies (`Package::hasDependencies([...])` in `plugins/webkul/*/src/*ServiceProvider.php`) to the canonical term **Install Plugins Dependency** across AI governance and domain documents ([`docs/ai/terminology.md`](ai/terminology.md), [`docs/ai/plugin-rules.md`](ai/plugin-rules.md), [`docs/ai/coding-rules.md`](ai/coding-rules.md), [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md), [`docs/ai/architecture-rules.md`](ai/architecture-rules.md), [`docs/business-rules/accounting.md`](business-rules/accounting.md), [`docs/business-rules/inventory.md`](business-rules/inventory.md), and [`docs/database/erds/core.md`](database/erds/core.md)), architecture and verification specifications ([`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md), [`docs/architecture/overview.md`](architecture/overview.md), [`docs/architecture/change-impact.md`](architecture/change-impact.md), and [`docs/verification-matrix.md`](verification-matrix.md)), the [`aureus-plugin-change`](../.agents/skills/aureus-plugin-change/SKILL.md) skill, [`docs/plugins/README.md`](plugins/README.md), and all 28 plugin specifications under `docs/plugins/*.md`, while preserving the 3-tier distinction between **Composer Requirement** (`composer.json`), **Install Plugins Dependency** (`Package::hasDependencies()`), and **Code-Level Consumption** (`declared`, `guarded`, `unguarded` PHP imports).
+- Added the derived `Dependents` column to the 28-plugin directory table in [`docs/plugins/README.md`](plugins/README.md) as the exact transpose of `Install Plugins Dependency`.
+- Consolidated all 28 standalone `## Enabled/Disabled` sections into `## Status` across `docs/plugins/*.md`, updated [`docs/development/plugin-documentation-template.md`](development/plugin-documentation-template.md) (and linked it from [`docs/development/ai-skills.md`](development/ai-skills.md)) to remove `## Enabled/Disabled` from the standard 16-section template shape, renamed `## Runtime Plugin Dependencies` to `## Install Plugins Dependency`, and codified the forbidden headings contract (`## Enabled/Disabled`, `## Runtime Plugin Dependencies`, `## Runtime Dependencies`).
+- Extended [`scripts/kb_lint.py`](../scripts/kb_lint.py) with 9 automated checks (`forbidden-headings`, `install-deps-mirror`, `core-install-empty`, `optional-no-core`, `core-set-mirror`, `dependents-mirror`, `plugin-doc-status`, `composer-webkul-empty`, and `consumption-stats`) verifying documentation-to-source alignment across all 28 plugins.
+
+---
+
+## Knowledge-Base Restructure — Stage 3: Governance & Operations SSoT Consolidation (2026-10-25)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Decoupled all governance and development specifications under `docs/development/` ([`git-workflow.md`](development/git-workflow.md), [`github-governance.md`](development/github-governance.md), [`ci-testing-governance.md`](development/ci-testing-governance.md), [`upstream-sync.md`](development/upstream-sync.md), [`change-management.md`](development/change-management.md), and [`ai-skills.md`](development/ai-skills.md)) from historical operational stage markers (`O0`–`O10`, `R6`, `R8`), removing all `Completion Boundary` and `Owning Operational Stage` sections (`0` stage references remaining across `docs/development/`).
+- Enforced strict Single Source of Truth (SSoT) ownership across the governance triad:
+  - [`git-workflow.md`](development/git-workflow.md) exclusively owns dual-remote topology, branch hierarchy, naming conventions, commit formatting, and merge/release lifecycles.
+  - [`github-governance.md`](development/github-governance.md) exclusively owns GitHub server-side default branch state, active repository rulesets (`23566563` and `23566566`), repository merge button settings, PR review rules, and issue templates (`.github/ISSUE_TEMPLATE/bug.yml`, `feature_request.yml`, and retained `bug_report.md`).
+  - [`ci-testing-governance.md`](development/ci-testing-governance.md) exclusively owns `.github/workflows/*.yml`, runtime/database matrices, test execution architecture, and the 4 required status check contexts, delegating per-plugin test file counts to [`docs/ai/testing-rules.md`](ai/testing-rules.md).
+- Replaced temporary audit-phase badges (`RECOMMENDED`, `DEFERRED`, `PENDING DECISION`) in [`github-governance.md`](development/github-governance.md) and [`ci-testing-governance.md`](development/ci-testing-governance.md) with explicit tables contrasting active enforced controls against optional future enhancements.
+- Merged the 7 routing and readiness verification scenarios into [`docs/development/change-management.md`](development/change-management.md#routing-and-readiness-verification-scenarios) and retired the standalone `docs/development/knowledge-base-readiness-audit.md` file (whose historical dated entries from `2026-09-17` through `2026-09-22` are preserved in this changelog), updating the canonical document count in [`docs/README.md`](README.md) from 80 to 79 verified files.
+
+---
+
+## Knowledge-Base Restructure — Stage 2: AI Layer Consolidation, Reading-Order Routing & Markdown Anchor Normalization (2026-10-25)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Updated [`docs/ai/reading-order.md`](ai/reading-order.md) so every task row routes through its mandatory prescriptive rules file in `docs/ai/*-rules.md` (and `docs/workflows/` / `docs/business-rules/` for domain workflow and calculation changes), and replaced the duplicated `Plugin change checklist` section with a direct link to the canonical checklists in [`docs/ai/plugin-rules.md`](ai/plugin-rules.md).
+- Eliminated duplicated technology-baseline version tables and terminology summaries from [`docs/ai/context.md`](ai/context.md) and [`docs/README.md`](README.md), pointing directly to [`AGENTS.md`](../AGENTS.md#technology-baseline), [`composer.lock`](../composer.lock), and [`docs/ai/terminology.md`](ai/terminology.md).
+- Removed the duplicated 28-plugin directory table from [`docs/README.md`](README.md) and the duplicated per-plugin test coverage breakdown from [`docs/ai/plugin-rules.md`](ai/plugin-rules.md), consolidating those inventories into [`docs/plugins/README.md`](plugins/README.md) and [`docs/ai/testing-rules.md`](ai/testing-rules.md).
+- Replaced all 46 fragile Markdown-to-Markdown `path.md:line` citations across [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md), [`docs/ai/terminology.md`](ai/terminology.md), [`docs/architecture/change-impact.md`](architecture/change-impact.md), [`docs/architecture/dynamic-schema.md`](architecture/dynamic-schema.md), [`docs/plugins/analytics.md`](plugins/analytics.md), [`docs/plugins/barcode.md`](plugins/barcode.md), [`docs/plugins/full-calendar.md`](plugins/full-calendar.md), [`docs/plugins/sales.md`](plugins/sales.md), and `docs/CHANGELOG.md` with stable `#heading-slug` section links (`0` Markdown line citations remaining).
+
+---
+
+## Knowledge-Base Restructure — Stage 1: De-Phasing & Prompt-Artifact Cleanup (2026-10-25)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure`.
+- Decoupled domain, architecture, database, plugin, and verification documentation from historical project build phases (`Phase 0`–`Phase 13`), consolidating historical phase narratives and operational remediation roadmaps exclusively into `docs/CHANGELOG.md`.
+- Removed historical phase and operational roadmap tables from [`docs/README.md`](README.md), phase columns and headings from [`docs/plugins/README.md`](plugins/README.md), and phase-attributed verification columns, prompt target-range rows, and handoff notes from [`docs/verification-matrix.md`](verification-matrix.md) and [`docs/architecture/change-impact.md`](architecture/change-impact.md).
+- Replaced prompt-completion headings (`## 11. Mandatory Final Answer` / `### Explicit Answer:`) with standard domain verification sections across [`docs/business-rules/accounting.md`](business-rules/accounting.md), [`docs/business-rules/inventory.md`](business-rules/inventory.md), [`docs/business-rules/purchasing.md`](business-rules/purchasing.md), and [`docs/business-rules/sales.md`](business-rules/sales.md).
+- Removed relative phase scoping wording (`later-phase`, `outside this phase`) from [`docs/ai/context.md`](ai/context.md), [`docs/ai/reading-order.md`](ai/reading-order.md), [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md), [`docs/architecture/overview.md`](architecture/overview.md), [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md), [`docs/database/overview.md`](database/overview.md), [`docs/database/company-isolation.md`](database/company-isolation.md), and affected plugin documents.
+
+---
+
+## Knowledge-Base Restructure — Baseline Citation & Playwright Inventory Corrections (2026-10-23)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current source tree on branch `docs/knowledge-base-restructure` at commit `74c8b860ce1e13593bf7f480de4ca4a525b8cc18`.
+- Repaired 12 stale line-citation starts across the accounting, fields, full-calendar, invoices, partners, and timesheets plugin documents by pointing each claim at a non-blank source line.
+- Reconciled the Playwright inventory in [`docs/application/overview.md`](application/overview.md) to 19 specs and 7 page objects, matching the source tree and the CI inventory.
+- Corrected the current documentation-maintenance record: the executable knowledge-base linter is [`scripts/kb_lint.py`](../scripts/kb_lint.py), not `docs/development/kb_lint.py`. Earlier historical entries are preserved as historical records.
+- Verification target for this phase: `python3 scripts/kb_lint.py --root . --strict` with zero errors and zero warnings; no application code, tests, migrations, dependencies, or CI workflows are changed by this phase.
+
+---
+
+## Knowledge-Base Restructure — Phase 2 Testing Strategy and Playwright Atlas (2026-10-23)
+
+- **Evidentiary Tier**: Reconstructed / Active History, verified against the current test tree and workflow configuration on branch `docs/knowledge-base-restructure`.
+- Added [`docs/development/testing-strategy.md`](development/testing-strategy.md) as the canonical source for Pest structure, Playwright execution, shared fixtures, and the 19-spec / 7-page-object atlas.
+- Kept CI matrices, shard execution, report merging, artifacts, and required gates in [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md), replacing its duplicate per-spec inventory with a link to the atlas.
+- Added direct and cross-plugin Playwright coverage references to the affected plugin documents and registered the new strategy in [`docs/README.md`](README.md).
+- Verification: documentation lint, link validation, diff validation, and editor problem checks passed; no application tests were run because this phase changes documentation only.
 
 ---
 
@@ -60,11 +169,11 @@ Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath
 - **Status**: **Reconciled external prompt citations and retired undefined artifact requirement**.
 - **Recorded Scope**:
   - **Retired External Authoring Spec Citations**: Removed four dangling citations to untracked external authoring execution prompt files across [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md) (Patterns 6 and 7) and [`docs/ai/terminology.md`](ai/terminology.md) (Sections 23 and 25). Replaced with verified repository evidence:
-    - Pattern 6 (Absolute vs Relative Paths): Cited [`docs/CHANGELOG.md:351`](CHANGELOG.md) (Machine Path Gate) and [`docs/development/change-management.md:84`](development/change-management.md).
-    - Pattern 7 (Silent Protected-File Modification): Cited `AGENTS.md:97` (Critical Constraint #8) and [`docs/development/change-management.md:61`](development/change-management.md).
-    - Section 23 (Navigation Composition Pattern): Cited [`plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`](../plugins/webkul/partners/src/Filament/Resources/PartnerResource.php), [`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`](../plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php), and [`docs/architecture/filament-architecture.md:293-298`](architecture/filament-architecture.md).
-    - Section 25 (Declaration ≠ Enforcement): Cited [`docs/security/authorization.md:25-28`](security/authorization.md), [`docs/ai/security-rules.md:148-155`](ai/security-rules.md), and [`docs/ai/forbidden-patterns.md:29-43`](ai/forbidden-patterns.md).
-  - **Retired Dangling "Exit Report" Requirement**: Removed the obsolete reference to an undefined "Exit Report" in [`docs/ai/forbidden-patterns.md:143`](ai/forbidden-patterns.md). Aligned out-of-scope bug reporting with `AGENTS.md` Critical Constraint #8 and standard PR/task notes.
+    - Pattern 6 (Absolute vs Relative Paths): Cited [`docs/CHANGELOG.md`](CHANGELOG.md#2-phase-by-phase-documentation-evolution) (Machine Path Gate) and [`docs/development/change-management.md`](development/change-management.md#evidence-and-claim-discipline).
+    - Pattern 7 (Silent Protected-File Modification): Cited `AGENTS.md#critical-constraints` (Critical Constraint #8) and [`docs/development/change-management.md`](development/change-management.md#required-change-lifecycle).
+    - Section 23 (Navigation Composition Pattern): Cited [`plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:24`](../plugins/webkul/partners/src/Filament/Resources/PartnerResource.php), [`plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php:28`](../plugins/webkul/contacts/src/Filament/Resources/PartnerResource.php), and [`docs/architecture/filament-architecture.md`](architecture/filament-architecture.md#deliberately-hidden-resources-shouldregisternavigation--false).
+    - Section 25 (Declaration ≠ Enforcement): Cited [`docs/security/authorization.md`](security/authorization.md#security-mechanisms-are-not-a-universal-request-pipeline), [`docs/ai/security-rules.md`](ai/security-rules.md#the-foundational-architectural-truth), and [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md#1-declaration--enforcement).
+  - **Retired Dangling "Exit Report" Requirement**: Removed the obsolete reference to an undefined "Exit Report" in [`docs/ai/forbidden-patterns.md`](ai/forbidden-patterns.md#7-silent-protected-file-modification). Aligned out-of-scope bug reporting with `AGENTS.md` Critical Constraint #8 and standard PR/task notes.
 
 ### Upstream Sync Knowledge-Base Gaps Reconciled (2026-09-25)
 
@@ -121,7 +230,7 @@ Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath
     - Pruned stale linked worktree in `/tmp/aureuserp-upstream-sync-20260918-c2b4ddaa2` using `git worktree prune -v`.
     - Safely deleted seven local branches fully merged into `develop` using `git branch -d`: `chore/upstream-sync-20260918-c2b4ddaa2`, `chore/enforce-ci-status-checks`, `chore/update-dependencies`, `docs/record-upstream-sync`, `docs/record-o6-enforcement`, `refactor/ai-knowledge-architecture`, and `feature/privacy-and-localization`.
     - Preserved protected branches (`master`, `develop`), checkpoints (`checkpoint/*`), active topic branch (`docs/sync-domain-knowledge-base`), and active feature branches/worktrees.
-  - Completed final scenario revalidation and closed Operational Stage O10 in [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) and [`docs/README.md`](README.md).
+  - Completed final scenario revalidation and closed Operational Stage O10 in `docs/development/knowledge-base-readiness-audit.md` and [`docs/README.md`](README.md).
 
 ### Post-Upstream Metrics & Governance Reconciliation (2026-09-22)
 
@@ -234,7 +343,7 @@ Verified: `kb_lint.py --root . --strict` = 0 errors, 0 warnings. `core.hooksPath
 - **Status**: **Initial audit complete / final revalidation pending**.
 - **Primary Focus**: Testing whether realistic agent tasks reach the correct canonical controls and direct repository evidence without granting unapproved authority.
 - **Recorded Result**:
-  - Added [`docs/development/knowledge-base-readiness-audit.md`](development/knowledge-base-readiness-audit.md) with seven scenario-based routing checks covering plugin, company-scoped schema, API, security, test/CI, documentation, and upstream work.
+  - Added `docs/development/knowledge-base-readiness-audit.md` with seven scenario-based routing checks covering plugin, company-scoped schema, API, security, test/CI, documentation, and upstream work.
   - All seven current routing scenarios passed static evidence inspection; the audit does not claim application execution or platform enforcement from that result.
   - Final O10 revalidation remains dependent on an authorized upstream synchronization, review of incoming workflow changes, and the separately tracked O6 decisions.
 
@@ -390,10 +499,10 @@ Audit        Foundation      Plugins         Synthesis    Workflows    Rules    
   - **Closure Gate (Sections 44–60)**: Documentation Quality Gate passed across all 7 dimensions (accuracy, completeness, traceability, consistency, navigability, AI usability, maintenance). Final Coverage Matrix produced for 23 architectural surfaces. Git integrity verified. Final verdict issued: PHASE 13 — COMPLETE / LOCKED.
   - **Final Micro-Reconciliation Gate**: Reconciled known closure inconsistencies:
     1. **CLOSURE-01 (Status Alignment)**: Synchronized `docs/README.md` Phase 13 status from `PENDING` to `COMPLETE / LOCKED`.
-    2. **CLOSURE-02 & CLOSURE-13 (`ShouldQueue` Reconciled)**: Reconciled `docs/ai/terminology.md:332-343` to align with `ChatterDatabaseNotification implements ShouldQueue` (`TERM-011`) while firmly preserving the zero traditional PHP queue Job classes architectural fact.
-    3. **CLOSURE-15 (Sales Quotation Template Boundary)**: Reconciled `docs/workflows/sales.md:180` to clarify that `QuotationForm` in the active admin UI does not expose a template selector, resolving the internal contradiction with line 46.
+    2. **CLOSURE-02 & CLOSURE-13 (`ShouldQueue` Reconciled)**: Reconciled `docs/ai/terminology.md#16-filament-multi-panel-boundaries-admin-vs-customer` to align with `ChatterDatabaseNotification implements ShouldQueue` (`TERM-011`) while firmly preserving the zero traditional PHP queue Job classes architectural fact.
+    3. **CLOSURE-15 (Sales Quotation Template Boundary)**: Reconciled `docs/workflows/sales.md#b-quotation-templates--optional-products` to clarify that `QuotationForm` in the active admin UI does not expose a template selector, resolving the internal contradiction with line 46.
     4. **CLOSURE-12 (Framework Versions)**: Re-verified versions against `composer.lock` (Laravel 13.21.1, Filament 5.7.6, Livewire 4.3.3). Retained `AGENTS.md` Livewire v3 claim as `[KNOWN STALE PROJECT ARTIFACT]` outside documentation closure scope.
-    5. **CLOSURE-08 (Inventory Valuation Semantic Boundary)**: Reconciled historical Phase 9 milestone entry in `docs/CHANGELOG.md:131` to explicitly distinguish the initial draft description from the subsequent reconciliation in `522e464ce`, confirming purely quantitative stock tracking, physical removal strategies (FIFO/LIFO), and zero monetary valuation layer.
+    5. **CLOSURE-08 (Inventory Valuation Semantic Boundary)**: Reconciled historical Phase 9 milestone entry in `docs/CHANGELOG.md#phase-9--domain-business--calculation-rules` to explicitly distinguish the initial draft description from the subsequent reconciliation in `522e464ce`, confirming purely quantitative stock tracking, physical removal strategies (FIFO/LIFO), and zero monetary valuation layer.
 
 ### Phase 1 — Final Documentation Baseline Validation & Closure (Micro-Reconciliation)
 - **Evidentiary Tier**: Git-Verified Diff

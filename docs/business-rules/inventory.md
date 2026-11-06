@@ -350,7 +350,7 @@ All quantity equality checks evaluate through `float_is_zero($qty, precisionRoun
 
 ### Dependency Analysis
 1. **`inventories` $\to$ `products` (Core Master Dependency)**:
-   - `inventories` declares runtime dependency on `products` (`hasDependencies(['products'])`).
+   - `inventories` declares an Install Plugins Dependency on `products` (`hasDependencies(['products'])`).
    - Gated behavior: Only products with `type = ProductType::GOODS` and `is_storable = true` generate stock moves or quant records.
 2. **`sales` $\to$ `inventories` (Fulfillment)**:
    - `sales` listens to `OperationDone` via `ComputeSaleOrderListener`. When delivery validation completes, `qty_delivered` is updated on sales order lines.
@@ -405,12 +405,9 @@ All quantity equality checks evaluate through `float_is_zero($qty, precisionRoun
 
 ---
 
-## 11. Mandatory Final Answer
+## 11. Financial Inventory Valuation Boundary
 
-> **Question:**
-> *"Does this codebase implement any inventory valuation/costing layer at all, or is stock purely quantity-tracked with no verified monetary valuation layer?"*
-
-### Explicit Answer:
+### Verified Behavior:
 **No verified inventory valuation/costing layer exists.**
 
 Stock tracking in Aureus ERP is **purely quantity-tracked** across the double-entry quant ledger (`inventories_product_quantities` and `inventories_moves`). There is:

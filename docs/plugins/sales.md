@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/sales
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Optional Module. Registered in `bootstrap/providers.php:57` as `Webkul\Sale\SaleServiceProvider::class`.
 
+**Conditionally Enabled (Database-Gated)**. `SalePlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/sales/src/SalePlugin.php:23-28`). When uninstalled, all Sales navigation groups, clusters, API endpoints, and configuration screens remain dormant without registering UI components.
+
 ## Core/Optional
 [VERIFIED]
 **Optional Plugin**. Configured as a modular customer quotation, sales order fulfillment, delivery tracking, and commercial billing plugin extending the core architecture without calling `$package->isCore()` (`plugins/webkul/sales/src/SaleServiceProvider.php:33-99`). Execution, Filament resource auto-discovery, cluster mounting, and page registration are gated by runtime installation verification via `Package::isPluginInstalled('sales')` (`plugins/webkul/sales/src/SalePlugin.php:23`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Conditionally Enabled (Database-Gated)**. `SalePlugin` registers conditionally on the `admin` Filament panel only when the plugin record in the database is marked `is_installed = true` (`plugins/webkul/sales/src/SalePlugin.php:23-28`). When uninstalled, all Sales navigation groups, clusters, API endpoints, and configuration screens remain dormant without registering UI components.
 
 ## Purpose
 [VERIFIED]
@@ -78,7 +76,7 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
     - Runs migrations automatically (`runsMigrations()`).
     - Registers 4 settings migrations (`hasSettings([...])`): `sales_product_settings`, `sales_price_settings`, `sales_invoice_settings`, and `sales_quotation_and_order_settings`.
     - Runs settings migrations automatically (`runsSettings()`).
-    - Declares runtime plugin dependencies on `invoices` and `payments` (`hasDependencies(['invoices', 'payments'])`).
+    - Declares an Install Plugins Dependency on `invoices` and `payments` (`hasDependencies(['invoices', 'payments'])`).
     - Registers database seeder: `Webkul\Sale\Database\Seeders\DatabaseSeeder::class`.
     - Configures install command: runs dependency installation, migrations, and seeders (`$command->installDependencies()->runsMigrations()->runsSeeders()`).
     - Configures uninstall command: purges chatter audit logs for `Order` and `Team` models via `ChatterCleanupService::purgeForModels([Order::class, Team::class])`, and purges sequence codes via `SequenceService::purge(['sales.order'])`.
@@ -97,7 +95,7 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
 
 ---
 
-## Filament Plugin Class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Sale\SalePlugin` (`plugins/webkul/sales/src/SalePlugin.php:9`)
 - **Plugin Identifier**: `'sales'` (`getId(): string`)
@@ -123,11 +121,11 @@ The `sales` plugin provides comprehensive commercial pipeline and revenue manage
 
 ---
 
-## Runtime Plugin Dependencies
+## Install Plugins Dependency
 [VERIFIED]
 Declared in `SaleServiceProvider::configureCustomPackage()` via `hasDependencies(['invoices', 'payments'])`:
-1. **`invoices`**: Required runtime dependency. Provides customer invoice presentation (`Invoice`), invoice lines (`InvoiceLine`), invoice policies (`InvoicePolicy`), and billing lifecycle synchronization.
-2. **`payments`**: Required runtime dependency. Provides electronic payment processing schemas, payment tokenization, and gateway transaction linking for settled invoices.
+1. **`invoices`**: Declared Install Plugins Dependency. Provides customer invoice presentation (`Invoice`), invoice lines (`InvoiceLine`), invoice policies (`InvoicePolicy`), and billing lifecycle synchronization.
+2. **`payments`**: Declared Install Plugins Dependency. Provides electronic payment processing schemas, payment tokenization, and gateway transaction linking for settled invoices.
 
 ---
 
@@ -434,7 +432,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
 
 ---
 
-## Filament Resources, Pages, Widgets & Clusters
+## Filament Components
 [VERIFIED]
 
 ### Admin Panel Clusters
@@ -476,7 +474,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
 
 ---
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 
 1. **`SaleManager` (`Webkul\Sale\SaleManager`)**:
@@ -542,7 +540,7 @@ The `sales` plugin defines 23 Eloquent models categorized into concrete table ow
 
 ---
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The plugin implements 19 authorization policies under `plugins/webkul/sales/src/Policies`:
 1. `OrderPolicy`
@@ -615,7 +613,9 @@ Covers app strings, models (`order`, `team`), enums (`order-state`, `invoice-sta
 
 ## Tests
 [VERIFIED]
-**Test Coverage Status: Fully Tested**. The `sales` plugin contains a comprehensive test suite of **19 feature test files and 1 shared helper** under `plugins/webkul/sales/tests`:
+**Test Coverage Status: Fully Tested**. The `sales` plugin contains a comprehensive test suite of **19 `*Test.php` feature test files and 1 shared helper** (`20` total files; see [`docs/plugins/README.md`](README.md)) under `plugins/webkul/sales/tests`:
+
+- **Direct Playwright UI coverage**: Four specs cover customers, products, quotations, and the sales order flow, including inventory integration. See the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the per-spec page-object mapping and coverage boundary.
 
 ### 1. Workflow & Integration Tests (`tests/Feature/Workflows/`)
 - `OrderPriceListTest.php`: Tests customer price list defaulting, quotation price list inheritance, dynamic line item recalculation upon price list changes, multi-currency conversion, and fallback pricing.
@@ -648,7 +648,22 @@ Covers app strings, models (`order`, `team`), enums (`order-state`, `invoice-sta
 
 ---
 
-## Runtime Dependencies & Cross-Plugin Relationships
+## Shared Infrastructure Dependencies
+[VERIFIED]
+
+This section records code-level consumption; the installation-order declarations remain owned by [`Install Plugins Dependency`](#install-plugins-dependency).
+
+- **`plugin-manager`**: `SaleServiceProvider` extends `PackageServiceProvider` (`plugins/webkul/sales/src/SaleServiceProvider.php`).
+- **`invoices`** and **`payments`**: Declared Install Plugins Dependency entries; sales order invoicing and electronic payment flows use both boundaries (`plugins/webkul/sales/src/SaleServiceProvider.php`, `plugins/webkul/sales/src/Services/`).
+- **`accounts`**: Sales order lines and invoice links use account move and tax models through the invoice integration (`plugins/webkul/sales/src/Models/`, `plugins/webkul/sales/database/migrations/`).
+- **`inventories`**: Confirmation and delivery workflows create or consume procurement groups, operations, and stock moves when inventory is installed (`plugins/webkul/sales/src/Services/`, `plugins/webkul/sales/src/Listeners/`).
+- **`products`**: Order lines, options, and templates resolve products and register usage protection (`plugins/webkul/sales/src/Models/`).
+- **`partners`**: Customer profiles and addresses are referenced by orders (`plugins/webkul/sales/src/Models/`).
+- **`support`**: Sequence generation, UOM, currency, and company isolation are consumed by sales workflows (`plugins/webkul/sales/src/Models/`, `plugins/webkul/sales/src/Services/`).
+- **`security`**: Ownership scope, policies, and authenticated user permissions govern sales records (`plugins/webkul/sales/src/Policies/`, `plugins/webkul/sales/src/Models/`).
+- **`chatter`**, **`fields`**, and **`table-views`**: Orders/resources consume shared audit, custom-field, and list-view infrastructure (`plugins/webkul/sales/src/Models/`, `plugins/webkul/sales/src/Filament/`).
+
+## Cross-Plugin Relationships
 [VERIFIED]
 
 ```mermaid
@@ -686,90 +701,36 @@ graph TD
   - `OrderLine`, `OrderOption`, and `OrderTemplateProduct` register with `ProductUsageRegistry` to enforce referential integrity.
 - **`support`**:
   - Number generation uses `SequenceService::next('sales.order')`.
-  - Multi-tenant isolation uses `BelongsToCompany` and `CompanyContext`.
+  - `Order` opts into company isolation through `BelongsToCompany`; the shared context, scope, and consistency contract is owned by [`support.md`](support.md) and [`multi-company.md`](../security/multi-company.md).
 - **`security`**:
-  - Salesperson ownership scoping uses `HasOwnershipScope`.
-  - Permissions evaluated via local `Bouncer`.
+  - Salesperson visibility uses `HasOwnershipScope`, while `OrderPolicy` combines permission abilities with `HasScopedPermissions`; shared ownership and authorization semantics are owned by [`security.md`](security.md), [`authorization.md`](../security/authorization.md), and [`ownership-scopes.md`](../security/ownership-scopes.md).
 - **`chatter`**:
   - `Order` and `Team` use `HasChatter` and `HasLogActivity` for audit feeds.
 
 ---
 
-## Data Flow
+## Data Flow and Workflows
 [VERIFIED]
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Salesperson as Sales Representative
-    actor Customer as Customer / Client
-    participant Filament as Filament UI (Admin)
-    participant SaleMgr as SaleManager / Workflow
-    participant Sequence as SequenceService
-    participant Calc as OrderCalculator
-    participant InvService as ProcurementRequester
-    participant Inventory as Inventories Plugin
-    participant Invoicer as Invoicer Service
-    participant Accounts as Accounts Plugin
-    participant SMS as Msg91Service
+Within the `sales` plugin boundary, `SaleManager` (`plugins/webkul/sales/src/SaleManager.php`) delegates lifecycle mutations to `OrderWorkflow`, pricing/status aggregation to `OrderCalculator`, stock fulfillment triggers to `ProcurementRequester`, and customer invoice creation to `Invoicer`.
 
-    Salesperson->>Filament: Create Quotation (Partner, Lines, Template)
-    Filament->>Sequence: SequenceService::next('sales.order')
-    Sequence-->>Filament: SO/00001
-    Filament->>Calc: recompute(Order)
-    Calc-->>Filament: Subtotals, Taxes, Total Calculated
-
-    Salesperson->>Filament: Send Quotation by Email
-    Filament->>SaleMgr: sendByEmail()
-    SaleMgr->>Customer: Email Quotation PDF
-    SaleMgr-->>Filament: State -> 'SENT'
-
-    Salesperson->>Filament: Confirm Sales Order
-    Filament->>SaleMgr: confirm()
-    SaleMgr->>SaleMgr: State -> 'SALE', InvoiceStatus -> 'TO_INVOICE'
-    SaleMgr->>InvService: requestForLines()
-    InvService->>Inventory: runProcurements() -> Creates Moves & Delivery Operations
-    SaleMgr-->>Filament: Dispatches OrderConfirmed
-
-    Inventory-->>SaleMgr: OperationDone Event
-    SaleMgr->>Calc: recompute() -> Updates qty_delivered & DeliveryStatus -> 'FULL'
-
-    Salesperson->>Filament: Create Invoice (Advance Payment Wizard / Delivered)
-    Filament->>Invoicer: invoiceOrder()
-    Invoicer->>Accounts: Create Customer Invoice (OUT_INVOICE)
-    Invoicer->>Invoicer: Attach sales_order_invoices & sales_order_line_invoices
-    Invoicer->>Calc: recompute() -> InvoiceStatus -> 'INVOICED'
-
-    Customer->>Accounts: Pay Invoice (Payment Registered)
-    Accounts-->>SaleMgr: MovePaid Event
-    SaleMgr->>SMS: SendSMSNotificationListener -> MSG91 SMS to Customer & Admin
-```
+The end-to-end commercial lifecycle, state transition matrices, and sequence diagrams are canonically documented in [`docs/workflows/sales.md`](../workflows/sales.md):
+- **Primary Quotation-to-Cash Flow**: [`docs/workflows/sales.md#4-main-flow`](../workflows/sales.md#4-main-flow) and [`#16-mermaid-flowchart`](../workflows/sales.md#16-mermaid-flowchart).
+- **State Machine Transitions (`OrderState`, `OrderDeliveryStatus`, `InvoiceStatus`)**: [`docs/workflows/sales.md#5-state-transitions`](../workflows/sales.md#5-state-transitions).
+- **Advance/Down-Payment Invoicing & Quotation Templates**: [`docs/workflows/sales.md#6-alternative-paths`](../workflows/sales.md#6-alternative-paths).
+- **Cancellation, Reversal, and Administrative Locking**: [`docs/workflows/sales.md#7-cancellation--reversal`](../workflows/sales.md#7-cancellation--reversal) and [`#8-administrative-locking`](../workflows/sales.md#8-administrative-locking).
 
 ---
 
 ## Business Rules
 [VERIFIED]
 
-1. **State Machine Invariants**:
-   - Initial quotation creation sets `OrderState::DRAFT` and `InvoiceStatus::NO`.
-   - Email dispatch transitions `DRAFT` to `OrderState::SENT`.
-   - Confirmation transitions `DRAFT` or `SENT` to `OrderState::SALE` and sets `InvoiceStatus::TO_INVOICE`.
-   - Cancellation transitions `DRAFT`, `SENT`, or `SALE` to `OrderState::CANCEL`, resetting `InvoiceStatus::NO` and canceling non-done warehouse delivery operations.
-   - Reversion to quotation transitions `CANCEL` to `OrderState::DRAFT` and `InvoiceStatus::NO`.
-2. **Invoicing Policy Determination**:
-   - Invoicing policy is resolved in priority: line item product policy (`product.invoice_policy`) → product parent policy (`product.parent.invoice_policy`) → global setting (`InvoiceSettings.invoice_policy`).
-   - `InvoicePolicy::ORDER`: `qty_to_invoice = product_uom_qty - qty_invoiced`.
-   - `InvoicePolicy::DELIVERY`: `qty_to_invoice = qty_delivered - qty_invoiced`.
-3. **Delivery Status Computation**:
-   - `NO`: No operations exist or all operations are cancelled.
-   - `PENDING`: Operations exist but none have reached `DONE` state.
-   - `STARTED`: Operations have finished but delivered line items are not yet reflected.
-   - `PARTIAL`: Operations completed and some delivered quantity > 0, but pending moves remain.
-   - `FULL`: All associated warehouse operations are settled (`DONE` or `CANCELED`).
-4. **Order Locking**:
-   - Confirmed sales orders are locked automatically if `enable_lock_confirm_sales = true`. Locked orders cannot have new procurement requests dispatched until unlocked.
-5. **Sequence Numbering**:
-   - Sales order numbers follow format `SO/#####` scoped by `company_id`.
+Plugin-local structural invariants (`SequenceService::next('sales.order')` numbering scoped by `company_id` and `BelongsToCompany` / `ChecksCompanyConsistency` enforcement on `Order` and `OrderLine`) are enforced during model persistence. All commercial calculation formulas, precedence hierarchies, and threshold rules are canonically owned by [`docs/business-rules/sales.md`](../business-rules/sales.md) and [`docs/business-rules/pricing.md`](../business-rules/pricing.md):
+1. **Pricing, Discounts, and Multi-Tier Price List Cascade**: [`docs/business-rules/sales.md#21-pricing--discount-calculation-engine`](../business-rules/sales.md#21-pricing--discount-calculation-engine) and [`docs/business-rules/pricing.md#3-resolution-cascade--rule-matching`](../business-rules/pricing.md#3-resolution-cascade--rule-matching).
+2. **Invoiceable Quantity Formulas (`InvoicePolicy::ORDER` vs `DELIVERY`)**: [`docs/business-rules/sales.md#22-invoiceable-quantity-calculation-invoicepolicy-order-vs-delivery`](../business-rules/sales.md#22-invoiceable-quantity-calculation-invoicepolicy-order-vs-delivery).
+3. **Delivered Quantity, Stock Return Offsetting, and Credit Note Netting**: [`docs/business-rules/sales.md#23-delivered-quantity--stock-returns-offsetting`](../business-rules/sales.md#23-delivered-quantity--stock-returns-offsetting) and [`#24-invoiced-quantity--credit-note-netting`](../business-rules/sales.md#24-invoiced-quantity--credit-note-netting).
+4. **Gross Margin & Profitability Formulas**: [`docs/business-rules/sales.md#25-margin--profitability-calculation`](../business-rules/sales.md#25-margin--profitability-calculation).
+5. **Delivery & Invoicing Status Precedence Rules**: [`docs/business-rules/sales.md#3-precedence--matching-rules`](../business-rules/sales.md#3-precedence--matching-rules).
 
 ---
 
@@ -823,4 +784,4 @@ sequenceDiagram
 - Settings: `plugins/webkul/sales/src/Settings/`
 - Routes: `plugins/webkul/sales/routes/api.php`
 - Tests: `plugins/webkul/sales/tests/`
-- ERD References: `docs/database/erds/operations.md:431-468`, `docs/database/erds/finance.md:236-243`
+- ERD References: `docs/database/erds/operations.md#sales-architecture`, `docs/database/erds/finance.md#sales-integration`

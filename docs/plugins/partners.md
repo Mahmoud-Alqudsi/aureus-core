@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: source-code
-last_verified: 2026-09-23
+last_verified: 2026-10-23
 scope: plugins/webkul/partners
 confidence: high
 ---
@@ -12,13 +12,11 @@ confidence: high
 [VERIFIED]
 Active Core Module. Registered explicitly in `bootstrap/providers.php:27` as `Webkul\Partner\PartnerServiceProvider::class`.
 
+**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `partners` module executes unconditionally at boot time across the application.
+
 ## Core/Optional
 [VERIFIED]
 **Core Plugin**. Configured via `$package->isCore()` within `PartnerServiceProvider::configureCustomPackage()` (`plugins/webkul/partners/src/PartnerServiceProvider.php:16`).
-
-## Enabled/Disabled
-[VERIFIED]
-**Always Enabled (Core Infrastructure)**. Core plugin status causes `PackageServiceProvider::boot()` to bypass database installation checks (`Package::isInstalled()`) when loading migrations and routes (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:131-135, 202`). The `partners` module executes unconditionally at boot time across the application.
 
 ## Purpose
 [VERIFIED]
@@ -85,7 +83,7 @@ The `partners` module serves as the universal party, contact, organization, and 
   - `packageBooted()`:
     - Contains empty method stub (`plugins/webkul/partners/src/PartnerServiceProvider.php:32-35`).
 
-## Filament Plugin class
+## Filament Integration
 [VERIFIED]
 - **Class**: `Webkul\Partner\PartnerPlugin` (`plugins/webkul/partners/src/PartnerPlugin.php:8`)
 - **Interface**: Implements `Filament\Contracts\Plugin`
@@ -99,7 +97,7 @@ The `partners` module serves as the universal party, contact, organization, and 
     - Discovers widgets in `src/Filament/Widgets` under namespace `Webkul\Partner\Filament\Widgets` (none present directly under `Widgets/`).
 - **Boot**: `boot(Panel $panel)` contains empty method stub (`plugins/webkul/partners/src/PartnerPlugin.php:44-47`).
 
-## Composer dependencies
+## Composer Dependencies
 [VERIFIED]
 - **Local Package Definition**: `plugins/webkul/partners/composer.json`
   - Name: `webkul/partners`
@@ -112,11 +110,11 @@ The `partners` module serves as the universal party, contact, organization, and 
   - Extra Laravel Providers:
     - `Webkul\Partner\PartnerServiceProvider`
 
-## Runtime plugin dependencies
+## Install Plugins Dependency
 [VERIFIED]
-`partners` is a foundational Core plugin and declares **no runtime dependencies** via `$package->hasDependencies([...])`. It is loaded early in the application boot cycle.
+`partners` is a foundational Core plugin and declares **no Install Plugins Dependency** via `$package->hasDependencies([...])`. It is loaded early in the application boot cycle.
 
-## Directory structure
+## Directory Structure
 [VERIFIED]
 ```text
 plugins/webkul/partners/
@@ -475,7 +473,7 @@ The `partners` module defines 6 physical tables, verified in `docs/database/erds
 - `IndustrySeeder` (`plugins/webkul/partners/database/seeders/IndustrySeeder.php`): Populates 21 standardized industry sectors (Agriculture, Construction, Energy Supply, Finance/Insurance, Manufacturing, Real Estate, etc.).
 - `TitleSeeder` (`plugins/webkul/partners/database/seeders/TitleSeeder.php`): Populates 5 standard titles (Doctor/Dr., Madam/Mrs, Miss/Miss, Mister/Mr., Professor/Prof.).
 
-## Filament resources/pages/widgets/clusters
+## Filament Components
 [VERIFIED]
 
 The `partners` module implements 7 Filament resources under `Webkul\Partner\Filament\Resources`. All 7 resources intentionally configure `protected static bool $shouldRegisterNavigation = false;`, serving as headless base resources. Navigation registration and clustering in the Admin panel is decoupled and activated by the optional `contacts` module (`plugins/webkul/contacts`).
@@ -557,7 +555,7 @@ The `partners` module implements 7 Filament resources under `Webkul\Partner\Fila
 - **Admin Panel (`admin`)**: Resources are registered conditionally for the `admin` panel via `PartnerPlugin::register()` (`plugins/webkul/partners/src/PartnerPlugin.php:23`).
 - **Customer Panel (`customer`)**: No resources are registered directly in the customer panel by this plugin. (Customer portal authentication on partners is contributed by the `website` plugin).
 
-## Services
+## Services and Support Classes
 [VERIFIED]
 - **Schema Contribution Registry (`PartnerSchemaRegistry`)**:
   - Class: `Webkul\Partner\Filament\Resources\PartnerResource\Support\PartnerSchemaRegistry` (`plugins/webkul/partners/src/Filament/Resources/PartnerResource/Support/PartnerSchemaRegistry.php:7`)
@@ -585,7 +583,7 @@ No dedicated Observer classes exist. Lifecycle events are registered inline via 
 - `BankAccount::creating` / `updating`: Sets `creator_id` and synchronizes `account_holder_name = $bankAccount->partner->name`.
 - `Industry::creating`, `Tag::creating`, `Title::creating`: Sets default `creator_id`.
 
-## Policies
+## Policies and Authorization
 [VERIFIED]
 The `partners` plugin provides 7 authorization policies under `Webkul\Partner\Policies`, configured with Filament Shield permissions in `plugins/webkul/partners/config/filament-shield.php`:
 
@@ -693,7 +691,9 @@ Dictionary structures:
 
 ## Tests
 [VERIFIED]
-The `partners` plugin contains an active test suite located under `plugins/webkul/partners/tests/`:
+The `partners` plugin contains an active test suite of **10 `*Test.php` feature test files** (`10` total files; see [`docs/plugins/README.md`](README.md)) located under `plugins/webkul/partners/tests/`:
+
+- **Cross-plugin Playwright coverage**: Customer and vendor records are exercised inside the sales and purchases browser journeys, including [`04_sales/01_salesCustomers.spec.ts`](../../tests/e2e-pw/tests/04_sales/01_salesCustomers.spec.ts) and [`05_purchases/01_purchaseVendors.spec.ts`](../../tests/e2e-pw/tests/05_purchases/01_purchaseVendors.spec.ts). This is not standalone partner-plugin browser coverage; see the [Playwright spec atlas](../development/testing-strategy.md#playwright-spec-atlas) for the boundary.
 
 1. **Filament Feature Tests**:
    - `PartnerTypeViewsTest.php` (`plugins/webkul/partners/tests/Feature/Filament/PartnerTypeViewsTest.php`): Verifies preset table views (individuals, companies, employees, customers, vendors) on `ListPartners` and partner type ranking filters.
@@ -713,13 +713,16 @@ The `partners` plugin contains an active test suite located under `plugins/webku
    - `CompanyIsolationTest.php` (`plugins/webkul/partners/tests/Feature/Workflows/CompanyIsolationTest.php`): Verifies cross-company data visibility invariants, ensuring company-bound partners are isolated while unassigned partners remain globally shared across tenants.
    - `CompanyScopingInvariantsTest.php` (`plugins/webkul/partners/tests/Feature/Workflows/CompanyScopingInvariantsTest.php`): Asserts that `Partner` is explicitly registered as shared master data and is not automatically stamped with an active company context.
 
-## Runtime dependencies
+## Shared Infrastructure Dependencies
 [VERIFIED]
-None (`—`). `PartnerServiceProvider::configureCustomPackage()` declares no runtime plugin dependencies via `Package::hasDependencies()`.
+This section records code-level consumption; the declared Install Plugins Dependency remains empty because `PartnerServiceProvider::configureCustomPackage()` does not call `Package::hasDependencies()`.
 
-Architectural and code-level interactions with other core packages are detailed below under Cross-plugin relationships.
+- **`plugin-manager`**: `PartnerServiceProvider` extends `PackageServiceProvider` and uses the shared package lifecycle (`plugins/webkul/partners/src/PartnerServiceProvider.php`).
+- **`security`**: The `Partner`/`User` synchronization and creator relationship use security user records (`plugins/webkul/partners/src/Models/Partner.php`).
+- **`support`**: Partner company, bank, country, and state relationships resolve support-owned models (`plugins/webkul/partners/src/Models/Partner.php`, `plugins/webkul/partners/src/Models/BankAccount.php`).
+- **`chatter`**: `Partner` uses chatter traits, and follower rows reference partner identities (`plugins/webkul/partners/src/Models/Partner.php`, `plugins/webkul/chatter/database/migrations/2024_12_11_101222_create_chatter_followers_table.php`).
 
-## Cross-plugin relationships
+## Cross-Plugin Relationships
 [VERIFIED]
 
 The `partners` module sits at the center of Aureus ERP's entity graph:
@@ -759,7 +762,7 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
    - `maintenance`: `Equipment.partner_id` references vendor/manufacturer `Partner`.
    - `analytics`: `Record.partner_id` references commercial `Partner`.
 
-## Data flow
+## Data Flow and Workflows
 [VERIFIED]
 
 1. **Partner Master Record Ingestion**:
@@ -784,7 +787,7 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
 5. **Follower & Communication Flow**:
    - When a user logs a note, attaches an activity plan, or follows a partner, `HasChatter` records messages in `chatter_messages` and subscribers in `chatter_followers` using the follower's `partner_id`.
 
-## Business rules
+## Business Rules
 [VERIFIED]
 
 1. **Company Isolation Bypass for Master Data**:
@@ -809,7 +812,7 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
 5. **Ownership & Access Control**:
    - Scoped access evaluates `PartnerPolicy` abilities (`view_partner_partner`, `update_partner_partner`, etc.) combined with `OwnershipScope` evaluating `creator_id` and `user_id`.
 
-## Extension points
+## Extension Points
 [VERIFIED]
 
 1. **`PartnerSchemaRegistry` Extension API**:
@@ -833,11 +836,11 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
 4. **Custom Metadata Attributes (`HasCustomFields`)**:
    - Users and administrators can define runtime custom fields on the `Partner` model via the `fields` module, automatically rendering them in `PartnerResource`.
 
-## Dangerous areas
+## Dangerous Areas
 [VERIFIED]
 
 1. **Test Coverage Explicit Declaration**:
-   - **Test files exist**: Yes. 9 dedicated test suites exist under `plugins/webkul/partners/tests/` verifying API v1 CRUD endpoints, company scoping invariants, company isolation, and Filament smoke tests.
+   - **Test files exist**: Yes. **10 dedicated `*Test.php` test suites** exist under `plugins/webkul/partners/tests/` verifying API v1 CRUD endpoints, company scoping invariants, company isolation, partner type views, and Filament smoke tests.
 
 2. **Multi-Company Data Leakage Hazard**:
    - Because `Partner` overrides automatic company stamping (`autoAssignsCompany() => false`), partners default to `company_id = null` (shared). If an engineer adds custom queries bypassing `CompanyScope`, partner records could be exposed across organizational boundaries unintentionally.
@@ -854,7 +857,7 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
 6. **Hard Deletion Blocking via Referential Constraints**:
    - Foundational tables use `restrictOnDelete` referencing `partners_partners` (e.g. `companies.partner_id`, `partners_partners.country_id`, `partners_partners.state_id`). Attempting to force delete a partner that represents a company's legal identity will throw a `QueryException` and be blocked.
 
-## Change impact
+## Change Impact
 [VERIFIED]
 
 - **Database Schema**: Modifying `partners_partners` impacts almost all ERP plugins (`sales`, `purchases`, `accounts`, `invoices`, `projects`, `website`, `security`, `support`, `recruitments`, `maintenance`, `analytics`).
@@ -873,7 +876,7 @@ The `partners` module sits at the center of Aureus ERP's entity graph:
 - `Title` Model: `plugins/webkul/partners/src/Models/Title.php:12-42`
 - `AccountType` Enum: `plugins/webkul/partners/src/Enums/AccountType.php:7-32`
 - `AddressType` Enum: `plugins/webkul/partners/src/Enums/AddressType.php:7-29`
-- `PartnerResource`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:18-99`
+- `PartnerResource`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource.php:19-99`
 - `PartnerForm`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource/Schemas/PartnerForm.php:25-293`
 - `PartnerInfolist`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource/Schemas/PartnerInfolist.php:21-184`
 - `PartnersTable`: `plugins/webkul/partners/src/Filament/Resources/PartnerResource/Tables/PartnersTable.php:38-344`
