@@ -122,11 +122,11 @@ def parse_frontmatter(lines):
 
 
 def in_kb(rel):
-    return rel in ("AGENTS.md", "CLAUDE.md") or rel.startswith(KB_PREFIXES)
+    return rel in ("AGENTS.md", "CLAUDE.md", ".github/copilot-instructions.md") or rel.startswith(KB_PREFIXES)
 
 
 def is_agent_facing(rel):
-    return rel.startswith(AGENT_FACING) or rel.endswith("/SKILL.md")
+    return rel.startswith(AGENT_FACING) or rel == ".github/copilot-instructions.md" or rel.endswith("/SKILL.md")
 
 
 class KB:
@@ -149,6 +149,9 @@ class KB:
             p = self.root / name
             if p.is_file():
                 self.files[name] = self._read(p)
+        copilot_instructions = self.root / ".github/copilot-instructions.md"
+        if copilot_instructions.is_file():
+            self.files[".github/copilot-instructions.md"] = self._read(copilot_instructions)
         docs = self.root / "docs"
         if docs.is_dir():
             for p in sorted(docs.rglob("*.md")):
@@ -355,6 +358,103 @@ def check_skills(kb, o, add):
                 % (tool_file, tool_name))
     if any(s.startswith("agents/") for s in kb.skill_dirs) and not (kb.root / ".agents").is_dir():
         add(INFO, "", 0, "skills folder is 'agents/' (no dot) while the docs reference '.agents/'")
+
+@check("knowledge-ownership", "canonical ownership map has unique topics and existing owner paths")
+def check_knowledge_ownership(kb, o, add):
+    rel = "docs/ai/knowledge-ownership.md"
+    lines = kb.files.get(rel)
+    if not lines:
+        add(ERROR, rel, 1, "missing canonical knowledge ownership map")
+        return
+
+    header = False
+    topics = {}
+    for i, line in enumerate(lines, 1):
+        if not line.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) >= 3 and cells[0].lower() == "topic" and cells[1].lower() == "canonical owner":
+            header = True
+            continue
+        if not header or len(cells) < 3 or set(cells[0]) <= set("-: "):
+            continue
+        topic = cells[0].lower()
+        owners = re.findall(r"`([^`]+)`", cells[1])
+        if topic in topics:
+            add(ERROR, rel, i, "duplicate ownership topic '%s' (first at line %d)" % (cells[0], topics[topic]))
+        else:
+            topics[topic] = i
+        if len(owners) != 1:
+            add(ERROR, rel, i, "topic '%s' must declare exactly one canonical owner path" % cells[0])
+            continue
+        owner = owners[0]
+        exists = any(kb.root.glob(owner)) if "*" in owner else (kb.root / owner).exists()
+        if not exists:
+            add(ERROR, rel, i, "canonical owner path '%s' does not exist" % owner)
+
+    if not header:
+        add(ERROR, rel, 1, "missing ownership table with Topic and Canonical owner columns")
+    elif not topics:
+        add(ERROR, rel, 1, "ownership table has no topics")
+
+
+@check("assistant-entrypoints", "selected assistant entrypoints route to the canonical AGENTS.md")
+def check_assistant_entrypoints(kb, o, add):
+    if not kb.repo_mode:
+        return
+
+    required = {
+        "AGENTS.md": ("AGENTS.md", None),
+        "GEMINI.md": ("GEMINI.md", "@AGENTS.md"),
+        ".github/copilot-instructions.md": (".github/copilot-instructions.md", "AGENTS.md"),
+    }
+    for rel, (name, marker) in required.items():
+        lines = kb.files.get(name)
+        if not lines:
+            add(ERROR, rel, 1, "missing supported assistant entrypoint")
+        elif marker and marker not in "\n".join(lines):
+            add(ERROR, rel, 1, "entrypoint must route to the repository-root AGENTS.md")
+
+    index = "\n".join(kb.files.get("docs/development/ai-skills.md", []))
+    for assistant in ("GitHub Copilot", "Gemini CLI", "Codex"):
+        if assistant not in index:
+            add(ERROR, "docs/development/ai-skills.md", 1, "assistant entrypoint index is missing '%s'" % assistant)
+
+
+@check("source-hierarchy-owner", "the source-of-truth ordering is not copied outside AGENTS.md")
+def check_source_hierarchy_owner(kb, o, add):
+    ordered_hierarchy = re.compile(
+        r"Source\s*Code\s*(?:>|\u2192)\s*Automated\s+Tests\s*(?:>|\u2192)\s*(?:Migrations|Database Schema)",
+        re.I,
+    )
+    canonical = "\n".join(kb.files.get("AGENTS.md", []))
+    if "## Source-of-Truth Hierarchy" not in canonical:
+        add(ERROR, "AGENTS.md", 1, "missing canonical Source-of-Truth Hierarchy section")
+    for rel, lines in kb.files.items():
+        if rel in ("AGENTS.md", "docs/CHANGELOG.md"):
+            continue
+        if ordered_hierarchy.search(" ".join(lines)):
+            add(ERROR, rel, 1, "duplicates the source-of-truth ordering; link to AGENTS.md instead")
+
+
+@check("workflow-index", "CI governance inventory matches the workflow files on disk")
+def check_workflow_index(kb, o, add):
+    workflow_root = kb.root / ".github/workflows"
+    if not workflow_root.is_dir():
+        return
+
+    workflows = sorted(p.name for p in workflow_root.iterdir() if p.suffix in (".yml", ".yaml"))
+    rel = "docs/development/ci-testing-governance.md"
+    text = "\n".join(kb.files.get(rel, []))
+    match = re.search(r"pipeline consists of\s+(\d+)\s+distinct workflow files", text, re.I)
+    if not match:
+        add(ERROR, rel, 1, "missing declared workflow count")
+    elif int(match.group(1)) != len(workflows):
+        add(ERROR, rel, 1, "declares %s workflows but %d workflow files exist" % (match.group(1), len(workflows)))
+    for name in workflows:
+        if name not in text:
+            add(ERROR, rel, 1, "workflow '%s' is missing from the CI governance inventory" % name)
+
 
 BANNED = [
     (r"\bHasOwner\b", "non-existent trait: the canonical name is HasOwnershipScope (terminology.md section 7)"),

@@ -18,8 +18,8 @@ While [`docs/development/git-workflow.md`](git-workflow.md) defines local branch
 
 - **GitHub Actions Workflows**: All workflow definitions under [`.github/workflows/`](../../.github/workflows/), their event triggers, path-filtering fast-tracks, concurrency groups, and token permissions.
 - **Runtime & Database Matrices**: PHP, Node.js, MySQL 8.0, and PostgreSQL 16 service container configurations.
-- **Test Execution Architecture**: Pest v4 backend suites (`phpunit.xml`, `tests/Pest.php`, `TestBootstrapHelper`), Playwright E2E browser sharding and report merging, `translations:check`, and local pre-commit linting (`scripts/kb_lint.py`).
-- **Status Check Contexts**: The 18 CI job contexts emitted by the workflows and the 4 stable contexts required for Pull Request merges.
+- **Test Execution Architecture**: Pest v4 backend suites (`phpunit.xml`, `tests/Pest.php`, `TestBootstrapHelper`), Playwright E2E browser sharding and report merging, `translations:check`, and knowledge-base validation in CI and local pre-commit.
+- **Status Check Contexts**: The 19 CI job contexts emitted by the workflows and the 4 stable contexts required for Pull Request merges.
 
 Modifying `.github/workflows/*.yml`, `phpunit.xml`, or GitHub required status check settings requires explicit human approval under [`AGENTS.md`](../../AGENTS.md).
 
@@ -27,7 +27,7 @@ Modifying `.github/workflows/*.yml`, `phpunit.xml`, or GitHub required status ch
 
 ## 2. CI Architecture Overview
 
-Aureus ERP automates continuous integration via GitHub Actions. The pipeline consists of 4 distinct workflow files:
+Aureus ERP automates continuous integration via GitHub Actions. The pipeline consists of 5 distinct workflow files:
 
 ```
                                   GitHub Events
@@ -55,24 +55,34 @@ Aureus ERP automates continuous integration via GitHub Actions. The pipeline con
 │ - EN Baseline Parity │
 │ - All Plugins Checked│
 └──────────────────────┘
+           │
+           ▼
+┌──────────────────────┐
+│     kb_lint.yml      │
+│                      │
+│ - KB lint + tests    │
+│ - PR / push / queue  │
+└──────────────────────┘
 ```
 
 1. **`pest_tests.yml`** (Backend Verification): Executes the Pest v4 feature test suite across dual database engines (MySQL 8.0 and PostgreSQL 16) on PHP 8.3.
 2. **`playwright_tests.yml`** (End-to-End Verification): Executes browser tests using Playwright across 6 parallel shards against dual database engines (MySQL 8.0 and PostgreSQL 16), culminating in a consolidated HTML report merge job.
 3. **`translations_check.yml`** (Linguistic Parity): Audits translation key and file parity across all plugin language directories against the canonical English (`en`) baseline.
 4. **`docker_publish.yml`** (Release Deployment): Builds and publishes production multi-architecture Docker images (`linux/amd64`, `linux/arm64`) to Docker Hub. This is a release deployment workflow, not a PR merge gate.
+5. **`kb_lint.yml`** (Knowledge Base Validation): Runs the standard-library linter regression tests and strict knowledge-base checks on pushes, pull requests, and merge groups. Its status is not yet a server-side required check.
 
 ---
 
 ## 4. Workflow Inventory
 
-Inspection of [`.github/workflows/`](../../.github/workflows/) confirms the following 4 active workflow definitions:
+Inspection of [`.github/workflows/`](../../.github/workflows/) confirms the following 5 active workflow definitions:
 
 | Workflow File | Workflow Name | Event Triggers | Concurrency Group | Permissions | Runner | Matrix Dimensions | Total Jobs |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | [`pest_tests.yml`](../../.github/workflows/pest_tests.yml) | `Pest Tests` | `push`, `pull_request` (branches: `master`, `develop`) | `${{ github.workflow }}-${{ github.ref }}` (`cancel-in-progress: true`) | `contents: read` | `ubuntu-latest` | OS: `ubuntu-latest`<br>PHP: `8.3`<br>DB: `mysql`, `pgsql` | 2 matrix jobs |
 | [`playwright_tests.yml`](../../.github/workflows/playwright_tests.yml) | `Playwright Tests` | `push`, `pull_request` (branches: `master`, `develop`), `merge_group`, `workflow_dispatch` | `${{ github.workflow }}-${{ github.ref }}` (`cancel-in-progress: true`) | `contents: read` | `ubuntu-latest` | PHP: `8.3`<br>Node: `22.13.1`<br>Shards: `1..6` of `6`<br>DB: `mysql`, `pgsql` | 14 jobs (12 test shards + 2 report merges) |
 | [`translations_check.yml`](../../.github/workflows/translations_check.yml) | `Translations Check` | `push`, `pull_request` (branches: `master`, `develop`) | `${{ github.workflow }}-${{ github.ref }}` (`cancel-in-progress: true`) | `contents: read` | `ubuntu-latest` | None (single job) | 1 job |
+| [`kb_lint.yml`](../../.github/workflows/kb_lint.yml) | `Knowledge Base Validation` | `push`, `pull_request` (branches: `master`, `develop`), `merge_group` | `${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}` (`cancel-in-progress: true`) | `contents: read` | `ubuntu-latest` | Python: `3.12` | 1 job |
 | [`docker_publish.yml`](../../.github/workflows/docker_publish.yml) | `Publish Docker Image` | `push` (tags: `v*`), `workflow_dispatch` (inputs: `app_ref`, `image_tag`) | None | `contents: read` | `ubuntu-latest` | Platforms: `linux/amd64`, `linux/arm64` | 1 job |
 
 ---
@@ -88,6 +98,7 @@ Inspection of [`.github/workflows/`](../../.github/workflows/) confirms the foll
 | pest_tests.yml           | YES [1]   | YES [1]      | NO          | NO                | NO        | NONE (Runs all)|
 | playwright_tests.yml     | YES [1]   | YES [1]      | YES         | YES               | NO        | NONE (Runs all)|
 | translations_check.yml   | YES [1]   | YES [1]      | NO          | NO                | NO        | NONE (Runs all)|
+| kb_lint.yml              | YES [1]   | YES [1]      | YES         | NO                | NO        | NONE (Runs all)|
 | docker_publish.yml       | YES [2]   | NO           | NO          | YES               | NO        | NONE (Tags only|
 +──────────────────────────┴───────────┴──────────────┴─────────────┴───────────────────┴───────────┴───────────────+
 [1] Target branches: master, develop
@@ -144,8 +155,7 @@ The root configuration file [`phpunit.xml`](../../phpunit.xml) defines 11 discre
 ### Domain Test Distribution & Architecture Observations
 
 1. **Canonical Per-Plugin Test Coverage Audit**:
-   - Automated PHP test coverage exists in **11 of the 28** plugin packages under `plugins/webkul/`, while **17 plugins** currently have no `tests/` directory (some, such as `website`, are partially exercised by Playwright E2E specs).
-   - The authoritative per-plugin test file breakdown is maintained solely in [`docs/ai/testing-rules.md`](../ai/testing-rules.md#2-fresh-repository-test-coverage-audit). Do not maintain a duplicate per-plugin count list in this document.
+   - The current per-plugin test status and exact file counts are maintained solely in [`docs/plugins/README.md`](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). Some plugins without backend tests, such as `website`, are partially exercised by Playwright E2E specs.
 2. **Feature Test Concentration**:
    - **Zero `Unit/` test directories exist** in the repository; all plugin tests reside under `tests/Feature` (with shared helpers/fakes under `tests/Helpers` or `tests/Fakes`).
 3. **Zero Pest Architecture Tests**:
@@ -384,7 +394,7 @@ A systematic audit of quality tools, static analyzers, and linters yielded the f
 | **Deptrac** | Absent | **NO** | **NOT CONFIGURED** | Not present in repository |
 | **Pest Arch Tests**| Absent | **NO** | **NOT CONFIGURED** | Zero `arch()` references in test codebase |
 | **Translations Check**| Custom Artisan command | **YES** | **PRESENT AND EXECUTED IN CI** | Executed in `translations_check.yml` |
-| **Knowledge Base Linter**| Custom Python script ([`scripts/kb_lint.py`](../../scripts/kb_lint.py)) | **NO** | **PRESENT AND EXECUTED LOCALLY (PRE-COMMIT)** | Versioned Git hook [`scripts/hooks/pre-commit`](../../scripts/hooks/pre-commit) |
+| **Knowledge Base Linter**| Custom Python script ([`scripts/kb_lint.py`](../../scripts/kb_lint.py)) | **YES** | **PRESENT IN CI AND LOCAL PRE-COMMIT** | [`kb_lint.yml`](../../.github/workflows/kb_lint.yml); versioned Git hook [`scripts/hooks/pre-commit`](../../scripts/hooks/pre-commit) |
 
 ### Code Quality Observation
 
@@ -392,7 +402,7 @@ Laravel Pint is configured for local development via [`pint.json`](../../pint.js
 
 ### Knowledge Base Linting & Git Pre-Commit Hook
 
-A dedicated static consistency checker for the documentation tree and AI guidance is provided in [`scripts/kb_lint.py`](../../scripts/kb_lint.py). It validates Markdown links, front matter, banned terminology, citation targets, numeric consistency, and skill definitions without modifying files.
+A dedicated static consistency checker for the documentation tree and AI guidance is provided in [`scripts/kb_lint.py`](../../scripts/kb_lint.py). It validates Markdown links, front matter, banned terminology, citation targets, numeric consistency, ownership entries, assistant entrypoints, and skill definitions without modifying files. The [`kb_lint.yml`](../../.github/workflows/kb_lint.yml) workflow runs this check and its standard-library regression tests on pushes, pull requests, and merge groups.
 
 To prevent documentation regressions locally before they are committed, the repository ships a versioned Git pre-commit hook at [`scripts/hooks/pre-commit`](../../scripts/hooks/pre-commit). The hook inspects staged changes via `git diff --cached --name-only` and runs:
 
@@ -400,7 +410,7 @@ To prevent documentation regressions locally before they are committed, the repo
 python3 scripts/kb_lint.py --root . --strict
 ```
 
-whenever a commit touches `docs/**`, `AGENTS.md`, or `agents/**` (including `.agents/**`), blocking the commit on a non-zero exit code.
+whenever a commit touches `docs/**`, the supported root assistant entrypoints, `.github/copilot-instructions.md`, or `agents/**` (including `.agents/**`), blocking the commit on a non-zero exit code.
 
 #### One-Time Developer Setup
 
@@ -411,7 +421,7 @@ git config core.hooksPath scripts/hooks
 ```
 
 > [!NOTE]
-> In the current solo-maintainer setup, running `kb_lint.py` locally via the versioned pre-commit hook provides immediate feedback and catches documentation regressions before commit. If external contributors join the project in the future, the same check can be promoted to a GitHub Actions workflow under `.github/workflows/`.
+> The local hook is opt-in per clone. CI runs the same knowledge checks, but the new workflow is not yet a server-side required status check; GitHub ruleset configuration remains a separate administrative decision.
 
 ---
 
@@ -566,7 +576,7 @@ GitHub Blocks PR Merge When Check Fails
 
 ### Evaluated Status Check Contexts
 
-The workflow configuration emits 18 distinct CI check contexts across all matrix dimensions and shards. Only the 4 stable contexts marked below are required by the active GitHub rulesets; the remaining 14 shard and report contexts execute as diagnostic detail:
+The workflow configuration emits 19 distinct CI check contexts across all matrix dimensions and shards. Only the 4 stable contexts marked below are required by the active GitHub rulesets; the remaining 15 shard, report, and knowledge-base contexts execute as diagnostic detail:
 
 | Status Check Context | Workflow File | Server-Side Ruleset Status | Purpose |
 | :--- | :--- | :--- | :--- |
@@ -574,6 +584,7 @@ The workflow configuration emits 18 distinct CI check contexts across all matrix
 | `PHP 8.3 \| PostgreSQL test on ubuntu-latest` | `pest_tests.yml` | **Required (`23566563`, `23566566`)** | Backend Pest verification against PostgreSQL 16. |
 | `Check translation files consistency` | `translations_check.yml` | **Required (`23566563`, `23566566`)** | Fast dictionary parity check against the `en` baseline. |
 | `Playwright E2E Gate` | `playwright_tests.yml` | **Required (`23566563`, `23566566`)** | Stable aggregate gate (`playwright_e2e_gate`, lines 257–272); succeeds only when all 12 browser shards (`MySQL/PostgreSQL \| Shard 1..6 of 6`) and both `report (mysql/pgsql)` jobs succeed. |
+| `Knowledge Base Validation` | `kb_lint.yml` | Not required by server-side rulesets | Linter regression tests and strict knowledge-base validation. |
 | `MySQL \| Shard 1..6 of 6`, `PostgreSQL \| Shard 1..6 of 6`, `report (mysql/pgsql)` | `playwright_tests.yml` | Diagnostic only (covered by `Playwright E2E Gate`) | Individual shard and report jobs; not bound directly in rulesets to avoid shard-count fragility. |
 | `docker_publish.yml` job | `docker_publish.yml` | Not a PR check | Release deployment workflow triggered only on `v*` tags or manual dispatch. |
 
@@ -585,7 +596,7 @@ The table below summarizes active CI controls alongside current technical constr
 
 | Area | Current Active Reality (`[VERIFIED]`) | Optional Future Enhancement |
 | :--- | :--- | :--- |
-| **Required PR Status Checks (`CI-001`, `CI-008`)** | 4 contexts (`MySQL Pest`, `PostgreSQL Pest`, `Translations`, `Playwright E2E Gate`) are strictly enforced on `develop` and `master`. | Add a dedicated `Laravel Pint` or `kb_lint.py` CI job before binding any additional required check context. |
+| **Required PR Status Checks (`CI-001`, `CI-008`)** | 4 contexts (`MySQL Pest`, `PostgreSQL Pest`, `Translations`, `Playwright E2E Gate`) are strictly enforced on `develop` and `master`; `Knowledge Base Validation` runs but is not required. | Bind `Knowledge Base Validation` as an additional required context only after explicit authorization and ruleset verification. |
 | **Documentation Fast-Track (`CI-010`)** | Path filtering in `pest_tests.yml`, `translations_check.yml`, and `playwright_tests.yml` skips heavy test runs on docs-only PRs while satisfying required status checks. | Keep path-filter patterns synchronized if new documentation-only root files are introduced. |
 | **Merge Queue (`merge_group`, `CI-002`)** | `playwright_tests.yml` declares `merge_group:`; `pest_tests.yml` and `translations_check.yml` omit `merge_group:` and `workflow_dispatch:`. | Add `merge_group:` and `workflow_dispatch:` to `pest_tests.yml` and `translations_check.yml` before enabling GitHub Merge Queue. |
 | **Composer Caching (`CI-003`)** | `playwright_tests.yml` and `translations_check.yml` use `actions/cache@v4`; `pest_tests.yml` runs bare `composer install` without cache. | Standardize `composer install --no-interaction --prefer-dist` and `actions/cache@v4` in `pest_tests.yml`. |

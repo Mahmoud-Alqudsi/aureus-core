@@ -4,8 +4,8 @@ set -eo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-# Check if any staged files touch docs/**, AGENTS.md, or agents/** (including .agents/**)
-CHANGED_KB_FILES=$(git diff --cached --name-only | grep -E '^(docs/|AGENTS\.md$|(\.?)agents/)' || true)
+# Check staged knowledge files and supported assistant entrypoints.
+CHANGED_KB_FILES=$(git diff --cached --name-only | grep -E '^(docs/|AGENTS\.md$|GEMINI\.md$|CLAUDE\.md$|\.github/copilot-instructions\.md$|(\.?)agents/)' || true)
 
 if [ -n "$CHANGED_KB_FILES" ]; then
     echo "Knowledge base files staged for commit:"
