@@ -23,3 +23,4 @@ EOF
 
 chmod +x "$HOOK_DEST"
 echo " [OK] Pre-commit hook installed successfully in $HOOK_DEST."
+

@@ -74,3 +74,4 @@ Ensure code styling is intact:
 ```bash
 vendor/bin/pint --dirty
 ```
+

@@ -28,3 +28,4 @@ Any task or commit touching the following paths is considered an **Architectural
    ```
 2. **Qualitative Documentation**: If a new plugin is introduced, its business domain and architectural role must be documented in Section 4.1 of `ARCHITECTURE.md`.
 3. **No Phantom Conventions**: Do not document features, traits, or classes in `ARCHITECTURE.md` that do not exist in the source code.
+
