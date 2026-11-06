@@ -12,14 +12,7 @@ confidence: high
 
 This policy keeps the Aureus ERP Living Documentation and AI guidance aligned with the repository as it changes. It governs documentation maintenance; it does not replace source-code review, automated tests, database safeguards, GitHub rulesets, or the Git operating model.
 
-The source-of-truth hierarchy remains binding:
-
-```text
-Source code → automated tests → database schema → configuration
-→ Composer manifests → documentation → AI inference
-```
-
-When documentation and an executable source disagree, the executable source governs. The discrepancy must be corrected or explicitly recorded; it must never be hidden by treating documentation as proof.
+The source-of-truth hierarchy and discrepancy rules are maintained in [`AGENTS.md`](../../AGENTS.md#source-of-truth-hierarchy). When documentation and an executable source disagree, follow that hierarchy and record the discrepancy; documentation is not proof of runtime behavior.
 
 ## Scope and Boundaries
 

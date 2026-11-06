@@ -15,7 +15,9 @@ Aureus ERP is a Laravel ERP application whose domain functionality is primarily 
 [VERIFIED]
 Evidence: `composer.json`; `bootstrap/providers.php`; `plugins/webkul/`
 
-For a coding task, use this evidence order: implementation and executable configuration first; then tests that exercise the behaviour; then Composer metadata and lockfile for installed dependency versions; then repository documentation. Existing documentation, comments, and prior analysis are leads to verify, not evidence by themselves. When sources disagree, record the discrepancy in the relevant in-scope work and follow the implementation.
+Use the source-of-truth hierarchy in the repository's canonical AI entry point, [`AGENTS.md`](../../AGENTS.md#source-of-truth-hierarchy), when sources disagree. Repository documentation, comments, and prior analysis are leads to verify, not evidence by themselves. Record discrepancies in the relevant in-scope work and follow the governing source.
+
+For documentation ownership and canonical destinations, use [`knowledge-ownership.md`](knowledge-ownership.md). Other documents may provide task-specific summaries, but must link to the owner rather than restate its authoritative content.
 
 Use these labels precisely:
 

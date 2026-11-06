@@ -1,7 +1,7 @@
 ---
 status: verified
 source_of_truth: git-history-and-execution-records
-last_verified: 2026-11-02
+last_verified: 2026-11-06
 scope: documentation-changelog
 confidence: high
 ---
@@ -25,6 +25,16 @@ In accordance with the repository's documentation accuracy rules, historical eve
 1. **Git-Verified History**: Backed directly by immutable Git commit hashes, author timestamps, and repository diffs (`git log -- docs/`).
 2. **Documented Execution History**: Backed by documented phase execution reports, verification matrices, and structured project logs where exact commit hashes were synthesized or consolidated.
 3. **Reconstructed / Active History**: Actively in progress or reconstructed from conversational context; explicitly flagged to prevent false claims of Git verification.
+
+## Knowledge Ownership, Assistant Entry Points & CI Validation (2026-11-06)
+
+- **Evidentiary Tier**: Documented Execution History; verified against the current repository files and local validation commands.
+- Established [`docs/ai/knowledge-ownership.md`](ai/knowledge-ownership.md) as the map for canonical documentation owners and centralized the source-of-truth hierarchy in [`AGENTS.md`](../AGENTS.md).
+- Added a thin Copilot repository-instructions adapter and documented the shared `AGENTS.md` entry route for Copilot, Gemini CLI, and Codex. The adapters point to shared rules rather than copying them.
+- Extended [`scripts/kb_lint.py`](../scripts/kb_lint.py) to validate ownership-map uniqueness and paths, selected assistant entrypoints, duplicate source-hierarchy text, and workflow inventory parity; extended the local pre-commit trigger to those entrypoints.
+- Added standard-library regression tests and [`kb_lint.yml`](../.github/workflows/kb_lint.yml) for push, pull-request, and merge-group validation. The workflow is not configured as a required GitHub status check.
+- Resolved the per-plugin test-count owner to [`docs/plugins/README.md`](plugins/README.md). Historical stage and phase entries remain unchanged.
+- Verification: 4 linter regression tests passed; strict KB lint passed with 0 errors and 0 warnings; the hook path matcher, shell syntax, and workflow YAML were validated.
 
 ---
 

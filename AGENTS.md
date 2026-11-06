@@ -29,6 +29,8 @@ Prescriptive rules that AI agents **must** follow. Start with this orientation p
 
 Read [`docs/ai/terminology.md`](docs/ai/terminology.md) before naming, creating, or changing a model, trait, service, table, policy, or documentation term; also read it whenever the task itself concerns canonical terminology. Then load domain-specific rules only when the task or a direct source reference requires them.
 
+Use [`docs/ai/knowledge-ownership.md`](docs/ai/knowledge-ownership.md) to find the canonical owner of cross-cutting knowledge; linked summaries are not competing authorities.
+
 Then load domain-specific rules as needed:
 
 - [`docs/ai/architecture-rules.md`](docs/ai/architecture-rules.md) — Structural invariants

@@ -16,12 +16,7 @@ The template is a documentation contract. It does not require every plugin to ow
 
 ## Source and evidence rules
 
-Every behavior claim must be checked against the repository source-of-truth hierarchy:
-
-```text
-Source code → automated tests → database schema → configuration
-→ Composer metadata → verified documentation → inference
-```
+Every behavior claim must be checked against the repository source-of-truth hierarchy maintained in [`AGENTS.md`](../../AGENTS.md#source-of-truth-hierarchy).
 
 Use the existing evidence labels precisely:
 

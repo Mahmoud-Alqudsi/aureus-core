@@ -15,7 +15,7 @@ This glossary defines the authoritative terminology, system concepts, and miscon
 Every entry in this glossary is backed by verified source code, tests, migrations, configuration, Composer metadata, and verified repository documentation (covering architecture, security, database, workflows, and business rules).
 
 > **Operational Principle:**
-> The glossary guides vocabulary and interpretation, but MUST NEVER override source-code evidence when implementation behavior is being verified.
+> The glossary guides vocabulary and interpretation, but MUST NEVER override the repository's [source-of-truth hierarchy](../../AGENTS.md#source-of-truth-hierarchy) when implementation behavior is being verified.
 
 When writing code, developing plugins, generating migrations, configuring security, or authoring documentation:
 1. Developers and AI agents MUST adhere to the canonical terms, class namespaces, and architectural distinctions defined herein.

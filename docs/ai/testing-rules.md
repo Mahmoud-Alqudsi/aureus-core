@@ -20,7 +20,7 @@ Because the repository has evolved with significant variation in automated test 
 ├──────────────────────────────┬───────────────────────────────────────────────────────────────────┤
 │ Testing Framework            │ Pest v4 (PHP 8.3+) with Feature/Unit separation                   │
 │ Shared Test Helpers          │ plugins/webkul/support/tests/Helpers/ (TestBootstrap, Filament)  │
-│ Historical Baseline          │ 11 Tested Plugins / 17 Untested Plugins (201 files / 189 *Test)   │
+│ Coverage Inventory           │ See `docs/plugins/README.md` for current plugin counts            │
 │ Future Rule Standard         │ Historical Practice ≠ Future Standard (Mandatory minimums)       │
 │ Priority Review Areas        │ security, payments, invoices, plugin-manager                      │
 └──────────────────────────────┴───────────────────────────────────────────────────────────────────┘
@@ -28,25 +28,15 @@ Because the repository has evolved with significant variation in automated test 
 
 ---
 
-## 2. Fresh Repository Test Coverage Audit
+## 2. Current Plugin Test Coverage
 
-A live audit of `plugins/webkul/*/tests/` confirms **201 PHP files** (`189` `*Test.php` executable test classes + `12` `TestCase.php` and shared helper/fake files) across **11 tested plugins**, while **17 plugins** currently have no `tests/` directory:
-
-| Classification | Total Plugins | Tested Plugins | Untested Plugins (`tests/` absent) |
-| :--- | :--- | :--- | :--- |
-| **Core Plugins** | `9` | `2` (`partners`, `support`) | `7` (`analytics`, `chatter`, `fields`, `full-calendar`, `plugin-manager`, `security`, `table-views`) |
-| **Optional Plugins** | `19` | `9` (`accounting`, `accounts`, `employees`, `inventories`, `manufacturing`, `products`, `projects`, `purchases`, `sales`) | `10` (`barcode`, `blogs`, `contacts`, `invoices`, `maintenance`, `payments`, `recruitments`, `time-off`, `timesheets`, `website`) |
-| **Entire Repository** | **`28`** | **`11` (`189` `*Test.php` / `201` total files)** | **`17` (`60.7%` zero PHP test coverage)** |
-
-> [!NOTE]
-> **Single Source of Truth for Per-Plugin Counts**:
-> The complete 28-plugin table with exact per-plugin `*Test.php` and total `tests/*.php` file counts is maintained solely in [`docs/plugins/README.md`](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). Do not duplicate per-plugin count lists in other documents.
+Current per-plugin test status and exact file counts are maintained solely in the [plugin registry](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). This document owns testing conventions and standards, not a second coverage inventory.
 
 ---
 
 ## 3. Actual Pest Testing Conventions
 
-Observed across the 11 tested plugins, tests adhere to these standard conventions:
+Observed in existing plugin test suites, tests adhere to these standard conventions:
 
 ### 1. Test Directory Structure
 Tests reside exclusively inside each plugin's `tests/` directory:
@@ -141,7 +131,7 @@ Evidence: `plugins/webkul/support/src/Database/Factories/Concerns/HasCompanyDefa
 
 ## 4. Prioritized List of High-Risk Untested Areas
 
-Because 17 plugins currently lack automated tests, future testing and refactoring efforts MUST prioritize modules according to risk profile:
+For plugins listed without automated tests in the [plugin registry](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage), future testing and refactoring efforts MUST prioritize modules according to risk profile:
 
 | Priority | Plugin | Status | Primary Risk Factors & Architectural Justification |
 | :-: | :--- | :--- | :--- |

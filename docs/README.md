@@ -23,29 +23,15 @@ This index enables engineers and AI agents to quickly orient themselves, locate 
 ## Documentation Philosophy
 
 1. **Evidence-First Truth**: Documentation narrows the search space; verified repository source code, automated tests, and database schema decide the result.
-2. **Strict Source-of-Truth Hierarchy**:
-   $$\text{Source Code} > \text{Automated Tests} > \text{Migrations \& DB Schema} > \text{Configuration} > \text{Composer Manifests} > \text{Documentation} > \text{AI Summaries}$$
+2. **Single Authority**: The source-of-truth hierarchy is maintained in [`AGENTS.md`](../AGENTS.md#source-of-truth-hierarchy); this index does not duplicate it.
 3. **No Phantom Architecture**: Every documented class, method, trait, and convention must be grounded in verified repository files. Assumed or third-party shorthand is prohibited.
 4. **Separation of Concerns**: Documentation describes system invariants and verified behavior; software release history is strictly separated from documentation evolution history.
 
 ---
 
-## Source of Truth
+## Resolving Conflicts
 
-When verifying behavior, resolving conflicting statements, or implementing features, adhere strictly to the established evidence hierarchy:
-
-| Level | Evidentiary Tier | Primary Locations | Authority |
-| :---: | :--- | :--- | :--- |
-| **1** | **Source Code** | `plugins/webkul/*/src/`, `app/`, `bootstrap/` | Absolute authority on executable behavior |
-| **2** | **Automated Tests** | `plugins/webkul/*/tests/` (Pest v4 / PHPUnit 12) | Authoritative on intended behavior and contracts |
-| **3** | **Database Schema** | `plugins/webkul/*/database/migrations/`, `database/` | Absolute authority on physical persistence & FKs |
-| **4** | **Configuration** | `config/*`, `plugins/webkul/*/config/` | Authoritative on runtime environment settings |
-| **5** | **Composer Manifests** | `composer.json`, `composer.lock`, plugin `composer.json` | Authoritative on packages & dependency versions |
-| **6** | **Canonical Docs** | `docs/*` | Authoritative synthesis of verified system behavior |
-| **7** | **AI Inference** | Model inference, previous conversational transcripts | Non-authoritative; requires code verification |
-
-> [!IMPORTANT]
-> **Escalation Rule**: If a claim in this documentation conflicts with active repository source code, the source code governs. Do not assume documentation is correct over executable code.
+Use the authoritative source hierarchy and discrepancy rules in [`AGENTS.md`](../AGENTS.md#source-of-truth-hierarchy). This documentation index is navigational; it does not establish a competing hierarchy.
 
 ---
 
@@ -58,6 +44,7 @@ When verifying behavior, resolving conflicting statements, or implementing featu
 4. **Enforce Canonical Vocabulary**: Check [`docs/ai/terminology.md`](ai/terminology.md) before authoring code, models, or documentation to avoid known architectural pitfalls.
 5. **Assess Blast Radius**: Review [`docs/architecture/change-impact.md`](architecture/change-impact.md) before altering cross-cutting services, traits, or database tables.
 6. **Verify Against Matrix**: Corroborate critical claims against [`docs/verification-matrix.md`](verification-matrix.md).
+7. **Find the Knowledge Owner**: Use [`docs/ai/knowledge-ownership.md`](ai/knowledge-ownership.md) before adding or moving cross-cutting guidance.
 
 ### For Human Developers
 1. **System Overview**: Read [`docs/architecture/overview.md`](architecture/overview.md) to understand provider registration and package architecture.
@@ -85,9 +72,11 @@ After cloning, activate the versioned pre-commit KB lint hook once:
 git config core.hooksPath scripts/hooks
 ```
 
-Every commit touching `docs/`, `AGENTS.md`, or `agents/**` then
+Every commit touching `docs/`, the root assistant entrypoints, `.github/copilot-instructions.md`, or `agents/**` then
 runs `scripts/kb_lint.py --root . --strict` and blocks on any
-finding. See
+finding. The same check and its regression tests also run in the
+`Knowledge Base Validation` GitHub Actions workflow, which is not yet a
+server-side required status check. See
 [`docs/development/ci-testing-governance.md`](development/ci-testing-governance.md)
 for details. The config is local per clone; it is not pushed.
 
@@ -273,7 +262,7 @@ Cross-cutting verification tracking and change-impact controls:
 Aureus ERP contains **28 domain plugins** located under `plugins/webkul/` (9 Core and 19 Optional).
 
 - **Complete Plugin Directory, Classification & Dependency Matrix**: Maintained solely in [`docs/plugins/README.md`](plugins/README.md).
-- **Per-Plugin Test Coverage Audit (11 Tested / 17 Untested)**: Maintained solely in [`docs/ai/testing-rules.md`](ai/testing-rules.md#2-fresh-repository-test-coverage-audit).
+- **Per-Plugin Test Coverage Inventory**: Maintained solely in [`docs/plugins/README.md`](plugins/README.md#plugin-registry-dependencies-migrations--test-coverage).
 - **Plugin Lifecycle & Registration Rules**: Maintained in [`docs/ai/plugin-rules.md`](ai/plugin-rules.md) and [`docs/architecture/plugin-registry.md`](architecture/plugin-registry.md).
 
 ---

@@ -199,7 +199,7 @@ A plugin introducing a company-sensitive model or database table MUST deliberate
 
 ## 5. Automated Test Coverage Baseline (Fresh Repository Audit)
 
-The canonical per-plugin test coverage audit (11 tested plugins and 17 untested plugins across the 28 local packages) is maintained solely in [`docs/ai/testing-rules.md`](testing-rules.md#2-fresh-repository-test-coverage-audit), with the master plugin catalog in [`docs/plugins/README.md`](../plugins/README.md). Do not duplicate per-plugin test file counts here.
+The canonical plugin catalog and per-plugin test coverage counts are maintained solely in [`docs/plugins/README.md`](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). Do not duplicate per-plugin test file counts here.
 
 ### Prescriptive Rules: Testing Baseline
 - **Historical Practice ≠ Future Standard**: The fact that 17 existing plugins lack automated tests MUST NOT become the future standard.

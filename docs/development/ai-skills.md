@@ -16,7 +16,19 @@ The canonical rules remain `AGENTS.md` and the referenced documents under `docs/
 
 ## Location and Discovery
 
-The skills are versioned under `.agents/skills/` at the repository root. AI coding assistants discover repository skills from that path, so the skills apply to this repository without becoming global user rules. The root `.gitignore` excludes other `.agents` content while explicitly retaining this reviewed skill subtree. Each skill is intentionally instruction-only: no skill includes credentials or automatic remote mutation.
+The skills are versioned under `.agents/skills/` at the repository root. Copilot and Gemini CLI document this as a project skill location; Codex instruction discovery is verified, but skill auto-discovery must be confirmed on the configured Codex surface. The root `.gitignore` excludes other `.agents` content while explicitly retaining this reviewed skill subtree. Each skill is intentionally instruction-only: no skill includes credentials or automatic remote mutation.
+
+## Supported Assistant Entry Points
+
+Each adapter points to the shared repository rules; do not copy prescriptive rules into platform-specific files.
+
+| Assistant | Repository instruction entry point | Skill discovery |
+| --- | --- | --- |
+| GitHub Copilot | [`.github/copilot-instructions.md`](../../.github/copilot-instructions.md) and root [`AGENTS.md`](../../AGENTS.md) | `.agents/skills/` is a supported project skill location. |
+| Gemini CLI | [`GEMINI.md`](../../GEMINI.md) imports root `AGENTS.md` | `.agents/skills/` is a supported workspace alias. |
+| Codex | Root [`AGENTS.md`](../../AGENTS.md) | On-demand through the shared reading-order guidance in `AGENTS.md`; this does not depend on platform-specific automatic skill discovery. |
+
+The Copilot repository-instructions path is documented in [GitHub's repository instructions guide](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions). Gemini's context imports and skill alias are documented in the [Gemini CLI context guide](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md) and [skills guide](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/skills.md). Codex's project instruction discovery is documented in its [AGENTS.md guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
 
 | Skill | Use for | Canonical controls |
 | --- | --- | --- |

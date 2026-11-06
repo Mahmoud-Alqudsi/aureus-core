@@ -136,34 +136,7 @@ Developers and AI agents MUST strictly respect the following ten architectural d
 
 ## 4. Source of Truth Hierarchy
 
-When resolving conflicting claims, analyzing change impact, or designing verification procedures, the following strict hierarchy of authority MUST be enforced:
-
-```
-    1. Source Code               (Authoritative implementation reality)
-         │
-         ▼
-    2. Automated Tests           (Verified behavioral specifications)
-         │
-         ▼
-    3. Migrations & DB Schema    (Physical persistence structure)
-         │
-         ▼
-    4. Configuration Files       (Framework and package settings)
-         │
-         ▼
-    5. Composer Configuration    (Package dependencies & lockfile metadata)
-         │
-         ▼
-    6. Canonical Documentation   (docs/* verified knowledge base)
-         │
-         ▼
-    7. Previous AI Statements    (Heuristic statements; zero evidentiary weight)
-```
-
-### Operational Rules for Discrepancies
-- Source code evidence **always overrides** documentation, comments, or external expectations.
-- If existing documentation in `docs/` contradicts verified source code behavior, developers and AI agents MUST NOT silently edit the historical documentation. The discrepancy MUST be formally recorded as a `[PROPOSED CORRECTION]` while current source code dictates the change impact analysis.
-- Previous AI-generated explanations possess zero evidentiary weight unless corroborated by direct repository file and line citations.
+The authoritative source hierarchy and discrepancy rules are maintained in [`AGENTS.md`](../../AGENTS.md#source-of-truth-hierarchy). This impact guide does not define a competing hierarchy.
 
 ---
 
@@ -602,23 +575,16 @@ Established deferred and reactive mechanisms in Aureus ERP:
 
 ## 13. Testing & Verification Impact
 
-### 13.1 The Coverage Baseline: 11 Tested vs. 17 Untested Plugins
+### 13.1 Current Plugin Test Coverage
 
-- **Tested Plugins (`11` total — `189` `*Test.php` classes / `201` total PHP files in `tests/`)**:
-  - Core (`2`): `partners`, `support`.
-  - Optional (`9`): `accounting`, `accounts`, `employees`, `inventories`, `manufacturing`, `products`, `projects`, `purchases`, `sales`.
-- **Untested Plugins (`17` total — `tests/` directory absent)**:
-  - Core (`7`): `analytics`, `chatter`, `fields`, `full-calendar`, `plugin-manager`, `security`, `table-views`.
-  - Optional (`10`): `barcode`, `blogs`, `contacts`, `invoices`, `maintenance`, `payments`, `recruitments`, `time-off`, `timesheets`, `website`.
-
-[VERIFIED] Evidence: Per-plugin test and migration counts are maintained solely in [`docs/plugins/README.md`](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage) and [`docs/ai/testing-rules.md`](../ai/testing-rules.md#2-fresh-repository-test-coverage-audit).
+The current per-plugin coverage status and exact counts are maintained solely in the [plugin registry](../plugins/README.md#plugin-registry-dependencies-migrations--test-coverage). Use that inventory to determine whether existing automated tests can verify an affected plugin; this impact guide owns the risk response, not the counts.
 
 ### 13.2 The Testing Governance Principle
 
 > **«Existing lack of tests describes the historical baseline; it does NOT define the future minimum standard.»**
 > **Passing Test Suite ≠ Complete Impact Verification**
 
-- Modifications to the 17 untested plugins (especially `security`, `payments`, `invoices`, and `plugin-manager`) CANNOT rely on existing CI tests to catch regressions.
+- Modifications to plugins without dedicated automated tests (especially `security`, `payments`, `invoices`, and `plugin-manager`) CANNOT rely on existing CI tests to catch regressions.
 - Future changes in critical zones require authoring new Pest tests or undergoing comprehensive manual verification.
 
 ---
