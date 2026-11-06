@@ -175,7 +175,7 @@ Aureus ERP enforces strict platform locking across its runtime and development d
 | **Laravel Sanctum** | `^4.0` | `v4.3.3` | `composer.json:26`, `composer.lock:4144` |
 | **Pest Testing Framework** | `^4.4` | `v4.7.5` | `composer.json:48`, `composer.lock:13666` |
 | **Composer Merge Plugin** | `^2.1` | `v2.1.0` | `composer.json:37`, `composer.lock:12615` |
-| **Filament Language Switch** | `^4.3` | `v4.3.0` | `composer.json:16` |
+| **Filament Language Switch** | `^4.3` | `4.3.0` | `composer.json:16` |
 | **Filament DateRangePicker** | `^5.0` | `5.0.6` | `composer.json:31`, `composer.lock:5372` |
 | **Spatie Query Builder** | `^7.0` | `7.3.0` | `composer.json:35`, `composer.lock:9003` |
 | **Spatie Translatable** | `^6.14` | `6.14.1` | `composer.json:36`, `composer.lock:9162` |

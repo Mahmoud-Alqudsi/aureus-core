@@ -24,6 +24,7 @@ When sources disagree, follow this precedence — higher levels override lower:
 3. **Plan before implementation.** For non-trivial changes: assess impact, identify affected components, write a plan, and obtain human approval before editing.
 4. **No phantom architecture.** Do not reference, create, or assume classes, traits, methods, or conventions that do not exist in the repository. Verify with search or file inspection.
 5. **Company isolation is mandatory.** Every database change touching company-scoped data must use the established isolation suite (`BelongsToCompany`, `CompanyScope`, `CompanyContext`).
+6. **Architecture specification must stay synchronized.** The canonical reference `ARCHITECTURE.md` must accurately reflect Level 1 source code reality. When changes touch plugins, migrations, dependencies, or architectural primitives, verify and synchronize via `php scripts/sync-architecture.php --check` (or `--sync`).
 
 ## Discovery Workflow
 
@@ -76,6 +77,7 @@ After every implementation, verify and report:
 | Plugin structure | Verify registration in `bootstrap/providers.php`. Verify `Package` configuration in the service provider. |
 | Security-sensitive | Verify policy exists and is registered. Verify company scope is applied. Verify no raw queries bypass scoping. |
 | Cross-plugin | Verify no circular dependencies. Verify affected plugins' tests still pass. |
+| Architecture | Run `php scripts/sync-architecture.php --check`. If drifted, run `--sync` and verify qualitative impact in `ARCHITECTURE.md`. |
 
 **Always report:**
 - What was tested and the result.
