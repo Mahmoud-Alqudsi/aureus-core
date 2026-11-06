@@ -22,9 +22,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/.agents/*
-!/.agents/skills/
-!/.agents/skills/**
+/.agents
 /.zed
 /.codex
 /.claude
