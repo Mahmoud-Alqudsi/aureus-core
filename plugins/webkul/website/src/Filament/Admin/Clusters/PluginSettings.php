@@ -11,7 +11,7 @@ class PluginSettings extends Cluster
     use HasClusterBreadcrumbs;
     protected static ?string $slug = 'website/settings';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 91;
 
     public static function getNavigationLabel(): string
     {
