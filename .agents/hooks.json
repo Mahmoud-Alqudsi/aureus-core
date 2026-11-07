@@ -1,0 +1,13 @@
+{
+  "architecture-guard": {
+    "enabled": true,
+    "Stop": [
+      {
+        "type": "command",
+        "command": "php scripts/sync-architecture.php --hook=stop",
+        "timeout": 15
+      }
+    ]
+  }
+}
+
