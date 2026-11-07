@@ -17,12 +17,17 @@
    - [2.1 Locked Dependency Baseline](#21-locked-dependency-baseline)
    - [2.2 Runtime Configuration & Self-Contained Persistence](#22-runtime-configuration--self-contained-persistence)
    - [2.3 Autoloading & Monorepo Manifest Merging](#23-autoloading--monorepo-manifest-merging)
+   - [2.4 Production Containerization & Multi-Process Architecture](#24-production-containerization--multi-process-architecture)
+   - [2.5 Native Mobile Shell Integration (NativePHP Remote)](#25-native-mobile-shell-integration-nativephp-remote)
+   - [2.6 Frontend Architecture: Tailwind CSS v4 & Vite Cross-Package Compilation](#26-frontend-architecture-tailwind-css-v4--vite-cross-package-compilation)
+   - [2.7 Developer CLI Concurrency Pipeline (`composer dev`)](#27-developer-cli-concurrency-pipeline-composer-dev)
 3. [Core Application Architecture (`app/` & `bootstrap/`)](#3-core-application-architecture-app--bootstrap)
    - [3.1 Host Application Layout & Responsibilities](#31-host-application-layout--responsibilities)
    - [3.2 Bootstrap Pipeline (`bootstrap/app.php`)](#32-bootstrap-pipeline-bootstrapappphp)
    - [3.3 Centralized Exception Handling & UI Notifications](#33-centralized-exception-handling--ui-notifications)
    - [3.4 Static Service Provider Registration (`bootstrap/providers.php`)](#34-static-service-provider-registration-bootstrapprovidersphp)
-   - [3.5 Core Foundation Services & Dynamic OKLCH Branding Middleware](#35-core-foundation-services--dynamic-oklch-branding-middleware)
+   - [3.5 Core Foundation Services, Dynamic OKLCH Branding & Multi-Language Negotiation](#35-core-foundation-services-dynamic-oklch-branding--multi-language-negotiation)
+   - [3.6 REST API Architecture & OpenAPI Documentation Engine](#36-rest-api-architecture--openapi-documentation-engine)
 4. [Domain & Plugin Ecosystem Topology](#4-domain--plugin-ecosystem-topology)
    - [4.1 Comprehensive Catalog of All 28 Local Plugins](#41-comprehensive-catalog-of-all-28-local-plugins)
    - [4.2 Plugin Directory Conventions & Manifest Layout](#42-plugin-directory-conventions--manifest-layout)
@@ -30,11 +35,13 @@
    - [4.4 Plugin Manager Engine (`plugins/webkul/plugin-manager`)](#44-plugin-manager-engine-pluginswebkulplugin-manager)
    - [4.5 Inter-Plugin Dependency Graph & Validation](#45-inter-plugin-dependency-graph--validation)
    - [4.6 Decoupled Cross-Plugin Integration Patterns](#46-decoupled-cross-plugin-integration-patterns)
+   - [4.7 Domain Facades & Service Manager Architecture](#47-domain-facades--service-manager-architecture)
+   - [4.8 Headless Engine & Composable UI Architecture](#48-headless-engine--composable-ui-architecture)
 5. [Multi-Company Tenancy & Isolation Architecture](#5-multi-company-tenancy--isolation-architecture)
    - [5.1 Bespoke Eloquent Tenancy vs. Filament Native Tenancy](#51-bespoke-eloquent-tenancy-vs-filament-native-tenancy)
    - [5.2 Tenancy Primitives: Scopes, Traits, and Context](#52-tenancy-primitives-scopes-traits-and-context)
    - [5.3 Multi-Active Company Viewing Mode](#53-multi-active-company-viewing-mode)
-   - [5.4 Referential Tenancy Integrity & Cross-Company Guards](#54-referential-tenancy-integrity--cross-company-guards)
+   - [5.4 Referential Tenancy Integrity & Interactive Form Isolation Guards](#54-referential-tenancy-integrity--interactive-form-isolation-guards)
    - [5.5 Tenancy Scope Bypasses & Privileged Contexts](#55-tenancy-scope-bypasses--privileged-contexts)
    - [5.6 Tenant Switcher UI & Controller Integration](#56-tenant-switcher-ui--controller-integration)
 6. [Security, Authentication & Authorization Architecture](#6-security-authentication--authorization-architecture)
@@ -44,19 +51,27 @@
    - [6.4 Fine-Grained Record Ownership Architecture (`Bouncer`)](#64-fine-grained-record-ownership-architecture-bouncer)
    - [6.5 Orthogonal Decoupling: Authorization Policies vs. Tenant Scoping](#65-orthogonal-decoupling-authorization-policies-vs-tenant-scoping)
 7. [Filament Panel Architecture](#7-filament-panel-architecture)
-   - [7.1 Dual-Panel Topography](#71-dual-panel-topography)
+   - [7.1 Dual-Panel Topography & Runtime Configuration](#71-dual-panel-topography--runtime-configuration)
    - [7.2 Inversion of Control: `Panel::configureUsing()`](#72-inversion-of-control-panelconfigureusing)
    - [7.3 Dynamic Discovery Gating & Panel Archetypes](#73-dynamic-discovery-gating--panel-archetypes)
-   - [7.4 Central Navigation Hierarchy & Cluster Breadcrumbs](#74-central-navigation-hierarchy--cluster-breadcrumbs)
+   - [7.4 Central Navigation Hierarchy & Domain SVG Iconography](#74-central-navigation-hierarchy--domain-svg-iconography)
+   - [7.5 Modular Navigation Topology: App Launcher & Dynamic Module Scoping](#75-modular-navigation-topology-app-launcher--dynamic-module-scoping)
+   - [7.6 Tabular Line Items Architecture: Reusable Repeater, Column Manager & Summarizers](#76-tabular-line-items-architecture-reusable-repeater-column-manager--summarizers)
+   - [7.7 Universal Workflow State Pipeline: ProgressStepper](#77-universal-workflow-state-pipeline-progressstepper)
+   - [7.8 Record Sub-Navigation: RecordNavigationTabs & HasRecordNavigationTabs](#78-record-sub-navigation-recordnavigationtabs--hasrecordnavigationtabs)
+   - [7.9 Collaboration & Activity Stream: Chatter Slide-Over & HasChatter](#79-collaboration--activity-stream-chatter-slide-over--haschatter)
+   - [7.10 Reusable Resource Concerns: Navigation Labels, Form State Refresh & PDF Generation](#710-reusable-resource-concerns-navigation-labels-form-state-refresh--pdf-generation)
 8. [Persistence & Database Conventions](#8-persistence--database-conventions)
    - [8.1 Schema Architecture Across 383 Migrations](#81-schema-architecture-across-383-migrations)
    - [8.2 Table & Column Conventions](#82-table--column-conventions)
    - [8.3 Foreign Key Semantics & Referential Cascade Tiers](#83-foreign-key-semantics--referential-cascade-tiers)
    - [8.4 Multi-Company Storage Models](#84-multi-company-storage-models)
+   - [8.5 Root Database Seeders & Baseline Data Provisioning](#85-root-database-seeders--baseline-data-provisioning)
 9. [Architectural Invariants, Constraints & Extension Guidelines](#9-architectural-invariants-constraints--extension-guidelines)
    - [9.1 Non-Negotiable Architectural Rules](#91-non-negotiable-architectural-rules)
-   - [9.2 Testing Bootstrap Architecture (`TestBootstrapHelper`)](#92-testing-bootstrap-architecture-testbootstraphelper)
+   - [9.2 Dual-Tier Testing Architecture: Pest Feature Testing & Playwright Browser Automation](#92-dual-tier-testing-architecture-pest-feature-testing--playwright-browser-automation)
    - [9.3 New Plugin Authoring & Extension Standards](#93-new-plugin-authoring--extension-standards)
+   - [9.4 Architecture Governance & Specification Synchronization Engine](#94-architecture-governance--specification-synchronization-engine)
 
 ---
 
@@ -182,12 +197,25 @@ Aureus ERP enforces strict platform locking across its runtime and development d
 | **Zeus Spatie Translatable** | `^2.0` | `2.0.1` | `composer.json:24`, `composer.lock:3801` |
 | **Laravel Pint** | `^1.27` | `v1.29.3` | `composer.json:44`, `composer.lock:13333` |
 | **Scribe API Documentation** | `^5.6` | `5.11.0` | `composer.json:23`, `composer.lock:3709` |
+| **NativePHP Remote Shell** | `^0.1.0` | `v0.1.0` | `composer.json:13`, `composer.lock:75` |
+| **NativePHP Mobile Runtime** | `^3.3` | `3.3.6` | `composer.json:33`, `composer.lock:5850` |
+| **Barryvdh Laravel DomPDF** | `^3.1` | `v3.1.2` | `composer.json:15`, `composer.lock:281` |
+| **Barryvdh Laravel Debugbar** | `^4.0` | `v4.4.0` | `composer.json:14`, `composer.lock:181` |
+| **Flowframe Laravel Trend** | `^0.5` | `v0.5.0` | `composer.json:20`, `composer.lock:2794` |
+| **Guava Filament Icon Picker** | `^4.0` | `4.0.0` | `composer.json:21`, `composer.lock:3001` |
+| **Khaled Alshamaa Ar-PHP** | `^7.0` | `v7.0.0` | `composer.json:22`, `composer.lock:3581` |
+| **League Glide Image Engine** | `^2.3` | `2.3.2` | `composer.json:28`, `composer.lock:4748` |
+| **Maatwebsite Excel** | `^3.1` | `3.1.69` | `composer.json:30`, `composer.lock:5211` |
+| **Milon Barcode Engine** | `^13.0` | `v13.1` | `composer.json:32`, `composer.lock:5614` |
+| **Spatie Eloquent Sortable** | `^5.0` | `5.0.1` | `composer.json:34`, `composer.lock:8720` |
+| **Laravel Pail Log Streamer** | `^1.2.5` | `v1.2.7` | `composer.json:43`, `composer.lock:13251` |
 
 ### 2.2 Runtime Configuration & Self-Contained Persistence
 
 Aureus ERP is architected to be completely **self-contained and zero-daemon** in its default configuration. Baseline configuration in `config/` confirms that every infrastructure subsystem utilizes database persistence:
 - **Default Database Driver (`config/database.php:16`)**: `env('DB_CONNECTION', 'sqlite')`. Path resolves to `database/database.sqlite` with `foreign_key_constraints = true`.
 - **Database Persistence & Production Dialects (`SupportServiceProvider.php:148–159`)**: While `sqlite` serves as the zero-daemon default for self-contained execution, local development, and rapid unit testing, multi-tenant enterprise ERP operations require MySQL, MariaDB, or PostgreSQL. `SupportServiceProvider:154` registers the `Webkul\Support\Database\Dialects\DatabaseDialect` singleton, which specifically implements `MySqlDialect` (`mysql`, `mariadb`) and `PostgresDialect` (`pgsql`). Advanced dialect operations (such as `jsonArrayAgg()`, `monthBucket()`, `alterColumnType()`, `syncSequences()`, and `caseInsensitiveEquals()`) are unsupported for SQLite and throw a `RuntimeException("No DatabaseDialect implementation is registered for the [sqlite] database driver. Supported drivers: mysql, mariadb, pgsql.")`.
+- **MySQL/MariaDB Strict Mode Exemption (`config/database.php:58, 78`)**: In MySQL and MariaDB drivers, SQL strict mode is disabled (`'strict' => false`). Enterprise ERP systems perform complex financial aggregations, balance calculations, and multi-period reporting that utilize SQL `GROUP BY` expressions across non-aggregated descriptive columns (e.g. grouped invoices with customer names, tax breakdown aggregations). Disabling `ONLY_FULL_GROUP_BY` allows these performant relational groupings without synthetic nested sub-queries.
 - **Session Management (`config/session.php:21–23`)**: Defaults to `'database'` driver (`SESSION_DRIVER=database`), persisting active sessions in the `sessions` table with `lifetime = 120`, `http_only = true`, and `same_site = 'lax'`.
 - **Asynchronous Queues (`config/queue.php:16–18`)**: Defaults to `'database'` driver (`QUEUE_CONNECTION=database`), utilizing the `jobs` table with automatic 90-second retry timeout.
 - **Cache Storage (`config/cache.php:18–20`)**: Defaults to `'database'` store (`CACHE_STORE=database`), storing application cache in the `cache` table.
@@ -230,6 +258,66 @@ The merge plugin automatically scans and injects the `composer.json` of all 28 p
 1. Unified class loading across all plugin namespaces (e.g., `Webkul\Account\` -> `plugins/webkul/accounts/src/`).
 2. Centralized dependency compilation and vendor conflict resolution during `composer install` or `composer update`.
 3. Seamless developer workflows without maintaining individual Git submodules or separate package repositories.
+
+### 2.4 Production Containerization & Multi-Process Architecture
+
+For production deployments, Aureus ERP provides a container topology defined in `docker/production/Dockerfile`:
+- **Base Environment**: Ubuntu 24.04 LTS, PHP 8.4, Node.js 22, MySQL 8, Nginx, and Supervisor.
+- **Image Processing Extensions**: In addition to standard extensions (`bcmath`, `curl`, `mbstring`, `zip`, `pdo_mysql`, `intl`, `gd`), the Dockerfile compiles the ImageMagick PECL extension (`imagick.so`), optimizing high-resolution document processing and PDF barcode rendering.
+- **Build-Time Installation Baking (`docker/production/build-install.sh`)**:
+  Rather than migrating and seeding upon container boot (which creates startup latency and race conditions in multi-replica deployments), database provisioning is baked during `docker build`:
+  1. Initializes a temporary MySQL daemon instance via `mysqld --initialize-insecure`.
+  2. Starts the temporary MySQL daemon in the background.
+  3. Executes `php artisan erp:install --force --no-interaction --admin-name='Admin' --admin-email='admin@example.com' --admin-password='password'`, which runs all core and plugin migrations, seeders, and initializes the root administrative company.
+  4. Shuts down MySQL cleanly, baking the populated database files directly into the container image layer (`/var/lib/mysql`).
+- **Process Orchestration (`supervisord.conf`)**:
+  Supervisor coordinates 3 concurrent processes:
+  - `mysqld`: Relational database engine.
+  - `php-fpm8.4`: FastCGI process manager executing PHP requests.
+  - `nginx`: Web server routing static assets and reverse-proxying PHP-FPM on port 80.
+- **Container Health Check**: Evaluates `curl -fsS http://127.0.0.1/health` with a 30-second interval, 5-second timeout, and 3 retries.
+
+### 2.5 Native Mobile Shell Integration (NativePHP Remote)
+
+Aureus ERP incorporates native mobile shell capabilities via `aureuserp/nativephp-remote` and `nativephp/mobile`:
+- **Configuration (`config/nativephp-remote.php:13–46`)**:
+  - Detects native mobile shells through the URL query parameter `?nativephp=1` and sets a 30-day persistent cookie (`nativephp_remote_shell = 1`).
+  - Automatically identifies whether incoming traffic originates from the native mobile shell wrapper (`NativePhpRemote::isNative()`).
+- **Hardware Permissions Injection**:
+  - Android: Automatically configures `android.permission.CAMERA` and `android.permission.VIBRATE`.
+  - iOS: Injects `NSCameraUsageDescription` ("This app uses your camera to scan barcodes and QR codes.").
+- **Barcode & Hardware Scanners**: In conjunction with `plugins/webkul/barcode`, warehouse operators running the native mobile application can trigger real-time device camera scanning for serials, lots, and SKU tracking directly from the browser view.
+
+### 2.6 Frontend Architecture: Tailwind CSS v4 & Vite Cross-Package Compilation
+
+Frontend assets are bundled via **Vite v5** with the **Tailwind CSS v4** engine (`package.json:9–16`):
+- **Vite Configuration (`vite.config.js:7–12`)**:
+  Rather than compiling plugin assets in isolation, the root Vite configuration compiles host assets alongside modular plugin assets in a single bundle:
+  ```javascript
+  laravel({
+      input: [
+          'resources/css/app.css',
+          'resources/js/app.js',
+          'plugins/webkul/barcode/resources/dist/barcode.css',
+          'plugins/webkul/barcode/resources/dist/barcode.js',
+      ],
+      refresh: true,
+  }),
+  tailwindcss(),
+  ```
+- **Tailwind CSS v4 Engine**: Built on `@tailwindcss/vite` (^4.3.0) and `@tailwindcss/postcss` (^4.1.12), leveraging native CSS cascade layers and lightning-fast JIT compilation without legacy `tailwind.config.js` boilerplate.
+
+### 2.7 Developer CLI Concurrency Pipeline (`composer dev`)
+
+Local full-stack development is orchestrated through a single unified command (`composer.json:79–82`):
+```bash
+composer dev
+```
+Powered by `npx concurrently -c "#93c5fd,#c4b5fd,#fb7185,#fdba74"`, this starts four parallel development services:
+1. `php artisan serve`: Host HTTP development server on `localhost:8000`.
+2. `php artisan queue:listen --tries=1`: Background job worker executing database queues.
+3. `php artisan pail --timeout=0`: Real-time CLI log streaming for exception tailing.
+4. `npm run dev`: Vite Hot Module Replacement (HMR) server for frontend styles and scripts.
 
 ---
 
@@ -346,7 +434,7 @@ return [
 - **Zero Overhead**: Eliminates runtime filesystem globbing and directory scanning on every request.
 - **Full `artisan optimize` Compatibility**: Allows compiling provider manifests cleanly during container builds.
 
-### 3.5 Core Foundation Services & Dynamic OKLCH Branding Middleware
+### 3.5 Core Foundation Services, Dynamic OKLCH Branding & Multi-Language Negotiation
 
 #### Container Contract Binding (`AppServiceProvider.php:19`)
 In `App\Providers\AppServiceProvider::register()`, the application rebinds Laravel's default authenticatable contract:
@@ -376,6 +464,69 @@ on('dehydrate', function (Component $component): void {
 2. Inspects hex color overrides for 6 palette keys: `primary`, `success`, `danger`, `warning`, `info`, `gray`.
 3. Executes `paletteFromHex($hex)`: Converts hex color values into the modern **OKLCH perceptual color space** (`lightness`, `chroma`, `hue`). It generates an 11-step color palette (`50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `950`) maintaining uniform perceptual contrast across both light and dark modes.
 4. Registers colors via `FilamentColor::register($brandColors)` and configures `$panel->brandLogo()`, `$panel->darkModeBrandLogo()`, `$panel->favicon()`, and `$panel->brandLogoHeight()`.
+
+#### Multi-Language Negotiation & RTL Pipeline (`SetLocale.php:20–44`)
+Aureus ERP provides a built-in internationalization infrastructure supporting multilingual and bidirectional (LTR/RTL) enterprise environments:
+1. **Canonical Supported Locales (`config/app.php:113–144`)**:
+   Declares the platform's supported locales with their metadata:
+   - `en`: English (flag `us`, `rtl => false`)
+   - `ar`: Arabic (flag `sa`, `rtl => true`)
+   - `es`: Spanish (flag `es`, `rtl => false`)
+   - `pt_BR`: Portuguese Brazil (flag `br`, `rtl => false`)
+   - `fr`: French (flag `fr`, `rtl => false`)
+2. **Deterministic 4-Tier Resolution Sequence**:
+   The `App\Http\Middleware\SetLocale` middleware evaluates incoming requests in strict priority:
+   - **Tier 1 (Query Parameter)**: `$request->query('lang')`. If valid and present in `supported_locales`, updates the user's active session via `Session::put('locale', $queryLang)`.
+   - **Tier 2 (Session State)**: `Session::get('locale')`. Persists user preference across subsequent stateful requests.
+   - **Tier 3 (User Preference)**: `$request->user()?->language`. Retrieves persisted preference from the authenticated user profile.
+   - **Tier 4 (System Fallback Chain)**: `config('app.locale')` ?? `config('app.fallback_locale')` ?? first supported locale ?? `'en'`.
+3. **Custom Language Switchers & Flag Assets**:
+   Mounted at `PanelsRenderHook::GLOBAL_SEARCH_END` in both `AdminPanelProvider` and `CustomerPanelProvider`, custom Alpine.js dropdown switchers (`resources/views/filament/components/language-switcher.blade.php` and `auth-language-switcher.blade.php`) render country flag SVGs (`public/flags/{code}.svg`) alongside native localized titles.
+4. **Arabic Glyph & Text Formatting Engine (`khaled.alshamaa/ar-php`)**:
+   Integrated via `khaled.alshamaa/ar-php: ^7.0` for Arabic morphological processing, date formatting, and right-to-left character shaping across generated PDFs and print views.
+
+### 3.6 REST API Architecture & OpenAPI Documentation Engine
+
+Aureus ERP provides a decoupled RESTful API infrastructure designed for headless ERP integrations, mobile applications, and third-party services:
+
+#### 1. Endpoint Architecture & Route Topology
+- **Base URI Pattern**: `/admin/api/*` (e.g. `/admin/api/v1/*`).
+- **Middleware Pipeline**: Configured under the `api` middleware group, enforcing stateless request handling, rate limiting, and exception normalization.
+
+#### 2. Bearer Token Authentication (Laravel Sanctum)
+- **Token Model**: `Laravel\Sanctum\PersonalAccessToken` persisted in the `personal_access_tokens` table (`2026_01_28_134402_create_personal_access_tokens_table.php`).
+- **Issuance**: Authenticated users obtain tokens via `POST /admin/api/v1/login`.
+- **Request Authorization**: Subsequent requests transmit tokens via the standard header:
+  ```http
+  Authorization: Bearer {YOUR_AUTH_TOKEN}
+  ```
+
+#### 3. Interactive Scalar Engine & Scribe Pipeline (`config/scribe.php:13–198`)
+- **Interactive Documentation UI**: Hosted at `/api/docs` using the modern `scalar` theme (`theme => 'scalar'`), providing live interactive API testing directly from the browser.
+- **Specification Generation (`ScalarOpenApiGenerator`)**:
+  Leverages `Webkul\Support\ScalarOpenApiGenerator` to generate:
+  - OpenAPI 3.0.3 Specification: Exported at `/docs.openapi`.
+  - Postman Collection: Exported at `/docs.postman` (Format v2.1.0).
+- **Domain API Groups**:
+  Endpoints are organized into 9 ordered functional groups:
+  1. `Security`: Authentication, tokens, user permissions.
+  2. `Support`: Currencies, units of measure, company context.
+  3. `Partner`: Contacts, addresses, customer and vendor profiles.
+  4. `Product`: Master catalog, variants, categories, price lists.
+  5. `Inventory`: Warehouses, locations, stock moves, delivery orders.
+  6. `Purchase`: RFQs, purchase orders, vendor agreements.
+  7. `Sales`: Quotations, sales orders, order templates.
+  8. `Account`: Invoices, bills, journal entries, payments, taxes.
+  9. `Project`: Projects, tasks, timesheet entries.
+
+#### 4. Normalized JSON Exception Handling (`bootstrap/app.php:30–113`)
+When `$request->is('api/*') || $request->expectsJson()`, exceptions are intercepted and normalized into uniform JSON schemas:
+- `ValidationException` (422): Structured `errors` mapping fields to validation error arrays.
+- `AuthenticationException` (401): `{"message": "Unauthenticated."}`.
+- `AuthorizationException` (403): `{"message": "This action is unauthorized."}`.
+- `ModelNotFoundException` (404): `{"message": "Resource not found."}`.
+- `MissingJournalException` (422): Domain-specific accounting error payloads.
+- `Throwable` (500): In production, returns sanitized `{"message": "Server error occurred."}` to prevent leaking sensitive database credentials or call stacks.
 
 ---
 
@@ -628,27 +779,49 @@ Other Isolated Chains:
 
 To prevent circular dependencies and monolithic schema bloat, Aureus ERP utilizes six decoupling mechanisms:
 
-#### 1. Schema Registries (`AbstractSchemaRegistry`)
+#### 1. Schema Registries & Contribution Architecture (`AbstractSchemaRegistry`)
 Downstream plugins contribute form fields, infolist entries, table columns, and header actions to upstream master resources without modifying upstream code:
 - Base implementation: `Webkul\Support\Filament\Contributions\AbstractSchemaRegistry` (`support/src/Filament/Contributions/AbstractSchemaRegistry.php:7–110`).
 - Registries: `PartnerSchemaRegistry`, `ProductSchemaRegistry`.
-- Example (`accounts` contributing tax fields to product forms):
-  ```php
-  ProductSchemaRegistry::form('right.pricing.fields', fn () => AccountProductSchema::taxFields());
-  ```
-- Example (`inventories` contributing stock on-hand columns):
-  ```php
-  ProductSchemaRegistry::table('columns', fn () => InventoryProductSchema::onHandColumn());
-  ProductSchemaRegistry::actions('header', fn () => UpdateQuantityAction::make());
-  ```
+- **7 Distinct Contribution Slots**:
+  1. `form($slot, Closure $factory)`: Injects form schemas into tabs/sections (e.g. `accounts` contributing tax fields via `ProductSchemaRegistry::form('right.pricing.fields', fn () => AccountProductSchema::taxFields())`).
+  2. `infolist($slot, Closure $factory)`: Injects read-only schema entries into infolist views.
+  3. `table($slot, Closure $factory)`: Injects columns and filters (e.g. `inventories` contributing stock on-hand columns).
+  4. `actions($slot, Closure $factory)`: Injects header/row actions (e.g. `inventories` contributing `UpdateQuantityAction`).
+  5. `presetView($key, $factory, $priority)`: Injects tab presets into list pages (`ListProducts.php:54`).
+  6. `eagerLoad(array $relations)`: Dynamically appends eager-loaded relations to prevent N+1 queries when contributed columns render (`ProductResource.php:115`, `PartnerResource.php:95`).
+  7. `companyDefaultFields()` & `companyDependentFields()`: Multi-company property field handling (`AccountServiceProvider.php:291–302`).
+- **Cross-Plugin Contributor (`PortalContributions`)**: `Webkul\Website\PortalContributions` (`plugins/webkul/website/src/PortalContributions.php:18–89`) injects portal access badges, QueryBuilder constraints, and header action groups into `PartnerSchemaRegistry` without `partners` possessing knowledge of `website`.
+- **Orphaned Class Reference**: `Webkul\Support\Services\SchemaRegistry` (`plugins/webkul/support/src/Services/SchemaRegistry.php`) is a 270-line legacy class with zero references across the repository, superseded by `Webkul\Support\Filament\Contributions\SchemaRegistry`.
+- **Settings Registry Singleton**: `Webkul\Support\SettingsRegistry` (`plugins/webkul/support/src/SettingsRegistry.php:5–16`) is the container singleton registered in `SupportServiceProvider.php:146` backing the global `settings()` helper.
 
 #### 2. Dynamic Eloquent Relationships via `resolveRelationUsing`
-Downstream packages inject dynamic Eloquent relationships into upstream models during `packageBooted()`:
-- `accounts` injects into `Partner`: `propertyAccountPayable`, `propertyAccountReceivable`, `propertyPaymentTerm`.
-- `accounts` injects into `Product`: `productTaxes` (belongsToMany), `supplierTaxes` (belongsToMany).
-- `inventories` injects into `Product`: `routes`, `moveLines`, `moves`, `quantities` (hasMany).
-- `manufacturing` injects into `Product`: `billsOfMaterials`, `billOfMaterialLines`.
-- `purchases` injects into `Product`: `sellers` (hasMany `ProductSupplier`).
+Downstream packages dynamically bind Eloquent relationships to upstream models during `packageBooted()`. The platform maintains exactly 22 dynamic relationship injections:
+
+| # | Provider | Target Model | Relationship Name | Relation Type | Target Related Class | Source Citation |
+|---|---|---|---|---|---|---|
+| 1 | `AccountServiceProvider` | `Partner` | `CompanyProperty::RELATION` | `hasMany` | `PartnerCompanyProperty` | `AccountServiceProvider.php:264` |
+| 2 | `AccountServiceProvider` | `Partner` | `propertyAccountPayable` | `belongsTo` | `Account` | `AccountServiceProvider.php:271` |
+| 3 | `AccountServiceProvider` | `Partner` | `propertyAccountReceivable` | `belongsTo` | `Account` | `AccountServiceProvider.php:272` |
+| 4 | `AccountServiceProvider` | `Partner` | `propertyAccountPosition` | `belongsTo` | `FiscalPosition` | `AccountServiceProvider.php:273` |
+| 5 | `AccountServiceProvider` | `Partner` | `propertyPaymentTerm` | `belongsTo` | `PaymentTerm` | `AccountServiceProvider.php:274` |
+| 6 | `AccountServiceProvider` | `Partner` | `propertySupplierPaymentTerm` | `belongsTo` | `PaymentTerm` | `AccountServiceProvider.php:275` |
+| 7 | `AccountServiceProvider` | `Partner` | `propertyOutboundPaymentMethodLine` | `belongsTo` | `PaymentMethodLine` | `AccountServiceProvider.php:276` |
+| 8 | `AccountServiceProvider` | `Partner` | `propertyInboundPaymentMethodLine` | `belongsTo` | `PaymentMethodLine` | `AccountServiceProvider.php:277` |
+| 9 | `AccountServiceProvider` | `Product` | `productTaxes` | `belongsToMany` | `Tax` | `AccountServiceProvider.php:322` |
+| 10 | `AccountServiceProvider` | `Product` | `supplierTaxes` | `belongsToMany` | `Tax` | `AccountServiceProvider.php:329` |
+| 11 | `AccountServiceProvider` | `Product` | `CompanyProperty::RELATION` | `hasMany` | `ProductCompanyAccount` | `AccountServiceProvider.php:341` |
+| 12 | `AccountServiceProvider` | `Category` | `CompanyProperty::RELATION` | `hasMany` | `CategoryCompanyAccount` | `AccountServiceProvider.php:352` |
+| 13 | `AccountServiceProvider` | `Product` | `propertyAccountIncome` | `belongsTo` | `Account` | `AccountServiceProvider.php:357` |
+| 14 | `AccountServiceProvider` | `Product` | `propertyAccountExpense` | `belongsTo` | `Account` | `AccountServiceProvider.php:370` |
+| 15 | `InventoryServiceProvider` | `Product` | `routes` | `belongsToMany` | `Route` | `InventoryServiceProvider.php:255` |
+| 16 | `InventoryServiceProvider` | `Product` | `responsible` | `belongsTo` | `User` | `InventoryServiceProvider.php:262` |
+| 17 | `InventoryServiceProvider` | `Product` | `moveLines` | `hasMany` | `MoveLine` | `InventoryServiceProvider.php:267` |
+| 18 | `InventoryServiceProvider` | `Product` | `moves` | `hasMany` | `Move` | `InventoryServiceProvider.php:272` |
+| 19 | `InventoryServiceProvider` | `Product` | `quantities` | `hasMany` | `ProductQuantity` | `InventoryServiceProvider.php:277` |
+| 20 | `ManufacturingServiceProvider` | `Product` | `billsOfMaterials` | `hasMany` | `BillOfMaterial` | `ManufacturingServiceProvider.php:272` |
+| 21 | `ManufacturingServiceProvider` | `Product` | `billOfMaterialLines` | `hasMany` | `BillOfMaterialLine` | `ManufacturingServiceProvider.php:277` |
+| 22 | `PurchaseServiceProvider` | `Product` | `sellers` | `hasMany` | `ProductSupplier` | `PurchaseServiceProvider.php:131` |
 
 #### 3. Contributed Attributes & Casts (`HasContributedAttributes`)
 Master models incorporate `Webkul\Support\Models\Concerns\HasContributedAttributes`. Downstream plugins call:
@@ -683,6 +856,71 @@ Prevents accidental deletion of products referenced in operational modules:
 - `purchases` listens:
   - `OperationDone` -> `ComputePurchaseOrderListener` (updates received quantities).
   - `MoveConfirmed`, `MoveCancelled` -> `ComputePurchaseOrderFromMoveListener` (updates bill status).
+
+### 4.7 Domain Facades & Service Manager Architecture
+
+Aureus ERP abstracts complex business logic away from Filament UI pages into dedicated Service Managers exposed via static Facades:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Domain Service Layer                            │
+├───────────────┬────────────────────────────┬───────────────────────────┤
+│ Domain Facade │ Service Manager Singleton  │ Core Injected Sub-Services│
+├───────────────┼────────────────────────────┼───────────────────────────┤
+│ SaleOrder     │ Webkul\Sale\SaleManager    │ OrderWorkflow, Calculator,│
+│ (accessor:    │                            │ Invoicer, Mailer,         │
+│  'sale')      │                            │ ProcurementRequester      │
+├───────────────┼────────────────────────────┼───────────────────────────┤
+│ PurchaseOrder │ Webkul\Purchase\           │ OrderWorkflow, Calculator,│
+│ (accessor:    │   PurchaseOrder            │ ReceiptPlanner, Biller,   │
+│'purchase_order│                            │ DocumentGenerator         │
+├───────────────┼────────────────────────────┼───────────────────────────┤
+│ Inventory     │ Webkul\Inventory\          │ TransferWorkflow, Reserver│
+│ (accessor:    │   InventoryManager         │ MoveConfirmer, Completer, │
+│  'inventory') │                            │ ProcurementRunner, Resolver│
+├───────────────┼────────────────────────────┼───────────────────────────┤
+│ Account       │ Webkul\Account\            │ MoveWorkflow, Calculator, │
+│ (accessor:    │   AccountManager           │ DynamicLineSynchronizer,  │
+│  'account')   │                            │ Reconciler, PaymentRegistr│
+├───────────────┼────────────────────────────┼───────────────────────────┤
+│ Tax           │ Webkul\Account\TaxManager  │ TaxLineFactory, Computer, │
+│ (accessor:    │                            │ TaxDetailRounder, Mapper  │
+│  'tax')       │                            │                           │
+├───────────────┼────────────────────────────┼───────────────────────────┤
+│ Manufacturing │ Webkul\Manufacturing\      │ OrderWorkflow, Expander,  │
+│ (accessor:    │   ManufacturingManager     │ ProductionRecorder        │
+│'manufacturing'│                            │                           │
+└───────────────┴────────────────────────────┴───────────────────────────┘
+```
+
+#### Key Capabilities & Cross-Module Invocations:
+- **`SaleOrder::createInvoice($record, $data)`**: Called by `CreateInvoiceAction:82` in `sales`, orchestrating line item conversion, account move creation via `Account` facade, and tax computations via `Tax` manager.
+- **`PurchaseOrder::createPurchaseOrderBill($record)`**: Called by `CreateBillAction:57` in `purchases`, synchronizing received quantities with vendor bills.
+- **`Inventory::runProcurements($requests)`**: Injected into `ProcurementRequester:50` in `sales` to evaluate warehouse replenishment rules and schedule delivery orders upon sales quotation confirmation.
+- **`Account::computeAccountMove($accountMove)`**: Injected into `Invoicer:59` and `Biller:33`, recalculating debits, credits, dynamic tax lines, and currency exchanges before ledger posting.
+
+### 4.8 Headless Engine & Composable UI Architecture
+
+Aureus ERP enforces a strict architectural separation between **transactional engines** and **presentation layers**:
+
+#### 1. Headless Engine Pattern (`plugins/webkul/accounts`)
+The `accounts` package encapsulates all financial ledger models, journal moves, reconciliation services, and tax calculators. However, it intentionally suppresses all Filament navigation:
+```php
+// Declared on all 17 Resource classes in accounts:
+protected static bool $shouldRegisterNavigation = false;
+```
+Resources like `InvoiceResource`, `BillResource`, `PaymentResource`, and `AccountResource` define complete forms, tables, and infolists, but are never directly exposed in the top navigation or sidebar by `accounts`.
+
+#### 2. Composable UI Layers (`invoices` and `accounting`)
+Presentation and user journeys are composed through specialized consumer plugins:
+- **`plugins/webkul/invoices`**: Reuses `accounts` resources to provide a lightweight, streamlined invoicing workflow under `NavigationGroup::Invoice`, tailored for sales and billing teams without general ledger overhead.
+- **`plugins/webkul/accounting`**: Provides a complete double-entry general ledger navigation suite (`Accounting`, `Customers`, `Vendors`, `Configuration`, `Reporting`, `PluginSettings`) under `NavigationGroup::Accounting`, adding journal entry management, bank reconciliation widgets, and financial reports.
+
+#### 3. Zero-Table Model Subclassing
+Zero-table packages extend domain entities through clean object-oriented inheritance without schema overhead:
+- **`contacts`**: `Webkul\Contact\Models\Partner extends Webkul\Partner\Models\Partner`
+- **`timesheets`**: `Webkul\Timesheet\Models\Timesheet extends Webkul\Project\Models\Timesheet`
+This allows packages to inject domain-specific scopes, model labels, and event listeners while sharing identical database tables.
 
 ---
 
@@ -805,22 +1043,43 @@ Aureus ERP supports **multi-active viewing**:
 - However, when creating a new record, the application must stamp a single `company_id`. The system designates **index 0** of the active array as the primary company (`currentId() = activeIds()[0]`).
 - Clicking a specific company in the switcher sets it at index 0, designating it as the active creation target.
 
-### 5.4 Referential Tenancy Integrity & Cross-Company Guards
+### 5.4 Referential Tenancy Integrity & Interactive Form Isolation Guards
 
-Cross-company relational contamination (e.g., assigning a warehouse from Company B to a sales order in Company A) is strictly prevented across four layers:
+Cross-company relational contamination (e.g., assigning a warehouse from Company B to a sales order in Company A) is strictly prevented across five integrated layers:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │                      Cross-Company Guard Layers                        │
 ├──────────────────────────────────┬─────────────────────────────────────┤
-│ 1. Filament UI Form Cleansing    │ clear_foreign_company_values()      │
-│ 2. Eloquent Model Hook           │ ChecksCompanyConsistency trait      │
-│ 3. Deep Relational Assertion     │ CompanyConsistencyGuard::detect()   │
-│ 4. Exception & UI Flash          │ CrossCompanyException               │
+│ 1. Interactive Form Scoping      │ owned_by_company(), hide_deleted()  │
+│ 2. Pre-Emptive State Cleansing   │ clear_foreign_company_values()      │
+│ 3. Settings Reapplication        │ reapply_company_defaults()          │
+│ 4. Eloquent Consistency Hook     │ ChecksCompanyConsistency trait      │
+│ 5. Deep Relational Assertion     │ CompanyConsistencyGuard::detect()   │
 └──────────────────────────────────┴─────────────────────────────────────┘
 ```
 
-#### 1. `Webkul\Support\Traits\ChecksCompanyConsistency`
+#### 1. Interactive Tenancy Isolation Suite (`plugins/webkul/support/src/helpers.php`)
+While backend Eloquent scopes protect database queries, interactive Filament form editing requires specialized form query scoping and reactive state cleansing:
+- **`owned_by_company($companyId = null): Closure` (`helpers.php:357`)**:
+  Generates a query closure filtering records to `$companyId ?? current_company_id()`. Reused across **over 50 relationship select inputs** platform-wide:
+  ```php
+  Select::make('partner_id')
+      ->relationship('partner', 'name', modifyQueryUsing: fn (Builder $query, Get $get) => $query->where(owned_by_company($get('company_id'))))
+  ```
+  This guarantees that dropdown choices in relational forms never display records belonging to other tenants.
+- **`clear_foreign_company_values($set, $get, array $fields, $companyId = null): void` (`helpers.php:426`)**:
+  Attached to `afterStateUpdated()` on company select inputs. When a user switches company assignment on a draft record, this helper immediately purges selected foreign keys if the referenced records belong to the previous company, preventing cross-tenant foreign key persistence.
+- **`reapply_company_defaults($component, array $fields): void` (`helpers.php:403`)**:
+  Attached to company select inputs; dynamically inspects and restores configured tenant settings (default currency, payment terms, tax groups) for the freshly selected company.
+- **`hide_deleted_unless_selected($state = null): Closure` (`helpers.php:380`)**:
+  Query modifier for select inputs:
+  ```php
+  $query->withTrashed()->where(hide_deleted_unless_selected($state))
+  ```
+  Ensures that existing soft-deleted records remain visible on historical orders and invoices without leaking inactive or deleted options into dropdowns for new selections.
+
+#### 2. `Webkul\Support\Traits\ChecksCompanyConsistency`
 Hooks into Eloquent `creating` and `updating` events (`ChecksCompanyConsistency.php:12–25`):
 ```php
 public static function bootChecksCompanyConsistency(): void
@@ -849,11 +1108,14 @@ public function companyConsistentFields(): array
 }
 ```
 
-#### 2. `Webkul\Support\Support\CompanyConsistencyGuard`
+#### 3. `Webkul\Support\Support\CompanyConsistencyGuard`
 Queries referenced foreign models using `withoutGlobalScopes()`, asserts that referenced foreign records belong to the target model's `company_id`, and throws `CrossCompanyException::forRecords($conflicts)` if boundary violations are detected.
 
-#### 3. UI Pre-Emptive Form Cleansing (`helpers.php`)
-`clear_foreign_company_values($set, $get, array $fields, $companyId = null)` is attached to `->afterStateUpdated()` on company select inputs in Filament forms. When the company selection changes, all dependent foreign key form fields are instantly purged to prevent submitting invalid cross-tenant combinations.
+#### 4. Warehouse Cross-Company Transfer Guard
+In `plugins/webkul/inventories`, inter-company stock movement is guarded by `Webkul\Inventory\Models\Concerns\ChecksCrossCompanyTransfer` on `Operation` and `Scrap` models:
+- Intercepts `creating` and `updating` events.
+- Calls `CrossCompanyTransferGuard::assert($this->source_location_id, $this->destination_location_id)`.
+- Forbids transferring stock directly between locations owned by different companies unless routed through configured transit inter-company locations.
 
 ### 5.5 Tenancy Scope Bypasses & Privileged Contexts
 
@@ -991,7 +1253,7 @@ This ensures clean separation of concerns: changing tenancy rules never requires
 
 ## 7. Filament Panel Architecture
 
-### 7.1 Dual-Panel Topography
+### 7.1 Dual-Panel Topography & Runtime Configuration
 
 Aureus ERP configures two distinct Filament panels:
 
@@ -1025,6 +1287,12 @@ Aureus ERP configures two distinct Filament panels:
        │   from 28 Plugin Service Providers                     │
        └────────────────────────────────────────────────────────┘
 ```
+
+#### Runtime Lifeline & Form Unsaved Changes Guard (`AdminPanelProvider.php:36, 52`)
+1. **Request Timeout Extension (`set_time_limit(300)`)**:
+   In `AdminPanelProvider::panel()`, the execution timeout is extended to 5 minutes (`set_time_limit(300)`). This prevents timeouts during initial plugin discovery, heavy multi-warehouse stock valuation reports, and large batch PDF generations.
+2. **Form Navigation Guard (`->unsavedChangesAlerts()`)**:
+   Activates browser-level navigation guards across all administrative forms. If a user modifies form inputs and attempts to navigate away without committing changes, the browser presents a confirmation alert to prevent accidental data loss.
 
 ### 7.2 Inversion of Control: `Panel::configureUsing()`
 
@@ -1073,7 +1341,7 @@ Filament panel registration differentiates strictly between core infrastructure 
 - **Universal (2 plugins)**: `chatter`, `full-calendar` (embeddable widgets across both panels).
 - **Non-Filament Plugins (2 plugins)**: `analytics` (pure backend service), `table-views` (Filament render hooks only).
 
-### 7.4 Central Navigation Hierarchy & Cluster Breadcrumbs
+### 7.4 Central Navigation Hierarchy & Domain SVG Iconography
 
 #### Navigation Groups Enum (`Webkul\Support\Enums\NavigationGroup`)
 Centralizes all navigation groups to avoid hardcoded string literals:
@@ -1081,8 +1349,111 @@ Centralizes all navigation groups to avoid hardcoded string literals:
 - Cases: `Dashboard`, `Contact`, `Sale`, `Purchase`, `Maintenance`, `Manufacturing`, `Inventory`, `Invoice`, `Accounting`, `Project`, `Employee`, `TimeOff`, `Recruitment`, `Website`, `Barcode`, `Plugin`, `Setting`, `Help`.
 - Maps custom SVG icons (`icon-sales`, `icon-inventories`, etc.) and localized labels (`__('admin.navigation.' . $this->value)`).
 
+#### Blade Icon Resolution & Domain SVG Catalog (`config/blade-icons.php`)
+`config/blade-icons.php:33, 59` registers the default icon set mapped directly to `resources/svg` under the `'icon'` prefix. This enables referencing custom domain icons anywhere via `icon-<name>` without external dependencies. The catalog includes 21 custom SVG assets:
+`accounting.svg`, `barcode.svg`, `contacts.svg`, `dashboard.svg`, `employees.svg`, `help.svg`, `inventories.svg`, `invoices.svg`, `maintenance.svg`, `manufacturing.svg`, `menu.svg`, `pin.svg`, `plugin.svg`, `projects.svg`, `purchases.svg`, `recruitments.svg`, `sales.svg`, `settings.svg`, `time-offs.svg`, `un-pin.svg`, and `website.svg`.
+
 #### Cluster Breadcrumbs (`HasClusterBreadcrumbs`)
 Complex domains organize resources inside Filament Clusters (e.g. `inventories` clusters `Operations`, `Configurations`, `Products`, `Reporting`, `Settings`). The trait `Webkul\Support\Traits\HasClusterBreadcrumbs` automatically generates breadcrumb hierarchies navigating from Group -> Cluster -> Resource -> Record.
+
+### 7.5 Modular Navigation Topology: App Launcher & Dynamic Module Scoping
+
+To prevent visual fatigue and clutter across 28 modular packages, Aureus ERP replaces Filament's default monolithic vertical navigation with a two-tier modular navigation topology:
+
+1. **Topbar App Launcher Dropdown (`resources/views/vendor/filament-panels/livewire/topbar.blade.php:43–85`)**:
+   In the admin panel header, an `icon-menu` button opens a 3-column dropdown modal displaying all installed module groups (`filament()->getNavigation()`). Each group is presented with a 64x64 domain SVG icon, localized label, and direct entry link.
+2. **Active-Module-Scoped Sidebar (`resources/views/vendor/filament-panels/livewire/sidebar.blade.php:60–63`)**:
+   The admin sidebar dynamically checks the active module group:
+   ```blade
+   if ($isAdminPanel && ! $isGroupActive) {
+       continue;
+   }
+   ```
+   Inactive navigation groups are filtered out. The sidebar displays only the resources, pages, and clusters belonging to the currently active module, providing an intuitive, focused workspace.
+
+### 7.6 Tabular Line Items Architecture: Reusable Repeater, Column Manager & Summarizers
+
+Transactional documents in ERP (quotations, purchase orders, invoices, bills, journal entries, BOMs, stock transfers) require tabular line-item entry with column management and financial summarizers:
+
+#### 1. Tabular Form Repeater (`Webkul\Support\Filament\Forms\Components\Repeater`)
+- **Source**: `plugins/webkul/support/src/Filament/Forms/Components/Repeater.php:13`
+- Extends `Filament\Forms\Components\Repeater`, incorporates `HasColumnManager`.
+- Renders `support::filament.forms.components.repeater.table`.
+- **Public API**:
+  - `table(array|Closure|null $columns): static`: Transforms repeater items into a responsive spreadsheet table.
+  - `footerActions(array $actions): static`: Injects action buttons below the table grid.
+  - `applyTableColumnManager(?array $columns): void`: Stores per-user column visibility and ordering in session (`repeater_{statePath}_column_manager`).
+  - `getSummaryForColumn(string $columnName): ?string`: Evaluates summarizers in real time.
+
+#### 2. Reusable Column Definition (`TableColumn`)
+- **Source**: `plugins/webkul/support/src/Filament/Forms/Components/Repeater/TableColumn.php:18`
+- Supports `resizable()`, `summarize()`, `hiddenHeaderLabel()`, `markAsRequired()`, and responsive width constraints.
+
+#### 3. Read-Only Infolist RepeatableEntry (`RepeatableEntry`)
+- **Source**: `plugins/webkul/support/src/Filament/Infolists/Components/RepeatableEntry.php:13`
+- Renders read-only tabular line items in infolists (`support::filament.infolists.components.repeatable-entry.table`) with session column management (`repeatable_entry_{statePath}_column_manager`).
+
+#### 4. Livewire Page Concerns
+- `Webkul\Support\Filament\Concerns\HasRepeaterColumnManager`: Bridges Livewire actions (`applyRepeaterColumnManager`, `resetRepeaterColumnManager`) on `CreateRecord` and `EditRecord` pages.
+- `Webkul\Support\Filament\Concerns\HasRepeatableEntryColumnManager`: Bridges Livewire column actions on `ViewRecord` pages.
+
+#### 5. Custom Summarizer Subsystem
+- **Base Class**: `Webkul\Support\Filament\Summarizers\Summarizer` (`plugins/webkul/support/src/Filament/Summarizers/Summarizer.php:12`)
+- **Concrete Implementations**:
+  - `Sum`: Calculates column totals (e.g. debit/credit totals in journal entries).
+  - `Average`: Computes mathematical means across lines.
+  - `Count`: Tracks line item counts.
+  - `Range`: Calculates minimum and maximum spans.
+
+### 7.7 Universal Workflow State Pipeline: ProgressStepper
+
+Workflow status visualization is standardized platform-wide via `ProgressStepper`:
+- **Form Stepper**: `Webkul\Field\Filament\Forms\Components\ProgressStepper` (extends `ToggleButtons`, view `fields::filament.forms.components.progress-stepper.index`).
+- **Infolist Stepper**: `Webkul\Field\Filament\Infolists\Components\ProgressStepper` (extends `Entry`, view `fields::filament.infolists.components.progress-stepper`).
+- **Visual Behavior**: Evaluates backed enums and renders an interconnected chevron/ribbon pipeline with highlighted active stages and muted inactive stages.
+- **Ubiquitous Adoption**: Standardized across 8+ operational domains (`sales`, `purchases`, `accounts`, `accounting`, `inventories`, `manufacturing`, `projects`, `recruitments`, `time-off`, `maintenance`).
+
+#### Dynamic Custom Field Infolist Component: `CustomEntries`
+- **Class**: `Webkul\Field\Filament\Infolists\Components\CustomEntries` (`plugins/webkul/fields/src/Filament/Infolists/Components/CustomEntries.php:15`)
+- **Hierarchy**: Extends `Filament\Schemas\Components\Component`.
+- **API**: `make(string $resource): static`, `include(array $fields): static`, `exclude(array $fields): static`, `getSchema(): array`.
+- **Behavior**: Dynamically generates Filament Infolist entries (`ColorEntry`, `IconEntry`, `TextEntry`) from custom fields configured on the target resource.
+- **Consumption**: Consumed via `HasCustomFields::getCustomInfolistEntries()` (`plugins/webkul/fields/src/Filament/Traits/HasCustomFields.php:71`) across resource view and infolist pages.
+
+### 7.8 Record Sub-Navigation: RecordNavigationTabs & HasRecordNavigationTabs
+
+- **Widget**: `Webkul\Support\Filament\Widgets\RecordNavigationTabs` (`plugins/webkul/support/src/Filament/Widgets/RecordNavigationTabs.php:8`, view `support::filament.widgets.record-navigation-tabs`).
+- **Trait**: `Webkul\Support\Traits\HasRecordNavigationTabs` (`plugins/webkul/support/src/Traits/HasRecordNavigationTabs.php:8`).
+- **Behavior**: Converts Filament's `getRecordSubNavigation()` into a horizontal topbar navigation tab strip across Edit, View, and Manage pages, automatically integrating clustered components. Reused on over 100 pages across the monorepo.
+
+### 7.9 Collaboration & Activity Stream: Chatter Slide-Over & HasChatter
+
+Audit trails, follower subscriptions, and scheduled activities are powered by `plugins/webkul/chatter`:
+- **Slide-Over Action**: `Webkul\Chatter\Filament\Actions\ChatterAction` mounted in `getHeaderActions()` across `EditRecord` and `ViewRecord` pages for 18 primary domain entities.
+- **Reactive Panel**: `Webkul\Chatter\Livewire\ChatterPanel` embedded in page footers via `ChatterWidget`.
+- **Model Traits**:
+  - `HasChatter`: Automatically subscribes record creators, synchronizes assigned owners, and manages message threads.
+  - `HasLogActivity`: Automatically logs create, update, and delete events into the chatter stream.
+- **Table Activity Action**: `Webkul\Chatter\Filament\Actions\ActivityTableAction` (`heroicon-o-clock`) embedded across 25+ domain tables in 11 plugins to schedule activities directly from list views.
+
+### 7.10 Reusable Resource Concerns: Navigation Labels, Form State Refresh & PDF Generation
+
+1. **`HasNavigationLabelTitles` (`plugins/webkul/support/src/Filament/Concerns/HasNavigationLabelTitles.php:19`)**:
+   Overrides `getTitleCasePluralModelLabel()` to return `getNavigationLabel()`. Reused across **over 90 Resource classes** to resolve Arabic RTL definite article prefixing ('Al-') across page titles, breadcrumbs, and tabs without corrupting singular/plural model labels.
+2. **`RefreshesRecordState` (`plugins/webkul/support/src/Traits/RefreshesRecordState.php:5`)**:
+   Attached to over 30 `EditRecord` pages, executing `$this->record->refresh()`, `$this->record->unsetRelations()`, `$this->fillForm()`, and `$this->rememberData()` after save to prevent Livewire hydration desynchronization.
+3. **`HandlesCrossCompanyException` (`plugins/webkul/support/src/Filament/Concerns/HandlesCrossCompanyException.php:8`)**:
+   Wraps page `create()` and `save()` operations, catching `CrossCompanyException` and emitting Filament danger notifications instead of crashing.
+4. **`PDFHandler` (`plugins/webkul/support/src/Traits/PDFHandler.php:11`)**:
+   Encapsulates DomPDF rendering, UTF-8 normalization, Arabic RTL text shaping (`prepare_rtl_html`), storage, and downloads.
+5. **`HasTableViews` (`plugins/webkul/table-views/src/Filament/Concerns/HasTableViews.php:20`)**:
+   Provides preset views, custom favorites, column customization, and URL parameter filtering across 45+ list pages.
+6. **`HasFilamentDefaults` (`plugins/webkul/support/src/Traits/HasFilamentDefaults.php:14`)**:
+   Configures global Filament schema defaults: enforces `columnSpanFull()` on `Fieldset`, `Grid`, and `Section` components; sets default currency on `Table` and `Schema` via `default_currency_code()`. Registers the `PanelsRenderHook::USER_MENU_PROFILE_BEFORE` ERP version badge in the user menu. Consumed directly in `SupportServiceProvider.php:32`.
+7. **`HasRouterMacros` (`plugins/webkul/support/src/Traits/HasRouterMacros.php:7`)**:
+   Injects the `softDeletableApiResource` router macro on Laravel's `Router`, registering `{id}/restore` and `{id}/force` endpoints for nested REST API routes. Consumed directly in `SupportServiceProvider.php:33`.
+8. **`ProgressBarEntry` Infolist Component (`plugins/webkul/support/src/Filament/Tables/Infolists/ProgressBarEntry.php:7`)**:
+   Infolist entry sister component to `Webkul\Support\Filament\Tables\Columns\ProgressBarEntry`, rendering visual progress bars within record infolists (`support::tables.infolists.progress-bar-entry`) alongside dynamic custom field entries (`CustomEntries`, documented in §7.7).
 
 ---
 
@@ -1094,6 +1465,25 @@ Aureus ERP contains **383 database migrations**:
 - Core application: `database/migrations/` (13 migrations).
 - Local plugins: `plugins/webkul/*/database/migrations/` (370 migrations across 22 plugins).
 Plugin migrations are loaded explicitly via `$package->hasMigrations([...])` and gated by installation state.
+
+#### Core Infrastructure Migrations & System Table Inventory
+The 13 root database migrations in `database/migrations/` provision the foundational identity, asynchronous queue, caching, and background processing substrate:
+
+| Migration File | Persisted Database Tables | Subsystem & Schema Responsibility |
+|---|---|---|
+| `0001_01_01_000000_create_users_table.php` | `users`, `password_reset_tokens`, `sessions` | Base user identity, password resets, and database HTTP session storage. |
+| `0001_01_01_000001_create_cache_table.php` | `cache`, `cache_locks` | Centralized database cache key-value store and atomic mutex locks. |
+| `0001_01_01_000002_create_jobs_table.php` | `jobs`, `job_batches`, `failed_jobs` | Database queue workers, batch coordination, and dead-letter failure logging. |
+| `2022_12_14_083707_create_settings_table.php` | `settings` | Spatie settings persistence store for application and module settings. |
+| `2024_11_04_132945_create_permission_tables.php` | `roles`, `permissions`, `model_has_roles`, `model_has_permissions`, `role_has_permissions` | Spatie RBAC tables powering Filament Shield roles and permissions. |
+| `2024_11_26_053234_add_resource_permission_column_to_users_table.php` | `users` (`resource_permission`) | Adds `resource_permission` column for fine-grained Bouncer ownership scoping. |
+| `2026_01_14_150817_create_imports_table.php` | `imports` | Filament asynchronous CSV/Excel import job tracking and progress metrics. |
+| `2026_01_14_150818_create_exports_table.php` | `exports` | Filament asynchronous data export job tracking and download links. |
+| `2026_01_14_150819_create_failed_import_rows_table.php` | `failed_import_rows` | Stores validation failures and rejected row payloads during data imports. |
+| `2026_01_14_151113_create_notifications_table.php` | `notifications` | Database notification storage for administrative user notifications. |
+| `2026_01_28_134402_create_personal_access_tokens_table.php` | `personal_access_tokens` | Laravel Sanctum personal access tokens for REST API authentication. |
+| `2026_07_07_185249_alter_notifications_table_data_column_to_json.php` | `notifications` (`data`) | Converts `data` column to native JSON for high-performance notification querying. |
+| `2026_07_21_100000_add_company_id_to_settings_table.php` | `settings` (`company_id`, index) | Multi-company settings partitioning with composite unique index `['group', 'name', 'company_id']`. |
 
 ### 8.2 Table & Column Conventions
 
@@ -1134,6 +1524,22 @@ Aureus ERP employs three distinct database persistence patterns for multi-tenanc
    - `['company_id', 'name']` on warehouses and sequences.
    - `['company_id', 'barcode']` on inventory locations.
 
+### 8.5 Root Database Seeders & Baseline Data Provisioning
+
+Database seeding initializes system security, currency standards, and plugin records:
+
+1. **`DatabaseSeeder` (`database/seeders/DatabaseSeeder.php:17–21`)**:
+   Coordinates foundational provisioning by sequentially delegating to:
+   - `Webkul\Security\Database\Seeders\DatabaseSeeder`: Provisions roles and default super-admin user.
+   - `Webkul\Support\Database\Seeders\DatabaseSeeder`: Provisions currencies and measurement units.
+   - `Webkul\PluginManager\Database\Seeders\DatabaseSeeder`: Provisions plugin records in the `plugins` catalog.
+2. **`CurrencySeeder` (`database/seeders/CurrencySeeder.php:15–71`)**:
+   Populates 41 standard ISO currencies into `Webkul\Support\Models\Currency` (`USD`, `EUR`, `GBP`, `CAD`, `AUD`, `JPY`, `SAR`, `AED`, `INR`, etc.) with ISO codes, symbols, precision rules, and active flags.
+3. **`ShieldSeeder` (`database/seeders/ShieldSeeder.php:11–68`)**:
+   - Flushes Spatie permission caches via `PermissionRegistrar::forgetCachedPermissions()`.
+   - Provisions the baseline `panel_user` role.
+   - Seeds 55 direct permissions covering identity, user teams, and dynamic custom fields.
+
 ---
 
 ## 9. Architectural Invariants, Constraints & Extension Guidelines
@@ -1150,8 +1556,11 @@ Every modification, extension, or new plugin in Aureus ERP must strictly adhere 
 6. **No Breaking Foreign Key References**: Always configure foreign key cascade rules according to the three semantic tiers (`nullOnDelete`, `cascadeOnDelete`, `restrictOnDelete`).
 7. **Proactive Referential Consistency**: Transactional models referencing foreign relations must implement `companyConsistentFields()` to prevent cross-tenant poisoning.
 
-### 9.2 Testing Bootstrap Architecture (`TestBootstrapHelper`)
+### 9.2 Dual-Tier Testing Architecture: Pest Feature Testing & Playwright Browser Automation
 
+Aureus ERP enforces verification across two complementary testing tiers:
+
+#### Tier 1: Pest PHP Backend & Feature Testing (`TestBootstrapHelper`)
 Automated tests extend `Tests\TestCase` and utilize `DatabaseTransactions` (`tests/Pest.php`).
 - Before test execution, `TestCase::setUp()` invokes `\TestBootstrapHelper::ensureERPInstalled()`.
 - `TestBootstrapHelper` provisions a clean environment:
@@ -1159,6 +1568,24 @@ Automated tests extend `Tests\TestCase` and utilize `DatabaseTransactions` (`tes
   - Executes `erp:install --force --no-interaction --admin-name='Test Admin' --admin-email='admin@example.com' --admin-password='admin123'`.
   - Uses an isolated database connection (`test_bootstrap`) to seed plugins without colliding with transactional rollbacks.
   - Gating preserves tenancy scopes during unit testing (`runningUnitTests() === true`).
+
+#### Tier 2: Playwright TypeScript Browser Automation (`tests/e2e-pw/`)
+End-to-end browser workflows are validated using Playwright TypeScript:
+- **Configuration (`tests/e2e-pw/playwright.config.ts:1–62`)**:
+  - Persistent authentication state caching via `.state/admin-auth.json`, eliminating redundant logins across test specs.
+  - Automatic screenshot, video, and trace capture upon test failures.
+  - Configurable timeouts (30s action, 60s test navigation).
+- **Reusable Abstractions**:
+  - Locator repository (`tests/e2e-pw/locator/erp_locator.ts`): Centralizes Filament and ERP DOM selectors.
+  - Administrative helpers (`tests/e2e-pw/utils/admin.ts`): Standardized login, company switching, and record actions.
+- **7 End-to-End Operational Suites (`tests/e2e-pw/tests/`)**:
+  - `01_plugins.spec.ts`: Validates dynamic plugin discovery, installation, and uninstallation rollback.
+  - `02_companies.spec.ts`: Validates multi-company switching and tenant isolation.
+  - `03_users.spec.ts`: Validates user creation, role assignment, and Bouncer permission boundaries.
+  - `04_sales.spec.ts`: Validates end-to-end sales quotation, confirmation, and invoice creation.
+  - `05_purchases.spec.ts`: Validates RFQ, purchase order approval, receipt planning, and vendor bill creation.
+  - `05_inventories.spec.ts`: Validates warehouse transfers, deliveries, receipts, and stock adjustments.
+  - `06_website.spec.ts`: Validates customer portal login, registration, and quotation approval.
 
 ### 9.3 New Plugin Authoring & Extension Standards
 
@@ -1169,3 +1596,24 @@ When authoring a new plugin under `plugins/webkul/<plugin>`:
 4. **Filament Plugin**: Implement `Filament\Contracts\Plugin`. Hook into `Panel::configureUsing()` in `packageRegistered()`. Check `Package::isPluginInstalled($this->getId())` before registering resources, pages, or clusters.
 5. **Cross-Plugin Decoupling**: If extending upstream resources, use `SchemaRegistry` or `resolveRelationUsing` rather than modifying upstream code.
 6. **Tenancy**: If tables store tenant data, include `$table->foreignId('company_id')`, use trait `BelongsToCompany`, and implement `ChecksCompanyConsistency` on transactional models.
+
+### 9.4 Architecture Governance & Specification Synchronization Engine
+
+To guarantee that `ARCHITECTURE.md` never drifts from Level 1 source reality, the repository incorporates an automated synchronization subsystem:
+
+- **CLI Tool (`scripts/sync-architecture.php`)**:
+  - `--check`: Compares extracted codebase metrics against `ARCHITECTURE.md`. Exits with code 0 if fully in sync, or code 1 with detailed drift items.
+  - `--sync`: Automatically updates quantitative baseline strings, dependency tables, plugin tables, and migration counts in `ARCHITECTURE.md`.
+  - `--json`: Outputs structured JSON metrics for CI integration.
+  - `--hook=<type>`: Invoked during agent lifecycle hooks (`stop`, `post-tool`).
+- **Core Components (`scripts/architecture/`)**:
+  - `Extractor.php`: Inspects `composer.json`, `composer.lock`, `database/migrations/`, `plugins/webkul/`, and `NavigationGroup.php`.
+  - `Synchronizer.php`: Computes exact text diffs against canonical markdown sections.
+  - `HookHandler.php`: Evaluates git working tree against an architectural watchlist (`composer.json`, `database/migrations/`, `plugins/webkul/`, `bootstrap/providers.php`, `NavigationGroup.php`).
+- **Git Pre-Commit Guard (`scripts/install-git-hooks.sh`)**:
+  Installs a `.git/hooks/pre-commit` script that runs `php scripts/sync-architecture.php --check`, rejecting commits if specification drift is detected.
+- **Automated CI Test (`tests/Unit/ArchitectureSyncTest.php`)**:
+  Executes `--check` in the Pest test suite to ensure automated pipeline verification.
+- **Composer Tooling Shortcuts**:
+  - `composer check-architecture`
+  - `composer sync-architecture`

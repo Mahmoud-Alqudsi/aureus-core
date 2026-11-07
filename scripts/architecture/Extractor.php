@@ -128,6 +128,66 @@ class Extractor
                 'constraint' => $composerJson['require']['knuckleswtf/scribe'] ?? '^5.6',
                 'locked'     => $lockedPackages['knuckleswtf/scribe'] ?? 'unknown',
             ],
+            'aureuserp/nativephp-remote' => [
+                'name'       => 'NativePHP Remote Shell',
+                'constraint' => $composerJson['require']['aureuserp/nativephp-remote'] ?? '^0.1.0',
+                'locked'     => $lockedPackages['aureuserp/nativephp-remote'] ?? 'unknown',
+            ],
+            'nativephp/mobile' => [
+                'name'       => 'NativePHP Mobile Runtime',
+                'constraint' => $composerJson['require']['nativephp/mobile'] ?? '^3.3',
+                'locked'     => $lockedPackages['nativephp/mobile'] ?? 'unknown',
+            ],
+            'barryvdh/laravel-dompdf' => [
+                'name'       => 'Barryvdh Laravel DomPDF',
+                'constraint' => $composerJson['require']['barryvdh/laravel-dompdf'] ?? '^3.1',
+                'locked'     => $lockedPackages['barryvdh/laravel-dompdf'] ?? 'unknown',
+            ],
+            'barryvdh/laravel-debugbar' => [
+                'name'       => 'Barryvdh Laravel Debugbar',
+                'constraint' => $composerJson['require']['barryvdh/laravel-debugbar'] ?? $composerJson['require-dev']['barryvdh/laravel-debugbar'] ?? '^4.0',
+                'locked'     => $lockedPackages['barryvdh/laravel-debugbar'] ?? 'unknown',
+            ],
+            'flowframe/laravel-trend' => [
+                'name'       => 'Flowframe Laravel Trend',
+                'constraint' => $composerJson['require']['flowframe/laravel-trend'] ?? '^0.5',
+                'locked'     => $lockedPackages['flowframe/laravel-trend'] ?? 'unknown',
+            ],
+            'guava/filament-icon-picker' => [
+                'name'       => 'Guava Filament Icon Picker',
+                'constraint' => $composerJson['require']['guava/filament-icon-picker'] ?? '^4.0',
+                'locked'     => $lockedPackages['guava/filament-icon-picker'] ?? 'unknown',
+            ],
+            'khaled.alshamaa/ar-php' => [
+                'name'       => 'Khaled Alshamaa Ar-PHP',
+                'constraint' => $composerJson['require']['khaled.alshamaa/ar-php'] ?? '^7.0',
+                'locked'     => $lockedPackages['khaled.alshamaa/ar-php'] ?? 'unknown',
+            ],
+            'league/glide' => [
+                'name'       => 'League Glide Image Engine',
+                'constraint' => $composerJson['require']['league/glide'] ?? '^2.3',
+                'locked'     => $lockedPackages['league/glide'] ?? 'unknown',
+            ],
+            'maatwebsite/excel' => [
+                'name'       => 'Maatwebsite Excel',
+                'constraint' => $composerJson['require']['maatwebsite/excel'] ?? '^3.1',
+                'locked'     => $lockedPackages['maatwebsite/excel'] ?? 'unknown',
+            ],
+            'milon/barcode' => [
+                'name'       => 'Milon Barcode Engine',
+                'constraint' => $composerJson['require']['milon/barcode'] ?? '^13.0',
+                'locked'     => $lockedPackages['milon/barcode'] ?? 'unknown',
+            ],
+            'spatie/eloquent-sortable' => [
+                'name'       => 'Spatie Eloquent Sortable',
+                'constraint' => $composerJson['require']['spatie/eloquent-sortable'] ?? '^5.0',
+                'locked'     => $lockedPackages['spatie/eloquent-sortable'] ?? 'unknown',
+            ],
+            'laravel/pail' => [
+                'name'       => 'Laravel Pail Log Streamer',
+                'constraint' => $composerJson['require-dev']['laravel/pail'] ?? '^1.2.5',
+                'locked'     => $lockedPackages['laravel/pail'] ?? 'unknown',
+            ],
         ];
     }
 

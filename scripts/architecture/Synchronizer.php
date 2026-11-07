@@ -38,6 +38,7 @@ class Synchronizer
         $migrations = $this->extractor->getMigrationMetrics();
         $plugins = $this->extractor->getPluginCatalog();
         $navGroups = $this->extractor->getNavigationGroups();
+        $providers = $this->extractor->getRegisteredProviders();
 
         // 1. Check Header Baseline
         $expectedHeader = sprintf(
@@ -51,6 +52,29 @@ class Synchronizer
 
         if (! str_contains($content, $expectedHeader)) {
             $drift[] = "Header baseline mismatch. Expected to contain: '{$expectedHeader}'";
+        }
+
+        // 1b. Check Table 2.1 Locked Dependency Baseline
+        foreach ($baseline as $key => $info) {
+            $nameEscaped = preg_quote($info['name'], '/');
+            $pattern = '/\|\s*\*\*'.$nameEscaped.'\*\*\s*\|\s*`([^`]+)`[^|]*\|\s*`([^`]+)`\s*\|/m';
+
+            if (! preg_match($pattern, $content, $m)) {
+                $drift[] = "Dependency '{$info['name']}' is missing from Section 2.1 table.";
+
+                continue;
+            }
+
+            if ($m[1] !== $info['constraint'] || $m[2] !== $info['locked']) {
+                $drift[] = "Dependency '{$info['name']}' mismatch in Section 2.1: documented ({$m[1]} / {$m[2]}), actual ({$info['constraint']} / {$info['locked']}).";
+            }
+        }
+
+        // 1c. Check Registered Service Providers count in Section 3.4
+        $providerCount = count($providers);
+        $expectedProviderStr = "**{$providerCount} service providers**";
+        if ($providerCount > 0 && ! str_contains($content, $expectedProviderStr)) {
+            $drift[] = "Service provider count mismatch in Section 3.4. Expected: '{$expectedProviderStr}'";
         }
 
         // 2. Check Plugin count
@@ -143,6 +167,7 @@ class Synchronizer
         $migrations = $this->extractor->getMigrationMetrics();
         $plugins = $this->extractor->getPluginCatalog();
         $navGroups = $this->extractor->getNavigationGroups();
+        $providers = $this->extractor->getRegisteredProviders();
 
         // 1. Update Header Baseline
         $newHeader = sprintf(
@@ -162,9 +187,19 @@ class Synchronizer
         // 2. Update Table 2.1 Locked Dependency Baseline
         foreach ($baseline as $key => $info) {
             $nameEscaped = preg_quote($info['name'], '/');
-            $pattern = '/(\|\s*\*\*'.$nameEscaped.'\*\*\s*\|\s*`)[^`]+(`\s*\|\s*`)[^`]+(`\s*\|)/m';
+            $pattern = '/(\|\s*\*\*'.$nameEscaped.'\*\*\s*\|\s*`)[^`]+(`[^|]*\|\s*`)[^`]+(`\s*\|)/m';
             $replacement = '${1}'.$info['constraint'].'${2}'.$info['locked'].'${3}';
             $content = preg_replace($pattern, $replacement, $content);
+        }
+
+        // 2b. Update Section 3.4 Registered Service Providers Count
+        $providerCount = count($providers);
+        if ($providerCount > 0) {
+            $content = preg_replace(
+                '/explicitly returns an immutable array of \*\*\d+ service providers\*\*:/m',
+                "explicitly returns an immutable array of **{$providerCount} service providers**:",
+                $content
+            );
         }
 
         // 3. Update Section 4.1 Plugin Count Header

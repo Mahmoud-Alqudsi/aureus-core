@@ -48,6 +48,7 @@ if (isset($options['json'])) {
         'migrations' => $extractor->getMigrationMetrics(),
         'plugins'    => $extractor->getPluginCatalog(),
         'navigation' => $extractor->getNavigationGroups(),
+        'providers'  => $extractor->getRegisteredProviders(),
     ];
     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES).PHP_EOL;
     exit(0);

@@ -68,7 +68,7 @@ If the change involves more than numerical metrics (such as a new plugin or arch
 Confirm that drift is eliminated and tests pass:
 ```bash
 php scripts/sync-architecture.php --check
-vendor/bin/pest tests/Feature/ArchitectureSyncTest.php
+vendor/bin/pest tests/Unit/ArchitectureSyncTest.php
 ```
 Ensure code styling is intact:
 ```bash
