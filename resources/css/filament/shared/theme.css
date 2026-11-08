@@ -374,6 +374,16 @@
     }
 }
 
+[dir="rtl"] .fi-progress-stepper-step {
+    clip-path: polygon(calc(100%-0.625rem) 50%, 100% 0, 0.625rem 0, 0 50%, 0.625rem 100%, 100% 100%);
+}
+[dir="rtl"] .fi-progress-stepper-step:first-child {
+    clip-path: polygon(100% 0, 0.625rem 0, 0 50%, 0.625rem 100%, 100% 100%);
+}
+[dir="rtl"] .fi-progress-stepper-step:last-child {
+    clip-path: polygon(calc(100%-0.625rem) 50%, 100% 0, 0 0, 0 100%, 100% 100%);
+}
+
 .fi-progress-stepper-step-icon {
     @apply size-4 text-success-600 dark:text-success-400;
 }
