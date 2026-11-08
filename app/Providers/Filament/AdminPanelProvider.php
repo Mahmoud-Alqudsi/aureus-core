@@ -16,6 +16,7 @@ use Filament\PanelProvider;
 use Filament\View\PanelsRenderHook;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\Tables\Table;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -39,6 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->theme(asset('css/filament/admin/theme.css').'?v='.filemtime(public_path('css/filament/admin/theme.css')))
             ->login()
             ->favicon(asset('images/favicon.ico'))
             ->brandLogo(asset('images/logo.svg'))
@@ -52,6 +54,10 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->topNavigation()
             ->maxContentWidth(Width::Full)
+            ->simplePageMaxContentWidth(Width::Small)
+            ->bootUsing(fn (): mixed => Table::configureUsing(fn (Table $table): Table => $table
+                ->loadingSkeleton()
+                ->filtersFormWidth(Width::Large)))
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
             ->userMenuItems([

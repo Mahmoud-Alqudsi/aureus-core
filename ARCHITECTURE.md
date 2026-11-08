@@ -3,7 +3,7 @@
 **Status:** Canonical Root Architectural Reference  
 **Authority:** Level 1 Source Code Authority  
 **Repository:** `aureuserp`  
-**Last Verified Baseline:** PHP ^8.3 | Laravel v13.31.0 | Filament v5.8.1 | Livewire v4.4.5 | Filament Shield 4.2.0  
+**Last Verified Baseline:** PHP ^8.3 | Laravel v13.36.0 | Filament v5.10.2 | Livewire v4.4.7 | Filament Shield 4.2.0  
 
 ---
 
@@ -19,7 +19,7 @@
    - [2.3 Autoloading & Monorepo Manifest Merging](#23-autoloading--monorepo-manifest-merging)
    - [2.4 Production Containerization & Multi-Process Architecture](#24-production-containerization--multi-process-architecture)
    - [2.5 Native Mobile Shell Integration (NativePHP Remote)](#25-native-mobile-shell-integration-nativephp-remote)
-   - [2.6 Frontend Architecture: Tailwind CSS v4 & Vite Cross-Package Compilation](#26-frontend-architecture-tailwind-css-v4--vite-cross-package-compilation)
+   - [2.6 Frontend Architecture: Tailwind CSS v4, Vue 3 & Vite Cross-Package Compilation](#26-frontend-architecture-tailwind-css-v4-vue-3--vite-cross-package-compilation)
    - [2.7 Developer CLI Concurrency Pipeline (`composer dev`)](#27-developer-cli-concurrency-pipeline-composer-dev)
 3. [Core Application Architecture (`app/` & `bootstrap/`)](#3-core-application-architecture-app--bootstrap)
    - [3.1 Host Application Layout & Responsibilities](#31-host-application-layout--responsibilities)
@@ -29,7 +29,7 @@
    - [3.5 Core Foundation Services, Dynamic OKLCH Branding & Multi-Language Negotiation](#35-core-foundation-services-dynamic-oklch-branding--multi-language-negotiation)
    - [3.6 REST API Architecture & OpenAPI Documentation Engine](#36-rest-api-architecture--openapi-documentation-engine)
 4. [Domain & Plugin Ecosystem Topology](#4-domain--plugin-ecosystem-topology)
-   - [4.1 Comprehensive Catalog of All 28 Local Plugins](#41-comprehensive-catalog-of-all-28-local-plugins)
+   - [4.1 Comprehensive Catalog of All 30 Local Plugins](#41-comprehensive-catalog-of-all-30-local-plugins)
    - [4.2 Plugin Directory Conventions & Manifest Layout](#42-plugin-directory-conventions--manifest-layout)
    - [4.3 Service Provider Inheritance & Lifecycle Execution](#43-service-provider-inheritance--lifecycle-execution)
    - [4.4 Plugin Manager Engine (`plugins/webkul/plugin-manager`)](#44-plugin-manager-engine-pluginswebkulplugin-manager)
@@ -51,7 +51,7 @@
    - [6.4 Fine-Grained Record Ownership Architecture (`Bouncer`)](#64-fine-grained-record-ownership-architecture-bouncer)
    - [6.5 Orthogonal Decoupling: Authorization Policies vs. Tenant Scoping](#65-orthogonal-decoupling-authorization-policies-vs-tenant-scoping)
 7. [Filament Panel Architecture](#7-filament-panel-architecture)
-   - [7.1 Dual-Panel Topography & Runtime Configuration](#71-dual-panel-topography--runtime-configuration)
+   - [7.1 Multi-Panel Topography & Runtime Configuration](#71-multi-panel-topography--runtime-configuration)
    - [7.2 Inversion of Control: `Panel::configureUsing()`](#72-inversion-of-control-panelconfigureusing)
    - [7.3 Dynamic Discovery Gating & Panel Archetypes](#73-dynamic-discovery-gating--panel-archetypes)
    - [7.4 Central Navigation Hierarchy & Domain SVG Iconography](#74-central-navigation-hierarchy--domain-svg-iconography)
@@ -182,31 +182,31 @@ Aureus ERP enforces strict platform locking across its runtime and development d
 | Platform Component | Constraint in `composer.json` | Exact Locked Version | Source Citation |
 |---|---|---|---|
 | **PHP Runtime** | `^8.3` | `8.3.x` | `composer.json:12`, `composer.lock:15937` |
-| **Laravel Framework** | `^13.0` | `v13.31.0` | `composer.json:25`, `composer.lock:3858` |
-| **Filament Admin Panel** | `^5.0` | `v5.8.1` | `composer.json:18`, `composer.lock:2240` |
-| **Filament Settings Plugin** | `^5.0` | `v5.8.1` | `composer.json:19` |
+| **Laravel Framework** | `^13.0` | `v13.36.0` | `composer.json:25`, `composer.lock:3858` |
+| **Filament Admin Panel** | `^5.0` | `v5.10.2` | `composer.json:18`, `composer.lock:2240` |
+| **Filament Settings Plugin** | `^5.0` | `v5.10.2` | `composer.json:19` |
 | **Filament Shield** | `4.2.0` (pinned) | `4.2.0` | `composer.json:17`, `composer.lock:524` |
-| **Livewire** | `^4.0` | `v4.4.5` | `composer.json:29`, `composer.lock:5136` |
+| **Livewire** | `^4.0` | `v4.4.7` | `composer.json:29`, `composer.lock:5136` |
 | **Laravel Sanctum** | `^4.0` | `v4.3.3` | `composer.json:26`, `composer.lock:4144` |
-| **Pest Testing Framework** | `^4.4` | `v4.7.5` | `composer.json:48`, `composer.lock:13666` |
+| **Pest Testing Framework** | `^4.4` | `v4.7.8` | `composer.json:48`, `composer.lock:13666` |
 | **Composer Merge Plugin** | `^2.1` | `v2.1.0` | `composer.json:37`, `composer.lock:12615` |
 | **Filament Language Switch** | `^4.3` | `4.3.0` | `composer.json:16` |
-| **Filament DateRangePicker** | `^5.0` | `5.0.6` | `composer.json:31`, `composer.lock:5372` |
-| **Spatie Query Builder** | `^7.0` | `7.3.0` | `composer.json:35`, `composer.lock:9003` |
+| **Filament DateRangePicker** | `^5.0` | `5.0.7` | `composer.json:31`, `composer.lock:5372` |
+| **Spatie Query Builder** | `^7.0` | `7.3.5` | `composer.json:35`, `composer.lock:9003` |
 | **Spatie Translatable** | `^6.14` | `6.14.1` | `composer.json:36`, `composer.lock:9162` |
 | **Zeus Spatie Translatable** | `^2.0` | `2.0.1` | `composer.json:24`, `composer.lock:3801` |
-| **Laravel Pint** | `^1.27` | `v1.29.3` | `composer.json:44`, `composer.lock:13333` |
+| **Laravel Pint** | `^1.27` | `v1.32.1` | `composer.json:44`, `composer.lock:13333` |
 | **Scribe API Documentation** | `^5.6` | `5.11.0` | `composer.json:23`, `composer.lock:3709` |
 | **NativePHP Remote Shell** | `^0.1.0` | `v0.1.0` | `composer.json:13`, `composer.lock:75` |
-| **NativePHP Mobile Runtime** | `^3.3` | `3.3.6` | `composer.json:33`, `composer.lock:5850` |
+| **NativePHP Mobile Runtime** | `^3.3` | `3.3.9` | `composer.json:33`, `composer.lock:5850` |
 | **Barryvdh Laravel DomPDF** | `^3.1` | `v3.1.2` | `composer.json:15`, `composer.lock:281` |
-| **Barryvdh Laravel Debugbar** | `^4.0` | `v4.4.0` | `composer.json:14`, `composer.lock:181` |
+| **Barryvdh Laravel Debugbar** | `^4.0` | `v4.4.4` | `composer.json:14`, `composer.lock:181` |
 | **Flowframe Laravel Trend** | `^0.5` | `v0.5.0` | `composer.json:20`, `composer.lock:2794` |
 | **Guava Filament Icon Picker** | `^4.0` | `4.0.0` | `composer.json:21`, `composer.lock:3001` |
 | **Khaled Alshamaa Ar-PHP** | `^7.0` | `v7.0.0` | `composer.json:22`, `composer.lock:3581` |
 | **League Glide Image Engine** | `^2.3` | `2.3.2` | `composer.json:28`, `composer.lock:4748` |
-| **Maatwebsite Excel** | `^3.1` | `3.1.69` | `composer.json:30`, `composer.lock:5211` |
-| **Milon Barcode Engine** | `^13.0` | `v13.1` | `composer.json:32`, `composer.lock:5614` |
+| **Maatwebsite Excel** | `^3.1` | `3.1.70` | `composer.json:30`, `composer.lock:5211` |
+| **Milon Barcode Engine** | `^13.0` | `v13.5.1` | `composer.json:32`, `composer.lock:5614` |
 | **Spatie Eloquent Sortable** | `^5.0` | `5.0.1` | `composer.json:34`, `composer.lock:8720` |
 | **Laravel Pail Log Streamer** | `^1.2.5` | `v1.2.7` | `composer.json:43`, `composer.lock:13251` |
 
@@ -254,7 +254,7 @@ The root `composer.json` declares PSR-4 autoloading for the host application and
 }
 ```
 
-The merge plugin automatically scans and injects the `composer.json` of all 28 plugins under `plugins/webkul/*`. This provides:
+The merge plugin automatically scans and injects the `composer.json` of all 30 plugins under `plugins/webkul/*`. This provides:
 1. Unified class loading across all plugin namespaces (e.g., `Webkul\Account\` -> `plugins/webkul/accounts/src/`).
 2. Centralized dependency compilation and vendor conflict resolution during `composer install` or `composer update`.
 3. Seamless developer workflows without maintaining individual Git submodules or separate package repositories.
@@ -288,11 +288,11 @@ Aureus ERP incorporates native mobile shell capabilities via `aureuserp/nativeph
   - iOS: Injects `NSCameraUsageDescription` ("This app uses your camera to scan barcodes and QR codes.").
 - **Barcode & Hardware Scanners**: In conjunction with `plugins/webkul/barcode`, warehouse operators running the native mobile application can trigger real-time device camera scanning for serials, lots, and SKU tracking directly from the browser view.
 
-### 2.6 Frontend Architecture: Tailwind CSS v4 & Vite Cross-Package Compilation
+### 2.6 Frontend Architecture: Tailwind CSS v4, Vue 3 & Vite Cross-Package Compilation
 
-Frontend assets are bundled via **Vite v5** with the **Tailwind CSS v4** engine (`package.json:9–16`):
-- **Vite Configuration (`vite.config.js:7–12`)**:
-  Rather than compiling plugin assets in isolation, the root Vite configuration compiles host assets alongside modular plugin assets in a single bundle:
+Frontend assets are bundled via **Vite v5** with the **Tailwind CSS v4** engine and **Vue 3** for interactive terminals (`package.json:9–16`):
+- **Vite Configuration (`vite.config.js:7–18`)**:
+  Rather than compiling plugin assets in isolation, the root Vite configuration compiles host assets alongside modular plugin assets and Vue 3 single-page applications in a single bundle:
   ```javascript
   laravel({
       input: [
@@ -300,12 +300,17 @@ Frontend assets are bundled via **Vite v5** with the **Tailwind CSS v4** engine 
           'resources/js/app.js',
           'plugins/webkul/barcode/resources/dist/barcode.css',
           'plugins/webkul/barcode/resources/dist/barcode.js',
+          'plugins/webkul/point-of-sale/resources/js/till/main.js',
       ],
       refresh: true,
   }),
-  tailwindcss(),
+  vue(),
   ```
-- **Tailwind CSS v4 Engine**: Built on `@tailwindcss/vite` (^4.3.0) and `@tailwindcss/postcss` (^4.1.12), leveraging native CSS cascade layers and lightning-fast JIT compilation without legacy `tailwind.config.js` boilerplate.
+- **Vue 3 Till Engine**: Powers the high-performance Point of Sale till interface at `plugins/webkul/point-of-sale/resources/js/till/` via `@vitejs/plugin-vue`.
+- **Tailwind CSS v4 & Theme Compilation**: Built on `@tailwindcss/vite` (^4.3.0) and `@tailwindcss/cli` (^4.3.0). Administrative and customer themes are compiled via `npm run build:theme`:
+  ```bash
+  tailwindcss -i resources/css/filament/admin/theme.css -o public/css/filament/admin/theme.css --minify && tailwindcss -i resources/css/filament/customer/theme.css -o public/css/filament/customer/theme.css --minify
+  ```
 
 ### 2.7 Developer CLI Concurrency Pipeline (`composer dev`)
 
@@ -387,17 +392,18 @@ return Application::configure(basePath: dirname(__DIR__))
 
 ### 3.4 Static Service Provider Registration (`bootstrap/providers.php`)
 
-Aureus ERP rejects runtime directory scanning for service providers. Instead, `bootstrap/providers.php` explicitly returns an immutable array of **31 service providers**:
+Aureus ERP rejects runtime directory scanning for service providers. Instead, `bootstrap/providers.php` explicitly returns an immutable array of **34 service providers**:
 
 ```php
-// File: bootstrap/providers.php:35-67
+// File: bootstrap/providers.php
 return [
-    // Core Application Providers (3)
+    // Core Application Providers (4)
     App\Providers\AppServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\CustomerPanelProvider::class,
+    App\Providers\Filament\PosPanelProvider::class,
 
-    // Local Plugin Providers (28)
+    // Local Plugin Providers (30)
     Webkul\Accounting\AccountingServiceProvider::class,
     Webkul\Account\AccountServiceProvider::class,
     Webkul\Analytic\AnalyticServiceProvider::class,
@@ -405,6 +411,7 @@ return [
     Webkul\Blog\BlogServiceProvider::class,
     Webkul\Chatter\ChatterServiceProvider::class,
     Webkul\Contact\ContactServiceProvider::class,
+    Webkul\Crm\CRMServiceProvider::class,
     Webkul\Employee\EmployeeServiceProvider::class,
     Webkul\Field\FieldServiceProvider::class,
     Webkul\Inventory\InventoryServiceProvider::class,
@@ -413,6 +420,7 @@ return [
     Webkul\Manufacturing\ManufacturingServiceProvider::class,
     Webkul\Partner\PartnerServiceProvider::class,
     Webkul\Payment\PaymentServiceProvider::class,
+    Webkul\PointOfSale\PointOfSaleServiceProvider::class,
     Webkul\Product\ProductServiceProvider::class,
     Webkul\Project\ProjectServiceProvider::class,
     Webkul\Purchase\PurchaseServiceProvider::class,
@@ -532,9 +540,9 @@ When `$request->is('api/*') || $request->expectsJson()`, exceptions are intercep
 
 ## 4. Domain & Plugin Ecosystem Topology
 
-### 4.1 Comprehensive Catalog of All 28 Local Plugins
+### 4.1 Comprehensive Catalog of All 30 Local Plugins
 
-Every business feature in Aureus ERP is encapsulated in `plugins/webkul/*`. Exactly 28 plugins are present:
+Every business feature in Aureus ERP is encapsulated in `plugins/webkul/*`. Exactly 30 plugins are present:
 
 | # | Directory | Composer Package | PSR-4 Namespace | Primary Service Provider | Core / Optional | Disk Migrations | Zero-Table? | Business Domain & Architectural Role |
 |:---:|:---|:---|:---|:---|:---:|:---:|:---:|:---|
@@ -545,31 +553,33 @@ Every business feature in Aureus ERP is encapsulated in `plugins/webkul/*`. Exac
 | 5 | `blogs` | `webkul/blogs` | `Webkul\Blog\` | `Webkul\Blog\BlogServiceProvider` | Optional | 7 | No | Content publishing, blog categories, blog posts, SEO metadata for backend administration and customer portal. |
 | 6 | `chatter` | `webkul/chatter` | `Webkul\Chatter\` | `Webkul\Chatter\ChatterServiceProvider` | **Core** | 4 | No | Universal activity tracking, chatter message threads, record followers, activity scheduling across models (`HasChatter`). |
 | 7 | `contacts` | `webkul/contacts` | `Webkul\Contact\` | `Webkul\Contact\ContactServiceProvider` | Optional | 0 | **Yes** | CRM contacts, address books, customer/vendor categorization. Zero-table UI layer over `partners`. |
-| 8 | `employees` | `webkul/employees` | `Webkul\Employee\` | `Webkul\Employee\EmployeeServiceProvider` | Optional | 22 | No | HR employee directory, departments, job positions, employment history, work locations, reporting hierarchy. |
-| 9 | `fields` | `webkul/fields` | `Webkul\Field\` | `Webkul\Field\FieldServiceProvider` | **Core** | 1 | No | Dynamic custom fields engine (`custom_fields`). Allows adding arbitrary custom fields to any model via `HasCustomFields`. |
-| 10 | `full-calendar` | `webkul/full-calendar` | `Webkul\FullCalendar\` | `Webkul\FullCalendar\FullCalendarServiceProvider` | **Core** | 0 | **Yes** | FullCalendar JS wrapper and reusable Filament calendar components/widgets across modules (maintenance, time-off). |
-| 11 | `inventories` | `webkul/inventories` | `Webkul\Inventory\` | `Webkul\Inventory\InventoryServiceProvider` | Optional | 57 | No | Multi-location stock tracking, warehouse transfers, deliveries, receipts, scrap, stock valuation, adjustments. |
-| 12 | `invoices` | `webkul/invoices` | `Webkul\Invoice\` | `Webkul\Invoice\InvoiceServiceProvider` | Optional | 0 | **Yes** | Dedicated invoicing UI workflows, bill run management, customer billing, vendor bills. Zero-table extension over `accounts`. |
-| 13 | `maintenance` | `webkul/maintenance` | `Webkul\Maintenance\` | `Webkul\Maintenance\MaintenanceServiceProvider` | Optional | 6 | No | Equipment maintenance requests, maintenance teams, preventative and corrective maintenance logs. |
-| 14 | `manufacturing` | `webkul/manufacturing` | `Webkul\Manufacturing\` | `Webkul\Manufacturing\ManufacturingServiceProvider` | Optional | 37 | No | Production control, Bills of Materials (BOM), work orders, routing, work centers, scrap, unbuild orders. |
-| 15 | `partners` | `webkul/partners` | `Webkul\Partner\` | `Webkul\Partner\PartnerServiceProvider` | **Core** | 8 | No | Master partner entity (customers, suppliers, companies, individuals, addresses, payment terms). |
-| 16 | `payments` | `webkul/payments` | `Webkul\Payment\` | `Webkul\Payment\PaymentServiceProvider` | Optional | 6 | No | Payment vouchers, customer receipts, vendor payments, payment registers, bank payment integration. |
-| 17 | `plugin-manager` | `webkul/plugin-manager` | `Webkul\PluginManager\` | `Webkul\PluginManager\PluginManagerServiceProvider` | **Core** | 1 | No | Plugin lifecycle engine, package manifest discovery, installation, uninstallation, table rollback, Shield manager. |
-| 18 | `products` | `webkul/products` | `Webkul\Product\` | `Webkul\Product\ProductServiceProvider` | Optional | 18 | No | Master product catalog, variants, configurable products, attributes, units of measure (UOM), price lists. |
-| 19 | `projects` | `webkul/projects` | `Webkul\Project\` | `Webkul\Project\ProjectServiceProvider` | Optional | 12 | No | Project management, task tracking, kanban stages, milestones, project member assignment, privacy scoping. |
-| 20 | `purchases` | `webkul/purchases` | `Webkul\Purchase\` | `Webkul\Purchase\PurchaseServiceProvider` | Optional | 19 | No | Procurement pipeline, Requests for Quotation (RFQ), Purchase Orders (PO), approval workflows, vendor price lists. |
-| 21 | `recruitments` | `webkul/recruitments` | `Webkul\Recruitment\` | `Webkul\Recruitment\RecruitmentServiceProvider` | Optional | 14 | No | Recruitment pipeline, job candidates, applications, recruitment stages, interview tracking. |
-| 22 | `sales` | `webkul/sales` | `Webkul\Sale\` | `Webkul\Sale\SaleServiceProvider` | Optional | 26 | No | Sales orders, quotation generation, quotation templates, price lists, sales teams, delivery invoicing triggers. |
-| 23 | `security` | `webkul/security` | `Webkul\Security\` | `Webkul\Security\SecurityServiceProvider` | **Core** | 10 | No | Security foundation, Filament Shield integration, RBAC roles, permissions, Bouncer, ownership scoping. |
-| 24 | `support` | `webkul/support` | `Webkul\Support\` | `Webkul\Support\SupportServiceProvider` | **Core** | 34 | No | Tenancy suite (`CompanyScope`, `CompanyContext`, `BelongsToCompany`), navigation enums, shared traits. |
-| 25 | `table-views` | `webkul/table-views` | `Webkul\TableViews\` | `Webkul\TableViews\TableViewsServiceProvider` | **Core** | 2 | No | Custom table view presets, favorite views, column visibility controls via Filament render hooks. Core infrastructure. |
-| 26 | `time-off` | `webkul/time-off` | `Webkul\TimeOff\` | `Webkul\TimeOff\TimeOffServiceProvider` | Optional | 10 | No | Employee leave management, time off requests, allocations, leave types, multi-level approvals, public holidays. |
-| 27 | `timesheets` | `webkul/timesheets` | `Webkul\Timesheet\` | `Webkul\Timesheet\TimesheetServiceProvider` | Optional | 0 | **Yes** | Employee project timesheets, billable hour logging, task time tracking. Zero-table extension over `projects`. |
-| 28 | `website` | `webkul/website` | `Webkul\Website\` | `Webkul\Website\WebsiteServiceProvider` | Optional | 4 | No | CMS website pages, public portal layout, customer authentication (login, registration, reset), theme engine. |
+| 8 | `crm` | `webkul/crm` | `Webkul\Crm\` | `Webkul\Crm\CRMServiceProvider` | Optional | 37 | No | Lead generation, CRM opportunity Kanban pipeline, sales teams, mail aliases, lead scoring, and reveal rules. |
+| 9 | `employees` | `webkul/employees` | `Webkul\Employee\` | `Webkul\Employee\EmployeeServiceProvider` | Optional | 22 | No | HR employee directory, departments, job positions, employment history, work locations, reporting hierarchy. |
+| 10 | `fields` | `webkul/fields` | `Webkul\Field\` | `Webkul\Field\FieldServiceProvider` | **Core** | 1 | No | Dynamic custom fields engine (`custom_fields`). Allows adding arbitrary custom fields to any model via `HasCustomFields`. |
+| 11 | `full-calendar` | `webkul/full-calendar` | `Webkul\FullCalendar\` | `Webkul\FullCalendar\FullCalendarServiceProvider` | **Core** | 0 | **Yes** | FullCalendar JS wrapper and reusable Filament calendar components/widgets across modules (maintenance, time-off). |
+| 12 | `inventories` | `webkul/inventories` | `Webkul\Inventory\` | `Webkul\Inventory\InventoryServiceProvider` | Optional | 57 | No | Multi-location stock tracking, warehouse transfers, deliveries, receipts, scrap, stock valuation, adjustments. |
+| 13 | `invoices` | `webkul/invoices` | `Webkul\Invoice\` | `Webkul\Invoice\InvoiceServiceProvider` | Optional | 0 | **Yes** | Dedicated invoicing UI workflows, bill run management, customer billing, vendor bills. Zero-table extension over `accounts`. |
+| 14 | `maintenance` | `webkul/maintenance` | `Webkul\Maintenance\` | `Webkul\Maintenance\MaintenanceServiceProvider` | Optional | 6 | No | Equipment maintenance requests, maintenance teams, preventative and corrective maintenance logs. |
+| 15 | `manufacturing` | `webkul/manufacturing` | `Webkul\Manufacturing\` | `Webkul\Manufacturing\ManufacturingServiceProvider` | Optional | 37 | No | Production control, Bills of Materials (BOM), work orders, routing, work centers, scrap, unbuild orders. |
+| 16 | `partners` | `webkul/partners` | `Webkul\Partner\` | `Webkul\Partner\PartnerServiceProvider` | **Core** | 8 | No | Master partner entity (customers, suppliers, companies, individuals, addresses, payment terms). |
+| 17 | `payments` | `webkul/payments` | `Webkul\Payment\` | `Webkul\Payment\PaymentServiceProvider` | Optional | 6 | No | Payment vouchers, customer receipts, vendor payments, payment registers, bank payment integration. |
+| 18 | `plugin-manager` | `webkul/plugin-manager` | `Webkul\PluginManager\` | `Webkul\PluginManager\PluginManagerServiceProvider` | **Core** | 1 | No | Plugin lifecycle engine, package manifest discovery, installation, uninstallation, table rollback, Shield manager. |
+| 19 | `point-of-sale` | `webkul/point-of-sale` | `Webkul\PointOfSale\` | `Webkul\PointOfSale\PointOfSaleServiceProvider` | Optional | 33 | No | Point of Sale terminal, Vue 3 Till UI, cash movements, sessions, floor/table planning, receipt printers, POS orders. |
+| 20 | `products` | `webkul/products` | `Webkul\Product\` | `Webkul\Product\ProductServiceProvider` | Optional | 19 | No | Master product catalog, variants, configurable products, attributes, units of measure (UOM), price lists. |
+| 21 | `projects` | `webkul/projects` | `Webkul\Project\` | `Webkul\Project\ProjectServiceProvider` | Optional | 12 | No | Project management, task tracking, kanban stages, milestones, project member assignment, privacy scoping. |
+| 22 | `purchases` | `webkul/purchases` | `Webkul\Purchase\` | `Webkul\Purchase\PurchaseServiceProvider` | Optional | 19 | No | Procurement pipeline, Requests for Quotation (RFQ), Purchase Orders (PO), approval workflows, vendor price lists. |
+| 23 | `recruitments` | `webkul/recruitments` | `Webkul\Recruitment\` | `Webkul\Recruitment\RecruitmentServiceProvider` | Optional | 14 | No | Recruitment pipeline, job candidates, applications, recruitment stages, interview tracking. |
+| 24 | `sales` | `webkul/sales` | `Webkul\Sale\` | `Webkul\Sale\SaleServiceProvider` | Optional | 26 | No | Sales orders, quotation generation, quotation templates, price lists, sales teams, delivery invoicing triggers. |
+| 25 | `security` | `webkul/security` | `Webkul\Security\` | `Webkul\Security\SecurityServiceProvider` | **Core** | 10 | No | Security foundation, Filament Shield integration, RBAC roles, permissions, Bouncer, ownership scoping. |
+| 26 | `support` | `webkul/support` | `Webkul\Support\` | `Webkul\Support\SupportServiceProvider` | **Core** | 34 | No | Tenancy suite (`CompanyScope`, `CompanyContext`, `BelongsToCompany`), navigation enums, shared traits. |
+| 27 | `table-views` | `webkul/table-views` | `Webkul\TableViews\` | `Webkul\TableViews\TableViewsServiceProvider` | **Core** | 2 | No | Custom table view presets, favorite views, column visibility controls via Filament render hooks. Core infrastructure. |
+| 28 | `time-off` | `webkul/time-off` | `Webkul\TimeOff\` | `Webkul\TimeOff\TimeOffServiceProvider` | Optional | 10 | No | Employee leave management, time off requests, allocations, leave types, multi-level approvals, public holidays. |
+| 29 | `timesheets` | `webkul/timesheets` | `Webkul\Timesheet\` | `Webkul\Timesheet\TimesheetServiceProvider` | Optional | 0 | **Yes** | Employee project timesheets, billable hour logging, task time tracking. Zero-table extension over `projects`. |
+| 30 | `website` | `webkul/website` | `Webkul\Website\` | `Webkul\Website\WebsiteServiceProvider` | Optional | 6 | No | CMS website pages, public portal layout, customer authentication (login, registration, reset), theme engine. |
 
 #### Architectural Plugin Archetypes
 - **9 Core Infrastructure Packages (`$package->isCore()`)**: `analytics`, `chatter`, `fields`, `full-calendar`, `partners`, `plugin-manager`, `security`, `support`, `table-views`. Loaded unconditionally. They execute migrations and register routes without database installation checks.
-- **19 Optional Domain Packages**: Gated by runtime installation (`Package::isPluginInstalled()`). Their UI, routes, and console migrations remain dormant until explicitly installed.
+- **21 Optional Domain Packages**: Gated by runtime installation (`Package::isPluginInstalled()`). Their UI, routes, and console migrations remain dormant until explicitly installed.
 - **6 Zero-Table Extension Packages**: `accounting`, `barcode`, `contacts`, `full-calendar`, `invoices`, `timesheets`. Own **zero migrations** on disk; they extend upstream schemas and UI workflows cleanly without creating duplicate database tables.
 
 ### 4.2 Plugin Directory Conventions & Manifest Layout
@@ -1253,39 +1263,38 @@ This ensures clean separation of concerns: changing tenancy rules never requires
 
 ## 7. Filament Panel Architecture
 
-### 7.1 Dual-Panel Topography & Runtime Configuration
+### 7.1 Multi-Panel Topography & Runtime Configuration
 
-Aureus ERP configures two distinct Filament panels:
+Aureus ERP configures three distinct Filament panels:
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│                              HTTP Request                              │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-                  ┌─────────────────┴─────────────────┐
-                  ▼                                   ▼
-          Path: `/admin/*`                     Path: `/*`
-   ┌─────────────────────────────┐     ┌─────────────────────────────┐
-   │      Admin Panel            │     │    Customer Portal Panel    │
-   │   (AdminPanelProvider)      │     │   (CustomerPanelProvider)   │
-   ├─────────────────────────────┤     ├─────────────────────────────┤
-   │ • id: 'admin' (default)     │     │ • id: 'customer'            │
-   │ • path: 'admin'             │     │ • path: '/'                 │
-   │ • guard: 'web'              │     │ • guard: 'customer'         │
-   │ • Top navigation            │     │ • Top navigation            │
-   │ • maxContentWidth(Full)     │     │ • darkMode(false)           │
-   │ • Shield & Translatable     │     │ • Self-registration & reset │
-   │ • Global Search Provider    │     │ • Customer portal pages     │
-   │ • 30s Database Notifications│     │ • Public brand headers      │
-   └──────────────┬──────────────┘     └──────────────┬──────────────┘
-                  │                                   │
-                  └─────────────────┬─────────────────┘
-                                    │
-                                    ▼
-       ┌────────────────────────────────────────────────────────┐
-       │   Dynamically Injected via `Panel::configureUsing()`   │
-       │   from 28 Plugin Service Providers                     │
-       └────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                       HTTP Request                                     │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │
+                  ┌─────────────────────────┼─────────────────────────┐
+                  ▼                         ▼                         ▼
+          Path: `/admin/*`              Path: `/*`               Path: `/pos/*`
+   ┌─────────────────────────────┐ ┌─────────────────────────┐ ┌─────────────────────────┐
+   │      Admin Panel            │ │  Customer Portal Panel  │ │     POS Till Panel      │
+   │   (AdminPanelProvider)      │ │ (CustomerPanelProvider) │ │   (PosPanelProvider)    │
+   ├─────────────────────────────┤ ├─────────────────────────┤ ├─────────────────────────┤
+   │ • id: 'admin' (default)     │ │ • id: 'customer'        │ │ • id: 'pos'             │
+   │ • path: 'admin'             │ │ • path: '/'             │ │ • path: 'pos'           │
+   │ • guard: 'web'              │ │ • guard: 'customer'     │ │ • guard: 'web'          │
+   │ • Top navigation            │ │ • Top navigation        │ │ • Fullscreen (No topbar)│
+   │ • maxContentWidth(Full)     │ │ • darkMode(false)       │ │ • Vue 3 Till UI runtime │
+   │ • Shield & Translatable     │ │ • Self-registration     │ │ • PWA Install Support   │
+   │ • Global Search Provider    │ │ • Customer portal pages │ │ • Cash movement / Orders│
+   │ • 30s Database Notifications│ │ • Public brand headers  │ │ • MaxContentWidth(Full) │
+   └──────────────┬──────────────┘ └────────────┬────────────┘ └────────────┬────────────┘
+                  │                             │                           │
+                  └─────────────────────────────┼───────────────────────────┘
+                                                ▼
+                   ┌────────────────────────────────────────────────────────┐
+                   │   Dynamically Injected via `Panel::configureUsing()`   │
+                   │   from 30 Plugin Service Providers                     │
+                   └────────────────────────────────────────────────────────┘
 ```
 
 #### Runtime Lifeline & Form Unsaved Changes Guard (`AdminPanelProvider.php:36, 52`)
@@ -1333,8 +1342,9 @@ Filament panel registration differentiates strictly between core infrastructure 
    The 7 core infrastructure plugins with Filament panel participation (`chatter`, `fields`, `full-calendar`, `partners`, `plugin-manager`, `security`, and `support`) do **not** gate on `Package::isPluginInstalled()`. They register their resources, widgets, render hooks, and configuration unconditionally into the panels, ensuring baseline platform capabilities (identity, tenancy context, custom fields, chatter activity, partner masters, and plugin lifecycle administration) are permanently available. (The remaining 2 core packages, `analytics` and `table-views`, do not declare a Filament `*Plugin` class).
 
 #### Panel Participation Breakdown
-- **Admin Panel Only (21 plugins)**: `accounting`, `accounts`, `barcode`, `contacts`, `employees`, `fields`, `inventories`, `invoices`, `maintenance`, `manufacturing`, `partners`, `payments`, `plugin-manager`, `products`, `projects`, `recruitments`, `sales`, `security`, `support`, `time-off`, `timesheets`.
-- **Dual Panel (3 plugins)**:
+- **Admin Panel Only (22 plugins)**: `accounting`, `accounts`, `barcode`, `contacts`, `crm`, `employees`, `fields`, `inventories`, `invoices`, `maintenance`, `manufacturing`, `partners`, `payments`, `plugin-manager`, `products`, `projects`, `recruitments`, `sales`, `security`, `support`, `time-off`, `timesheets`.
+- **Dual / Multi-Panel (4 plugins)**:
+  - `point-of-sale`: Configurations, registers, orders, and sessions in `admin` panel; dedicated fullscreen Vue 3 till terminal in `pos` panel.
   - `website`: Login, registration, password reset, account clusters, public CMS pages, topbar links, and footer render hooks.
   - `blogs`: Backend editor in admin panel; customer-facing reading UI in customer panel.
   - `purchases`: Admin procurement clusters; customer/vendor quotation and order portal in customer panel.
@@ -1346,19 +1356,19 @@ Filament panel registration differentiates strictly between core infrastructure 
 #### Navigation Groups Enum (`Webkul\Support\Enums\NavigationGroup`)
 Centralizes all navigation groups to avoid hardcoded string literals:
 - File: `plugins/webkul/support/src/Enums/NavigationGroup.php`.
-- Cases: `Dashboard`, `Contact`, `Sale`, `Purchase`, `Maintenance`, `Manufacturing`, `Inventory`, `Invoice`, `Accounting`, `Project`, `Employee`, `TimeOff`, `Recruitment`, `Website`, `Barcode`, `Plugin`, `Setting`, `Help`.
+- Cases: `Dashboard`, `Contact`, `Crm`, `Sale`, `Purchase`, `Maintenance`, `Manufacturing`, `Inventory`, `Invoice`, `Accounting`, `Project`, `Employee`, `TimeOff`, `Recruitment`, `Website`, `PointOfSale`, `Barcode`, `Plugin`, `Setting`, `Help`.
 - Maps custom SVG icons (`icon-sales`, `icon-inventories`, etc.) and localized labels (`__('admin.navigation.' . $this->value)`).
 
 #### Blade Icon Resolution & Domain SVG Catalog (`config/blade-icons.php`)
-`config/blade-icons.php:33, 59` registers the default icon set mapped directly to `resources/svg` under the `'icon'` prefix. This enables referencing custom domain icons anywhere via `icon-<name>` without external dependencies. The catalog includes 21 custom SVG assets:
-`accounting.svg`, `barcode.svg`, `contacts.svg`, `dashboard.svg`, `employees.svg`, `help.svg`, `inventories.svg`, `invoices.svg`, `maintenance.svg`, `manufacturing.svg`, `menu.svg`, `pin.svg`, `plugin.svg`, `projects.svg`, `purchases.svg`, `recruitments.svg`, `sales.svg`, `settings.svg`, `time-offs.svg`, `un-pin.svg`, and `website.svg`.
+`config/blade-icons.php:33, 59` registers the default icon set mapped directly to `resources/svg` under the `'icon'` prefix. This enables referencing custom domain icons anywhere via `icon-<name>` without external dependencies. The catalog includes 23 custom SVG assets:
+`accounting.svg`, `barcode.svg`, `contacts.svg`, `crm.svg`, `dashboard.svg`, `employees.svg`, `help.svg`, `inventories.svg`, `invoices.svg`, `maintenance.svg`, `manufacturing.svg`, `menu.svg`, `pin.svg`, `plugin.svg`, `point-of-sale.svg`, `projects.svg`, `purchases.svg`, `recruitments.svg`, `sales.svg`, `settings.svg`, `time-offs.svg`, `un-pin.svg`, and `website.svg`.
 
 #### Cluster Breadcrumbs (`HasClusterBreadcrumbs`)
 Complex domains organize resources inside Filament Clusters (e.g. `inventories` clusters `Operations`, `Configurations`, `Products`, `Reporting`, `Settings`). The trait `Webkul\Support\Traits\HasClusterBreadcrumbs` automatically generates breadcrumb hierarchies navigating from Group -> Cluster -> Resource -> Record.
 
 ### 7.5 Modular Navigation Topology: App Launcher & Dynamic Module Scoping
 
-To prevent visual fatigue and clutter across 28 modular packages, Aureus ERP replaces Filament's default monolithic vertical navigation with a two-tier modular navigation topology:
+To prevent visual fatigue and clutter across 30 modular packages, Aureus ERP replaces Filament's default monolithic vertical navigation with a two-tier modular navigation topology:
 
 1. **Topbar App Launcher Dropdown (`resources/views/vendor/filament-panels/livewire/topbar.blade.php:43–85`)**:
    In the admin panel header, an `icon-menu` button opens a 3-column dropdown modal displaying all installed module groups (`filament()->getNavigation()`). Each group is presented with a 64x64 domain SVG icon, localized label, and direct entry link.
@@ -1461,9 +1471,9 @@ Audit trails, follower subscriptions, and scheduled activities are powered by `p
 
 ### 8.1 Schema Architecture Across 383 Migrations
 
-Aureus ERP contains **383 database migrations**:
+Aureus ERP contains **456 database migrations**:
 - Core application: `database/migrations/` (13 migrations).
-- Local plugins: `plugins/webkul/*/database/migrations/` (370 migrations across 22 plugins).
+- Local plugins: `plugins/webkul/*/database/migrations/` (443 migrations across 24 plugins).
 Plugin migrations are loaded explicitly via `$package->hasMigrations([...])` and gated by installation state.
 
 #### Core Infrastructure Migrations & System Table Inventory

@@ -13,7 +13,6 @@ use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Pa
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Pages\ListRoutes;
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Pages\ManageRules;
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Pages\ViewRoute;
-use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\RelationManagers\RulesRelationManager;
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Schemas\RouteForm;
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Schemas\RouteInfolist;
 use Webkul\Inventory\Filament\Clusters\Configurations\Resources\RouteResource\Tables\RoutesTable;
@@ -78,13 +77,6 @@ class RouteResource extends Resource
             EditRoute::class,
             ManageRules::class,
         ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            RulesRelationManager::class,
-        ];
     }
 
     public static function getPages(): array
