@@ -172,22 +172,29 @@ class AssignmentRuleFields
                 ])
                 ->schema([
                     TextEntry::make('name')
+                        ->label(__('crm::filament/assignment.rules.records-modal.columns.name'))
                         ->weight('medium')
                         ->url(fn (Lead $record): ?string => LeadResourceResolver::viewUrl($record), shouldOpenInNewTab: true),
                     TextEntry::make('type')
+                        ->label(__('crm::filament/assignment.rules.records-modal.columns.type'))
                         ->badge()
                         ->color(fn (Lead $record): string => $record->isLead() ? 'gray' : 'primary'),
                     TextEntry::make('contact')
+                        ->label(__('crm::filament/assignment.rules.records-modal.columns.contact'))
                         ->state(fn (Lead $record): ?string => $record->contact_name ?: $record->partner?->name)
                         ->placeholder('—'),
                     TextEntry::make('email')
+                        ->label(__('crm::filament/assignment.rules.records-modal.columns.email'))
                         ->placeholder('—'),
                     TextEntry::make('user.name')
+                        ->label(__('crm::filament/assignment.rules.records-modal.columns.salesperson'))
                         ->placeholder('—'),
                     TextEntry::make('expected_revenue')
+                        ->label(__('crm::filament/assignment.rules.records-modal.columns.expected-revenue'))
                         ->money(fn (Lead $record): string => $record->company?->currency?->code ?? default_currency_code())
                         ->alignEnd(),
                     TextEntry::make('stage.name')
+                        ->label(__('crm::filament/assignment.rules.records-modal.columns.stage'))
                         ->placeholder('—'),
                 ]),
             Text::make(__('crm::filament/assignment.rules.records-modal.showing', ['shown' => $records->count(), 'total' => $total]))

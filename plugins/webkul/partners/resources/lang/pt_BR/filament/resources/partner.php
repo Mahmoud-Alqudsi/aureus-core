@@ -12,19 +12,20 @@ return [
                 'title' => 'Geral',
 
                 'fields' => [
-                    'company'    => 'Empresa',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Identificação fiscal',
-                    'job-title'  => 'Cargo',
-                    'phone'      => 'Telefone',
-                    'mobile'     => 'Celular',
-                    'email'      => 'E-mail',
-                    'website'    => 'Site',
-                    'title'      => 'Título',
-                    'name'       => 'Nome',
-                    'short-name' => 'Nome curto',
-                    'tags'       => 'Tags',
-                    'color'      => 'Cor',
+                    'account-type' => 'Tipo de conta',
+                    'company'      => 'Empresa',
+                    'avatar'       => 'Avatar',
+                    'tax-id'       => 'Identificação fiscal',
+                    'job-title'    => 'Cargo',
+                    'phone'        => 'Telefone',
+                    'mobile'       => 'Celular',
+                    'email'        => 'E-mail',
+                    'website'      => 'Site',
+                    'title'        => 'Título',
+                    'name'         => 'Nome',
+                    'short-name'   => 'Nome curto',
+                    'tags'         => 'Tags',
+                    'color'        => 'Cor',
                 ],
 
                 'address' => [
@@ -48,6 +49,15 @@ return [
             'sales-purchase' => [
                 'title' => 'Vendas e compras',
 
+                'sections' => [
+                    'sales' => [
+                        'title' => 'Vendas',
+                    ],
+                    'others' => [
+                        'title' => 'Outros',
+                    ],
+                ],
+
                 'fields' => [
                     'responsible'           => 'Responsável',
                     'responsible-hint-text' => 'Este é o vendedor interno responsável por este cliente',
@@ -62,6 +72,8 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'     => 'Avatar',
+            'name'       => 'Nome',
             'parent'     => 'Pai',
             'work-email' => 'E-mail de trabalho',
             'work-phone' => 'Telefone de trabalho',
@@ -176,18 +188,19 @@ return [
                 'title' => 'Geral',
 
                 'fields' => [
-                    'company'    => 'Empresa',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Identificação fiscal',
-                    'job-title'  => 'Cargo',
-                    'phone'      => 'Telefone',
-                    'mobile'     => 'Celular',
-                    'email'      => 'E-mail',
-                    'website'    => 'Site',
-                    'title'      => 'Título',
-                    'name'       => 'Nome',
-                    'short-name' => 'Nome curto',
-                    'tags'       => 'Tags',
+                    'account-type' => 'Tipo de conta',
+                    'company'      => 'Empresa',
+                    'avatar'       => 'Avatar',
+                    'tax-id'       => 'Identificação fiscal',
+                    'job-title'    => 'Cargo',
+                    'phone'        => 'Telefone',
+                    'mobile'       => 'Celular',
+                    'email'        => 'E-mail',
+                    'website'      => 'Site',
+                    'title'        => 'Título',
+                    'name'         => 'Nome',
+                    'short-name'   => 'Nome curto',
+                    'tags'         => 'Tags',
                 ],
 
                 'address' => [
@@ -210,6 +223,15 @@ return [
         'tabs' => [
             'sales-purchase' => [
                 'title' => 'Vendas e compras',
+
+                'sections' => [
+                    'sales' => [
+                        'title' => 'Vendas',
+                    ],
+                    'others' => [
+                        'title' => 'Outros',
+                    ],
+                ],
 
                 'fields' => [
                     'responsible'           => 'Responsável',

@@ -10,8 +10,8 @@ return [
     'filters' => [
         'heading'       => 'عوامل التصفية',
         'all-terminals' => 'كل الطرفيات',
-        'date-range' => 'Date Range',
-        'terminal' => 'Terminal',
+        'date-range'    => 'النطاق الزمني',
+        'terminal'      => 'الطرفية',
     ],
 
     'summary' => [
