@@ -422,11 +422,11 @@ class BranchesRelationManager extends RelationManager
                                             ->placeholder('—')
                                             ->label(__('support::filament/resources/company/relation-managers/manage-branch.infolist.tabs.general-information.sections.branch-information.entries.tax-id')),
                                         TextEntry::make('color')
+                                            ->label(__('support::filament/resources/company/relation-managers/manage-branch.infolist.tabs.general-information.sections.branch-information.entries.color'))
                                             ->icon('heroicon-o-swatch')
                                             ->placeholder('—')
                                             ->badge()
-                                            ->color(fn ($record) => $record->color ?? 'gray')
-                                            ->label(__('support::filament/resources/company/relation-managers/manage-branch.infolist.tabs.general-information.sections.branch-information.entries.color')),
+                                            ->color(fn ($record) => $record->color ?? 'gray'),
                                     ])
                                     ->columns(2),
 
