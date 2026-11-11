@@ -29,6 +29,11 @@ class VendorResource extends BaseVendorResource
 
     protected static ?string $cluster = Vendors::class;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('accounting::filament/clusters/vendors/resources/vendor.navigation.title');
+    }
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
