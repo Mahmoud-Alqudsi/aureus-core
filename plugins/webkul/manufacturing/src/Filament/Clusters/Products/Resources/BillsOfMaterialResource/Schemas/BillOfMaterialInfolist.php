@@ -87,10 +87,17 @@ class BillOfMaterialInfolist
                                                     ->resizable(),
                                             ])
                                             ->schema([
-                                                TextEntry::make('product.name')->placeholder('—'),
-                                                TextEntry::make('quantity')->numeric(decimalPlaces: 4),
-                                                TextEntry::make('uom.name')->placeholder('—'),
+                                                TextEntry::make('product.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.components.entries.product'))
+                                                    ->placeholder('—'),
+                                                TextEntry::make('quantity')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.components.entries.quantity'))
+                                                    ->numeric(decimalPlaces: 4),
+                                                TextEntry::make('uom.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.components.entries.uom'))
+                                                    ->placeholder('—'),
                                                 TextEntry::make('attribute_values')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.components.columns.apply-on-variants'))
                                                     ->state(function ($record): string {
                                                         $labels = $record->attributeValues
                                                             ->map(fn ($value): string => $value->attribute?->name && $value->attributeOption?->name
@@ -101,8 +108,12 @@ class BillOfMaterialInfolist
 
                                                         return $labels->isNotEmpty() ? $labels->implode(', ') : '—';
                                                     }),
-                                                TextEntry::make('operation.name')->placeholder('—'),
-                                                IconEntry::make('is_manual_consumption')->boolean(),
+                                                TextEntry::make('operation.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.components.columns.consumed-in-operation'))
+                                                    ->placeholder('—'),
+                                                IconEntry::make('is_manual_consumption')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.components.columns.highlight-consumption'))
+                                                    ->boolean(),
                                             ]),
                                     ]),
                                 Tab::make(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.operations.title'))
@@ -137,12 +148,23 @@ class BillOfMaterialInfolist
                                                     ->resizable(),
                                             ])
                                             ->schema([
-                                                TextEntry::make('name')->placeholder('—'),
-                                                TextEntry::make('workCenter.name')->placeholder('—'),
-                                                TextEntry::make('time_mode')->badge(),
-                                                TextEntry::make('time_mode_batch')->placeholder('—'),
-                                                TextEntry::make('company.name')->placeholder('—'),
+                                                TextEntry::make('name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.operations.columns.operation'))
+                                                    ->placeholder('—'),
+                                                TextEntry::make('workCenter.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.operations.columns.work-center'))
+                                                    ->placeholder('—'),
+                                                TextEntry::make('time_mode')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.operations.columns.time-mode'))
+                                                    ->badge(),
+                                                TextEntry::make('time_mode_batch')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.operations.columns.time-mode-batch'))
+                                                    ->placeholder('—'),
+                                                TextEntry::make('company.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.operations.columns.company'))
+                                                    ->placeholder('—'),
                                                 TextEntry::make('attribute_values')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.operations.columns.apply-on-variants'))
                                                     ->state(function ($record): string {
                                                         $labels = $record->attributeValues
                                                             ->map(fn ($value): string => $value->attribute?->name && $value->attributeOption?->name
@@ -154,6 +176,7 @@ class BillOfMaterialInfolist
                                                         return $labels->isNotEmpty() ? $labels->implode(', ') : '—';
                                                     }),
                                                 TextEntry::make('manual_cycle_time')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.form.tabs.operations.columns.duration'))
                                                     ->formatStateUsing(fn (mixed $state): string => format_float_time($state ?? 60, 'minutes')),
                                             ]),
                                     ]),
@@ -178,10 +201,18 @@ class BillOfMaterialInfolist
                                                     ->resizable(),
                                             ])
                                             ->schema([
-                                                TextEntry::make('product.name')->placeholder('—'),
-                                                TextEntry::make('quantity')->numeric(decimalPlaces: 4),
-                                                TextEntry::make('uom.name')->placeholder('—'),
-                                                TextEntry::make('operation.name')->placeholder('—'),
+                                                TextEntry::make('product.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.by-products.entries.product'))
+                                                    ->placeholder('—'),
+                                                TextEntry::make('quantity')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.by-products.entries.quantity'))
+                                                    ->numeric(decimalPlaces: 4),
+                                                TextEntry::make('uom.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.by-products.entries.uom'))
+                                                    ->placeholder('—'),
+                                                TextEntry::make('operation.name')
+                                                    ->label(__('manufacturing::filament/clusters/products/resources/bill-of-material.infolist.tabs.by-products.entries.operation'))
+                                                    ->placeholder('—'),
                                             ]),
                                     ]),
                             ]),

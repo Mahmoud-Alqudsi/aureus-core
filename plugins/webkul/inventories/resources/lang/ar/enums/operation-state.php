@@ -3,7 +3,7 @@
 return [
     'draft'     => 'مسودة',
     'confirmed' => 'قيد الانتظار',
-    'waiting'   => 'Waiting Another Operation',
+    'waiting'   => 'في انتظار عملية أخرى',
     'assigned'  => 'جاهز',
     'done'      => 'مكتمل',
     'canceled'  => 'ملغى',

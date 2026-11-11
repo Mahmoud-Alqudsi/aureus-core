@@ -38,10 +38,13 @@ class ManageRules extends ManageRelatedRecords
         return RuleResource::table($table)
             ->columns([
                 TextColumn::make('action')
+                    ->label(__('inventories::filament/clusters/configurations/resources/rule.table.columns.action'))
                     ->searchable(),
                 TextColumn::make('sourceLocation.full_name')
+                    ->label(__('inventories::filament/clusters/configurations/resources/rule.table.columns.source-location'))
                     ->searchable(),
                 TextColumn::make('destinationLocation.full_name')
+                    ->label(__('inventories::filament/clusters/configurations/resources/rule.table.columns.destination-location'))
                     ->searchable(),
             ])
             ->headerActions([

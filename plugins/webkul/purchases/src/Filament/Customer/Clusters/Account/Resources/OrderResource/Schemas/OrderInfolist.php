@@ -208,14 +208,6 @@ class OrderInfolist
                                 Group::make()
                                     ->extraAttributes(['class' => 'mt-8'])
                                     ->schema([
-                                        // TextEntry::make('name')
-                                        //     ->hiddenLabel()
-                                        //     ->size('text-2xl')
-                                        //     ->weight(FontWeight::Bold)
-                                        //     ->formatStateUsing(function (Order $record) {
-                                        //         return __('purchases::filament/customer/clusters/account/resources/order.infolist.general.entries.communication-history');
-                                        //     }),
-
                                         Livewire::make('chatter-panel', function (Order $record) use ($resource) {
                                             $record = Order::findOrFail($record->id);
 
