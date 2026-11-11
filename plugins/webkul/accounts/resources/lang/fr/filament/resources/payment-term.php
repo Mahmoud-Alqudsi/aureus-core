@@ -20,7 +20,7 @@ return [
             'due-terms' => [
                 'title' => 'Termes d\'échéance',
                 'add-action-label' => 'Ajouter un terme d\'échéance',
-                
+
                 'repeater' => [
                     'due-terms' => [
                         'fields' => [

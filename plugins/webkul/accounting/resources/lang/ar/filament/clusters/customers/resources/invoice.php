@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'title' => 'فاتورة',
+
     'navigation' => [
         'title' => 'فواتير العملاء',
     ],

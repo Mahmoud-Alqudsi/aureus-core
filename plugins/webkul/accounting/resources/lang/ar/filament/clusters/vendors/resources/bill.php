@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'title' => 'فاتورة مورد',
+
     'navigation' => [
         'title' => 'فواتير الموردين',
     ],
