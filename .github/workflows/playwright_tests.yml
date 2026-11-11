@@ -208,6 +208,7 @@ jobs:
             --admin-password="admin123"
 
       - name: Switch to Production Mode
+        if: steps.filter.outputs.docs_only != 'true'
         run: |
           sed -i "s|^\(APP_ENV=\s*\).*$|\1production|" .env
           sed -i "/URL::forceScheme('https');/s|^|//|" app/Providers/AppServiceProvider.php
