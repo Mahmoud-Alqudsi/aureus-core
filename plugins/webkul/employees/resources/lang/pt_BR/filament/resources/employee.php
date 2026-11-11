@@ -170,6 +170,7 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'          => 'Avatar',
             'name'            => 'Nome',
             'manager-name'    => 'Gerente',
             'company-name'    => 'Empresa',
@@ -356,6 +357,7 @@ return [
 
                 'entries' => [
                     'location'             => 'Localização',
+                    'approvers'            => 'Aprovadores',
                     'work-address'         => 'Endereço de trabalho',
                     'work-location'        => 'Local de trabalho',
                     'time-off'             => 'Ausências',

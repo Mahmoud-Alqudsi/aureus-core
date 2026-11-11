@@ -21,8 +21,8 @@ class AccrualPlansTable
                     ->searchable()
                     ->label(__('time-off::filament/clusters/configurations/resources/accrual-plan.table.columns.name')),
                 TextColumn::make('leaveAccrualLevels')
-                    ->formatStateUsing(fn ($record) => $record?->leaveAccrualLevels?->count() ?? 0)
-                    ->label(__('time-off::filament/clusters/configurations/resources/accrual-plan.table.columns.levels')),
+                    ->label(__('time-off::filament/clusters/configurations/resources/accrual-plan.table.columns.levels'))
+                    ->formatStateUsing(fn ($record) => $record?->leaveAccrualLevels?->count() ?? 0),
             ])
             ->recordActions([
                 ViewAction::make(),

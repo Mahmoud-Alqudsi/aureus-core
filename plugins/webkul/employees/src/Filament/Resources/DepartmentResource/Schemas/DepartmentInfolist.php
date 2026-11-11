@@ -41,7 +41,7 @@ class DepartmentInfolist
                                             ->hidden(fn (Department $record): bool => $record->parent === null)
                                             ->schema([
                                                 TextEntry::make('hierarchy')
-                                                    ->label('')
+                                                    ->hiddenLabel()
                                                     ->html()
                                                     ->state(fn (Department $record): string => static::buildHierarchyTree($record)),
                                             ])->columnSpan('full'),

@@ -177,10 +177,10 @@ trait CandidateSkillRelation
                                     ->placeholder('—')
                                     ->label(__('recruitments::filament/clusters/applications/resources/candidate/relation-manager/skill.infolist.entries.skill')),
                                 TextEntry::make('skillLevel.name')
+                                    ->label(__('recruitments::filament/clusters/applications/resources/candidate/relation-manager/skill.infolist.entries.skill-level'))
                                     ->placeholder('—')
                                     ->badge()
-                                    ->color(fn ($record) => $record->skillType?->color)
-                                    ->label(__('recruitments::filament/clusters/applications/resources/candidate/relation-manager/skill.infolist.entries.skill-level')),
+                                    ->color(fn ($record) => $record->skillType?->color),
                                 CustomTables\Infolists\ProgressBarEntry::make('skillLevel.level')
                                     ->getStateUsing(fn ($record) => $record->skillLevel?->level)
                                     ->color(function ($record) {

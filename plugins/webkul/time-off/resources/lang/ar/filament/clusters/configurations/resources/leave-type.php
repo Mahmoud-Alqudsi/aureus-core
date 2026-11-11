@@ -139,6 +139,7 @@ return [
                     'public-holiday-included'             => 'تشمل العطل الرسمية',
                     'allow-to-attach-supporting-document' => 'السماح بإرفاق مستند داعم',
                     'show-on-dashboard'                   => 'العرض في لوحة التحكم',
+                    'allow-negative-cap'                  => 'السماح بالرصيد السالب',
                     'kind-off-time'                       => 'نوع الوقت',
                     'max-negative-cap'                    => 'الحد الأقصى للرصيد السالب',
                     'kind-of-time'                        => 'نوع الإجازة',

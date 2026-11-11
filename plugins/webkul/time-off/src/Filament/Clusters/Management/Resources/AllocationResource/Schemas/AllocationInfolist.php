@@ -49,10 +49,10 @@ class AllocationInfolist
                                             ->icon('heroicon-o-clock')
                                             ->label(__('time-off::filament/clusters/management/resources/allocation.infolist.sections.allocation-details.entries.time-off-type')),
                                         TextEntry::make('allocation_type')
+                                            ->label(__('time-off::filament/clusters/management/resources/allocation.infolist.sections.allocation-details.entries.allocation-type'))
                                             ->placeholder('—')
                                             ->icon('heroicon-o-queue-list')
-                                            ->formatStateUsing(fn ($state) => $state->getLabel())
-                                            ->label(__('time-off::filament/clusters/management/resources/allocation.infolist.sections.allocation-details.entries.allocation-type')),
+                                            ->formatStateUsing(fn ($state) => $state->getLabel()),
                                     ])->columns(2),
                                 Section::make(__('time-off::filament/clusters/management/resources/allocation.infolist.sections.validity-period.title'))
                                     ->schema([
@@ -77,10 +77,10 @@ class AllocationInfolist
                                         ->icon('heroicon-o-calculator')
                                         ->numeric(),
                                     TextEntry::make('state')
+                                        ->label(__('time-off::filament/clusters/management/resources/allocation.infolist.sections.allocation-status.entries.state'))
                                         ->placeholder('—')
                                         ->icon('heroicon-o-flag')
-                                        ->formatStateUsing(fn ($state) => State::options()[$state])
-                                        ->label(__('time-off::filament/clusters/management/resources/allocation.infolist.sections.allocation-status.entries.state')),
+                                        ->formatStateUsing(fn ($state) => State::options()[$state]),
                                 ]),
                         ])->columnSpan(1),
                     ]),

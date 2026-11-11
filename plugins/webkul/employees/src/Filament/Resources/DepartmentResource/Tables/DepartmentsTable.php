@@ -33,6 +33,7 @@ class DepartmentsTable
             ->columns([
                 Stack::make([
                     ImageColumn::make('manager.partner.avatar')
+                        ->label(__('employees::filament/resources/department.table.columns.avatar'))
                         ->imageHeight(35)
                         ->circular()
                         ->width(35),

@@ -71,6 +71,7 @@ class LeaveTypesTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->label(__('time-off::filament/clusters/configurations/resources/leave-type.table.columns.color')),
                 TextColumn::make('company.name')
+                    ->label(__('time-off::filament/clusters/configurations/resources/leave-type.table.columns.company-name'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
             ])
