@@ -59,6 +59,7 @@ class BillsTable
                     ->label(__('accounts::filament/resources/bill.table.columns.bill-date'))
                     ->sortable(),
                 TextColumn::make('invoice_date_due')
+                    ->label(__('accounts::filament/resources/bill.table.columns.due-date'))
                     ->state(function ($record) {
                         if ($record->payment_state == PaymentState::PAID) {
                             return null;
@@ -94,7 +95,6 @@ class BillsTable
                         return null;
                     })
                     ->placeholder('-')
-                    ->label(__('accounts::filament/resources/bill.table.columns.due-date'))
                     ->sortable(),
                 TextColumn::make('amount_untaxed_in_currency_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.tax-excluded'))

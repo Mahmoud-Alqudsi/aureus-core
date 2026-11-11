@@ -34,15 +34,15 @@ class JournalInfolist
                                                 Fieldset::make(__('accounts::filament/resources/journal.infolist.tabs.journal-entries.field-set.accounting-information.title'))
                                                     ->schema([
                                                         IconEntry::make('refund_order')
+                                                            ->label(__('accounts::filament/resources/journal.infolist.tabs.journal-entries.field-set.accounting-information.entries.dedicated-credit-note-sequence'))
                                                             ->boolean()
-                                                            ->visible(fn ($record) => in_array($record->type, [JournalType::SALE, JournalType::PURCHASE]))
                                                             ->placeholder('-')
-                                                            ->label(__('accounts::filament/resources/journal.infolist.tabs.journal-entries.field-set.accounting-information.entries.dedicated-credit-note-sequence')),
+                                                            ->visible(fn ($record) => in_array($record->type, [JournalType::SALE, JournalType::PURCHASE])),
                                                         IconEntry::make('payment_order')
+                                                            ->label(__('accounts::filament/resources/journal.infolist.tabs.journal-entries.field-set.accounting-information.entries.dedicated-payment-sequence'))
                                                             ->boolean()
                                                             ->placeholder('-')
-                                                            ->visible(fn ($record) => in_array($record->type, [JournalType::BANK, JournalType::CASH, JournalType::CREDIT_CARD]))
-                                                            ->label(__('accounts::filament/resources/journal.infolist.tabs.journal-entries.field-set.accounting-information.entries.dedicated-payment-sequence')),
+                                                            ->visible(fn ($record) => in_array($record->type, [JournalType::BANK, JournalType::CASH, JournalType::CREDIT_CARD])),
                                                         TextEntry::make('code')
                                                             ->placeholder('-')
                                                             ->label(__('accounts::filament/resources/journal.infolist.tabs.journal-entries.field-set.accounting-information.entries.sort-code')),

@@ -192,6 +192,7 @@ return [
                 'title'   => 'General',
 
                 'entries' => [
+                    'payment-state'     => 'Payment State',
                     'vendor-invoice'    => 'Vendor Invoice',
                     'vendor'            => 'Vendor',
                     'bill-date'         => 'Bill Date',

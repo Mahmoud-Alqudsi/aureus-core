@@ -77,9 +77,11 @@ class FiscalPositionInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('taxSource.name')
+                                            ->label(__('accounts::filament/resources/fiscal-position.form.tabs.tax-mapping.table.columns.tax-source'))
                                             ->placeholder('-'),
 
                                         TextEntry::make('taxDestination.name')
+                                            ->label(__('accounts::filament/resources/fiscal-position.form.tabs.tax-mapping.table.columns.tax-destination'))
                                             ->placeholder('-'),
                                     ]),
                             ]),
@@ -99,9 +101,11 @@ class FiscalPositionInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('accountSource.name')
+                                            ->label(__('accounts::filament/resources/fiscal-position.form.tabs.account-mapping.table.columns.source-account'))
                                             ->placeholder('-'),
 
                                         TextEntry::make('accountDestination.name')
+                                            ->label(__('accounts::filament/resources/fiscal-position.form.tabs.account-mapping.table.columns.destination-account'))
                                             ->placeholder('-'),
                                     ]),
                             ]),

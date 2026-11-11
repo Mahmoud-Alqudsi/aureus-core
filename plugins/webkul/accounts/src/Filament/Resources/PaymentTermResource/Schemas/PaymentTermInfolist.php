@@ -50,8 +50,8 @@ class PaymentTermInfolist
                                             ->placeholder('—'),
                                     ])->columns(2),
                                 TextEntry::make('early_pay_discount')
-                                    ->visible(fn (Get $get) => $get('early_discount'))
                                     ->label(__('accounts::filament/resources/payment-term.infolist.sections.entries.reduced-tax'))
+                                    ->visible(fn (Get $get) => $get('early_discount'))
                                     ->placeholder('—'),
                                 TextEntry::make('note')
                                     ->label(__('accounts::filament/resources/payment-term.infolist.sections.entries.note'))
@@ -91,20 +91,25 @@ class PaymentTermInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('value')
+                                            ->label(__('accounts::filament/resources/payment-term.infolist.tabs.due-terms.repeater.due-terms.entries.value'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => DueTermValue::options()[$state] ?? $state),
 
                                         TextEntry::make('value_amount')
+                                            ->label(__('accounts::filament/resources/payment-term.infolist.tabs.due-terms.repeater.due-terms.entries.due'))
                                             ->placeholder('-'),
 
                                         TextEntry::make('delay_type')
+                                            ->label(__('accounts::filament/resources/payment-term.infolist.tabs.due-terms.repeater.due-terms.entries.delay-type'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => DelayType::options()[$state] ?? $state),
 
                                         TextEntry::make('days_next_month')
+                                            ->label(__('accounts::filament/resources/payment-term.infolist.tabs.due-terms.repeater.due-terms.entries.days-on-the-next-month'))
                                             ->placeholder('-'),
 
                                         TextEntry::make('nb_days')
+                                            ->label(__('accounts::filament/resources/payment-term.infolist.tabs.due-terms.repeater.due-terms.entries.days'))
                                             ->placeholder('-'),
                                     ]),
                                 TextEntry::make('payment_term_preview')

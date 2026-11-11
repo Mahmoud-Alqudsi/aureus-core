@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'model-label' => 'Tax',
+    'model-label' => 'الضريبة',
 
     'navigation' => [
         'title' => 'الضرائب',

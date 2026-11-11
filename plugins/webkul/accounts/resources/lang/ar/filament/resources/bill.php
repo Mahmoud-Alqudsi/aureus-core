@@ -192,6 +192,7 @@ return [
                 'title'   => 'عام',
 
                 'entries' => [
+                    'payment-state'     => 'حالة الدفع',
                     'vendor-invoice'    => 'فاتورة المورد',
                     'vendor'            => 'المورد',
                     'bill-date'         => 'تاريخ الفاتورة',

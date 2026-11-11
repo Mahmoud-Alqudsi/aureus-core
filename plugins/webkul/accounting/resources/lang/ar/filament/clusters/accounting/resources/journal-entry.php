@@ -152,6 +152,7 @@ return [
             'general' => [
                 'title'   => 'عام',
                 'entries' => [
+                    'payment-state'   => 'حالة الدفع',
                     'number'          => 'الرقم',
                     'reference'       => 'المرجع',
                     'accounting-date' => 'تاريخ المحاسبة',

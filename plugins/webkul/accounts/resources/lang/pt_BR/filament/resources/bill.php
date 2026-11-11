@@ -192,6 +192,7 @@ return [
                 'title' => 'Geral',
 
                 'entries' => [
+                    'payment-state'     => 'Status do pagamento',
                     'vendor-invoice'    => 'Fatura de fornecedor',
                     'vendor'            => 'Fornecedor',
                     'bill-date'         => 'Data da fatura de fornecedor',
