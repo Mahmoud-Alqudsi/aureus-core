@@ -126,7 +126,7 @@ class ManageTeamMembers extends ManageRelatedRecords
             ->columns([
                 Stack::make([
                     ImageColumn::make('user.partner.avatar')
-                        ->hiddenLabel()
+                        ->label('')
                         ->height(200)
                         ->width(250)
                         ->alignCenter(),

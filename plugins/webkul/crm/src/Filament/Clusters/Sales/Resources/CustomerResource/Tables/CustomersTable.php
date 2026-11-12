@@ -65,7 +65,7 @@ class CustomersTable
     {
         return [
             ImageColumn::make('avatar')
-                ->hiddenLabel()
+                ->label('')
                 ->circular()
                 ->imageSize(32)
                 ->grow(false),

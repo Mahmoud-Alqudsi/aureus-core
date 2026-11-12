@@ -227,6 +227,12 @@ class ComponentScanner
                 // Check for ->label(...)
                 if (preg_match('/->label\s*\(([^)]+)\)/', $chain, $labelMatch)) {
                     $arg = trim($labelMatch[1]);
+
+                    // Intentional blank label for image/icon table columns
+                    if ($arg === "''" || $arg === '""' || $arg === 'false' || $arg === 'null') {
+                        continue;
+                    }
+
                     // Check if argument is translated
                     if (strpos($arg, '__(') === false && strpos($arg, 'trans(') === false) {
                         // Check if it's a closure or variable: fn() or $...

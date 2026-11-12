@@ -34,7 +34,7 @@ class PluginsTable
             ->columns([
                 Split::make([
                     IconColumn::make('package_icon')
-                        ->hiddenLabel()
+                        ->label('')
                         ->state(true)
                         ->icon('heroicon-o-puzzle-piece')
                         ->size(IconSize::ExtraLarge)
@@ -43,7 +43,7 @@ class PluginsTable
                         ->grow(false),
 
                     ImageColumn::make('package_image')
-                        ->hiddenLabel()
+                        ->label('')
                         ->getStateUsing(fn ($record) => $record?->package?->icon
                             ? asset("svg/{$record->package->icon}.svg")
                             : null)

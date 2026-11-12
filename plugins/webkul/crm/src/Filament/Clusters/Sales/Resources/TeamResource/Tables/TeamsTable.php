@@ -85,25 +85,25 @@ class TeamsTable
                 Stack::make([
                     Split::make([
                         TextColumn::make('open_opportunities_count')
-                            ->hiddenLabel()
+                            ->label('')
                             ->formatStateUsing(fn (int $state): string => trans_choice('crm::filament/clusters/sales/resources/team.grid.open-opportunities', $state, ['count' => $state]))
                             ->color('primary')
                             ->url(fn (Team $record): string => static::pipelineUrl($record, ['layout' => 'list', 'activeTableView' => 'open'])),
                         TextColumn::make('open_expected_revenue')
-                            ->hiddenLabel()
+                            ->label('')
                             ->money(fn (Team $record): ?string => $record->company?->currency?->code)
                             ->default(0)
                             ->alignEnd(),
                     ]),
                     Split::make([
                         TextColumn::make('quotations_count')
-                            ->hiddenLabel()
+                            ->label('')
                             ->state(fn (Team $record, ListTeams $livewire): int => $livewire->getTeamDashboard($record)['quotations'])
                             ->formatStateUsing(fn (int $state): string => trans_choice('crm::filament/clusters/sales/resources/team.grid.quotations', $state, ['count' => $state]))
                             ->color('primary')
                             ->url(fn (Team $record): string => QuotationResource::getUrl('index', QuotationResource::getTeamOrdersParameters($record->getKey(), TeamOrderScope::QUOTATIONS))),
                         TextColumn::make('quotations_amount')
-                            ->hiddenLabel()
+                            ->label('')
                             ->state(fn (Team $record, ListTeams $livewire): float => $livewire->getTeamDashboard($record)['quotations_amount'])
                             ->money(fn (Team $record): ?string => $record->company?->currency?->code)
                             ->alignEnd(),
@@ -111,13 +111,13 @@ class TeamsTable
                         ->visible(fn (Team $record, ListTeams $livewire): bool => $livewire->getTeamDashboard($record)['quotations'] > 0),
                     Split::make([
                         TextColumn::make('orders_to_invoice_count')
-                            ->hiddenLabel()
+                            ->label('')
                             ->state(fn (Team $record, ListTeams $livewire): int => $livewire->getTeamDashboard($record)['orders_to_invoice'])
                             ->formatStateUsing(fn (int $state): string => trans_choice('crm::filament/clusters/sales/resources/team.grid.orders-to-invoice', $state, ['count' => $state]))
                             ->color('primary')
                             ->url(fn (Team $record): string => QuotationResource::getUrl('index', QuotationResource::getTeamOrdersParameters($record->getKey(), TeamOrderScope::TO_INVOICE))),
                         TextColumn::make('orders_to_invoice_amount')
-                            ->hiddenLabel()
+                            ->label('')
                             ->state(fn (Team $record, ListTeams $livewire): float => $livewire->getTeamDashboard($record)['orders_to_invoice_amount'])
                             ->money(fn (Team $record): ?string => $record->company?->currency?->code)
                             ->alignEnd(),
@@ -125,11 +125,11 @@ class TeamsTable
                         ->visible(fn (Team $record, ListTeams $livewire): bool => $livewire->getTeamDashboard($record)['orders_to_invoice'] > 0),
                     Split::make([
                         TextColumn::make('invoiced_month_label')
-                            ->hiddenLabel()
+                            ->label('')
                             ->state(fn (): string => __('crm::filament/clusters/sales/resources/team.grid.invoiced-month'))
                             ->weight(FontWeight::SemiBold),
                         TextColumn::make('invoiced_month')
-                            ->hiddenLabel()
+                            ->label('')
                             ->state(fn (Team $record, ListTeams $livewire): string => __('crm::filament/clusters/sales/resources/team.grid.of-target', [
                                 'invoiced' => money($livewire->getTeamDashboard($record)['invoiced_month'], $record->company?->currency?->code),
                                 'target'   => money((float) $record->invoiced_target, $record->company?->currency?->code),
@@ -139,7 +139,7 @@ class TeamsTable
                         ->visible(fn (Team $record): bool => (float) $record->invoiced_target > 0),
                 ])->space(2),
                 TextColumn::make('weekly_opportunities')
-                    ->hiddenLabel()
+                    ->label('')
                     ->state(fn (Team $record, ListTeams $livewire): Htmlable => static::weeklyChart($livewire->getTeamDashboard($record)['weeks']))
                     ->extraAttributes(['role' => 'img', 'aria-label' => __('crm::filament/clusters/sales/resources/team.grid.chart')]),
             ])->space(4),
