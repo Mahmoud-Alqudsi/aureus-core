@@ -54,6 +54,7 @@ class PluginsTable
                     Stack::make([
                         Split::make([
                             TextColumn::make('name')
+                                ->label(__('plugin-manager::filament/resources/plugin.table.name'))
                                 ->weight('semibold')
                                 ->searchable()
                                 ->size(TextSize::Large)
@@ -68,6 +69,7 @@ class PluginsTable
                         ]),
 
                         TextColumn::make('summary')
+                            ->label(__('plugin-manager::filament/resources/plugin.table.summary'))
                             ->color('gray')
                             ->limit(80)
                             ->wrap()
@@ -75,6 +77,7 @@ class PluginsTable
 
                         Split::make([
                             TextColumn::make('is_installed')
+                                ->label(__('plugin-manager::filament/resources/plugin.table.status'))
                                 ->badge()
                                 ->inline()
                                 ->grow(false)

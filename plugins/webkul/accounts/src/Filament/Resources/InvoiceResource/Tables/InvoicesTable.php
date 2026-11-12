@@ -64,6 +64,7 @@ class InvoicesTable
                     ->label(__('accounts::filament/resources/invoice.table.columns.invoice-date'))
                     ->sortable(),
                 TextColumn::make('invoice_date_due')
+                    ->label(__('accounts::filament/resources/invoice.table.columns.due-date'))
                     ->state(function ($record) {
                         if ($record->payment_state == PaymentState::PAID) {
                             return null;
@@ -99,7 +100,6 @@ class InvoicesTable
                         return null;
                     })
                     ->placeholder('-')
-                    ->label(__('accounts::filament/resources/invoice.table.columns.due-date'))
                     ->sortable(),
                 TextColumn::make('amount_untaxed_in_currency_signed')
                     ->label(__('accounts::filament/resources/invoice.table.columns.tax-excluded'))
@@ -134,7 +134,7 @@ class InvoicesTable
                     ->money(fn ($record) => $record->currency?->name)
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('payment_state')
-                    ->label(__('Payment State'))
+                    ->label(__('accounts::filament/resources/invoice.table.columns.payment-state'))
                     ->placeholder('-')
                     ->color(fn (PaymentState $state) => $state->getColor())
                     ->icon(fn (PaymentState $state) => $state->getIcon())

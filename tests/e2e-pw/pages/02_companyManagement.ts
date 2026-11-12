@@ -74,6 +74,7 @@ export class CompanyManagementPage {
     async searchCompany(keyword: string) {
         const searchInput = this.erpLocators.companiesSearchInput;
         await searchInput.fill(keyword);
+        await this.page.waitForTimeout(500); // table search debounce
         await this.page.waitForLoadState("networkidle");
     }
 

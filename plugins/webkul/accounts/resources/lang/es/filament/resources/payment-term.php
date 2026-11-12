@@ -19,6 +19,7 @@ return [
         'tabs' => [
             'due-terms' => [
                 'title' => 'Plazos de vencimiento',
+                'add-action-label' => 'Agregar Plazo de Vencimiento',   
 
                 'repeater' => [
                     'due-terms' => [
@@ -32,6 +33,13 @@ return [
                     ],
                 ],
             ],
+        ],
+
+        'preview' => [
+            'example'     => 'Ejemplo: <strong>:total</strong> el :date',
+            'no-terms'    => 'No se han definido términos de vencimiento para la vista previa',
+            'title'       => 'Vista previa de las condiciones de pago',
+            'installment' => 'Cuota <strong>#:number</strong> de <strong>:amount</strong> con vencimiento el :date',
         ],
     ],
 

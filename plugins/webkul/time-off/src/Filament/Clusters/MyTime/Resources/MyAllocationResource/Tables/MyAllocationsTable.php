@@ -32,13 +32,13 @@ class MyAllocationsTable
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('allocation_type')
-                    ->formatStateUsing(fn ($state) => AllocationType::options()[$state->value])
                     ->label(__('time-off::filament/clusters/my-time/resources/my-allocation.table.columns.allocation-type'))
+                    ->formatStateUsing(fn ($state) => AllocationType::options()[$state->value])
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('state')
-                    ->formatStateUsing(fn ($state) => State::options()[$state])
                     ->label(__('time-off::filament/clusters/my-time/resources/my-allocation.table.columns.status'))
+                    ->formatStateUsing(fn ($state) => State::options()[$state])
                     ->badge()
                     ->sortable()
                     ->searchable(),

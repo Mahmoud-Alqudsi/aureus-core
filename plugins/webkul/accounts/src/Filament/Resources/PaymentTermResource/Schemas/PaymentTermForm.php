@@ -97,7 +97,7 @@ class PaymentTermForm
                                             ->relationship('dueTerms')
                                             ->compact()
                                             ->reactive()
-                                            ->addActionLabel(__('Add Due Term'))
+                                            ->addActionLabel(__('accounts::filament/resources/payment-term.form.tabs.due-terms.add-action-label'))
                                             ->table([
                                                 TableColumn::make('value')
                                                     ->label(__('accounts::filament/resources/payment-term.form.tabs.due-terms.repeater.due-terms.fields.value'))
@@ -149,16 +149,20 @@ class PaymentTermForm
                                         Group::make()
                                             ->schema([
                                                 TextEntry::make('payment_term_preview')
+                                                    ->hiddenLabel()
                                                     ->state(function (Get $get) {
                                                         $dueTerms = $get('dueTerms') ?? [];
                                                         $total = 1000;
                                                         $start = Carbon::now();
 
                                                         $html = '';
-                                                        $html .= '<div style="margin-bottom:0.75rem;font-size:0.9rem;color:#6b7280;">Example: '.number_format($total, 2).' on '.$start->format('m/d/Y').'</div>';
+                                                        $html .= '<div style="margin-bottom:0.75rem;font-size:0.9rem;color:#6b7280;">'.__('accounts::filament/resources/payment-term.form.preview.example', [
+                                                            'total' => number_format($total, 2),
+                                                            'date'  => $start->format('m/d/Y'),
+                                                        ]).'</div>';
 
                                                         if (empty($dueTerms)) {
-                                                            $html .= '<div style="padding:1rem;background:#f3f4f6;border-radius:4px;color:#374151;">'.__('No due terms defined to preview').'</div>';
+                                                            $html .= '<div style="padding:1rem;background:#f3f4f6;border-radius:4px;color:#374151;">'.__('accounts::filament/resources/payment-term.form.preview.no-terms').'</div>';
 
                                                             return new HtmlString($html);
                                                         }
@@ -173,7 +177,7 @@ class PaymentTermForm
 
                                                         $html .= '<div class="rounded-md bg-gray-100 p-4 text-gray-800 dark:bg-gray-800 dark:text-white">';
 
-                                                        $html .= '<div style="margin-bottom:0.5rem;font-weight:600;">Payment terms preview</div>';
+                                                        $html .= '<div style="margin-bottom:0.5rem;font-weight:600;">'.__('accounts::filament/resources/payment-term.form.preview.title').'</div>';
 
                                                         $i = 1;
                                                         foreach ($dueTerms as $term) {
@@ -193,7 +197,11 @@ class PaymentTermForm
 
                                                             $dueDate = $start->copy()->addDays($days)->format('m/d/Y');
 
-                                                            $html .= '<div style="margin-bottom:0.5rem;"><strong>'.$i.'#</strong> Installment of <strong>$'.number_format($amt, 2).'</strong> due on '.$dueDate.'</div>';
+                                                            $html .= '<div style="margin-bottom:0.5rem;">'.__('accounts::filament/resources/payment-term.form.preview.installment', [
+                                                                'number' => $i,
+                                                                'amount' => '$'.number_format($amt, 2),
+                                                                'date'   => $dueDate,
+                                                            ]).'</div>';
                                                             $i++;
                                                         }
 

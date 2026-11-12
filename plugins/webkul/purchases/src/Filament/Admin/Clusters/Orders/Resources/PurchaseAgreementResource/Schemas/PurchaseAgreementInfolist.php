@@ -84,26 +84,32 @@ class PurchaseAgreementInfolist
                             ->icon('heroicon-o-cube')
                             ->schema([
                                 RepeatableEntry::make('lines')
+                                    ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.title'))
                                     ->table(fn ($record) => [
                                         InfolistTableColumn::make('product.name')
                                             ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.product')),
                                         InfolistTableColumn::make('qty')
                                             ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.quantity')),
                                         InfolistTableColumn::make('ordered_qty')
-                                            ->visible(fn (): bool => $record->type === RequisitionType::BLANKET_ORDER)
-                                            ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.ordered')),
+                                            ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.ordered'))
+                                            ->visible(fn (): bool => $record->type === RequisitionType::BLANKET_ORDER),
                                         InfolistTableColumn::make('uom.name')
                                             ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.uom')),
                                         InfolistTableColumn::make('price_unit')
                                             ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.unit-price')),
                                     ])
                                     ->schema([
-                                        TextEntry::make('product.name'),
-                                        TextEntry::make('qty'),
-                                        TextEntry::make('ordered_qty'),
+                                        TextEntry::make('product.name')
+                                            ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.product')),
+                                        TextEntry::make('qty')
+                                            ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.quantity')),
+                                        TextEntry::make('ordered_qty')
+                                            ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.ordered')),
                                         TextEntry::make('uom.name')
+                                            ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.uom'))
                                             ->visible(PurchaseAgreementResource::getProductSettings()->enable_uom),
                                         TextEntry::make('price_unit')
+                                            ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.infolist.tabs.products.entries.unit-price'))
                                             ->money(fn ($record) => $record->requisition->currency->code ?? default_currency_code()),
                                     ])
                                     ->columns([

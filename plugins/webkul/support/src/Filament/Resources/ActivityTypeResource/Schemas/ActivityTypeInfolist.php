@@ -31,18 +31,18 @@ class ActivityTypeInfolist
                                             ->placeholder('—')
                                             ->label(__('support::filament/resources/activity-type.infolist.sections.activity-type-details.entries.name')),
                                         TextEntry::make('category')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.activity-type-details.entries.action'))
                                             ->icon('heroicon-o-tag')
                                             ->placeholder('—')
-                                            ->formatStateUsing(fn ($state) => ActivityTypeAction::options()[$state])
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.activity-type-details.entries.action')),
+                                            ->formatStateUsing(fn ($state) => ActivityTypeAction::options()[$state]),
                                         TextEntry::make('defaultUser.name')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.activity-type-details.entries.default-user'))
                                             ->icon('heroicon-o-user')
-                                            ->placeholder('—')
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.activity-type-details.entries.default-user')),
+                                            ->placeholder('—'),
                                         TextEntry::make('plugin')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.activity-type-details.entries.plugin'))
                                             ->icon('heroicon-o-puzzle-piece')
-                                            ->placeholder('—')
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.activity-type-details.entries.plugin')),
+                                            ->placeholder('—'),
                                     ])->columns(2),
                                 Section::make(__('support::filament/resources/activity-type.infolist.sections.delay-information.title'))
                                     ->schema([
@@ -59,20 +59,20 @@ class ActivityTypeInfolist
                                 Section::make(__('support::filament/resources/activity-type.infolist.sections.delay-information.title'))
                                     ->schema([
                                         TextEntry::make('delay_count')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.delay-information.entries.delay-count'))
                                             ->icon('heroicon-o-clock')
                                             ->placeholder('—')
-                                            ->numeric()
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.delay-information.entries.delay-count')),
+                                            ->numeric(),
                                         TextEntry::make('delay_unit')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.delay-information.entries.delay-unit'))
                                             ->icon('heroicon-o-calendar')
                                             ->placeholder('—')
-                                            ->formatStateUsing(fn ($state) => ActivityDelayUnit::options()[$state])
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.delay-information.entries.delay-unit')),
+                                            ->formatStateUsing(fn ($state) => ActivityDelayUnit::options()[$state]),
                                         TextEntry::make('delay_from')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.delay-information.entries.delay-form'))
                                             ->icon('heroicon-o-arrow-right')
                                             ->placeholder('—')
-                                            ->formatStateUsing(fn ($state) => ActivityDelayFrom::options()[$state])
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.delay-information.entries.delay-form')),
+                                            ->formatStateUsing(fn ($state) => ActivityDelayFrom::options()[$state]),
                                     ])->columns(2),
                             ])->columnSpan(2),
                         Group::make()
@@ -80,28 +80,28 @@ class ActivityTypeInfolist
                                 Section::make(__('support::filament/resources/activity-type.infolist.sections.advanced-information.title'))
                                     ->schema([
                                         TextEntry::make('icon')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.icon'))
                                             ->icon(fn ($record) => $record->icon)
-                                            ->placeholder('—')
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.icon')),
+                                            ->placeholder('—'),
                                         TextEntry::make('decoration_type')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.decoration-type'))
                                             ->icon('heroicon-o-paint-brush')
                                             ->formatStateUsing(fn ($state) => ActivityDecorationType::options()[$state])
-                                            ->placeholder('—')
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.decoration-type')),
+                                            ->placeholder('—'),
                                         TextEntry::make('chaining_type')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.chaining-type'))
                                             ->icon('heroicon-o-link')
                                             ->formatStateUsing(fn ($state) => ActivityChainingType::options()[$state])
-                                            ->placeholder('—')
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.chaining-type')),
+                                            ->placeholder('—'),
                                         TextEntry::make('suggestedActivityTypes.name')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.suggest'))
                                             ->icon('heroicon-o-list-bullet')
                                             ->placeholder('—')
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.suggest'))
                                             ->listWithLineBreaks(),
                                         TextEntry::make('triggeredNextType.name')
+                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.trigger'))
                                             ->icon('heroicon-o-forward')
-                                            ->placeholder('—')
-                                            ->label(__('support::filament/resources/activity-type.infolist.sections.advanced-information.entries.trigger')),
+                                            ->placeholder('—'),
                                     ]),
                                 Section::make(__('support::filament/resources/activity-type.infolist.sections.status-and-configuration-information.title'))
                                     ->schema([

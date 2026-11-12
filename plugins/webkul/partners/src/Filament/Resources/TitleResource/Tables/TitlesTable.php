@@ -22,10 +22,12 @@ class TitlesTable
                     ->label(__('partners::filament/resources/title.table.columns.short-name'))
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label(__('partners::filament/resources/title.table.columns.created-at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label(__('partners::filament/resources/title.table.columns.updated-at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

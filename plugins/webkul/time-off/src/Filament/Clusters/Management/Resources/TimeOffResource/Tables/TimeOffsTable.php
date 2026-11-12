@@ -43,7 +43,6 @@ class TimeOffsTable
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('duration_display')
-                    ->label(__('Duration'))
                     ->label(__('time-off::filament/clusters/management/resources/time-off.table.columns.duration'))
                     ->sortable()
                     ->searchable(),

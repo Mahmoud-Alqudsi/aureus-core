@@ -13,7 +13,7 @@ class ActivityPlanInfolist
     {
         return $schema
             ->components([
-                Section::make('General Information')
+                Section::make(__('projects::filament/clusters/configurations/resources/activity-plan.infolist.general'))
                     ->schema([
                         TextEntry::make('name')
                             ->label(__('projects::filament/clusters/configurations/resources/activity-plan.infolist.name'))

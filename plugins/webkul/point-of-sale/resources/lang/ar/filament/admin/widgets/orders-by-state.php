@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'heading' => 'Orders by Status',
-    'dataset' => 'Orders',
+    'heading' => 'الطلبات حسب الحالة',
+    'dataset' => 'الطلبات',
 ];

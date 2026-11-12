@@ -44,6 +44,7 @@ class EmployeesTable
                 Stack::make([
                     Split::make([
                         ImageColumn::make('partner.avatar')
+                            ->label(__('employees::filament/resources/employee.table.columns.avatar'))
                             ->circular()
                             ->imageSize(72)
                             ->defaultImageUrl(fn (Employee $record): string => (new UiAvatarsProvider)->get($record))
@@ -140,13 +141,13 @@ class EmployeesTable
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('time_zone')
+                    ->label(__('employees::filament/resources/employee.table.filters.timezone'))
                     ->options(function () {
                         return collect(timezone_identifiers_list())->mapWithKeys(function ($timezone) {
                             return [$timezone => $timezone];
                         });
                     })
                     ->searchable()
-                    ->label(__('employees::filament/resources/employee.table.filters.timezone'))
                     ->multiple()
                     ->preload(),
                 QueryBuilder::make()

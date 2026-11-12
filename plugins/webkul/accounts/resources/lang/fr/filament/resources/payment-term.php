@@ -19,6 +19,7 @@ return [
         'tabs' => [
             'due-terms' => [
                 'title' => 'Termes d\'échéance',
+                'add-action-label' => 'Ajouter un terme d\'échéance',
 
                 'repeater' => [
                     'due-terms' => [
@@ -32,6 +33,13 @@ return [
                     ],
                 ],
             ],
+        ],
+
+        'preview' => [
+            'example'     => 'Exemple : <strong>:total</strong> le :date',
+            'no-terms'    => 'Aucune condition d\'échéance définie pour l\'aperçu',
+            'title'       => 'Aperçu des conditions de paiement',
+            'installment' => 'Échéance <strong>#:number</strong> de <strong>:amount</strong> exigible le :date',
         ],
     ],
 

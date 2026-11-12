@@ -98,8 +98,7 @@ class RoleResource extends RolesRoleResource
     {
         return self::shield()->hasSimpleResourcePermissionView()
             ? self::getTabFormComponentForSimpleResourcePermissionsView()
-            : Tab::make('resources')
-                ->label(__('filament-shield::filament-shield.resources'))
+            : Tab::make(__('filament-shield::filament-shield.resources'))
                 ->visible(fn (): bool => Utils::isResourceTabEnabled())
                 ->badge(static::getResourceTabBadgeCount())
                 ->schema(static::getPluginResourceEntitiesSchema());
@@ -110,8 +109,7 @@ class RoleResource extends RolesRoleResource
         $options = static::getPageOptions();
         $count = count($options);
 
-        return Tab::make('pages')
-            ->label(__('filament-shield::filament-shield.pages'))
+        return Tab::make(__('filament-shield::filament-shield.pages'))
             ->visible(fn (): bool => Utils::isPageTabEnabled() && $count > 0)
             ->badge($count)
             ->schema(static::getPluginPageEntitiesSchema());
@@ -122,8 +120,7 @@ class RoleResource extends RolesRoleResource
         $options = static::getWidgetOptions();
         $count = count($options);
 
-        return Tab::make('widgets')
-            ->label(__('filament-shield::filament-shield.widgets'))
+        return Tab::make(__('filament-shield::filament-shield.widgets'))
             ->visible(fn (): bool => Utils::isWidgetTabEnabled() && $count > 0)
             ->badge($count)
             ->schema(static::getPluginWidgetEntitiesSchema());

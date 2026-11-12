@@ -66,6 +66,7 @@ return [
             'planned-date'    => 'Data planejada',
             'remaining-hours' => 'Horas restantes',
             'project-manager' => 'Gerente de projeto',
+            'tags'            => 'Tags',
         ],
 
         'groups' => [

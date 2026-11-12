@@ -112,6 +112,7 @@ return [
             'tax'             => 'Imposto',
             'total'           => 'Total',
             'amount-due'      => 'Valor devido',
+            'payment-state'   => 'Status do pagamento',
             'bill-currency'   => 'Moeda da fatura de fornecedor',
         ],
 
@@ -191,6 +192,7 @@ return [
                 'title' => 'Geral',
 
                 'entries' => [
+                    'payment-state'     => 'Status do pagamento',
                     'vendor-invoice'    => 'Fatura de fornecedor',
                     'vendor'            => 'Fornecedor',
                     'bill-date'         => 'Data da fatura de fornecedor',

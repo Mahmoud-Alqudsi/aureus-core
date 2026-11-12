@@ -42,6 +42,7 @@ class JournalEntryInfolist
                 Section::make()
                     ->schema([
                         TextEntry::make('payment_state')
+                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.section.general.entries.payment-state'))
                             ->badge(),
                     ])
                     ->compact()
@@ -130,17 +131,22 @@ class JournalEntryInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('account')
+                                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.tabs.lines.repeater.entries.account'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => $state['name'] ?? '-'),
                                         TextEntry::make('partner')
+                                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.tabs.lines.repeater.entries.partner'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => $state ? ($state['name'] ?? '-') : '-'),
                                         TextEntry::make('name')
+                                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.tabs.lines.repeater.entries.label'))
                                             ->placeholder('-'),
                                         TextEntry::make('currency')
+                                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.tabs.lines.repeater.entries.currency'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => $state['name'] ?? '-'),
                                         TextEntry::make('taxes')
+                                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.tabs.lines.repeater.entries.taxes'))
                                             ->badge()
                                             ->state(function ($record): array {
                                                 return $record->taxes->map(fn ($tax) => [
@@ -151,9 +157,11 @@ class JournalEntryInfolist
                                             ->placeholder('-')
                                             ->weight(FontWeight::Bold),
                                         TextEntry::make('debit')
+                                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.tabs.lines.repeater.entries.debit'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency?->name),
                                         TextEntry::make('credit')
+                                            ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.infolist.tabs.lines.repeater.entries.credit'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency?->name),
                                     ])->columns(5),

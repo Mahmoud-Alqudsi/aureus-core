@@ -65,7 +65,6 @@ class PaymentTermsTable
                     ->label(__('accounts::filament/resources/payment-term.table.groups.display-on-invoice'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('early_discount')
-                    ->label(__('Early Discount'))
                     ->label(__('accounts::filament/resources/payment-term.table.groups.early-discount'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('discount_percentage')

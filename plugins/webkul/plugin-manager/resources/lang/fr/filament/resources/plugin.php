@@ -5,6 +5,9 @@ return [
     'title' => 'Plugin',
 
     'table' => [
+        'name'                => 'Nom',
+        'summary'             => 'Résumé',
+        'status'              => 'Statut',
         'version'             => 'Version',
         'dependencies'        => 'Dépendances',
         'dependencies_suffix' => ' Dépendances',

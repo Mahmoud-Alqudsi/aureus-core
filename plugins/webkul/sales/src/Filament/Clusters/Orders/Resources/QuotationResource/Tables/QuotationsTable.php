@@ -246,40 +246,31 @@ class QuotationsTable
             ->defaultSort('id', 'desc')
             ->groups([
                 Tables\Grouping\Group::make('medium.name')
-                    ->label(__('Medium'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.medium'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('utmSource.name')
-                    ->label(__('Source'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.source'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('team.name')
-                    ->label(__('Team'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.team'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('user.name')
-                    ->label(__('Sales Person'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.sales-person'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('currency.full_name')
-                    ->label(__('Currency'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.currency'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('company.name')
-                    ->label(__('Company'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.company'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('partner.name')
-                    ->label(__('Customer'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.customer'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('date_order')
-                    ->label(__('Quotation Date'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.quotation-date'))
                     ->date()
                     ->collapsible(),
                 Tables\Grouping\Group::make('commitment_date')
-                    ->label(__('Commitment Date'))
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.groups.commitment-date'))
                     ->date()
                     ->collapsible(),

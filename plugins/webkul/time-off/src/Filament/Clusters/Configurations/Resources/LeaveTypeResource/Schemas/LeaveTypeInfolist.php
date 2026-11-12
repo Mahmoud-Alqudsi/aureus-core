@@ -108,6 +108,7 @@ class LeaveTypeInfolist
                                         ->formatStateUsing(fn ($state) => TimeType::options()[$state])
                                         ->badge(),
                                     IconEntry::make('allows_negative')
+                                        ->label(__('time-off::filament/clusters/configurations/resources/leave-type.infolist.sections.configuration.entries.allow-negative-cap'))
                                         ->boolean()
                                         ->visible(fn ($record) => $record->requires_allocation === RequiresAllocation::YES->value)
                                         ->placeholder('—'),

@@ -21,16 +21,19 @@ return [
         ],
         'tabs' => [
             'account-mapping' => [
-                'table' => [
+                'title'            => 'مطابقة الحسابات',
+                'add-action-label' => 'إضافة مطابقة حساب',
+                'table'            => [
                     'columns' => [
                         'source-account'      => 'الحساب المصدر',
                         'destination-account' => 'الحساب الوجهة',
                     ],
                 ],
-
             ],
             'tax-mapping' => [
-                'table' => [
+                'title'            => 'مطابقة الضرائب',
+                'add-action-label' => 'إضافة مطابقة ضريبة',
+                'table'            => [
                     'columns' => [
                         'tax-source'      => 'مصدر الضريبة',
                         'tax-destination' => 'وجهة الضريبة',

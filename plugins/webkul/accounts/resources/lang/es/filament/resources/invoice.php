@@ -122,6 +122,7 @@ return [
             'tax'              => 'Impuesto',
             'total'            => 'Total',
             'amount-due'       => 'Importe pendiente',
+            'payment-state'    => 'Estado de pago',
             'invoice-currency' => 'Moneda de la factura',
         ],
 
@@ -200,6 +201,7 @@ return [
             'general' => [
                 'title'   => 'General',
                 'entries' => [
+                    'payment-state'    => 'Estado de pago',
                     'customer-invoice' => 'Factura de cliente',
                     'customer'         => 'Cliente',
                     'invoice-date'     => 'Fecha de factura',

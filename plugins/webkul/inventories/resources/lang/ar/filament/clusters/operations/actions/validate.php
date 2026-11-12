@@ -23,8 +23,8 @@ return [
             ],
 
             'no-quantities-reserved' => [
-                'title' => 'No quantities are reserved',
-                'body'  => 'No quantities are reserved for the transfer.',
+                'title' => 'لا توجد كميات محجوزة',
+                'body'  => 'لا توجد كميات محجوزة للتحويل.',
             ],
 
             'lot-missing' => [

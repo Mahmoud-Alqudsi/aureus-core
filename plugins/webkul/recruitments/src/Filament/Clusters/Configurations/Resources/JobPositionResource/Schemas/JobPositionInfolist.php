@@ -80,10 +80,10 @@ class JobPositionInfolist
                                         ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d') : null)
                                         ->icon('heroicon-o-calendar'),
                                     TextEntry::make('date_to')
+                                        ->label(__('recruitments::filament/clusters/configurations/resources/job-position.infolist.sections.work-planning.entries.date-to'))
                                         ->icon('heroicon-o-calendar')
                                         ->placeholder('—')
-                                        ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d') : null)
-                                        ->label(__('recruitments::filament/clusters/configurations/resources/job-position.infolist.sections.work-planning.entries.date-to')),
+                                        ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d') : null),
                                 ]),
                             Section::make(__('recruitments::filament/clusters/configurations/resources/job-position.infolist.sections.work-planning.title'))
                                 ->schema([

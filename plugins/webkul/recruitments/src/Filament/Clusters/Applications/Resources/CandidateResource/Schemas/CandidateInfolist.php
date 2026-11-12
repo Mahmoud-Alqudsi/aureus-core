@@ -41,10 +41,10 @@ class CandidateInfolist
                                             ->placeholder('—')
                                             ->label(__('recruitments::filament/clusters/applications/resources/candidate.infolist.sections.basic-information.entries.phone')),
                                         TextEntry::make('linkedin_profile')
+                                            ->label(__('recruitments::filament/clusters/applications/resources/candidate.infolist.sections.basic-information.entries.linkedin'))
                                             ->icon('heroicon-o-link')
                                             ->placeholder('—')
-                                            ->url(fn ($record) => $record->linkedin_profile)
-                                            ->label(__('recruitments::filament/clusters/applications/resources/candidate.infolist.sections.basic-information.entries.linkedin')),
+                                            ->url(fn ($record) => $record->linkedin_profile),
                                     ])
                                     ->columns(2),
                                 Section::make(__('recruitments::filament/clusters/applications/resources/candidate.infolist.sections.additional-details.title'))
@@ -58,6 +58,7 @@ class CandidateInfolist
                                             ->placeholder('—')
                                             ->label(__('recruitments::filament/clusters/applications/resources/candidate.infolist.sections.additional-details.entries.degree')),
                                         TextEntry::make('categories.name')
+                                            ->label(__('recruitments::filament/clusters/applications/resources/candidate.infolist.sections.additional-details.entries.tags'))
                                             ->icon('heroicon-o-tag')
                                             ->placeholder('—')
                                             ->state(function (Candidate $record): array {
@@ -69,8 +70,7 @@ class CandidateInfolist
                                             ->badge()
                                             ->formatStateUsing(fn ($state) => $state['label'])
                                             ->color(fn ($state) => Color::generateV3Palette($state['color']))
-                                            ->listWithLineBreaks()
-                                            ->label(__('recruitments::filament/clusters/applications/resources/candidate.infolist.sections.additional-details.entries.tags')),
+                                            ->listWithLineBreaks(),
                                         TextEntry::make('manager.name')
                                             ->icon('heroicon-o-user-circle')
                                             ->placeholder('—')

@@ -152,6 +152,7 @@ return [
             'general' => [
                 'title'   => 'Geral',
                 'entries' => [
+                    'payment-state'   => 'Status do pagamento',
                     'number'          => 'Número',
                     'reference'       => 'Referência',
                     'accounting-date' => 'Data contábil',

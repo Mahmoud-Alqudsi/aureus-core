@@ -70,8 +70,8 @@ trait PaymentDueTerm
                     ->label(__('accounts::traits/payment-due-term.table.columns.after'))
                     ->sortable(),
                 TextColumn::make('delay_type')
-                    ->formatStateUsing(fn ($state) => DelayType::options()[$state])
                     ->label(__('accounts::traits/payment-due-term.table.columns.delay-type'))
+                    ->formatStateUsing(fn ($state) => DelayType::options()[$state])
                     ->sortable(),
             ])
             ->recordActions([

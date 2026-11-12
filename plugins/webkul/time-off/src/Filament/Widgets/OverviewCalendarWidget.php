@@ -150,7 +150,7 @@ class OverviewCalendarWidget extends FullCalendarWidget
                 ->icon('heroicon-o-document-text')
                 ->placeholder(__('time-off::filament/widgets/overview-calendar-widget.infolist.entries.description-placeholder')),
             TextEntry::make('state')
-                ->placeholder(__('time-off::filament/widgets/overview-calendar-widget.infolist.entries.status'))
+                ->label(__('time-off::filament/widgets/overview-calendar-widget.infolist.entries.status'))
                 ->badge()
                 ->formatStateUsing(fn ($state) => State::options()[$state->value])
                 ->icon('heroicon-o-check-circle'),

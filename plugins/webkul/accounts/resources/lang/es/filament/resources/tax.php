@@ -2,7 +2,21 @@
 
 return [
     'form' => [
+        'tabs' => [
+            'repartition-lines' => [
+                'title' => 'Líneas de repartición',
+            ],
+            'descriptions' => [
+                'title' => 'Descripciones',
+            ],
+        ],
+
         'sections' => [
+            'invoice-refund-distribution' => [
+                'title'       => 'Distribución de facturas y reembolsos',
+                'description' => 'Defina cómo afecta este impuesto a las cuentas de facturas y reembolsos.',
+            ],
+
             'fields' => [
                 'name'                         => 'Nombre',
                 'tax-type'                     => 'Tipo de impuesto',
@@ -38,12 +52,15 @@ return [
                     'title' => 'Opciones avanzadas',
 
                     'fields' => [
-                        'invoice-label'       => 'Etiqueta de factura',
-                        'tax-group'           => 'Grupo de impuestos',
-                        'country'             => 'País',
-                        'include-in-price'    => 'Incluido en el precio',
-                        'include-base-amount' => 'Afecta a la base de impuestos posteriores',
-                        'is-base-affected'    => 'Base afectada por impuestos anteriores',
+                        'invoice-label'            => 'Etiqueta de factura',
+                        'tax-group'                => 'Grupo de impuestos',
+                        'country'                  => 'País',
+                        'include-in-price'             => 'Incluido en el precio',
+                        'include-in-price-tooltip'     => 'Anula el valor predeterminado de la empresa sobre si el precio que utiliza en el producto y las facturas incluye este impuesto.',
+                        'include-base-amount'          => 'Afecta a la base de impuestos posteriores',
+                        'include-base-amount-tooltip'  => 'Si está marcado, los impuestos con una secuencia superior a este se verán afectados por él, siempre que lo acepten.',
+                        'is-base-affected'             => 'Base afectada por impuestos anteriores',
+                        'is-base-affected-tooltip'     => 'Si está marcado, los impuestos con una secuencia inferior pueden afectar a este, siempre que intenten hacerlo.',
                     ],
                 ],
 

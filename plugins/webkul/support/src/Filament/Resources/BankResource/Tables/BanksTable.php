@@ -35,14 +35,17 @@ class BanksTable
                     ->sortable()
                     ->sortable(),
                 TextColumn::make('deleted_at')
+                    ->label(__('support::filament/resources/bank.table.columns.deleted-at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
+                    ->label(__('support::filament/resources/bank.table.columns.created-at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label(__('support::filament/resources/bank.table.columns.updated-at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -35,9 +35,9 @@ class UsersTable
             ->reorderableColumns()
             ->columns([
                 ImageColumn::make('partner.avatar')
+                    ->label(__('security::filament/resources/user.table.columns.avatar'))
                     ->defaultImageUrl(fn ($record) => $record->avatar_url)
-                    ->imageSize(50)
-                    ->label(__('security::filament/resources/user.table.columns.avatar')),
+                    ->imageSize(50),
                 TextColumn::make('name')
                     ->label(__('security::filament/resources/user.table.columns.name'))
                     ->searchable()
@@ -83,13 +83,13 @@ class UsersTable
                     ->options(PermissionType::class)
                     ->preload(),
                 SelectFilter::make('default_company')
-                    ->relationship('defaultCompany', 'name', fn (Builder $query) => $query->withoutGlobalScope(AllowedCompanyScope::class))
                     ->label(__('security::filament/resources/user.table.filters.default-company'))
+                    ->relationship('defaultCompany', 'name', fn (Builder $query) => $query->withoutGlobalScope(AllowedCompanyScope::class))
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('allowed_companies')
-                    ->relationship('allowedCompanies', 'name', fn (Builder $query) => $query->withoutGlobalScope(AllowedCompanyScope::class))
                     ->label(__('security::filament/resources/user.table.filters.allowed-companies'))
+                    ->relationship('allowedCompanies', 'name', fn (Builder $query) => $query->withoutGlobalScope(AllowedCompanyScope::class))
                     ->multiple()
                     ->searchable()
                     ->preload(),

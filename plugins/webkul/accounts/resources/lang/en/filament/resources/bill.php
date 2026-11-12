@@ -112,6 +112,7 @@ return [
             'tax'              => 'Tax',
             'total'            => 'Total',
             'amount-due'       => 'Amount Due',
+            'payment-state'    => 'Payment State',
             'bill-currency'    => 'Bill Currency',
         ],
 
@@ -191,6 +192,7 @@ return [
                 'title'   => 'General',
 
                 'entries' => [
+                    'payment-state'     => 'Payment State',
                     'vendor-invoice'    => 'Vendor Invoice',
                     'vendor'            => 'Vendor',
                     'bill-date'         => 'Bill Date',

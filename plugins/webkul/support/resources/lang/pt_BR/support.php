@@ -4,8 +4,8 @@ return [
     'version' => 'Versão :version',
 
     'cross-company' => [
-        'title'       => 'Cross-company record not allowed',
-        'records'     => 'These records belong to a different company: :records. Change them or switch the company back.',
+        'title'       => 'Registro entre empresas não permitido',
+        'records'     => 'Estes registros pertencem a uma empresa diferente: :records. Altere-os ou volte para a empresa original.',
         'not-allowed' => 'A empresa selecionada não é uma das suas empresas permitidas.',
     ],
 ];

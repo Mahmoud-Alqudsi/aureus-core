@@ -100,10 +100,10 @@ class ApplicantInfolist
                                             ->placeholder('—')
                                             ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.phone')),
                                         TextEntry::make('candidate.linkedin_profile')
+                                            ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.linkedin-profile'))
                                             ->icon('heroicon-o-link')
                                             ->placeholder('—')
-                                            ->url(fn ($record) => $record->candidate->linkedin_profile)
-                                            ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.linkedin-profile')),
+                                            ->url(fn ($record) => $record->candidate->linkedin_profile),
                                         TextEntry::make('job.name')
                                             ->icon('heroicon-o-briefcase')
                                             ->placeholder('—')
@@ -117,6 +117,7 @@ class ApplicantInfolist
                                             ->placeholder('—')
                                             ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.recruiter')),
                                         TextEntry::make('categories.name')
+                                            ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.tags'))
                                             ->icon('heroicon-o-tag')
                                             ->placeholder('—')
                                             ->state(function (Applicant $record): array {
@@ -130,8 +131,7 @@ class ApplicantInfolist
                                             ->badge()
                                             ->formatStateUsing(fn ($state) => $state['label'])
                                             ->color(fn ($state) => Color::generateV3Palette($state['color']))
-                                            ->listWithLineBreaks()
-                                            ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.tags')),
+                                            ->listWithLineBreaks(),
                                         TextEntry::make('interviewer.name')
                                             ->icon('heroicon-o-user')
                                             ->placeholder('—')
@@ -143,9 +143,9 @@ class ApplicantInfolist
                                 Section::make()
                                     ->schema([
                                         TextEntry::make('applicant_notes')
+                                            ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.notes'))
                                             ->formatStateUsing(fn ($state) => new HtmlString($state))
-                                            ->placeholder('—')
-                                            ->label(__('recruitments::filament/clusters/applications/resources/applicant.infolist.sections.general-information.entries.notes')),
+                                            ->placeholder('—'),
                                     ]),
                             ])->columnSpan(2),
                         Group::make()

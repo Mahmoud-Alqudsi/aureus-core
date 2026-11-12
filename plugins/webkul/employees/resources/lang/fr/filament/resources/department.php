@@ -37,6 +37,7 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'       => 'Avatar',
             'name'         => 'Nom',
             'manager-name' => 'Responsable',
             'company-name' => 'Société',

@@ -12,19 +12,20 @@ return [
                 'title' => 'General',
 
                 'fields' => [
-                    'company'    => 'Empresa',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Tax ID',
-                    'job-title'  => 'Puesto de trabajo',
-                    'phone'      => 'Teléfono',
-                    'mobile'     => 'Móvil',
-                    'email'      => 'Correo electrónico',
-                    'website'    => 'Sitio web',
-                    'title'      => 'Tratamiento',
-                    'name'       => 'Nombre',
-                    'short-name' => 'Nombre corto',
-                    'tags'       => 'Etiquetas',
-                    'color'      => 'Color',
+                    'account-type' => 'Tipo de cuenta',
+                    'company'      => 'Empresa',
+                    'avatar'       => 'Avatar',
+                    'tax-id'       => 'Tax ID',
+                    'job-title'    => 'Puesto de trabajo',
+                    'phone'        => 'Teléfono',
+                    'mobile'       => 'Móvil',
+                    'email'        => 'Correo electrónico',
+                    'website'      => 'Sitio web',
+                    'title'        => 'Tratamiento',
+                    'name'         => 'Nombre',
+                    'short-name'   => 'Nombre corto',
+                    'tags'         => 'Etiquetas',
+                    'color'        => 'Color',
                 ],
 
                 'address' => [
@@ -48,6 +49,15 @@ return [
             'sales-purchase' => [
                 'title' => 'Ventas y compras',
 
+                'sections' => [
+                    'sales' => [
+                        'title' => 'Ventas',
+                    ],
+                    'others' => [
+                        'title' => 'Otros',
+                    ],
+                ],
+
                 'fields' => [
                     'responsible'           => 'Responsable',
                     'responsible-hint-text' => 'Este es el comercial interno responsable de este cliente',
@@ -62,6 +72,8 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'     => 'Avatar',
+            'name'       => 'Nombre',
             'parent'     => 'Contacto principal',
             'work-email' => 'Correo electrónico de trabajo',
             'work-phone' => 'Teléfono de trabajo',
@@ -176,18 +188,19 @@ return [
                 'title' => 'General',
 
                 'fields' => [
-                    'company'    => 'Empresa',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Tax ID',
-                    'job-title'  => 'Puesto de trabajo',
-                    'phone'      => 'Teléfono',
-                    'mobile'     => 'Móvil',
-                    'email'      => 'Correo electrónico',
-                    'website'    => 'Sitio web',
-                    'title'      => 'Tratamiento',
-                    'name'       => 'Nombre',
-                    'short-name' => 'Nombre corto',
-                    'tags'       => 'Etiquetas',
+                    'account-type' => 'Tipo de cuenta',
+                    'company'      => 'Empresa',
+                    'avatar'       => 'Avatar',
+                    'tax-id'       => 'Tax ID',
+                    'job-title'    => 'Puesto de trabajo',
+                    'phone'        => 'Teléfono',
+                    'mobile'       => 'Móvil',
+                    'email'        => 'Correo electrónico',
+                    'website'      => 'Sitio web',
+                    'title'        => 'Tratamiento',
+                    'name'         => 'Nombre',
+                    'short-name'   => 'Nombre corto',
+                    'tags'         => 'Etiquetas',
                 ],
 
                 'address' => [
@@ -210,6 +223,15 @@ return [
         'tabs' => [
             'sales-purchase' => [
                 'title' => 'Ventas y compras',
+
+                'sections' => [
+                    'sales' => [
+                        'title' => 'Ventas',
+                    ],
+                    'others' => [
+                        'title' => 'Otros',
+                    ],
+                ],
 
                 'fields' => [
                     'responsible'           => 'Responsable',

@@ -44,6 +44,7 @@ class PortalContributions
     {
         return Stack::make([
             TextColumn::make('portal_access')
+                ->label(__('website::filament/admin/portal-access.table.columns.portal-access'))
                 ->state(fn (): string => __('website::filament/admin/portal-access.table.columns.portal-access'))
                 ->badge()
                 ->color('info')

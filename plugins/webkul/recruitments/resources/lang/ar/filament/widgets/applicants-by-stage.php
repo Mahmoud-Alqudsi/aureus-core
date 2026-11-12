@@ -2,8 +2,8 @@
 
 return [
     'heading' => [
-        'title' => 'Applicants by Stage',
+        'title' => 'المتقدمون حسب المرحلة',
     ],
 
-    'dataset' => 'Applicants',
+    'dataset' => 'المتقدمون',
 ];

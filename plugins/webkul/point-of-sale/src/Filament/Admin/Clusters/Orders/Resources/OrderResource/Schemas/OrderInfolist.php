@@ -97,31 +97,37 @@ class OrderInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('full_product_name')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.order-line.entries.product'))
                                             ->placeholder('-')
                                             ->tooltip(fn ($record) => $record->product?->name)
                                             ->iconColor('primary'),
 
                                         TextEntry::make('qty')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.order-line.entries.quantity'))
                                             ->placeholder('-')
                                             ->numeric(),
 
                                         TextEntry::make('price_unit')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.order-line.entries.unit-price'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->order?->currency?->name)
                                             ->weight(FontWeight::Medium),
 
                                         TextEntry::make('taxes')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.order-line.entries.taxes'))
                                             ->badge()
                                             ->state(fn ($record): array => $record->taxes->map(fn ($tax) => ['name' => $tax->name])->toArray())
                                             ->formatStateUsing(fn ($state) => $state['name'])
                                             ->placeholder('-'),
 
                                         TextEntry::make('discount')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.order-line.entries.discount'))
                                             ->placeholder('-')
                                             ->numeric()
                                             ->suffix('%'),
 
                                         TextEntry::make('price_subtotal')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.order-line.entries.amount'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->order?->currency?->name),
                                     ]),
@@ -173,11 +179,14 @@ class OrderInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('paymentMethod.name')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.payments.entries.method'))
                                             ->placeholder('-'),
                                         TextEntry::make('amount')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.payments.entries.amount'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->order?->currency?->name),
                                         TextEntry::make('paid_at')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.payments.entries.paid-at'))
                                             ->placeholder('-')
                                             ->dateTime(),
                                     ]),
@@ -221,13 +230,13 @@ class OrderInfolist
                                             ->placeholder('-')
                                             ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.other-information.entries.cashier')),
                                         TextEntry::make('amount_paid')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.other-information.entries.paid'))
                                             ->placeholder('-')
-                                            ->money(fn ($record) => $record->currency?->name)
-                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.other-information.entries.paid')),
+                                            ->money(fn ($record) => $record->currency?->name),
                                         TextEntry::make('amount_return')
+                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.other-information.entries.change'))
                                             ->placeholder('-')
-                                            ->money(fn ($record) => $record->currency?->name)
-                                            ->label(__('point-of-sale::filament/admin/clusters/orders/resources/order.infolist.tabs.other-information.entries.change')),
+                                            ->money(fn ($record) => $record->currency?->name),
                                     ])->columns(2),
                             ]),
                     ]),
