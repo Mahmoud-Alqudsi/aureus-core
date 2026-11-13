@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Journal Entries',
+    'title'              => 'Journal Entries',
+    'model-label'        => 'Journal Entry',
+    'plural-model-label' => 'Journal Entries',
 
     'navigation' => [
         'title' => 'Journal Entries',

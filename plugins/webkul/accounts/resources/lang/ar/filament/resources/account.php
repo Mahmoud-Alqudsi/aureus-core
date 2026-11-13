@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'model-label'        => 'حساب',
-    'plural-model-label' => 'حسابات',
+    'model-label'        => 'دليل حسابات',
+    'plural-model-label' => 'دليل حسابات',
 
     'global-search' => [
         'code' => 'الرمز',

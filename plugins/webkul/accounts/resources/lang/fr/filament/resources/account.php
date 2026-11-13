@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'model-label'        => 'Compte',
-    'plural-model-label' => 'Comptes',
+    'model-label'        => 'Plan comptable',
+    'plural-model-label' => 'Plans comptables',
 
     'global-search' => [
         'code' => 'Code',
