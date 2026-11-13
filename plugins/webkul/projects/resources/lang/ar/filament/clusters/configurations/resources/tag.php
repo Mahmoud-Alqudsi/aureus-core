@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'وسم مشروع',
+    'plural-model-label' => 'وسوم مشاريع',
+
     'navigation' => [
         'title' => 'الوسوم',
     ],

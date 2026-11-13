@@ -2,6 +2,8 @@
 
 return [
     'title' => 'المهام',
+    'model-label'        => 'مهمة',
+    'plural-model-label' => 'مهام',
 
     'navigation' => [
         'title' => 'المهام',
