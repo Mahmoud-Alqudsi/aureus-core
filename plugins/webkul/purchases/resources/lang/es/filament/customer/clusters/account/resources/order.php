@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Pedido',
+    'plural-model-label' => 'Pedidos',
+
     'table' => [
         'columns' => [
             'reference'         => 'Referencia',

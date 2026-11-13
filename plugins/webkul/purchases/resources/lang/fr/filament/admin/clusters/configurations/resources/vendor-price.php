@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Liste de prix fournisseur',
+    'plural-model-label' => 'Listes de prix fournisseur',
+
     'navigation' => [
         'title' => 'Listes de prix fournisseur',
     ],
