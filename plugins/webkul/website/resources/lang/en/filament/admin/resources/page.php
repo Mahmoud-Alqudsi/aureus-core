@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Page',
+    'plural-model-label' => 'Pages',
+
     'navigation' => [
         'title' => 'Pages',
     ],

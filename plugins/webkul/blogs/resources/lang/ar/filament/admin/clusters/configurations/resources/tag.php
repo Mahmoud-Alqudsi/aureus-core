@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'وسم مدونة',
+    'plural-model-label' => 'وسوم مدونات',
+
     'navigation' => [
         'title' => 'الوسوم',
         'group' => 'المدونة',
