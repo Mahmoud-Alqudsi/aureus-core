@@ -1,6 +1,10 @@
 <?php
 
 return [
+    
+    'model-label' => 'جهة اتصال',
+    'plural-model-label' => 'جهات اتصال',
+
     'navigation' => [
         'title' => 'جهات الاتصال',
     ],
