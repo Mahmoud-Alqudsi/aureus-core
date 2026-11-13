@@ -32,10 +32,6 @@ class ProductResource extends BaseProductResource
 
     protected static ?int $navigationSort = 5;
 
-    public static function getModelLabel(): string
-    {
-        return __('invoices::filament/clusters/customers/resources/products.title');
-    }
 
     public static function getNavigationLabel(): string
     {
