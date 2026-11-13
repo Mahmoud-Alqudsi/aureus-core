@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Scrap',
+    'plural-model-label' => 'Scraps',
+
     'navigation' => [
         'title' => 'Scraps',
         'group' => 'Adjustments',

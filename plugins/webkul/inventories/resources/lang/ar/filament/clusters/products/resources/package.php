@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'طرد',
+    'plural-model-label' => 'طرود',
+
     'navigation' => [
         'title' => 'الطرود',
         'group' => 'المخزون',

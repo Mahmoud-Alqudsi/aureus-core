@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'تحويل داخلي',
+    'plural-model-label' => 'تحويلات داخلية',
+
     'navigation' => [
         'title' => 'التحويلات الداخلية',
         'group' => 'التحويلات',

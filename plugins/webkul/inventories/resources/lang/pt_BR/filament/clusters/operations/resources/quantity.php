@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Quantidade em estoque',
+    'plural-model-label' => 'Quantidades em estoque',
+
     'navigation' => [
         'title' => 'Quantidades',
         'group' => 'Ajustes',

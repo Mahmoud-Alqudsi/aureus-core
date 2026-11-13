@@ -34,6 +34,16 @@ class ReplenishmentResource extends Resource
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/replenishment.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/replenishment.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('inventories::filament/clusters/operations/resources/replenishment.navigation.title');

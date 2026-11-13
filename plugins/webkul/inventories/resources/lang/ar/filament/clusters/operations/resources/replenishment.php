@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'تجديد مخزون',
+    'plural-model-label' => 'تجديدات مخزون',
+
     'navigation' => [
         'title' => 'التجديد',
         'group' => 'المشتريات',

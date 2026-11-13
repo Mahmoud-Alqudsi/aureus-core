@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'مسار',
+    'plural-model-label' => 'مسارات',
+
     'navigation' => [
         'title' => 'المسارات',
         'group' => 'إدارة المستودعات',

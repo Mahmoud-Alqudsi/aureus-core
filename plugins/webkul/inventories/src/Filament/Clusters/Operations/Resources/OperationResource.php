@@ -35,6 +35,16 @@ class OperationResource extends Resource
 
     protected static bool $isGloballySearchable = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/operation.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/operation.plural-model-label');
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'partner.name'];

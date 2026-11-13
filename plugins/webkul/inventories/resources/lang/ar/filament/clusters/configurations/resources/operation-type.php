@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'نوع عملية',
+    'plural-model-label' => 'أنواع عمليات',
+
     'navigation' => [
         'title' => 'أنواع العمليات',
         'group' => 'إدارة المستودعات',

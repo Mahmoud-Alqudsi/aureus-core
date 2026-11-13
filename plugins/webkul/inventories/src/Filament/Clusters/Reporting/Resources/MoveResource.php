@@ -26,6 +26,16 @@ class MoveResource extends Resource
 
     protected static ?string $cluster = Reporting::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/reporting.moves.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/reporting.moves.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('inventories::filament/clusters/reporting.moves.navigation.title');

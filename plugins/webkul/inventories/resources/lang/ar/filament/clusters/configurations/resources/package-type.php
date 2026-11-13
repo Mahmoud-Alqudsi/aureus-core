@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'نوع طرد',
+    'plural-model-label' => 'أنواع طرود',
+
     'navigation' => [
         'title' => 'أنواع الطرود',
         'group' => 'التوصيل',

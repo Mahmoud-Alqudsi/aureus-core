@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'تالف',
+    'plural-model-label' => 'توالف',
+
     'navigation' => [
         'title' => 'الخردة',
         'group' => 'التعديلات',
