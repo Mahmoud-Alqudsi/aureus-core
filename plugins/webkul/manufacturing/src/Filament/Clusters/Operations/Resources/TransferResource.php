@@ -30,6 +30,16 @@ class TransferResource extends OperationResource
 
     protected static ?string $cluster = Operations::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('manufacturing::filament/clusters/operations/resources/transfer.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('manufacturing::filament/clusters/operations/resources/transfer.plural-model-label');
+    }
+
     public static function canAccess(): bool
     {
         return ManufacturingOrderResource::canAccess();

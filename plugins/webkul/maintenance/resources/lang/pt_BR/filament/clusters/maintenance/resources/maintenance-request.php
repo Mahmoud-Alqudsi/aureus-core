@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Solicitação de manutenção',
+    'plural-model-label' => 'Solicitações de manutenção',
+
     'navigation' => [
         'group' => 'Manutenção',
         'title' => 'Solicitações de manutenção',

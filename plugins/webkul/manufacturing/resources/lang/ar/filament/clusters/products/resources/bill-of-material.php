@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'قائمة مواد',
+    'plural-model-label' => 'قوائم مواد',
+
     'navigation' => [
         'title' => 'قوائم المواد',
     ],

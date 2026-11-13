@@ -39,7 +39,12 @@ class BillsOfMaterialResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('manufacturing::models/bill-of-material.title');
+        return __('manufacturing::filament/clusters/products/resources/bill-of-material.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('manufacturing::filament/clusters/products/resources/bill-of-material.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

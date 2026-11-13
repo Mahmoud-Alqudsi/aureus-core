@@ -48,7 +48,12 @@ class OperationResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('manufacturing::models/operation.title');
+        return __('manufacturing::filament/clusters/configurations/resources/operation.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('manufacturing::filament/clusters/configurations/resources/operation.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

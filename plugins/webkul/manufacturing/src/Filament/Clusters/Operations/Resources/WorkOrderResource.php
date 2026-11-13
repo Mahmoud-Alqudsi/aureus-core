@@ -52,7 +52,12 @@ class WorkOrderResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('manufacturing::models/work-order.title');
+        return __('manufacturing::filament/clusters/operations/resources/work-order.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('manufacturing::filament/clusters/operations/resources/work-order.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

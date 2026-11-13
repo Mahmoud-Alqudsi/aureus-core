@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Lista de materiais',
+    'plural-model-label' => 'Listas de materiais',
+
     'navigation' => [
         'title' => 'Listas de materiais',
     ],
