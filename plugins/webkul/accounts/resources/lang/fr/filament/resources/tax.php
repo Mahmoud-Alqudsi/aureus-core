@@ -5,7 +5,21 @@ return [
     'plural-model-label' => 'Taxes',
 
     'form' => [
+        'tabs' => [
+            'repartition-lines' => [
+                'title' => 'Lignes de répartition',
+            ],
+            'descriptions' => [
+                'title' => 'Descriptions',
+            ],
+        ],
+
         'sections' => [
+            'invoice-refund-distribution' => [
+                'title'       => 'Distribution des factures et avoirs',
+                'description' => 'Définir l\'impact de cette taxe sur les comptes de factures et d\'avoirs.',
+            ],
+
             'fields' => [
                 'name'                         => 'Nom',
                 'tax-type'                     => 'Type de taxe',
@@ -41,12 +55,15 @@ return [
                     'title' => 'Options avancées',
 
                     'fields' => [
-                        'invoice-label'       => 'Libellé de la facture',
-                        'tax-group'           => 'Groupe de taxes',
-                        'country'             => 'Pays',
-                        'include-in-price'    => 'Inclus dans le prix',
-                        'include-base-amount' => 'Affecter la base des taxes suivantes',
-                        'is-base-affected'    => 'Base affectée par les taxes précédentes',
+                        'invoice-label'            => 'Libellé de la facture',
+                        'tax-group'                => 'Groupe de taxes',
+                        'country'                  => 'Pays',
+                        'include-in-price'             => 'Inclus dans le prix',
+                        'include-in-price-tooltip'     => 'Remplace la valeur par défaut de l\'entreprise concernant l\'inclusion de cette taxe dans le prix du produit et des factures.',
+                        'include-base-amount'          => 'Affecter la base des taxes suivantes',
+                        'include-base-amount-tooltip'  => 'Si défini, les taxes ayant une séquence supérieure à celle-ci en seront affectées, à condition qu\'elles l\'acceptent.',
+                        'is-base-affected'             => 'Base affectée par les taxes précédentes',
+                        'is-base-affected-tooltip'     => 'Si défini, les taxes avec une séquence inférieure peuvent affecter celle-ci, à condition qu\'elles le prévoient.',
                     ],
                 ],
 

@@ -24,16 +24,19 @@ return [
         ],
         'tabs' => [
             'account-mapping' => [
-                'table' => [
+                'title'            => 'Mapeamento de contas',
+                'add-action-label' => 'Adicionar mapeamento de contas',
+                'table'            => [
                     'columns' => [
                         'source-account'      => 'Conta de origem',
                         'destination-account' => 'Conta de destino',
                     ],
                 ],
-
             ],
             'tax-mapping' => [
-                'table' => [
+                'title'            => 'Mapeamento de impostos',
+                'add-action-label' => 'Adicionar mapeamento de impostos',
+                'table'            => [
                     'columns' => [
                         'tax-source'      => 'Imposto de origem',
                         'tax-destination' => 'Imposto de destino',

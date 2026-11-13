@@ -5,6 +5,9 @@ return [
     'title' => 'إضافة',
 
     'table' => [
+        'name'                => 'الاسم',
+        'summary'             => 'الملخص',
+        'status'              => 'الحالة',
         'version'             => 'الإصدار',
         'dependencies'        => 'التبعيات',
         'dependencies_suffix' => 'تبعيات',

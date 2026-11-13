@@ -27,6 +27,11 @@ class CustomerResource extends BaseCustomerResource
 
     protected static ?string $cluster = Customers::class;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('accounting::filament/clusters/customers/resources/customer.navigation.title');
+    }
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([

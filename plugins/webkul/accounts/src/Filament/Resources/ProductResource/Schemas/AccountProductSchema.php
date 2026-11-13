@@ -80,17 +80,15 @@ class AccountProductSchema
                     $parts = [];
 
                     if ($result['total_included'] != $price) {
-                        $parts[] = sprintf(
-                            '%s Incl. Taxes',
-                            number_format($result['total_included'], 2)
-                        );
+                        $parts[] = __('accounts::filament/resources/product.form.fields.taxes.incl-taxes', [
+                            'amount' => number_format($result['total_included'], 2),
+                        ]);
                     }
 
                     if ($result['total_excluded'] != $price) {
-                        $parts[] = sprintf(
-                            '%s Excl. Taxes',
-                            number_format($result['total_excluded'], 2)
-                        );
+                        $parts[] = __('accounts::filament/resources/product.form.fields.taxes.excl-taxes', [
+                            'amount' => number_format($result['total_excluded'], 2),
+                        ]);
                     }
 
                     return ! empty($parts) ? '(= '.implode(', ', $parts).')' : ' ';

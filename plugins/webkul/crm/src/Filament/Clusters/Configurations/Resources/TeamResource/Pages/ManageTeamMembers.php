@@ -126,6 +126,7 @@ class ManageTeamMembers extends ManageRelatedRecords
             ->columns([
                 Stack::make([
                     ImageColumn::make('user.partner.avatar')
+                        ->label('')
                         ->height(200)
                         ->width(250)
                         ->alignCenter(),
@@ -144,6 +145,7 @@ class ManageTeamMembers extends ManageRelatedRecords
                             ->visible(fn (TeamMember $record): bool => filled($record->user?->email)),
                         Stack::make([
                             TextColumn::make('user.partner.phone')
+                                ->label(__('crm::filament/assignment.rules.fields.phone'))
                                 ->icon('heroicon-o-phone')
                                 ->color('gray')
                                 ->limit(30),
@@ -151,6 +153,7 @@ class ManageTeamMembers extends ManageRelatedRecords
                             ->visible(fn (TeamMember $record): bool => filled($record->user?->partner?->phone)),
                         Stack::make([
                             TextColumn::make('lead_limit')
+                                ->label(__('crm::filament/assignment.members.columns.capacity'))
                                 ->icon('heroicon-o-inbox-arrow-down')
                                 ->color('gray')
                                 ->state(fn (TeamMember $record): int => $record->leadsAssignedLastMonth())
@@ -160,6 +163,7 @@ class ManageTeamMembers extends ManageRelatedRecords
                             ->visible(fn (): bool => TeamResource::usesRuleBasedAssignment()),
                         Stack::make([
                             TextColumn::make('assignment_badges')
+                                ->label(__('crm::filament/assignment.members.columns.rules'))
                                 ->badge()
                                 ->state(fn (TeamMember $record): array => static::getMemberBadges($record))
                                 ->formatStateUsing(fn (string $state, TeamMember $record): string => match ($state) {

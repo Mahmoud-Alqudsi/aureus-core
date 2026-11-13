@@ -198,7 +198,6 @@ class ApplicantsTable
                     ->label(__('recruitments::filament/clusters/applications/resources/applicant.table.groups.last-stage'))
                     ->collapsible(),
                 TableGroup::make('refuseReason.name')
-                    ->label(__('Refuse Reason'))
                     ->label(__('recruitments::filament/clusters/applications/resources/applicant.table.groups.refuse-reason'))
                     ->collapsible(),
             ])

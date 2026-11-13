@@ -39,6 +39,7 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'       => 'الصورة الرمزية',
             'name'         => 'الاسم',
             'manager-name' => 'المدير',
             'company-name' => 'الشركة',

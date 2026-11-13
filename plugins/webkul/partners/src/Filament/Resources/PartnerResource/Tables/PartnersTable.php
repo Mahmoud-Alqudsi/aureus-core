@@ -47,6 +47,7 @@ class PartnersTable
                 Stack::make([
                     Split::make([
                         ImageColumn::make('avatar')
+                            ->label(__('partners::filament/resources/partner.table.columns.avatar'))
                             ->circular()
                             ->imageSize(72)
                             ->defaultImageUrl(fn (Partner $record): string => (new UiAvatarsProvider)->get($record))
@@ -54,6 +55,7 @@ class PartnersTable
 
                         Stack::make([
                             TextColumn::make('name')
+                                ->label(__('partners::filament/resources/partner.table.columns.name'))
                                 ->weight(FontWeight::Bold)
                                 ->size(TextSize::Large)
                                 ->searchable()

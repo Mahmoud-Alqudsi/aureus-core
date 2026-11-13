@@ -159,10 +159,10 @@ trait EmployeeSkillRelation
                                     ->placeholder('—')
                                     ->label(__('employees::filament/resources/employee/relation-manager/skill.infolist.entries.skill')),
                                 TextEntry::make('skillLevel.name')
+                                    ->label(__('employees::filament/resources/employee/relation-manager/skill.infolist.entries.skill-level'))
                                     ->placeholder('—')
                                     ->badge()
-                                    ->color(fn ($record) => $record->skillType?->color)
-                                    ->label(__('employees::filament/resources/employee/relation-manager/skill.infolist.entries.skill-level')),
+                                    ->color(fn ($record) => $record->skillType?->color),
                                 CustomTables\Infolists\ProgressBarEntry::make('skillLevel.level')
                                     ->getStateUsing(fn ($record) => $record->skillLevel?->level)
                                     ->color(function ($record) {

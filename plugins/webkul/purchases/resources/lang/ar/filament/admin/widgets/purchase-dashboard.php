@@ -52,20 +52,20 @@ return [
         ],
     ],
     'top-rfqs'     => [
-        'heading' => 'Top RFQs',
+        'heading' => 'أعلى طلبات عروض الأسعار',
         'columns' => [
-            'reference' => 'RFQ Number',
-            'status'    => 'Status',
-            'amount'    => 'Total Amount',
+            'reference' => 'رقم طلب عرض السعر',
+            'status'    => 'الحالة',
+            'amount'    => 'المبلغ الإجمالي',
         ],
     ],
 
     'top-vendors'  => [
-        'heading' => 'Top Vendors',
+        'heading' => 'أعلى الموردين',
         'columns' => [
-            'vendor' => 'Vendor',
-            'orders' => 'Orders',
-            'amount' => 'Total Spend',
+            'vendor' => 'المورد',
+            'orders' => 'الأوامر',
+            'amount' => 'إجمالي الإنفاق',
         ],
     ],
 ];

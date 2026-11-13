@@ -141,6 +141,7 @@ return [
                     'public-holiday-included'             => 'Jour férié inclus',
                     'allow-to-attach-supporting-document' => 'Autoriser la jointure d\'un justificatif',
                     'show-on-dashboard'                   => 'Afficher sur le tableau de bord',
+                    'allow-negative-cap'                  => 'Autoriser le plafond négatif',
                     'kind-off-time'                       => 'Type de temps',
                     'max-negative-cap'                    => 'Plafond négatif maximum',
                     'kind-of-time'                        => 'Type de congé',

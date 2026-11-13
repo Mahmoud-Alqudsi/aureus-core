@@ -14,19 +14,20 @@ return [
                 'title' => 'Général',
 
                 'fields' => [
-                    'company'    => 'Société',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Numéro fiscal',
-                    'job-title'  => 'Fonction',
-                    'phone'      => 'Téléphone',
-                    'mobile'     => 'Mobile',
-                    'email'      => 'E-mail',
-                    'website'    => 'Site web',
-                    'title'      => 'Titre',
-                    'name'       => 'Nom',
-                    'short-name' => 'Nom court',
-                    'tags'       => 'Étiquettes',
-                    'color'      => 'Couleur',
+                    'account-type' => 'Type de compte',
+                    'company'      => 'Société',
+                    'avatar'       => 'Avatar',
+                    'tax-id'       => 'Numéro fiscal',
+                    'job-title'    => 'Fonction',
+                    'phone'        => 'Téléphone',
+                    'mobile'       => 'Mobile',
+                    'email'        => 'E-mail',
+                    'website'      => 'Site web',
+                    'title'        => 'Titre',
+                    'name'         => 'Nom',
+                    'short-name'   => 'Nom court',
+                    'tags'         => 'Étiquettes',
+                    'color'        => 'Couleur',
                 ],
 
                 'address' => [
@@ -50,6 +51,15 @@ return [
             'sales-purchase' => [
                 'title' => 'Ventes et achats',
 
+                'sections' => [
+                    'sales' => [
+                        'title' => 'Ventes',
+                    ],
+                    'others' => [
+                        'title' => 'Autres',
+                    ],
+                ],
+
                 'fields' => [
                     'responsible'           => 'Responsable',
                     'responsible-hint-text' => 'Il s\'agit du commercial interne responsable de ce client',
@@ -64,6 +74,8 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'     => 'Avatar',
+            'name'       => 'Nom',
             'parent'     => 'Parent',
             'work-email' => 'E-mail professionnel',
             'work-phone' => 'Téléphone professionnel',
@@ -178,18 +190,19 @@ return [
                 'title' => 'Général',
 
                 'fields' => [
-                    'company'    => 'Société',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Numéro fiscal',
-                    'job-title'  => 'Fonction',
-                    'phone'      => 'Téléphone',
-                    'mobile'     => 'Mobile',
-                    'email'      => 'E-mail',
-                    'website'    => 'Site web',
-                    'title'      => 'Titre',
-                    'name'       => 'Nom',
-                    'short-name' => 'Nom court',
-                    'tags'       => 'Étiquettes',
+                    'account-type' => 'Type de compte',
+                    'company'      => 'Société',
+                    'avatar'       => 'Avatar',
+                    'tax-id'       => 'Numéro fiscal',
+                    'job-title'    => 'Fonction',
+                    'phone'        => 'Téléphone',
+                    'mobile'       => 'Mobile',
+                    'email'        => 'E-mail',
+                    'website'      => 'Site web',
+                    'title'        => 'Titre',
+                    'name'         => 'Nom',
+                    'short-name'   => 'Nom court',
+                    'tags'         => 'Étiquettes',
                 ],
 
                 'address' => [
@@ -212,6 +225,15 @@ return [
         'tabs' => [
             'sales-purchase' => [
                 'title' => 'Ventes et achats',
+
+                'sections' => [
+                    'sales' => [
+                        'title' => 'Ventes',
+                    ],
+                    'others' => [
+                        'title' => 'Autres',
+                    ],
+                ],
 
                 'fields' => [
                     'responsible'           => 'Responsable',

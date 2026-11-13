@@ -20,7 +20,7 @@ return [
     'form' => [
         'fields' => [
             'web'     => 'ويب',
-            'sanctum' => 'Sanctum',
+            'sanctum' => 'سانكتوم',
         ],
     ],
 

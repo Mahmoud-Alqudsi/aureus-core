@@ -30,7 +30,6 @@ class DoneAction extends Action
         parent::setUp();
 
         $this
-            ->label(__('manufacturing::filament/clusters/operations/actions/done.label'))
             ->label(function (Order $record) {
                 if (
                     $record->quantity_producing == 0

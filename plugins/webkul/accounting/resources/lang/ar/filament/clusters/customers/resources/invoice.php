@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'الفاتورة',
+    'title' => 'فاتورة',
 
     'navigation' => [
-        'title' => 'الفواتير',
+        'title' => 'فواتير العملاء',
     ],
 
     'global-search' => [

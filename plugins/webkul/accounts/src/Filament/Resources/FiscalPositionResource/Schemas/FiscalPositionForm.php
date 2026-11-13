@@ -32,9 +32,8 @@ class FiscalPositionForm
                                 TextInput::make('name')
                                     ->label(__('accounts::filament/resources/fiscal-position.form.fields.name'))
                                     ->required()
-                                    ->placeholder(__('Name')),
+                                    ->placeholder(__('accounts::filament/resources/fiscal-position.form.fields.name')),
                                 TextInput::make('foreign_vat')
-                                    ->label(__('Foreign VAT'))
                                     ->label(__('accounts::filament/resources/fiscal-position.form.fields.foreign-vat'))
                                     ->required(),
                                 Select::make('country_id')
@@ -114,14 +113,14 @@ class FiscalPositionForm
                     ])->columnSpanFull(),
                 Tabs::make('Mappings')
                     ->tabs([
-                        Tab::make('Tax Mapping')
+                        Tab::make(__('accounts::filament/resources/fiscal-position.form.tabs.tax-mapping.title'))
                             ->schema([
                                 Repeater::make('taxes')
                                     ->hiddenLabel()
                                     ->relationship('taxes')
                                     ->compact()
                                     ->reactive()
-                                    ->addActionLabel(__('Add Tax Mapping'))
+                                    ->addActionLabel(__('accounts::filament/resources/fiscal-position.form.tabs.tax-mapping.add-action-label'))
                                     ->table([
                                         TableColumn::make('tax_source_id')
                                             ->label(__('accounts::filament/resources/fiscal-position.form.tabs.tax-mapping.table.columns.tax-source'))
@@ -157,14 +156,14 @@ class FiscalPositionForm
                                     ])
                                     ->columns(2),
                             ]),
-                        Tab::make('Account Mapping')
+                        Tab::make(__('accounts::filament/resources/fiscal-position.form.tabs.account-mapping.title'))
                             ->schema([
                                 Repeater::make('accounts')
                                     ->hiddenLabel()
                                     ->relationship('accounts')
                                     ->compact()
                                     ->reactive()
-                                    ->addActionLabel(__('Add Account Mapping'))
+                                    ->addActionLabel(__('accounts::filament/resources/fiscal-position.form.tabs.account-mapping.add-action-label'))
                                     ->table([
                                         TableColumn::make('account_source_id')
                                             ->label(__('accounts::filament/resources/fiscal-position.form.tabs.account-mapping.table.columns.source-account'))

@@ -44,6 +44,7 @@ class BillInfolist
                 Section::make()
                     ->schema([
                         TextEntry::make('payment_state')
+                            ->label(__('accounts::filament/resources/bill.infolist.section.general.entries.payment-state'))
                             ->badge(),
                     ])
                     ->compact(),
@@ -144,10 +145,10 @@ class BillInfolist
                                             ->toggleable()
                                             ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.quantity')),
                                         InfolistTableColumn::make('uom')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.unit'))
                                             ->alignCenter()
                                             ->toggleable()
-                                            ->visible(fn (ProductSettings $settings) => $settings->enable_uom)
-                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.unit')),
+                                            ->visible(fn (ProductSettings $settings) => $settings->enable_uom),
                                         InfolistTableColumn::make('price_unit')
                                             ->alignCenter()
                                             ->toggleable()
@@ -167,20 +168,26 @@ class BillInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('name')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.product'))
                                             ->placeholder('-'),
                                         TextEntry::make('quantity')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.quantity'))
                                             ->placeholder('-'),
                                         TextEntry::make('uom')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.unit'))
                                             ->formatStateUsing(fn ($state) => $state['name'])
                                             ->placeholder('-')
                                             ->visible(fn (ProductSettings $settings) => $settings->enable_uom),
                                         TextEntry::make('price_unit')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.unit-price'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency->name),
                                         TextEntry::make('discount')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.discount-percentage'))
                                             ->placeholder('-')
                                             ->suffix('%'),
                                         TextEntry::make('taxes')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.taxes'))
                                             ->badge()
                                             ->state(function ($record): array {
                                                 return $record->taxes->map(fn ($tax) => [
@@ -191,6 +198,7 @@ class BillInfolist
                                             ->placeholder('-')
                                             ->weight(FontWeight::Bold),
                                         TextEntry::make('price_subtotal')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.invoice-lines.repeater.products.entries.sub-total'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency->name),
                                     ]),
@@ -252,20 +260,26 @@ class BillInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('account')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.account'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => $state['name'] ?? '-'),
                                         TextEntry::make('partner')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.partner'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => $state ? ($state['name'] ?? '-') : '-'),
                                         TextEntry::make('name')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.label'))
                                             ->placeholder('-'),
                                         TextEntry::make('currency')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.currency'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => $state['name'] ?? '-'),
                                         TextEntry::make('date_maturity')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.due-date'))
                                             ->placeholder('-')
                                             ->date(),
                                         TextEntry::make('taxes')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.taxes'))
                                             ->badge()
                                             ->state(function ($record): array {
                                                 return $record->taxes->map(fn ($tax) => [
@@ -276,9 +290,11 @@ class BillInfolist
                                             ->placeholder('-')
                                             ->weight(FontWeight::Bold),
                                         TextEntry::make('debit')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.debit'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency?->name),
                                         TextEntry::make('credit')
+                                            ->label(__('accounts::filament/resources/bill.infolist.tabs.journal-items.repeater.entries.credit'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency?->name),
                                     ])->columns(5),

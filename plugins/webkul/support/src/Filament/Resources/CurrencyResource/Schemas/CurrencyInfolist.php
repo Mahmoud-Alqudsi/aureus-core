@@ -47,10 +47,10 @@ class CurrencyInfolist
                                             ->placeholder('—')
                                             ->label(__('support::filament/resources/currency.infolist.sections.format-information.entries.decimal-places')),
                                         TextEntry::make('rounding')
+                                            ->label(__('support::filament/resources/currency.infolist.sections.format-information.entries.rounding'))
                                             ->icon('heroicon-o-arrow-path-rounded-square')
                                             ->placeholder('—')
-                                            ->money(fn ($record) => $record->code, divideBy: 1)
-                                            ->label(__('support::filament/resources/currency.infolist.sections.format-information.entries.rounding')),
+                                            ->money(fn ($record) => $record->code, divideBy: 1),
                                     ])->columns(2),
                             ])->columnSpan(2),
                         Group::make()
@@ -81,11 +81,18 @@ class CurrencyInfolist
                             ])
                             ->schema([
                                 TextEntry::make('name')
+                                    ->label(__('support::filament/resources/currency.infolist.sections.rates.entries.name'))
                                     ->placeholder('-')
                                     ->date('Y-m-d'),
                                 TextEntry::make('rate')
+                                    ->label(__('support::filament/resources/currency.infolist.sections.rates.entries.unit-per-currency', [
+                                        'currency' => default_currency_code(),
+                                    ]))
                                     ->placeholder('-'),
                                 TextEntry::make('rate_temp')
+                                    ->label(__('support::filament/resources/currency.infolist.sections.rates.entries.currency-per-unit', [
+                                        'currency' => default_currency_code(),
+                                    ]))
                                     ->placeholder('-')
                                     ->getStateUsing(function ($record) {
                                         if ($record && $record->rate && $record->rate > 0) {

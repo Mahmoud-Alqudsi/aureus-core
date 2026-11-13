@@ -19,7 +19,6 @@ class SetAsCheckedAction extends Action
         parent::setUp();
 
         $this
-            ->label(__('Set as checked'))
             ->label(__('accounts::filament/resources/invoice/actions/set-as-checked-action.title'))
             ->color('gray')
             ->action(function (Move $record, $livewire): void {

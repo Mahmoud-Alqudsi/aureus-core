@@ -118,6 +118,7 @@ return [
             'tax'              => 'الضريبة',
             'total'            => 'الإجمالي',
             'amount-due'       => 'المبلغ المستحق',
+            'payment-state'    => 'حالة الدفع',
             'invoice-currency' => 'عملة الفاتورة',
         ],
 
@@ -196,6 +197,7 @@ return [
             'general' => [
                 'title'   => 'عام',
                 'entries' => [
+                    'payment-state'    => 'حالة الدفع',
                     'customer-invoice' => 'فاتورة العميل',
                     'customer'         => 'العميل',
                     'invoice-date'     => 'تاريخ الفاتورة',

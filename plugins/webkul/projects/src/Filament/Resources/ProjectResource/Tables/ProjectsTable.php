@@ -67,6 +67,7 @@ class ProjectsTable
                             ->sortable()
                             ->extraAttributes(['class' => 'hidden']),
                         TextColumn::make('planned_date')
+                            ->label(__('projects::filament/resources/project.table.columns.planned-date'))
                             ->icon('heroicon-o-calendar')
                             ->tooltip(__('projects::filament/resources/project.table.columns.planned-date'))
                             ->state(fn (Project $record): string => $record->start_date->format('d M Y').' - '.$record->end_date->format('d M Y')),
@@ -74,9 +75,9 @@ class ProjectsTable
                         ->visible(fn (Project $record) => filled($record->start_date) && filled($record->end_date)),
                     Stack::make([
                         TextColumn::make('remaining_hours')
+                            ->label(__('projects::filament/resources/project.table.columns.remaining-hours'))
                             ->icon('heroicon-o-clock')
                             ->badge()
-                            ->color('success')
                             ->color(fn (Project $record): string => $record->remaining_hours < 0 ? 'danger' : 'success')
                             ->state(fn (Project $record): string => $record->remaining_hours.' Hours')
                             ->tooltip(__('projects::filament/resources/project.table.columns.remaining-hours')),
@@ -86,12 +87,12 @@ class ProjectsTable
                         TextColumn::make('user.name')
                             ->label(__('projects::filament/resources/project.table.columns.project-manager'))
                             ->icon('heroicon-o-user')
-                            ->label(__('projects::filament/resources/project.table.columns.project-manager'))
                             ->sortable(),
                     ])
                         ->visible(fn (Project $record) => filled($record->user)),
                     Stack::make([
                         TextColumn::make('tags.name')
+                            ->label(__('projects::filament/resources/project.table.columns.tags'))
                             ->badge()
                             ->state(function (Project $record): array {
                                 return $record->tags->map(fn ($tag) => [

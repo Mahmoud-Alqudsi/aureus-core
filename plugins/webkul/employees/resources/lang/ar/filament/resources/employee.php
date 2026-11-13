@@ -172,6 +172,7 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'          => 'الصورة الرمزية',
             'name'            => 'الاسم',
             'manager-name'    => 'المدير',
             'company-name'    => 'الشركة',
@@ -358,6 +359,7 @@ return [
 
                 'entries' => [
                     'location'             => 'الموقع',
+                    'approvers'            => 'المعتمدون',
                     'work-address'         => 'عنوان العمل',
                     'work-location'        => 'موقع العمل',
                     'time-off'             => 'الإجازات',

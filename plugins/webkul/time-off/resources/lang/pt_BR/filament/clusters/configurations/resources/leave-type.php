@@ -141,6 +141,7 @@ return [
                     'public-holiday-included'             => 'Feriado incluído',
                     'allow-to-attach-supporting-document' => 'Permitir anexar documento comprobatório',
                     'show-on-dashboard'                   => 'Mostrar no painel',
+                    'allow-negative-cap'                  => 'Permitir limite negativo',
                     'kind-off-time'                       => 'Tipo de tempo',
                     'max-negative-cap'                    => 'Limite negativo máximo',
                     'kind-of-time'                        => 'Tipo de ausência',

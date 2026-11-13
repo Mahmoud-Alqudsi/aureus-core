@@ -12,9 +12,11 @@ class IncotermInfolist
         return $schema
             ->components([
                 TextEntry::make('code')
-                    ->placeholder(__('accounts::filament/resources/incoterm.infolist.entries.code')),
+                    ->label(__('accounts::filament/resources/incoterm.infolist.entries.code'))
+                    ->placeholder('-'),
                 TextEntry::make('name')
-                    ->placeholder(__('accounts::filament/resources/incoterm.infolist.entries.name')),
+                    ->label(__('accounts::filament/resources/incoterm.infolist.entries.name'))
+                    ->placeholder('-'),
             ]);
     }
 }

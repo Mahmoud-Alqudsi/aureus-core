@@ -172,6 +172,7 @@ return [
 
     'table' => [
         'columns' => [
+            'avatar'          => 'Avatar',
             'name'            => 'Name',
             'manager-name'    => 'Manager',
             'company-name'    => 'Company',
@@ -358,6 +359,7 @@ return [
 
                 'entries' => [
                     'location'             => 'Location',
+                    'approvers'            => 'Approvers',
                     'work-address'         => 'Work Address',
                     'work-location'        => 'Work Location',
                     'time-off'             => 'Time Off',

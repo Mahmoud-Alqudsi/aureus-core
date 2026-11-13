@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'heading' => 'Revenue Over Time',
-    'dataset' => 'Revenue',
+    'heading' => 'الإيرادات بمرور الوقت',
+    'dataset' => 'الإيرادات',
 ];

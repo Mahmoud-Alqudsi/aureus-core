@@ -69,6 +69,7 @@ return [
             'planned-date'    => 'التاريخ المخطط',
             'remaining-hours' => 'الساعات المتبقية',
             'project-manager' => 'مدير المشروع',
+            'tags'            => 'الوسوم',
         ],
 
         'groups' => [

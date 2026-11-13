@@ -141,6 +141,7 @@ return [
                     'public-holiday-included'             => 'Public Holiday Included',
                     'allow-to-attach-supporting-document' => 'Allow to Attach Supporting Document',
                     'show-on-dashboard'                   => 'Show on Dashboard',
+                    'allow-negative-cap'                  => 'Allow Negative Cap',
                     'kind-off-time'                       => 'Kind of Time',
                     'max-negative-cap'                    => 'Max Negative Cap',
                     'kind-of-time'                        => 'Kind of Time Off',

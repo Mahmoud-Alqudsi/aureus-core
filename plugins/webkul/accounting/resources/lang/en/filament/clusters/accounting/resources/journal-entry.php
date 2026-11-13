@@ -154,6 +154,7 @@ return [
             'general' => [
                 'title'   => 'General',
                 'entries' => [
+                    'payment-state'   => 'Payment State',
                     'number'          => 'Number',
                     'reference'       => 'Reference',
                     'accounting-date' => 'Accounting Date',

@@ -85,7 +85,8 @@ return [
     ],
 
     'infolist' => [
-        'name'   => 'Nome',
-        'status' => 'Status',
+        'general' => 'Informações Gerais',
+        'name'    => 'Nome',
+        'status'  => 'Status',
     ],
 ];

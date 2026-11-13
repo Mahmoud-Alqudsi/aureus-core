@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'اليوميات',
+    'model-label' => 'دفتر اليومية',
 
     'navigation' => [
-        'title' => 'اليوميات',
+        'title' => 'دفاتر اليومية',
         'group' => 'المحاسبة',
     ],
 ];

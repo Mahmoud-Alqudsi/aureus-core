@@ -56,8 +56,8 @@ class AccountsTable
             ])
             ->filters(array_merge([
                 SelectFilter::make('account_type')
-                    ->options(AccountType::groupedOptions())
-                    ->label(__('accounts::filament/resources/account.table.filters.account-type')),
+                    ->label(__('accounts::filament/resources/account.table.filters.account-type'))
+                    ->options(AccountType::groupedOptions()),
                 SelectFilter::make('parent_id')
                     ->relationship('parent', 'name')
                     ->searchable()
@@ -69,10 +69,10 @@ class AccountsTable
                     ->preload()
                     ->label(__('accounts::filament/resources/account.table.filters.account-journals')),
                 SelectFilter::make('currency')
+                    ->label(__('accounts::filament/resources/account.table.filters.currency'))
                     ->relationship(name: 'currency', titleAttribute: 'name', modifyQueryUsing: fn (Builder $query) => $query->active())
                     ->searchable()
-                    ->preload()
-                    ->label(__('accounts::filament/resources/account.table.filters.currency')),
+                    ->preload(),
                 TernaryFilter::make('reconcile')
                     ->label(__('accounts::filament/resources/account.table.filters.allow-reconcile')),
                 TernaryFilter::make('non_trade')

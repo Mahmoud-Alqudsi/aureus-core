@@ -78,6 +78,7 @@ After every implementation, verify and report:
 | Security-sensitive | Verify policy exists and is registered. Verify company scope is applied. Verify no raw queries bypass scoping. |
 | Cross-plugin | Verify no circular dependencies. Verify affected plugins' tests still pass. |
 | Architecture | Run `php scripts/sync-architecture.php --check`. If drifted, run `--sync` and verify qualitative impact in `ARCHITECTURE.md`. |
+| Localization / UI | Run `php scripts/audit-translations.php --plugin=...` (or `--check`). Ensure zero missing labels, zero hardcoded strings, and 5-locale symmetry. |
 
 **Always report:**
 - What was tested and the result.

@@ -119,15 +119,15 @@ class QuotationInfolist
                                             ->toggleable(isToggledHiddenByDefault: true)
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.lead-time')),
                                         InfolistTableColumn::make('product_packaging_qty')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.packaging-qty'))
                                             ->toggleable(isToggledHiddenByDefault: true)
                                             ->width(150)
-                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.packaging-qty'))
                                             ->visible(fn (ProductSettings $settings) => $settings->enable_packagings),
                                         InfolistTableColumn::make('productPackaging')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.packaging'))
                                             ->toggleable(isToggledHiddenByDefault: true)
                                             ->width(150)
-                                            ->visible(fn (ProductSettings $settings) => $settings->enable_packagings)
-                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.packaging')),
+                                            ->visible(fn (ProductSettings $settings) => $settings->enable_packagings),
                                         InfolistTableColumn::make('price_unit')
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.unit-price'))
                                             ->toggleable()
@@ -158,52 +158,62 @@ class QuotationInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('name')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.product'))
                                             ->placeholder('-')
                                             ->tooltip(fn ($record) => $record->product?->name)
                                             ->iconColor('primary'),
 
                                         TextEntry::make('product_uom_qty')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.quantity'))
                                             ->placeholder('-')
                                             ->numeric(),
 
                                         TextEntry::make('qty_delivered')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.qty-delivered'))
                                             ->placeholder('-')
                                             ->numeric()
                                             ->visible(fn ($record): bool => in_array($record?->state, [OrderState::SALE])),
 
                                         TextEntry::make('qty_invoiced')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.qty-invoiced'))
                                             ->placeholder('-')
                                             ->numeric()
                                             ->visible(fn ($record): bool => in_array($record?->state, [OrderState::SALE])),
 
                                         TextEntry::make('uom')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.uom'))
                                             ->formatStateUsing(function ($state, ProductSettings $settings) {
                                                 return $settings->enable_uom && $state ? $state['name'] : '-';
                                             })
                                             ->visible(fn (ProductSettings $settings) => $settings->enable_uom),
 
                                         TextEntry::make('customer_lead')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.lead-time'))
                                             ->placeholder('-')
                                             ->numeric()
                                             ->suffix(' days'),
 
                                         TextEntry::make('product_packaging_qty')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.packaging-qty'))
                                             ->formatStateUsing(function ($state, ProductSettings $settings) {
                                                 return $settings->enable_packagings && $state ? $state : '-';
                                             })
                                             ->visible(fn (ProductSettings $settings) => $settings->enable_packagings),
 
                                         TextEntry::make('productPackaging')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.packaging'))
                                             ->formatStateUsing(fn ($state) => $state['name'])
                                             ->placeholder('-')
                                             ->visible(fn (ProductSettings $settings) => $settings->enable_packagings),
 
                                         TextEntry::make('price_unit')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.unit-price'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency->code)
                                             ->weight(FontWeight::Medium),
 
                                         TextEntry::make('margin')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.margin'))
                                             ->formatStateUsing(function ($state, PriceSettings $settings) {
                                                 return $settings->enable_margin && $state ? $state : '-';
                                             })
@@ -211,11 +221,13 @@ class QuotationInfolist
                                             ->money(fn ($record) => $record->currency->code),
 
                                         TextEntry::make('margin_percent')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.margin-percentage'))
                                             ->formatStateUsing(function ($state, PriceSettings $settings) {
                                                 return $settings->enable_margin && $state ? $state : '-';
                                             })
                                             ->visible(fn (PriceSettings $settings) => $settings->enable_margin),
                                         TextEntry::make('taxes')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.taxes'))
                                             ->badge()
                                             ->state(function ($record): array {
                                                 return $record->taxes->map(fn ($tax) => ['name' => $tax->name])->toArray();
@@ -225,6 +237,7 @@ class QuotationInfolist
                                             ->placeholder('-'),
 
                                         TextEntry::make('discount')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.discount-percentage'))
                                             ->formatStateUsing(function ($state, PriceSettings $settings) {
                                                 return $settings->enable_discount && $state ? $state : '-';
                                             })
@@ -233,6 +246,7 @@ class QuotationInfolist
                                             ->suffix('%'),
 
                                         TextEntry::make('price_subtotal')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.products.entries.amount'))
                                             ->placeholder('-')
                                             ->money(fn ($record) => $record->currency->code),
                                     ])
@@ -316,14 +330,14 @@ class QuotationInfolist
                                     ])
                                     ->schema([
                                         TextEntry::make('product')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.product-optional.entries.product'))
                                             ->placeholder('-')
                                             ->formatStateUsing(fn ($state) => $state['name'])
-                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.product-optional.entries.product'))
                                             ->alignment(Alignment::Start),
                                         TextEntry::make('uom.name')
+                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.product-optional.entries.uom'))
                                             ->placeholder('-')
                                             ->visible(fn (ProductSettings $settings) => $settings->enable_uom)
-                                            ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.order-line.repeater.product-optional.entries.uom'))
                                             ->alignment(Alignment::Start),
                                         TextEntry::make('quantity')
                                             ->placeholder('-')
@@ -359,6 +373,7 @@ class QuotationInfolist
                                                     ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.other-information.fieldset.sales.entries.customer-reference'))
                                                     ->icon('heroicon-o-hashtag'),
                                                 TextEntry::make('tags.name')
+                                                    ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.other-information.fieldset.sales.entries.tags'))
                                                     ->badge()
                                                     ->state(function ($record): array {
                                                         return $record->tags->map(fn ($tag) => [
@@ -367,7 +382,6 @@ class QuotationInfolist
                                                     })
                                                     ->formatStateUsing(fn ($state) => $state['name'])
                                                     ->placeholder('-')
-                                                    ->label(__('sales::filament/clusters/orders/resources/quotation.infolist.tabs.other-information.fieldset.sales.entries.tags'))
                                                     ->icon('heroicon-o-tag'),
                                             ])->columns(2),
                                     ]),

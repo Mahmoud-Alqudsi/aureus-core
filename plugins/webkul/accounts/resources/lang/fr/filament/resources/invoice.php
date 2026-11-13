@@ -118,6 +118,7 @@ return [
             'tax'              => 'Taxe',
             'total'            => 'Total',
             'amount-due'       => 'Montant dû',
+            'payment-state'    => 'État du paiement',
             'invoice-currency' => 'Devise de la facture',
         ],
 
@@ -196,6 +197,7 @@ return [
             'general' => [
                 'title'   => 'Général',
                 'entries' => [
+                    'payment-state'    => 'État du paiement',
                     'customer-invoice' => 'Facture client',
                     'customer'         => 'Client',
                     'invoice-date'     => 'Date de facture',

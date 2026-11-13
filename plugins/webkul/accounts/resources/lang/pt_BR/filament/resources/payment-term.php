@@ -22,6 +22,7 @@ return [
         'tabs' => [
             'due-terms' => [
                 'title' => 'Termos de vencimento',
+                'add-action-label' => 'Adicionar Termo de Vencimento',
 
                 'repeater' => [
                     'due-terms' => [
@@ -35,6 +36,13 @@ return [
                     ],
                 ],
             ],
+        ],
+
+        'preview' => [
+            'example'     => 'Exemplo: <strong>:total</strong> em :date',
+            'no-terms'    => 'Nenhum termo de vencimento definido para pré-visualização',
+            'title'       => 'Pré-visualização das condições de pagamento',
+            'installment' => 'Parcela <strong>#:number</strong> de <strong>:amount</strong> com vencimento em :date',
         ],
     ],
 

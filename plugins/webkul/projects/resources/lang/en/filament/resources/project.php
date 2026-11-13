@@ -69,6 +69,7 @@ return [
             'planned-date'    => 'Planned Date',
             'remaining-hours' => 'Remaining Hours',
             'project-manager' => 'Project Manager',
+            'tags'            => 'Tags',
         ],
 
         'groups' => [

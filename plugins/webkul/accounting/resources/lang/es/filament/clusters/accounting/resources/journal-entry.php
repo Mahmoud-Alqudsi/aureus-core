@@ -154,6 +154,7 @@ return [
             'general' => [
                 'title'   => 'General',
                 'entries' => [
+                    'payment-state'   => 'Estado de pago',
                     'number'          => 'Número',
                     'reference'       => 'Referencia',
                     'accounting-date' => 'Fecha contable',
