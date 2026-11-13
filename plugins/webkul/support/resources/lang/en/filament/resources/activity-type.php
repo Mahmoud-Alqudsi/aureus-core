@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Activity Type',
+    'plural-model-label' => 'Activity Types',
     'title' => 'Activity Type',
 
     'navigation' => [

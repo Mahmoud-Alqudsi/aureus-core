@@ -20,10 +20,6 @@ class ActivityTypeResource extends BaseActivityTypeResource
 
     protected static ?string $cluster = Configuration::class;
 
-    public static function getModelLabel(): string
-    {
-        return __('Activity Type');
-    }
 
     public static function getNavigationGroup(): ?string
     {

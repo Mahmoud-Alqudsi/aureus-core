@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Horário de trabalho',
+    'plural-model-label' => 'Horários de trabalho',
     'title' => 'Horários de trabalho',
 
     'navigation' => [

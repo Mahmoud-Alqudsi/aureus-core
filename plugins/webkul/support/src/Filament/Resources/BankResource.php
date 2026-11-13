@@ -18,6 +18,16 @@ class BankResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('support::filament/resources/bank.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('support::filament/resources/bank.plural-model-label');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('support::filament/resources/bank.navigation.group');

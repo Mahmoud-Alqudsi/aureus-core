@@ -35,7 +35,12 @@ class ActivityTypeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('support::filament/resources/activity-type.title');
+        return __('support::filament/resources/activity-type.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('support::filament/resources/activity-type.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

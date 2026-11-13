@@ -2,7 +2,7 @@
 
 return [
     'model-label'        => 'مورد',
-    'plural-model-label' => 'الموردين',
+    'plural-model-label' => 'موردين',
 
     'title' => 'الموردين',
 

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'نوع نشاط',
+    'plural-model-label' => 'أنواع أنشطة',
     'title' => 'نوع النشاط',
 
     'navigation' => [

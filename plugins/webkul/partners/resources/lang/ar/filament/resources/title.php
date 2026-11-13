@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'model-label'        => 'اللقب',
-    'plural-model-label' => 'الألقاب',
+    'model-label'        => 'لقب',
+    'plural-model-label' => 'ألقاب',
     'navigation' => [
         'title' => 'الألقاب',
     ],

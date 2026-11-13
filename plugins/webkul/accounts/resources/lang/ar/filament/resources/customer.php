@@ -2,7 +2,7 @@
 
 return [
     'model-label'        => 'عميل',
-    'plural-model-label' => 'العملاء',
+    'plural-model-label' => 'عملاء',
 
     'title' => 'العملاء',
 

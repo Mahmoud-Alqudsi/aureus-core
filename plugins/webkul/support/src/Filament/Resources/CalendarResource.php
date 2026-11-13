@@ -31,7 +31,12 @@ class CalendarResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('support::filament/resources/calendar.title');
+        return __('support::filament/resources/calendar.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('support::filament/resources/calendar.plural-model-label');
     }
 
     public static function getNavigationGroup(): string|\UnitEnum
