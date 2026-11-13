@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Champ personnalisé',
+    'plural-model-label' => 'Champs personnalisés',
+
     'navigation' => [
         'title' => 'Champs personnalisés',
     ],
