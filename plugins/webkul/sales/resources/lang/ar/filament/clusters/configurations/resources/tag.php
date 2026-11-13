@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'وسم مبيعات',
+    'plural-model-label' => 'وسوم مبيعات',
+
     'title' => 'الوسم',
 
     'navigation' => [

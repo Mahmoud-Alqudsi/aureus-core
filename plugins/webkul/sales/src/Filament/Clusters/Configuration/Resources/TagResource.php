@@ -27,7 +27,12 @@ class TagResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('sales::filament/clusters/configurations/resources/tag.title');
+        return __('sales::filament/clusters/configurations/resources/tag.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales::filament/clusters/configurations/resources/tag.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

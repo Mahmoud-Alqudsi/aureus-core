@@ -51,6 +51,16 @@ class LeadAnalysisResource extends Resource
         return __('crm::filament/clusters/reporting/resources/lead-analysis.title');
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('crm::filament/clusters/reporting/resources/lead-analysis.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('crm::filament/clusters/reporting/resources/lead-analysis.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('crm::filament/clusters/reporting/resources/lead-analysis.navigation.title');

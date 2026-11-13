@@ -20,7 +20,12 @@ class OrderToUpsellResource extends QuotationResource
 
     public static function getModelLabel(): string
     {
-        return __('sales::filament/clusters/to-invoice/resources/order-to-upsell.title');
+        return __('sales::filament/clusters/to-invoice/resources/order-to-upsell.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales::filament/clusters/to-invoice/resources/order-to-upsell.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

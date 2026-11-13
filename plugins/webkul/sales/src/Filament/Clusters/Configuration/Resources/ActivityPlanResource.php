@@ -29,6 +29,16 @@ class ActivityPlanResource extends Resource
 
     protected static ?string $cluster = Configuration::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('sales::filament/clusters/configurations/resources/activity-plan.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales::filament/clusters/configurations/resources/activity-plan.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('sales::filament/clusters/configurations/resources/activity-plan.navigation.title');

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Équipes commerciales',
+    'title'              => 'Équipes commerciales',
+    'model-label'        => 'Équipe commerciale',
+    'plural-model-label' => 'Équipes commerciales',
 
     'navigation' => [
         'title' => 'Équipes commerciales',

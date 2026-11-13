@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Orçamento',
+    'title'              => 'Orçamento',
+    'model-label'        => 'Cotação',
+    'plural-model-label' => 'Cotações',
 
     'navigation' => [
         'title' => 'Orçamentos',

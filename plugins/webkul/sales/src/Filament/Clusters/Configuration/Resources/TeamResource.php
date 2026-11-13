@@ -33,7 +33,12 @@ class TeamResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('sales::filament/clusters/configurations/resources/team.title');
+        return __('sales::filament/clusters/configurations/resources/team.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales::filament/clusters/configurations/resources/team.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

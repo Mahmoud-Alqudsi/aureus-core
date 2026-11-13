@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Sales Teams',
+    'title'              => 'Sales Teams',
+    'model-label'        => 'Sales Team',
+    'plural-model-label' => 'Sales Teams',
 
     'navigation' => [
         'title' => 'Sales Teams',
