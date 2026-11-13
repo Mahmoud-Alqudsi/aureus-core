@@ -4,11 +4,6 @@ return [
     'model-label'        => 'إشعار دائن',
     'plural-model-label' => 'إشعارات دائنة',
 
-    'navigation' => [
-        'title' => 'إشعارات دائنة',
-        'group' => 'الفواتير',
-    ],
-
     'form' => [
         'section' => [
             'general' => [
