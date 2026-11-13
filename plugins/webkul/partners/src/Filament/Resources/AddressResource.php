@@ -18,6 +18,16 @@ class AddressResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('partners::filament/resources/address.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('partners::filament/resources/address.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('partners::filament/resources/address.navigation.title');

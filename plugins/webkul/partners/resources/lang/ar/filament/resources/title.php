@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'اللقب',
+    'plural-model-label' => 'الألقاب',
     'navigation' => [
         'title' => 'الألقاب',
     ],
