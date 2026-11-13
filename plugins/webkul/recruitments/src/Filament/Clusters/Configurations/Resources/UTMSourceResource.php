@@ -26,7 +26,12 @@ class UTMSourceResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/configurations/resources/utm-source.title');
+        return __('recruitments::filament/clusters/configurations/resources/utm-source.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/utm-source.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

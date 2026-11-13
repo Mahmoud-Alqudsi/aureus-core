@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Employment Types',
+    'title'              => 'Employment Types',
+    'model-label'        => 'Employment Type',
+    'plural-model-label' => 'Employment Types',
 
     'navigation' => [
         'title' => 'Employment Types',

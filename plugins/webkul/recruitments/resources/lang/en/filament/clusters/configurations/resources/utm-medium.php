@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Mediums',
+    'title'              => 'Mediums',
+    'model-label'        => 'Medium',
+    'plural-model-label' => 'Mediums',
 
     'navigation' => [
         'title' => 'Mediums',

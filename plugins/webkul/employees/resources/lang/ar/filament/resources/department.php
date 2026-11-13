@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'الأقسام',
+    'title'              => 'الأقسام',
+    'model-label'        => 'قسم',
+    'plural-model-label' => 'أقسام',
 
     'navigation' => [
         'title' => 'الأقسام',

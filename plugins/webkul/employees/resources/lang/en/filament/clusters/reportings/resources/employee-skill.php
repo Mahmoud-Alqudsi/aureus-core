@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Skills',
+    'title'              => 'Skills',
+    'model-label'        => 'Employee Skill',
+    'plural-model-label' => 'Employee Skills',
 
     'navigation' => [
         'title' => 'Skills',

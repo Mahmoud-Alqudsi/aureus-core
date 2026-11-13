@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Ubicaciones de trabajo',
+    'title'              => 'Ubicaciones de trabajo',
+    'model-label'        => 'Ubicación de trabajo',
+    'plural-model-label' => 'Ubicaciones de trabajo',
 
     'navigation' => [
         'title' => 'Ubicaciones de trabajo',

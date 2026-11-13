@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'المراحل',
+    'title'              => 'المراحل',
+    'model-label'        => 'مرحلة توظيف',
+    'plural-model-label' => 'مراحل توظيف',
 
     'navigation' => [
         'title' => 'المراحل',

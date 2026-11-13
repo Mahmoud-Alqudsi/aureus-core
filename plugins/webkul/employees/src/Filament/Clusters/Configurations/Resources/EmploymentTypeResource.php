@@ -23,7 +23,12 @@ class EmploymentTypeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('employees::filament/clusters/configurations/resources/employment-type.title');
+        return __('employees::filament/clusters/configurations/resources/employment-type.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('employees::filament/clusters/configurations/resources/employment-type.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'أسباب المغادرة',
+    'title'              => 'أسباب المغادرة',
+    'model-label'        => 'سبب مغادرة',
+    'plural-model-label' => 'أسباب مغادرة',
 
     'navigation' => [
         'title' => 'أسباب المغادرة',

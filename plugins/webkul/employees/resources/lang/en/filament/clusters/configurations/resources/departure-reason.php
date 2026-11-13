@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Departure Reasons',
+    'title'              => 'Departure Reasons',
+    'model-label'        => 'Departure Reason',
+    'plural-model-label' => 'Departure Reasons',
 
     'navigation' => [
         'title' => 'Departure Reasons',

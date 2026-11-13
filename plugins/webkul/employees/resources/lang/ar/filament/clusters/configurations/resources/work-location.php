@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'مواقع العمل',
+    'title'              => 'مواقع العمل',
+    'model-label'        => 'موقع عمل',
+    'plural-model-label' => 'مواقع عمل',
 
     'navigation' => [
         'title' => 'مواقع العمل',

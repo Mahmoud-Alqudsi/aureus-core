@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'الوسائط',
+    'title'              => 'الوسائط',
+    'model-label'        => 'وسيط تسويقي',
+    'plural-model-label' => 'وسائط تسويقية',
 
     'navigation' => [
         'title' => 'الوسائط',

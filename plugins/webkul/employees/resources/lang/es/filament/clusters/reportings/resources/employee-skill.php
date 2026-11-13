@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Competencias',
+    'title'              => 'Competencias',
+    'model-label'        => 'Habilidad de empleado',
+    'plural-model-label' => 'Habilidades de empleado',
 
     'navigation' => [
         'title' => 'Competencias',

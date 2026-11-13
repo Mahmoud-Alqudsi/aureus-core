@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'الوسوم',
+    'title'              => 'الوسوم',
+    'model-label'        => 'وسم متقدم',
+    'plural-model-label' => 'وسوم متقدمين',
 
     'navigation' => [
         'title' => 'الوسوم',

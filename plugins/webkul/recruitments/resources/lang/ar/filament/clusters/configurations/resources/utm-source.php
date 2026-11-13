@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'المصادر',
+    'title'              => 'المصادر',
+    'model-label'        => 'مصدر تسويقي',
+    'plural-model-label' => 'مصادر تسويقية',
 
     'navigation' => [
         'title' => 'المصادر',

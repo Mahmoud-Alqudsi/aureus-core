@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Types de compétence',
+    'title'              => 'Types de compétence',
+    'model-label'        => 'Type de compétence',
+    'plural-model-label' => 'Types de compétences',
 
     'navigation' => [
         'title' => 'Types de compétence',
