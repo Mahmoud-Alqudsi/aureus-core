@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Días festivos',
-
-    'model-label' => 'Día festivo',
+    'title'              => 'Días festivos',
+    'model-label'        => 'Día festivo',
+    'plural-model-label' => 'Días festivos',
 
     'navigation' => [
         'title' => 'Días festivos',

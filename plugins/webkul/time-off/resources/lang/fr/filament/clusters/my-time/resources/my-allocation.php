@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Mon allocation',
-
-    'model-label' => 'Mon allocation',
+    'title'              => 'Mon allocation',
+    'model-label'        => 'Mon allocation',
+    'plural-model-label' => 'Mes allocations',
 
     'navigation' => [
         'title' => 'Mon allocation',

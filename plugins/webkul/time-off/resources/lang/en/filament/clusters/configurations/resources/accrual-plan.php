@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'Accrual Plan',
+    'title'              => 'Accrual Plan',
+    'model-label'        => 'Accrual Plan',
+    'plural-model-label' => 'Accrual Plans',
     'navigation' => [
         'title' => 'Accrual Plan',
     ],

@@ -37,6 +37,11 @@ class TimeOffResource extends Resource
         return __('time-off::filament/clusters/management/resources/time-off.model-label');
     }
 
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/management/resources/time-off.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('time-off::filament/clusters/management/resources/time-off.navigation.title');

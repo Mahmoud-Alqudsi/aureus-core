@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'Tipo de ausencia',
+    'title'              => 'Tipo de ausencia',
+    'model-label'        => 'Tipo de tiempo libre',
+    'plural-model-label' => 'Tipos de tiempo libre',
     'navigation' => [
         'title' => 'Tipo de ausencia',
     ],

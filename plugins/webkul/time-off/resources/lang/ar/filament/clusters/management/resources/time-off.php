@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'الإجازات',
-
-    'model-label' => 'إجازة',
+    'title'              => 'الإجازات',
+    'model-label'        => 'إجازة',
+    'plural-model-label' => 'إجازات',
 
     'navigation' => [
         'title' => 'الإجازات',

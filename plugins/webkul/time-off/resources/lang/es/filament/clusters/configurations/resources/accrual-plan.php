@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'Plan de acumulación',
+    'title'              => 'Plan de acumulación',
+    'model-label'        => 'Plan de acumulación',
+    'plural-model-label' => 'Planes de acumulación',
     'navigation' => [
         'title' => 'Plan de acumulación',
     ],
