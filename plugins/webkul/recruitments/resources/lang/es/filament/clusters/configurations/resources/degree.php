@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Titulaciones',
+    'title'              => 'Titulaciones',
+    'model-label'        => 'Grado',
+    'plural-model-label' => 'Grados',
 
     'navigation' => [
         'title' => 'Titulaciones',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'شحن مباشر',
+    'plural-model-label' => 'شحنات مباشرة',
+
     'navigation' => [
         'title' => 'الشحن المباشر',
         'group' => 'التحويلات',

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Time off',
-
-    'model-label' => 'Time off',
+    'title'              => 'Time off',
+    'model-label'        => 'Time Off',
+    'plural-model-label' => 'Time Off',
 
     'navigation' => [
         'title' => 'Time off',

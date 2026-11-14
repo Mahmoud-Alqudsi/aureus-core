@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'خطة الاستحقاق',
+    'title'              => 'خطة الاستحقاق',
+    'model-label'        => 'خطة استحقاق',
+    'plural-model-label' => 'خطط استحقاق',
     'navigation' => [
         'title' => 'خطة الاستحقاق',
     ],

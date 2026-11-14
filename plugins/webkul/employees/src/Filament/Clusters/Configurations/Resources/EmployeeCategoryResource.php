@@ -25,7 +25,12 @@ class EmployeeCategoryResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('employees::filament/clusters/configurations/resources/employee-category.title');
+        return __('employees::filament/clusters/configurations/resources/employee-category.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('employees::filament/clusters/configurations/resources/employee-category.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

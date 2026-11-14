@@ -18,6 +18,16 @@ class TagResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('partners::filament/resources/tag.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('partners::filament/resources/tag.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('partners::filament/resources/tag.navigation.title');

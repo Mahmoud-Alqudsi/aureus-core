@@ -30,6 +30,16 @@ class JournalResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/journal.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/journal.plural-model-label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return JournalForm::configure($schema);

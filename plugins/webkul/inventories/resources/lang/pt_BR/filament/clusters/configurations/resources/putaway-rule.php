@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Regra de armazenamento',
+    'plural-model-label' => 'Regras de armazenamento',
+
     'navigation' => [
         'title' => 'Regras de armazenamento',
         'group' => 'Gestão de armazéns',

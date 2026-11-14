@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Setor',
+    'plural-model-label' => 'Setores',
     'navigation' => [
         'title' => 'Setores',
     ],

@@ -17,4 +17,14 @@ class StateResource extends Resource
     protected static bool $isGloballySearchable = false;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getModelLabel(): string
+    {
+        return __('support::filament/resources/state.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('support::filament/resources/state.plural-model-label');
+    }
 }

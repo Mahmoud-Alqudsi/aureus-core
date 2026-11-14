@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Order',
+    'plural-model-label' => 'Orders',
+
     'global-search' => [
         'vendor'    => 'Vendor',
         'reference' => 'Reference',

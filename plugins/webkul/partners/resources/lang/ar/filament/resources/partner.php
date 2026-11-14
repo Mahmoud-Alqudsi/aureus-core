@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'شريك',
+    'plural-model-label' => 'شركاء',
     'global-search' => [
         'email' => 'البريد الإلكتروني',
         'phone' => 'الهاتف',

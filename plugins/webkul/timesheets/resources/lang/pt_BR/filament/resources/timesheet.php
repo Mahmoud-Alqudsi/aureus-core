@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Apontamentos de horas',
+    'model-label'        => 'Planilha de horas',
+    'plural-model-label' => 'Planilhas de horas',
 
     'navigation' => [
         'title' => 'Apontamentos de horas',

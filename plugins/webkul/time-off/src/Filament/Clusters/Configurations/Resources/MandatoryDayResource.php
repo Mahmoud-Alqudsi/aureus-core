@@ -28,7 +28,12 @@ class MandatoryDayResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('time-off::filament/clusters/configurations/resources/mandatory-days.title');
+        return __('time-off::filament/clusters/configurations/resources/mandatory-days.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/configurations/resources/mandatory-days.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

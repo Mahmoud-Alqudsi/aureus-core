@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Putaway Rule',
+    'plural-model-label' => 'Putaway Rules',
+
     'navigation' => [
         'title' => 'Putaway Rules',
         'group' => 'Warehouse Management',

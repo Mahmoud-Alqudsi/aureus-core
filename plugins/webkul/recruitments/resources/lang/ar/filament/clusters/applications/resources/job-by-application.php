@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'الوظيفة',
+    'title'              => 'الوظيفة',
+    'model-label'        => 'وظيفة شاغرة',
+    'plural-model-label' => 'وظائف شاغرة',
 
     'navigation' => [
         'title' => 'الوظائف',

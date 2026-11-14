@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Account Tag',
+    'plural-model-label' => 'Account Tags',
+
     'form' => [
         'fields' => [
             'color'         => 'Color',

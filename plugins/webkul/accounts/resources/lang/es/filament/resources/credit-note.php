@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'Factura',
-
-    'navigation' => [
-        'title' => 'Facturas',
-        'group' => 'Facturas',
-    ],
+    'model-label'        => 'Nota de crédito',
+    'plural-model-label' => 'Notas de crédito',
 
     'form' => [
         'section' => [

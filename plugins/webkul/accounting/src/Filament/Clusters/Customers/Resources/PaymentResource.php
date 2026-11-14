@@ -26,11 +26,6 @@ class PaymentResource extends BasePaymentResource
 
     protected static ?string $cluster = Customers::class;
 
-    public static function getModelLabel(): string
-    {
-        return __('accounting::filament/clusters/customers/resources/payment.model-label');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('accounting::filament/clusters/customers/resources/payment.navigation.title');

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Posição fiscal',
+    'plural-model-label' => 'Posições fiscais',
+
     'global-search' => [
         'zip-from' => 'CEP inicial',
         'zip-to'   => 'CEP final',

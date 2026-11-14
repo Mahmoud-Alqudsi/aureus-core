@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'المتقدم',
+    'title'              => 'المتقدم',
+    'model-label'        => 'متقدم للوظيفة',
+    'plural-model-label' => 'متقدمون للوظيفة',
 
     'navigation' => [
         'title' => 'المتقدمون',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Job Position',
+    'plural-model-label' => 'Job Positions',
+
     'navigation' => [
         'title' => 'Job Positions',
         'group' => 'Job Positions',

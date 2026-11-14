@@ -28,7 +28,12 @@ class JobPositionResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('employees::filament/clusters/configurations/resources/job-position.title');
+        return __('employees::filament/clusters/configurations/resources/job-position.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('employees::filament/clusters/configurations/resources/job-position.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

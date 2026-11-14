@@ -31,6 +31,16 @@ class CurrencyResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('support::filament/resources/currency.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('support::filament/resources/currency.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('support::filament/resources/currency.navigation.title');

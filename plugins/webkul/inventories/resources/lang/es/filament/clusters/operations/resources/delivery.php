@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Entrega',
+    'plural-model-label' => 'Entregas',
+
     'navigation' => [
         'title' => 'Entregas',
         'group' => 'Transferencias',

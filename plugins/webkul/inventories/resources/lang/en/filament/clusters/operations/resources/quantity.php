@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Inventory Quantity',
+    'plural-model-label' => 'Inventory Quantities',
+
     'navigation' => [
         'title' => 'Quantities',
         'group' => 'Adjustments',

@@ -28,7 +28,12 @@ class TeamResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('maintenance::models/team.title');
+        return __('maintenance::filament/clusters/configurations/resources/team.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('maintenance::filament/clusters/configurations/resources/team.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Categoría de almacenamiento',
+    'plural-model-label' => 'Categorías de almacenamiento',
+
     'navigation' => [
         'title' => 'Categorías de almacenamiento',
         'group' => 'Gestión de almacenes',

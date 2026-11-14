@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Pacote',
+    'plural-model-label' => 'Pacotes',
+
     'navigation' => [
         'title' => 'Embalagens',
         'group' => 'Estoque',

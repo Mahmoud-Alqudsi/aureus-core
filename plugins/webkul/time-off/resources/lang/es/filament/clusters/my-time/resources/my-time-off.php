@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Ausencias',
-
-    'model-label' => 'Mis ausencias',
+    'title'              => 'Ausencias',
+    'model-label'        => 'Mi tiempo libre',
+    'plural-model-label' => 'Mis tiempos libres',
 
     'navigation' => [
         'title' => 'Mis ausencias',

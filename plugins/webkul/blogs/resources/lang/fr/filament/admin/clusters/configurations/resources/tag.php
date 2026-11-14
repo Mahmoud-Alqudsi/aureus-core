@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Étiquette',
+    'plural-model-label' => 'Étiquettes',
+
     'navigation' => [
         'title' => 'Étiquettes',
         'group' => 'Blog',

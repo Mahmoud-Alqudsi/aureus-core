@@ -32,7 +32,12 @@ class AccrualPlanResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('time-off::filament/clusters/configurations/resources/accrual-plan.title');
+        return __('time-off::filament/clusters/configurations/resources/accrual-plan.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/configurations/resources/accrual-plan.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

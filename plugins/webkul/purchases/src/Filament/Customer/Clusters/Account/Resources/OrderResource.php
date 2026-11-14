@@ -26,6 +26,16 @@ abstract class OrderResource extends Resource
 
     protected static string|array $routeMiddleware = [Authenticate::class];
 
+    public static function getModelLabel(): string
+    {
+        return __('purchases::filament/customer/clusters/account/resources/order.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('purchases::filament/customer/clusters/account/resources/order.plural-model-label');
+    }
+
     public static function table(Table $table): Table
     {
         return OrdersTable::configure($table);

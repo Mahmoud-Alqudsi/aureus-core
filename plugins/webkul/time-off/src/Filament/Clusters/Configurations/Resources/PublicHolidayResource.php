@@ -26,11 +26,14 @@ class PublicHolidayResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $modelLabel = 'Public Holiday';
-
     public static function getModelLabel(): string
     {
-        return __('time-off::filament/clusters/configurations/resources/public-holiday.title');
+        return __('time-off::filament/clusters/configurations/resources/public-holiday.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/configurations/resources/public-holiday.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Tipos de habilidade',
+    'title'              => 'Tipos de habilidade',
+    'model-label'        => 'Tipo de habilidade',
+    'plural-model-label' => 'Tipos de habilidades',
 
     'navigation' => [
         'title' => 'Tipos de habilidade',

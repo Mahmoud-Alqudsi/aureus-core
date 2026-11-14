@@ -37,6 +37,16 @@ class PutawayRuleResource extends Resource
         return settings(WarehouseSettings::class)->enable_locations;
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/putaway-rule.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/putaway-rule.plural-model-label');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('inventories::filament/clusters/configurations/resources/putaway-rule.navigation.group');

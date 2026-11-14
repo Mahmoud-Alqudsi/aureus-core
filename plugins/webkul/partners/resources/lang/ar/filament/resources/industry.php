@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'مجال عمل',
+    'plural-model-label' => 'مجالات عمل',
     'navigation' => [
         'title' => 'الصناعات',
     ],

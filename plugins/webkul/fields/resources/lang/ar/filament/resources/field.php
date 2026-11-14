@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'حقل مخصص',
+    'plural-model-label' => 'حقول مخصصة',
+
     'navigation' => [
         'title' => 'الحقول المخصصة',
     ],

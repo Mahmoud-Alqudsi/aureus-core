@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'قاعدة',
+    'plural-model-label' => 'قواعد',
+
     'navigation' => [
         'title' => 'القواعد',
         'group' => 'إدارة المستودعات',

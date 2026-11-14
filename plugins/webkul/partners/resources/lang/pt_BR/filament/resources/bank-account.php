@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Conta bancária',
+    'plural-model-label' => 'Contas bancárias',
     'navigation' => [
         'group' => 'Bancos',
         'title' => 'Contas bancárias',

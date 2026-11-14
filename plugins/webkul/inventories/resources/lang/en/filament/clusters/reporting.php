@@ -7,6 +7,9 @@ return [
     ],
 
     'moves' => [
+        'model-label'        => 'Stock Move',
+        'plural-model-label' => 'Stock Moves',
+
         'navigation' => [
             'title' => 'Moves History',
         ],
@@ -31,6 +34,9 @@ return [
     ],
 
     'quantities' => [
+        'model-label'        => 'Stock Quantity',
+        'plural-model-label' => 'Stock Quantities',
+
         'navigation' => [
             'title' => 'Locations',
         ],

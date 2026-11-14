@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Ordem de trabalho',
+    'plural-model-label' => 'Ordens de trabalho',
+
     'navigation' => [
         'title' => 'Ordens de trabalho',
         'group' => 'Operações',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'مجموعة ضريبية',
+    'plural-model-label' => 'مجموعات ضريبية',
+
     'form' => [
         'sections' => [
             'fields' => [

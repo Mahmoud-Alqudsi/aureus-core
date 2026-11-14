@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Departamentos',
+    'title'              => 'Departamentos',
+    'model-label'        => 'Departamento',
+    'plural-model-label' => 'Departamentos',
 
     'navigation' => [
         'title' => 'Departamentos',

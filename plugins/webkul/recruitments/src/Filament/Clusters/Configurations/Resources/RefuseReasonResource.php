@@ -25,7 +25,12 @@ class RefuseReasonResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/configurations/resources/refuse-reason.navigation.title');
+        return __('recruitments::filament/clusters/configurations/resources/refuse-reason.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/refuse-reason.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

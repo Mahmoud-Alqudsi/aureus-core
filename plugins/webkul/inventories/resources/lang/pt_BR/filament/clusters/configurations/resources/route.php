@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Rota',
+    'plural-model-label' => 'Rotas',
+
     'navigation' => [
         'title' => 'Rotas',
         'group' => 'Gestão de armazéns',

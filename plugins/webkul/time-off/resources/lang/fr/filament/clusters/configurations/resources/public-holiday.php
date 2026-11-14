@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Jours fériés publics',
-
-    'model-label' => 'Jour férié public',
+    'title'              => 'Jours fériés publics',
+    'model-label'        => 'Jour férié',
+    'plural-model-label' => 'Jours fériés',
 
     'navigation' => [
         'title' => 'Jours fériés publics',

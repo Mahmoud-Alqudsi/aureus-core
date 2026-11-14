@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'فريق صيانة',
+    'plural-model-label' => 'فرق صيانة',
+
     'navigation' => [
         'title' => 'الفرق',
     ],

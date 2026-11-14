@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Operation Type',
+    'plural-model-label' => 'Operation Types',
+
     'navigation' => [
         'title' => 'Operation Types',
         'group' => 'Warehouse Management',

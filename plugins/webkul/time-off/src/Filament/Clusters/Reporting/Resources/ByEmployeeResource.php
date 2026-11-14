@@ -22,7 +22,12 @@ class ByEmployeeResource extends BaseByEmployeeResource
 
     public static function getModelLabel(): string
     {
-        return __('time-off::filament/clusters/reporting/resources/by-employee.title');
+        return __('time-off::filament/clusters/reporting/resources/by-employee.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/reporting/resources/by-employee.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

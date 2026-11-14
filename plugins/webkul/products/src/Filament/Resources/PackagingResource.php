@@ -19,6 +19,16 @@ class PackagingResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('products::models/packaging.title');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('products::models/packaging.plural-title');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('products::filament/resources/packaging.navigation.title');

@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Tarefas',
+    'model-label'        => 'Tarefa',
+    'plural-model-label' => 'Tarefas',
 
     'navigation' => [
         'title' => 'Tarefas',

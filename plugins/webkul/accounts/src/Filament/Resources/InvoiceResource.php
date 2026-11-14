@@ -39,6 +39,16 @@ class InvoiceResource extends Resource
 
     protected static bool $isGloballySearchable = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/invoice.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/invoice.plural-model-label');
+    }
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

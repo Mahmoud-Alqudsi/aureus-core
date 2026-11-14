@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Public Holidays',
-
-    'model-label' => 'Public holiday',
+    'title'              => 'Public Holidays',
+    'model-label'        => 'Public Holiday',
+    'plural-model-label' => 'Public Holidays',
 
     'navigation' => [
         'title' => 'Public Holidays',

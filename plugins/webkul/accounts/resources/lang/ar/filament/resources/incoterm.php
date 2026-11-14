@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'شرط تسليم',
+    'plural-model-label' => 'شروط تسليم',
+
     'form' => [
         'fields' => [
             'code' => 'الرمز',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'استلام',
+    'plural-model-label' => 'استلامات',
+
     'navigation' => [
         'title' => 'الاستلامات',
         'group' => 'التحويلات',

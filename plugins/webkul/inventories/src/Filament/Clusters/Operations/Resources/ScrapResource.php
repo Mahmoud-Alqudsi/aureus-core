@@ -36,6 +36,16 @@ class ScrapResource extends Resource
 
     protected static ?string $cluster = Operations::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/scrap.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/scrap.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('inventories::filament/clusters/operations/resources/scrap.navigation.title');

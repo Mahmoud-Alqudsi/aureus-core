@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Motivo de rechazo',
+    'title'              => 'Motivo de rechazo',
+    'model-label'        => 'Motivo de rechazo',
+    'plural-model-label' => 'Motivos de rechazo',
 
     'navigation' => [
         'title' => 'Motivos de rechazo',

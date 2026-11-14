@@ -25,6 +25,16 @@ class PostResource extends Resource
 
     protected static bool $shouldSkipAuthorization = true;
 
+    public static function getModelLabel(): string
+    {
+        return __('blogs::filament/customer/resources/post.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('blogs::filament/customer/resources/post.plural-model-label');
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['title', 'category.name', 'tags.name'];

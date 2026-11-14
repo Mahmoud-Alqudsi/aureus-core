@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'دفعة',
-
-    'navigation' => [
-        'title' => 'المدفوعات',
-        'group' => 'الفواتير',
-    ],
+    'model-label'        => 'دفعة',
+    'plural-model-label' => 'مدفوعات',
 
     'global-search' => [
         'partner' => 'الشريك',

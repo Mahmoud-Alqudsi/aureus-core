@@ -17,6 +17,16 @@ class VendorResource extends PartnerResource
 {
     protected static ?string $model = Vendor::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/vendor.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/vendor.plural-model-label');
+    }
+
     public static function table(Table $table): Table
     {
         $table = PartnerResource::table($table);

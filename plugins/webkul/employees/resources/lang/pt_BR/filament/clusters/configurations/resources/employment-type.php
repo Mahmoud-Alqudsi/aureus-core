@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Tipos de vínculo',
+    'title'              => 'Tipos de vínculo',
+    'model-label'        => 'Tipo de emprego',
+    'plural-model-label' => 'Tipos de emprego',
 
     'navigation' => [
         'title' => 'Tipos de vínculo',

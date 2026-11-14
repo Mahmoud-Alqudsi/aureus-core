@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Devise',
+    'plural-model-label' => 'Devises',
     'title' => 'Devises',
 
     'navigation' => [

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Fiscal Position',
+    'plural-model-label' => 'Fiscal Positions',
+
     'global-search' => [
         'zip-from' => 'Zip From',
         'zip-to'   => 'Zip To',

@@ -37,7 +37,12 @@ class CandidateResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/applications/resources/candidate.title');
+        return __('recruitments::filament/clusters/applications/resources/candidate.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/applications/resources/candidate.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

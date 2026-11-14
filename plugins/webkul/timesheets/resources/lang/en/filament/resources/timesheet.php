@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Timesheets',
+    'model-label'        => 'Timesheet',
+    'plural-model-label' => 'Timesheets',
 
     'navigation' => [
         'title' => 'Timesheets',

@@ -31,7 +31,12 @@ class LeaveTypeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('time-off::filament/clusters/configurations/resources/leave-type.title');
+        return __('time-off::filament/clusters/configurations/resources/leave-type.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/configurations/resources/leave-type.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

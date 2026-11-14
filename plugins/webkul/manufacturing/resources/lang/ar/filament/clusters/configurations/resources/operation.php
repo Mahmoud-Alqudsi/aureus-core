@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'عملية تصنيع',
+    'plural-model-label' => 'عمليات تصنيع',
+
     'navigation' => [
         'title' => 'العمليات',
         'group' => 'الإعدادات',

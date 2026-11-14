@@ -40,7 +40,12 @@ class QuotationResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('sales::filament/clusters/orders/resources/quotation.title');
+        return __('sales::filament/clusters/orders/resources/quotation.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales::filament/clusters/orders/resources/quotation.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

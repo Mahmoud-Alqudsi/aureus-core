@@ -20,11 +20,6 @@ class TaxResource extends BaseTaxResource
 
     protected static ?string $cluster = Configuration::class;
 
-    public static function getModelLabel(): string
-    {
-        return __('accounting::filament/clusters/configurations/resources/tax.model-label');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('accounting::filament/clusters/configurations/resources/tax.navigation.title');

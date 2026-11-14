@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'Pago',
-
-    'navigation' => [
-        'title' => 'Pagos',
-        'group' => 'Facturas',
-    ],
+    'model-label'        => 'Pago',
+    'plural-model-label' => 'Pagos',
 
     'global-search' => [
         'partner' => 'Contacto',

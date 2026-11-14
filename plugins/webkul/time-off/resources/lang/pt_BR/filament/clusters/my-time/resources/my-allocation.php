@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Minha alocação',
-
-    'model-label' => 'Minha alocação',
+    'title'              => 'Minha alocação',
+    'model-label'        => 'Minha alocação',
+    'plural-model-label' => 'Minhas alocações',
 
     'navigation' => [
         'title' => 'Minha alocação',

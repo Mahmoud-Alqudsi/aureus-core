@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Feuilles de temps',
+    'model-label'        => 'Feuille de temps',
+    'plural-model-label' => 'Feuilles de temps',
 
     'navigation' => [
         'title' => 'Feuilles de temps',

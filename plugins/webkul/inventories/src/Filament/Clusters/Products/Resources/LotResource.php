@@ -45,6 +45,16 @@ class LotResource extends Resource
         return settings(TraceabilitySettings::class)->enable_lots_serial_numbers;
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/products/resources/lot.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/products/resources/lot.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('inventories::filament/clusters/products/resources/lot.navigation.title');

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Etapas',
+    'title'              => 'Etapas',
+    'model-label'        => 'Etapa de recrutamento',
+    'plural-model-label' => 'Etapas de recrutamento',
 
     'navigation' => [
         'title' => 'Etapas',

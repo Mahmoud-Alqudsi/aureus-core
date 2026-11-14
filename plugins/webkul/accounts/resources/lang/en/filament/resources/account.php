@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Chart of Account',
+    'plural-model-label' => 'Chart of Accounts',
+
     'global-search' => [
         'code' => 'Code',
         'type' => 'Type',

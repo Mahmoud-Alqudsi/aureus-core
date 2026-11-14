@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'عرض سعر',
+    'title'              => 'عرض سعر',
+    'model-label'        => 'عرض سعر',
+    'plural-model-label' => 'عروض أسعار',
 
     'navigation' => [
         'title' => 'عروض الأسعار',

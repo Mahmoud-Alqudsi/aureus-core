@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Plan de cuentas',
+    'plural-model-label' => 'Planes de cuentas',
+
     'global-search' => [
         'code' => 'Código',
         'type' => 'Tipo',

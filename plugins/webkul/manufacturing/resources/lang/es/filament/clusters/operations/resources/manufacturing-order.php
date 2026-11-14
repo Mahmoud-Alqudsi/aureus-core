@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Orden de fabricación',
+    'plural-model-label' => 'Órdenes de fabricación',
+
     'navigation' => [
         'title' => 'Órdenes de fabricación',
         'group' => 'Operaciones',

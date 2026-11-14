@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'نوع الإجازة',
+    'title'              => 'نوع الإجازة',
+    'model-label'        => 'نوع إجازة',
+    'plural-model-label' => 'أنواع إجازات',
     'navigation' => [
         'title' => 'نوع الإجازة',
     ],

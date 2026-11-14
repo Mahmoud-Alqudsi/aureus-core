@@ -44,6 +44,16 @@ class RuleResource extends Resource
         return settings(WarehouseSettings::class)->enable_multi_steps_routes;
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/rule.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/rule.plural-model-label');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('inventories::filament/clusters/configurations/resources/rule.navigation.group');

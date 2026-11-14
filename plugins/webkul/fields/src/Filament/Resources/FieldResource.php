@@ -27,7 +27,12 @@ class FieldResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('fields::filament/resources/field.navigation.title');
+        return __('fields::filament/resources/field.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('fields::filament/resources/field.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

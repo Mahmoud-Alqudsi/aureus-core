@@ -22,8 +22,6 @@ class EmployeeSkillResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static ?string $pluralModelLabel = 'Skills';
-
     protected static ?string $cluster = Reportings::class;
 
     public static function getEloquentQuery(): Builder
@@ -33,7 +31,12 @@ class EmployeeSkillResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('employees::filament/clusters/reportings/resources/employee-skill.title');
+        return __('employees::filament/clusters/reportings/resources/employee-skill.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('employees::filament/clusters/reportings/resources/employee-skill.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

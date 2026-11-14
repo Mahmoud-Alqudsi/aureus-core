@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'دفعة/رقم تسلسلي',
+    'plural-model-label' => 'دفعات/أرقام تسلسلية',
+
     'navigation' => [
         'title' => 'الدفعات / الأرقام التسلسلية',
         'group' => 'المخزون',

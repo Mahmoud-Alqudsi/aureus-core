@@ -29,6 +29,16 @@ class AccountResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-circle';
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/account.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/account.plural-model-label');
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['code', 'name'];

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'الوسوم',
+    'title'              => 'الوسوم',
+    'model-label'        => 'فئة موظف',
+    'plural-model-label' => 'فئات موظفين',
 
     'navigation' => [
         'title' => 'الوسوم',

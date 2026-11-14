@@ -32,11 +32,6 @@ class CustomerResource extends BaseCustomerResource
 
     protected static ?int $navigationSort = 3;
 
-    public static function getModelLabel(): string
-    {
-        return __('sales::filament/clusters/orders/resources/customer.title');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('sales::filament/clusters/orders/resources/customer.navigation.title');

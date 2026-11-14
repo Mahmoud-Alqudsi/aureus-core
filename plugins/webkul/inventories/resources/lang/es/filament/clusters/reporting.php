@@ -7,6 +7,9 @@ return [
     ],
 
     'moves' => [
+        'model-label'        => 'Movimiento de stock',
+        'plural-model-label' => 'Movimientos de stock',
+
         'navigation' => [
             'title' => 'Historial de movimientos',
         ],
@@ -31,6 +34,9 @@ return [
     ],
 
     'quantities' => [
+        'model-label'        => 'Cantidad de stock',
+        'plural-model-label' => 'Cantidades de stock',
+
         'navigation' => [
             'title' => 'Ubicaciones',
         ],
