@@ -1,9 +1,6 @@
 <?php
 
 return [
-    'model-label'        => 'Forecast',
-    'plural-model-label' => 'Forecasts',
-
     'title' => 'Forecast',
 
     'navigation' => [

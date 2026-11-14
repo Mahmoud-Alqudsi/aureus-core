@@ -1,9 +1,6 @@
 <?php
 
 return [
-    'model-label'        => 'توقع مبيعات',
-    'plural-model-label' => 'توقعات مبيعات',
-
     'title' => 'التوقعات',
 
     'navigation' => [

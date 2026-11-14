@@ -49,16 +49,6 @@ class ForecastResource extends Resource
         return __('crm::filament/clusters/reporting/resources/forecast.title');
     }
 
-    public static function getModelLabel(): string
-    {
-        return __('crm::filament/clusters/reporting/resources/forecast.model-label');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('crm::filament/clusters/reporting/resources/forecast.plural-model-label');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('crm::filament/clusters/reporting/resources/forecast.navigation.title');

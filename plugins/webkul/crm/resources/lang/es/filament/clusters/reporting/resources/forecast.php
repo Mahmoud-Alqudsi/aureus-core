@@ -1,9 +1,6 @@
 <?php
 
 return [
-    'model-label'        => 'Pronóstico',
-    'plural-model-label' => 'Pronósticos',
-
     'title' => 'Previsión',
 
     'navigation' => [

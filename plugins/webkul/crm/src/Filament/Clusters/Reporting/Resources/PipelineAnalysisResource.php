@@ -48,16 +48,6 @@ class PipelineAnalysisResource extends Resource
         return __('crm::filament/clusters/reporting/resources/pipeline-analysis.title');
     }
 
-    public static function getModelLabel(): string
-    {
-        return __('crm::filament/clusters/reporting/resources/pipeline-analysis.model-label');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('crm::filament/clusters/reporting/resources/pipeline-analysis.plural-model-label');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('crm::filament/clusters/reporting/resources/pipeline-analysis.navigation.title');
