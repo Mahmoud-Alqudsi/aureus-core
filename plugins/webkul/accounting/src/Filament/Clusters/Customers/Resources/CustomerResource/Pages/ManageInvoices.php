@@ -21,7 +21,7 @@ class ManageInvoices extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('accounting::filament/clusters/customers/resources/invoice.navigation.title');
     }
