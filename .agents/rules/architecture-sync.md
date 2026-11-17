@@ -22,10 +22,17 @@ Any task or commit touching the following paths is considered an **Architectural
    ```bash
    php scripts/sync-architecture.php --check
    ```
+   To preview changes without writing, run:
+   ```bash
+   php scripts/sync-architecture.php --dry-run
+   php scripts/sync-architecture.php --diff
+   ```
    If drift is reported, run:
    ```bash
    php scripts/sync-architecture.php --sync
    ```
-2. **Qualitative Documentation**: If a new plugin is introduced, its business domain and architectural role must be documented in Section 4.1 of `ARCHITECTURE.md`.
-3. **No Phantom Conventions**: Do not document features, traits, or classes in `ARCHITECTURE.md` that do not exist in the source code.
+2. **Zero Contradictions**: The synchronization engine guarantees that metrics match simultaneously across Table of Contents, headings, file trees, archetypes package lists, and table rows.
+3. **Data Loss Protection**: Pre-flight safety assertions guard against abnormal content shrinkage, heading deletion, or table row dropping. Existing plugin descriptions are strictly preserved.
+4. **Qualitative Documentation**: If a new plugin is introduced, its business domain and architectural role must be documented in Section 4.1 of `ARCHITECTURE.md`.
+5. **No Phantom Conventions**: Do not document features, traits, or classes in `ARCHITECTURE.md` that do not exist in the source code.
 

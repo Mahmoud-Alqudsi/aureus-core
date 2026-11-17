@@ -26,28 +26,37 @@ Whenever work touches any of these directories or files, architecture synchroniz
 
 ## Workflow Steps
 
-### Step 1: Detect Architectural Drift
+### Step 1: Detect Architectural Drift & Preview Changes
 
 Run the architecture verification command:
 ```bash
 php scripts/sync-architecture.php --check
 ```
-- If the exit code is `0`, `ARCHITECTURE.md` is fully in sync with the codebase.
-- If the exit code is `1`, review the reported drift items (e.g. new migration count, package version changes, or uncataloged plugins).
+- If the exit code is `0`, `ARCHITECTURE.md` is fully in sync with the codebase without drift or contradictions.
+- If the exit code is `1`, review the reported drift items (e.g. migration counts, package versions, TOC, headings, or uncataloged plugins).
 
-### Step 2: Automatic Quantitative Synchronization
+To preview line-by-line differences before synchronizing:
+```bash
+php scripts/sync-architecture.php --diff
+php scripts/sync-architecture.php --dry-run
+```
+
+### Step 2: Automatic Quantitative Synchronization (Zero-Contradiction & Zero-Loss)
 
 Run the synchronization engine:
 ```bash
 php scripts/sync-architecture.php --sync
 ```
-This automatically updates:
+This automatically updates with safety assertions preventing data loss:
 1. Header baseline string: `Last Verified Baseline`.
-2. Section 2.1 table: `Locked Dependency Baseline`.
-3. Section 4.1 count and table: `Comprehensive Catalog of All Local Plugins`.
-4. Section 4.1 archetypes breakdown: Core, Optional, and Zero-Table counts.
-5. Section 7.4 cases: `Navigation Groups Enum`.
-6. Section 8.1 counts: Total, Core, and Plugin database migration counts.
+2. Table of Contents & Headings: Section 4.1 (`All N Local Plugins`) and Section 8.1 (`Across N Migrations`).
+3. Section 1.1 monorepo file trees: service providers count, system migrations, local plugins count, other plugins count.
+4. Section 2.1 table: `Locked Dependency Baseline`.
+5. Section 4.1 count and catalog table: `Comprehensive Catalog of All Local Plugins` (preserving existing descriptions).
+6. Section 4.1 archetypes breakdown: Core, Optional, and Zero-Table counts **AND package names arrays**.
+7. Prose & diagram references: Sections 1.1, 2.3, 4.3, 4.4, 7.1, 8.3.
+8. Section 7.4 cases: `Navigation Groups Enum`.
+9. Section 8.1 counts: Total, Core, and Plugin database migration counts.
 
 ### Step 3: Qualitative Impact Review & Narrative Update
 

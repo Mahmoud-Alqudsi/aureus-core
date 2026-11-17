@@ -238,6 +238,9 @@ class Extractor
         $coreCount = 0;
         $optionalCount = 0;
         $zeroTableCount = 0;
+        $corePluginNames = [];
+        $zeroTablePluginNames = [];
+        $optionalPluginNames = [];
 
         foreach ($pluginDirs as $dir) {
             $name = basename($dir);
@@ -269,12 +272,15 @@ class Extractor
 
             if ($isCore) {
                 $coreCount++;
+                $corePluginNames[] = $name;
             } else {
                 $optionalCount++;
+                $optionalPluginNames[] = $name;
             }
 
             if ($isZeroTable) {
                 $zeroTableCount++;
+                $zeroTablePluginNames[] = $name;
             }
 
             $catalog[$name] = [
@@ -288,12 +294,20 @@ class Extractor
             ];
         }
 
+        sort($corePluginNames);
+        sort($zeroTablePluginNames);
+        sort($optionalPluginNames);
+
         return [
-            'total_plugins'     => count($catalog),
-            'core_plugins'      => $coreCount,
-            'optional_plugins'  => $optionalCount,
-            'zero_table_plugins'=> $zeroTableCount,
-            'plugins'           => $catalog,
+            'total_plugins'           => count($catalog),
+            'core_plugins'            => $coreCount,
+            'optional_plugins'        => $optionalCount,
+            'zero_table_plugins'      => $zeroTableCount,
+            'core_plugin_names'       => $corePluginNames,
+            'zero_table_plugin_names' => $zeroTablePluginNames,
+            'optional_plugin_names'   => $optionalPluginNames,
+            'other_plugins_count'     => max(0, count($catalog) - 6),
+            'plugins'                 => $catalog,
         ];
     }
 
