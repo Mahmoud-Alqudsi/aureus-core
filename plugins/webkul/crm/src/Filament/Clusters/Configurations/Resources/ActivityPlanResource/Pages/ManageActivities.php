@@ -26,7 +26,7 @@ class ManageActivities extends ManageRelatedRecords
         return __('crm::filament/clusters/configurations/resources/activity-plan/pages/manage-activities.title');
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('crm::filament/clusters/configurations/resources/activity-plan/pages/manage-activities.title');
     }

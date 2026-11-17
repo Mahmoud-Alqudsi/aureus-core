@@ -13,9 +13,12 @@ use Webkul\Crm\Filament\Clusters\Configurations\Resources\RecurringPlanResource\
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\RecurringPlanResource\Tables\RecurringPlansTable;
 use Webkul\Crm\Models\RecurringPlan;
 use Webkul\Crm\Settings\CRMSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class RecurringPlanResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = RecurringPlan::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';

@@ -29,7 +29,7 @@ class ManageRevealRuleLeads extends ManageRelatedRecords
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-funnel';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('crm::filament/clusters/configurations/resources/reveal-rule.pages.leads.navigation');
     }
@@ -37,11 +37,6 @@ class ManageRevealRuleLeads extends ManageRelatedRecords
     public function getTitle(): string|Htmlable
     {
         return __('crm::filament/clusters/configurations/resources/reveal-rule.pages.leads.title', ['rule' => $this->getRecord()->name]);
-    }
-
-    public function getBreadcrumb(): string
-    {
-        return __('crm::filament/clusters/configurations/resources/reveal-rule.pages.leads.navigation');
     }
 
     public function table(Table $table): Table

@@ -24,10 +24,11 @@ use Webkul\Crm\Filament\Support\SimilarLeads as SimilarLeadsNavigation;
 use Webkul\Crm\Models\Lead;
 use Webkul\Crm\Policies\LeadRecordPolicy;
 use Webkul\Crm\Settings\CRMSettings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class LeadResource extends Resource
 {
-    use HasCRMAuthorization;
+    use HasCRMAuthorization, HasNavigationLabelTitles;
 
     protected static ?string $model = Lead::class;
 

@@ -8,9 +8,12 @@ use Webkul\Crm\Filament\Clusters\Configurations\Resources\InboundEmailResource\P
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\InboundEmailResource\Tables\InboundEmailsTable;
 use Webkul\Crm\Models\InboundEmail;
 use Webkul\Support\Filament\Clusters\Settings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class InboundEmailResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = InboundEmail::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope-open';

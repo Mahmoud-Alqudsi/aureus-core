@@ -37,7 +37,7 @@ class ManageQuotations extends ManageRelatedRecords
         return __('crm::filament/clusters/sales/resources/opportunity.quotations.title');
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('crm::filament/clusters/sales/resources/opportunity.quotations.title');
     }

@@ -12,9 +12,12 @@ use Webkul\Crm\Filament\Clusters\Configurations\Resources\PartnerLevelResource\P
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\PartnerLevelResource\Schemas\PartnerLevelForm;
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\PartnerLevelResource\Tables\PartnerLevelsTable;
 use Webkul\Crm\Models\PartnerLevel;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PartnerLevelResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = PartnerLevel::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-trophy';

@@ -10,9 +10,12 @@ use Webkul\Crm\Filament\Clusters\Configurations\Resources\StageResource\Pages\Ma
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\StageResource\Schemas\StageForm;
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\StageResource\Tables\StagesTable;
 use Webkul\Crm\Models\Stage;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class StageResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Stage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';

@@ -38,7 +38,7 @@ class ManageOpportunity extends ManageRelatedRecords
             && OpportunityResource::canView($opportunity);
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('crm::filament/clusters/sales/resources/quotation.tabs.opportunity');
     }
