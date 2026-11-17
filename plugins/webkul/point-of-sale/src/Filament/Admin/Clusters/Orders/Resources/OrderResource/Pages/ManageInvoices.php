@@ -27,7 +27,7 @@ class ManageInvoices extends ManageRelatedRecords
         return parent::canAccess($parameters) && Package::isPluginInstalled('invoices');
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('point-of-sale::filament/admin/clusters/orders/resources/order/pages/manage-invoices.navigation.title');
     }

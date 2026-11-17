@@ -19,9 +19,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\FloorRes
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\FloorResource\Schemas\FloorInfolist;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\FloorResource\Tables\FloorsTable;
 use Webkul\PointOfSale\Models\Floor;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class FloorResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Floor::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-map';

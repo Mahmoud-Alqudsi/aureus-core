@@ -17,9 +17,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\OrderResource\Sc
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\OrderResource\Schemas\OrderInfolist;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\OrderResource\Tables\OrdersTable;
 use Webkul\PointOfSale\Models\Order;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class OrderResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Order::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';

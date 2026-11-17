@@ -21,9 +21,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\PaymentM
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\PaymentMethodResource\Schemas\PaymentMethodInfolist;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\PaymentMethodResource\Tables\PaymentMethodsTable;
 use Webkul\PointOfSale\Models\PaymentMethod;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PaymentMethodResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = PaymentMethod::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';

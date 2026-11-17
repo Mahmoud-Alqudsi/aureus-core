@@ -11,9 +11,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\NoteReso
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\NoteResource\Schemas\NoteForm;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\NoteResource\Tables\NotesTable;
 use Webkul\PointOfSale\Models\Note;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class NoteResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Note::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
