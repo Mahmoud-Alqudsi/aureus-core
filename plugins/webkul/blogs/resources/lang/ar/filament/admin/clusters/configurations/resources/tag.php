@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'model-label'        => 'وسم مدونة',
-    'plural-model-label' => 'وسوم مدونات',
+    'model-label'        => 'وسم',
+    'plural-model-label' => 'وسوم',
 
     'navigation' => [
-        'title' => 'الوسوم',
+        'title' => 'وسوم المدونات',
         'group' => 'المدونة',
     ],
 

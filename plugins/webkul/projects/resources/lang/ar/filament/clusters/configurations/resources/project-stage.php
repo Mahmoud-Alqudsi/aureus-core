@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'model-label'        => 'مرحلة مشروع',
+    'model-label'        => 'مرحلة',
     'plural-model-label' => 'مراحل مشاريع',
 
     'navigation' => [

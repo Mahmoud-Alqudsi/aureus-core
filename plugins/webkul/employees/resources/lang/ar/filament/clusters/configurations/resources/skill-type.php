@@ -2,7 +2,7 @@
 
 return [
     'title'              => 'أنواع المهارات',
-    'model-label'        => 'نوع مهارة',
+    'model-label'        => 'نوع',
     'plural-model-label' => 'أنواع مهارات',
 
     'navigation' => [

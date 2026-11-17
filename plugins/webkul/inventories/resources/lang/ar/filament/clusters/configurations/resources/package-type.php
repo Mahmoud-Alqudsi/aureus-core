@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'model-label'        => 'نوع طرد',
+    'model-label'        => 'نوع طرود',
     'plural-model-label' => 'أنواع طرود',
 
     'navigation' => [

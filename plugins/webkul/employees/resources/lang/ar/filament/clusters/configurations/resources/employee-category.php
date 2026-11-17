@@ -2,11 +2,11 @@
 
 return [
     'title'              => 'الوسوم',
-    'model-label'        => 'فئة موظف',
+    'model-label'        => 'فئة',
     'plural-model-label' => 'فئات موظفين',
 
     'navigation' => [
-        'title' => 'الوسوم',
+        'title' => 'فئات الموظفين',
         'group' => 'الموظف',
     ],
 

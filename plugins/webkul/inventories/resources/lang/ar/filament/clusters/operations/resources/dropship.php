@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'model-label'        => 'شحن مباشر',
+    'model-label'        => 'شحنة',
     'plural-model-label' => 'شحنات مباشرة',
 
     'navigation' => [

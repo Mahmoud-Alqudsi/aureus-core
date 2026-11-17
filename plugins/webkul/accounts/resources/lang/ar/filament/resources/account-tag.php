@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'model-label'        => 'وسم محاسبي',
-    'plural-model-label' => 'وسوم محاسبية',
+    'model-label'        => 'وسم',
+    'plural-model-label' => 'وسوم',
 
     'form' => [
         'fields' => [

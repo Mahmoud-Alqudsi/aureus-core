@@ -2,8 +2,8 @@
 
 return [
     'title'              => 'فرق المبيعات',
-    'model-label'        => 'فريق بيع',
-    'plural-model-label' => 'فرق بيع',
+    'model-label'        => 'فريق مبيعات',
+    'plural-model-label' => 'فرق مبيعات',
 
     'navigation' => [
         'title' => 'فرق المبيعات',

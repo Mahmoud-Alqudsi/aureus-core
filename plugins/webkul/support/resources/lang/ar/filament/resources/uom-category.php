@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'model-label'        => 'فئة وحدة قياس',
+    'model-label'        => 'فئة وحدات قياس',
     'plural-model-label' => 'فئات وحدات قياس',
     'navigation' => [
         'title' => 'فئات وحدات القياس',

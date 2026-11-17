@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'model-label'        => 'فئة مدونة',
-    'plural-model-label' => 'فئات مدونات',
+    'model-label'        => 'فئة',
+    'plural-model-label' => 'فئات',
 
     'navigation' => [
         'title' => 'المدونة',

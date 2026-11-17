@@ -2,11 +2,11 @@
 
 return [
     'title'              => 'الوسوم',
-    'model-label'        => 'وسم متقدم',
-    'plural-model-label' => 'وسوم متقدمين',
+    'model-label'        => 'فئة',
+    'plural-model-label' => 'فئات متقدمين',
 
     'navigation' => [
-        'title' => 'الوسوم',
+        'title' => 'فئات المتقدمين',
         'group' => 'الطلبات',
     ],
 

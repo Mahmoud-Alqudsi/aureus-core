@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'model-label'        => 'نوع عملية',
+    'model-label'        => 'نوع عمليات',
     'plural-model-label' => 'أنواع عمليات',
 
     'navigation' => [

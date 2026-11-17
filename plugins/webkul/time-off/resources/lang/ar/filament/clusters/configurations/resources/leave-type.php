@@ -2,10 +2,10 @@
 
 return [
     'title'              => 'نوع الإجازة',
-    'model-label'        => 'نوع إجازة',
+    'model-label'        => 'نوع إجازات',
     'plural-model-label' => 'أنواع إجازات',
     'navigation' => [
-        'title' => 'نوع الإجازة',
+        'title' => 'أنواع الإجازات',
     ],
 
     'form' => [

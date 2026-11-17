@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title'          => 'فئة منتج',
+    'title'          => 'فئة منتجات',
     'plural-title'   => 'فئات منتجات',
 
     'log-attributes' => [

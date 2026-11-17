@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'title'        => 'تغليف',
+    'title'        => 'حزمة تغليف',
     'plural-title' => 'حزم تغليف',
 ];
