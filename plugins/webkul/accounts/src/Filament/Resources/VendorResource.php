@@ -27,6 +27,11 @@ class VendorResource extends PartnerResource
         return __('accounts::filament/resources/vendor.plural-model-label');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('accounts::filament/resources/vendor.navigation.title');
+    }
+
     public static function table(Table $table): Table
     {
         $table = PartnerResource::table($table);

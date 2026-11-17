@@ -27,6 +27,11 @@ class CustomerResource extends PartnerResource
         return __('accounts::filament/resources/customer.plural-model-label');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('accounts::filament/resources/customer.navigation.title');
+    }
+
     public static function table(Table $table): Table
     {
         $table = PartnerResource::table($table);
