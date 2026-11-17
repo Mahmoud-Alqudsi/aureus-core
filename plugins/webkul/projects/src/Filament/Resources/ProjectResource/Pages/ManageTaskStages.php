@@ -19,9 +19,9 @@ class ManageTaskStages extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
-        return __('Task Stages');
+        return __('projects::filament/clusters/configurations/resources/task-stage.navigation.title');
     }
 
     public static function getNavigationBadge($parameters = []): ?string
