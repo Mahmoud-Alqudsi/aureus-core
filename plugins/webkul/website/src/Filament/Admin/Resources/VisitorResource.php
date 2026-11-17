@@ -19,6 +19,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Website\Filament\Admin\Resources\VisitorResource\Pages\ListVisitors;
 use Webkul\Website\Filament\Admin\Resources\VisitorResource\Pages\ViewVisitor;
 use Webkul\Website\Filament\Admin\Resources\VisitorResource\RelationManagers\TracksRelationManager;
@@ -26,6 +27,8 @@ use Webkul\Website\Models\Visitor;
 
 class VisitorResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Visitor::class;
 
     protected static ?string $slug = 'website/visitors';

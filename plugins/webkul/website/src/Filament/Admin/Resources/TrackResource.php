@@ -11,11 +11,14 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 use Webkul\Website\Filament\Admin\Resources\TrackResource\Pages\ListTracks;
 use Webkul\Website\Models\Track;
 
 class TrackResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Track::class;
 
     protected static ?string $slug = 'website/page-views';
