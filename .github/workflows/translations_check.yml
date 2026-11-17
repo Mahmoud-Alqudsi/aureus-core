@@ -29,19 +29,35 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=1 || true
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only HEAD~1 HEAD || true)
-            NON_DOC_FILES=$(echo "${CHANGED_FILES}" | grep -v -E '^\.github/|^\.agents/|^scripts/|^\.gitignore$|\.md$' || true)
-            if [ -n "${CHANGED_FILES}" ] && [ -z "${NON_DOC_FILES}" ]; then
-              echo "docs_only=true" >> "$GITHUB_OUTPUT"
-              echo "Documentation-only pull request detected. Skipping heavy translation check."
+            
+            # 1. Check for translation modifications in any plugin or root
+            TRANSLATION_FILES=$(echo "${CHANGED_FILES}" | grep -E '(^|/)lang/|(^|/)resources/lang/' || true)
+
+            # 2. Check for new plugin introduction under plugins/webkul
+            NEW_PLUGINS=$(git diff --name-only --diff-filter=A origin/${{ github.base_ref }}...HEAD || git diff --name-only --diff-filter=A HEAD~1 HEAD || true)
+            NEW_PLUGIN_DETECTED=$(echo "${NEW_PLUGINS}" | grep -E '^plugins/webkul/[^/]+/' || true)
+
+            if [ -n "${TRANSLATION_FILES}" ] || [ -n "${NEW_PLUGIN_DETECTED}" ]; then
+              echo "run_check=true" >> "$GITHUB_OUTPUT"
+              if [ -n "${NEW_PLUGIN_DETECTED}" ]; then
+                echo "new_plugin=true" >> "$GITHUB_OUTPUT"
+                echo "New plugin package detected in plugins/webkul/. Full translation & audit checks will run."
+              else
+                echo "new_plugin=false" >> "$GITHUB_OUTPUT"
+                echo "Translation files modified. Running plugin-manager translation consistency check."
+              fi
             else
-              echo "docs_only=false" >> "$GITHUB_OUTPUT"
+              echo "run_check=false" >> "$GITHUB_OUTPUT"
+              echo "new_plugin=false" >> "$GITHUB_OUTPUT"
+              echo "No translation files modified and no new plugin package added. Skipping translation checks."
             fi
           else
-            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            echo "run_check=true" >> "$GITHUB_OUTPUT"
+            echo "new_plugin=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Setup PHP
-        if: steps.filter.outputs.docs_only != 'true'
+        if: steps.filter.outputs.run_check == 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -49,7 +65,7 @@ jobs:
           tools: composer:v2
 
       - name: Cache Composer dependencies
-        if: steps.filter.outputs.docs_only != 'true'
+        if: steps.filter.outputs.run_check == 'true'
         uses: actions/cache@v4
         with:
           path: vendor
@@ -57,20 +73,24 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        if: steps.filter.outputs.docs_only != 'true'
+        if: steps.filter.outputs.run_check == 'true'
         run: composer install --no-interaction --prefer-dist
 
       - name: Setting Environment
-        if: steps.filter.outputs.docs_only != 'true'
+        if: steps.filter.outputs.run_check == 'true'
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      - name: Run translations consistency check
-        if: steps.filter.outputs.docs_only != 'true'
+      - name: Run plugin-manager translations consistency check
+        if: steps.filter.outputs.run_check == 'true'
         run: php artisan translations:check --details
 
-      - name: Report Documentation-Only Pass
-        if: steps.filter.outputs.docs_only == 'true'
+      - name: Run full UI component localization audit (New Plugin Only)
+        if: steps.filter.outputs.new_plugin == 'true'
+        run: php scripts/audit-translations.php --check
+
+      - name: Report Skip
+        if: steps.filter.outputs.run_check != 'true'
         run: |
-          echo "Translations consistency check passed - documentation-only pull request."
+          echo "Translation check skipped - no translation files modified and no new plugin introduced."

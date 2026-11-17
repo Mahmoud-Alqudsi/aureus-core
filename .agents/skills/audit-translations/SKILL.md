@@ -2,13 +2,18 @@
 name: audit-translations
 description: >-
   Audit, detect, and remediate translation gaps, missing labels in Filament tables and infolists,
-  and duplicate label calls across Aureus ERP plugins. Use whenever creating or modifying Filament
-  resources, schemas, tables, infolists, or language files.
+  and duplicate label calls across Aureus ERP plugins. Triggered strictly when authoring a new plugin
+  or synchronizing with upstream when a new plugin package is present.
 ---
 
 # Translation & Localization Audit Runbook
 
 This skill guides Antigravity agents in identifying and eliminating localization gaps, missing component labels, hardcoded English strings, and duplicate label declarations across all Aureus ERP plugins (`plugins/webkul/*`).
+
+> [!NOTE]
+> **Activation Scope**:
+> - For routine translation file changes (`resources/lang/**` or `lang/**`), use the fast parity checker from `plugin-manager`: `php artisan translations:check --plugin=<plugin_name>`.
+> - Use this full UI component audit (`audit-translations.php`) strictly when creating a **new plugin** or performing an **upstream synchronization** that introduces new plugins.
 
 ---
 
