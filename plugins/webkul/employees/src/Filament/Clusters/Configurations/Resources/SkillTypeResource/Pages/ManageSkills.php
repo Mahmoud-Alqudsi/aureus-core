@@ -37,9 +37,9 @@ class ManageSkills extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-bolt';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
-        return __('Skills');
+        return __('employees::filament/clusters/configurations/resources/skill-type/pages/manage-skills.title');
     }
 
     public static function getNavigationBadge($parameters = []): ?string
