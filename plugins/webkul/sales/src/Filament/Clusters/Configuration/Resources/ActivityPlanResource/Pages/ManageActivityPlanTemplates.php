@@ -22,9 +22,9 @@ class ManageActivityPlanTemplates extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
-        return __('Activity Plan Templates');
+        return __('sales::filament/clusters/configurations/resources/activity-plan/pages/manage-activity-plan-templates.title');
     }
 
     public static function getNavigationBadge($parameters = []): ?string
