@@ -62,7 +62,7 @@
    - [7.9 Collaboration & Activity Stream: Chatter Slide-Over & HasChatter](#79-collaboration--activity-stream-chatter-slide-over--haschatter)
    - [7.10 Reusable Resource Concerns: Navigation Labels, Form State Refresh & PDF Generation](#710-reusable-resource-concerns-navigation-labels-form-state-refresh--pdf-generation)
 8. [Persistence & Database Conventions](#8-persistence--database-conventions)
-   - [8.1 Schema Architecture Across 383 Migrations](#81-schema-architecture-across-383-migrations)
+   - [8.1 Schema Architecture Across 456 Migrations](#81-schema-architecture-across-456-migrations)
    - [8.2 Table & Column Conventions](#82-table--column-conventions)
    - [8.3 Foreign Key Semantics & Referential Cascade Tiers](#83-foreign-key-semantics--referential-cascade-tiers)
    - [8.4 Multi-Company Storage Models](#84-multi-company-storage-models)
@@ -81,37 +81,39 @@
 
 Aureus ERP is a multi-company, modular enterprise resource planning platform engineered on **Laravel 13** and **Filament 5**. The repository is organized as a specialized **modular monolith** structured around two fundamental tiers:
 1. **The Host Application Micro-Kernel (`app/`, `bootstrap/`, `config/`)**: A minimal host wrapper providing HTTP routing pipelines, global reverse proxy termination, session negotiation, exception rendering, and Filament panel definitions.
-2. **The Local Plugin Ecosystem (`plugins/webkul/*`)**: An autonomous suite of 28 local Composer packages encapsulating all domain entities, business workflows, migrations, seeders, API routes, Livewire components, and Filament UI resources.
+2. **The Local Plugin Ecosystem (`plugins/webkul/*`)**: An autonomous suite of 30 local Composer packages encapsulating all domain entities, business workflows, migrations, seeders, API routes, Livewire components, and Filament UI resources.
 
 By strictly separating the micro-kernel host from domain packages, the system ensures zero business logic leaks into the root application namespace, keeping core infrastructure completely independent of domain volatility.
 
 ```
 aureuserp/ (Repository Root)
-├── app/                          # Micro-kernel application host (6 classes, 1 abstract controller)
+├── app/                          # Micro-kernel application host (9 classes, 1 abstract controller)
+│   ├── Filament/Support/        # WCAG AA ButtonComponent override
 │   ├── Http/Controllers/        # Base controller
 │   ├── Http/Middleware/         # Brand settings (OKLCH), Locale negotiation
 │   ├── Models/                  # Base authenticatable User
-│   └── Providers/               # AppServiceProvider, AdminPanelProvider, CustomerPanelProvider
+│   ├── Providers/               # AppServiceProvider, AdminPanelProvider, CustomerPanelProvider, PosPanelProvider
+│   └── Support/                 # BrandPalette OKLCH palette generator
 ├── bootstrap/
 │   ├── app.php                  # Fluent Laravel 13 application builder & exception pipelines
-│   └── providers.php            # Static registration of all 31 service providers
+│   └── providers.php            # Static registration of all 34 service providers
 ├── config/                      # Framework and package configuration baselines
 ├── database/                    # Root migrations (13 system migrations), factories, seeders
-├── plugins/webkul/              # 28 Local Composer packages (domain & infrastructure plugins)
+├── plugins/webkul/              # 30 Local Composer packages (domain & infrastructure plugins)
 │   ├── accounts/                # Core financial ledger and Chart of Accounts
 │   ├── inventories/             # Multi-warehouse logistics and stock valuation
 │   ├── partners/                # Master partner directory (customers, suppliers, companies)
 │   ├── plugin-manager/          # Dynamic discovery, lifecycle, and Shield permissions
 │   ├── security/                # RBAC roles, Bouncer, model ownership scoping
 │   ├── support/                 # Tenancy isolation suite (CompanyScope, CompanyContext)
-│   └── ... (22 other plugins)
+│   └── ... (24 other plugins)
 └── routes/                      # Minimal root routes (all domain routes reside in plugins)
 ```
 
 ### 1.2 Micro-Kernel Host & Plugin Monolith
 
 The platform adopts a decoupled **micro-kernel architecture**:
-- **Host Application as an Inversion Container**: The host application defines two Filament panels (`admin` and `customer`), but registers zero domain resources or business navigation items directly. Instead, panels expose extension points via Filament's `Panel::configureUsing()` lifecycle hook.
+- **Host Application as an Inversion Container**: The host application defines three Filament panels (`admin`, `customer`, and `pos`), delegating business resource, page, and widget discovery via Filament's `Panel::configureUsing()` lifecycle hook (`PosPanelProvider` links only terminal chrome actions and PWA metadata directly to `point-of-sale`).
 - **Local Packages as Independent Units**: Each package in `plugins/webkul/` is a valid Composer package defining its own `composer.json`, PSR-4 namespaces, service provider, configuration files, migrations, translations, Blade views, and Filament UI components.
 - **Dynamic Manifest Composition**: The root `composer.json` employs `wikimedia/composer-merge-plugin` (`v2.1.0`) to merge package manifests from `plugins/*/*/composer.json`. Autoloading, package discovery, and dependencies are unified without requiring private Composer registries or external artifact packaging.
 
@@ -120,38 +122,38 @@ The platform adopts a decoupled **micro-kernel architecture**:
 The runtime architecture partitions HTTP requests across dedicated authentication guards, panel providers, multi-company context resolvers, and Eloquent global scopes:
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                               Incoming HTTP Request                                    │
-└──────────────────────────────────────────┬─────────────────────────────────────────────┘
-                                           │
-                                           ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        Laravel 13 Global Middleware Pipeline                           │
-│     TrustProxies (*)  ──►  SetLocale  ──►  EncryptCookies  ──►  StartSession           │
-└──────────────────────────────────────────┬─────────────────────────────────────────────┘
-                                           │
-                     ┌─────────────────────┴─────────────────────┐
-                     ▼                                           ▼
-          Path: `/admin/*`                                Path: `/*`
-┌───────────────────────────────────────┐   ┌───────────────────────────────────────────┐
-│           Admin Panel                 │   │         Customer Portal Panel             │
-│    (AdminPanelProvider.php)           │   │      (CustomerPanelProvider.php)          │
-├───────────────────────────────────────┤   ├───────────────────────────────────────────┤
-│ • Guard: 'web'                        │   │ • Guard: 'customer'                       │
-│ • Model: Webkul\Security\Models\User  │   │ • Model: Webkul\Website\Models\Partner    │
-│ • Full viewport (Width::Full)         │   │ • Light mode enforced (darkMode(false))   │
-│ • Top navigation bar                  │   │ • Top navigation bar                      │
-│ • MFA App TOTP Authentication         │   │ • Self-registration & password reset      │
-│ • Global Search Provider              │   │ • Portal dashboard & public pages         │
-│ • Database Notifications (30s polling)│   │ • Customer quotation/order views          │
-│ • Render Hooks:                       │   │ • Render Hooks:                           │
-│   - GLOBAL_SEARCH_BEFORE: CompanySw.  │   │   - TOPBAR_END: Public links              │
-│   - GLOBAL_SEARCH_END: LanguageSw.    │   │   - FOOTER: Portal footer                 │
-└───────────────────┬───────────────────┘   └─────────────────────┬─────────────────────┘
-                    │                                             │
-                    └──────────────────────┬──────────────────────┘
-                                           │
-                                           ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                       Incoming HTTP Request                                          │
+└──────────────────────────────────────────────────┬───────────────────────────────────────────────────┘
+                                                   │
+                                                   ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                Laravel 13 Global Middleware Pipeline                                 │
+│             TrustProxies (*)  ──►  SetLocale  ──►  EncryptCookies  ──►  StartSession                 │
+└──────────────────────────────────────────────────┬───────────────────────────────────────────────────┘
+                                                   │
+                 ┌─────────────────────────────────┼─────────────────────────────────┐
+                 ▼                                 ▼                                 ▼
+          Path: `/admin/*`                     Path: `/*`                     Path: `/pos/*`
+┌─────────────────────────────────┐ ┌──────────────────────────────┐ ┌─────────────────────────────────┐
+│          Admin Panel            │ │    Customer Portal Panel     │ │         POS Till Panel          │
+│     (AdminPanelProvider.php)    │ │  (CustomerPanelProvider.php) │ │     (PosPanelProvider.php)      │
+├─────────────────────────────────┤ ├──────────────────────────────┤ ├─────────────────────────────────┤
+│ • Guard: 'web'                  │ │ • Guard: 'customer'          │ │ • Guard: 'web'                  │
+│ • Model: Security\Models\User   │ │ • Model: Website\Models\Part.│ │ • Model: Security\Models\User   │
+│ • Full viewport (Width::Full)   │ │ • Light mode (darkMode(false)│ │ • Fullscreen (topbar(false))    │
+│ • Top navigation bar            │ │ • Top navigation bar         │ │ • Vue 3 Till UI + SPA mode      │
+│ • MFA App TOTP Authentication   │ │ • Self-registration & reset  │ │ • User menu: orders, cash, PWA  │
+│ • Global Search Provider        │ │ • Portal dashboard & pages   │ │ • Render Hooks:                 │
+│ • Database Notifications (30s)  │ │ • Customer quotes/orders     │ │   - HEAD_END: PWA manifest      │
+│ • Render Hooks:                 │ │ • Render Hooks:              │ │   - GLOBAL_SEARCH_AFTER: Status │
+│   - GLOBAL_SEARCH_BEFORE: Comp. │ │   - GLOBAL_SEARCH_END: Lang. │ │ • Middleware: SetLocale,        │
+│   - GLOBAL_SEARCH_END: Lang.    │ │   - TOPBAR_END / FOOTER      │ │   ApplyBrandSettings            │
+└────────────────┬────────────────┘ └──────────────┬───────────────┘ └────────────────┬────────────────┘
+                 │                                 │                                  │
+                 └─────────────────────────────────┼──────────────────────────────────┘
+                                                   │
+                                                   ▼
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                       Tenancy & Security Context Resolution                            │
 │  1. CompanyContext: session('active_company_ids') ∩ $user->allowedCompanies()          │
@@ -330,10 +332,15 @@ Powered by `npx concurrently -c "#93c5fd,#c4b5fd,#fb7185,#fdba74"`, this starts 
 
 ### 3.1 Host Application Layout & Responsibilities
 
-The root `app/` directory is deliberately lean, containing only 6 PHP classes and 1 abstract base controller:
+The root `app/` directory is deliberately lean, containing only 9 PHP classes and 1 abstract base controller:
 
 ```
 app/
+├── Filament/
+│   └── Support/
+│       └── View/
+│           └── Components/
+│               └── ButtonComponent.php     # WCAG AA button contrast override
 ├── Http/
 │   ├── Controllers/
 │   │   └── Controller.php                  # Abstract base controller
@@ -342,11 +349,14 @@ app/
 │       └── SetLocale.php                   # Request & session locale negotiation
 ├── Models/
 │   └── User.php                            # Foundation Authenticatable User model
-└── Providers/
-    ├── AppServiceProvider.php              # Container bindings, HTTPS, Livewire redirect hook
-    └── Filament/
-        ├── AdminPanelProvider.php          # Admin panel configuration
-        └── CustomerPanelProvider.php       # Customer portal configuration
+├── Providers/
+│   ├── AppServiceProvider.php              # Container bindings (User, ButtonComponent), HTTPS
+│   └── Filament/
+│       ├── AdminPanelProvider.php          # Admin panel configuration
+│       ├── CustomerPanelProvider.php       # Customer portal configuration
+│       └── PosPanelProvider.php            # POS till panel configuration
+└── Support/
+    └── BrandPalette.php                    # OKLCH palette curve & tinted gray generator
 ```
 
 The host application does **not** declare domain models, business policies, domain migrations, or business controllers. It serves strictly as the bootstrap runtime harness.
@@ -444,33 +454,21 @@ return [
 
 ### 3.5 Core Foundation Services, Dynamic OKLCH Branding & Multi-Language Negotiation
 
-#### Container Contract Binding (`AppServiceProvider.php:19`)
-In `App\Providers\AppServiceProvider::register()`, the application rebinds Laravel's default authenticatable contract:
+#### Container Contract Bindings (`AppServiceProvider.php:16, 18`)
+In `App\Providers\AppServiceProvider::register()`, the application rebinds Laravel's authenticatable contract and Filament's button component contract:
 ```php
 $this->app->bind(Authenticatable::class, User::class);
-```
-Where `User` is `Webkul\Security\Models\User`. This guarantees that dependency injection across the framework resolves the security plugin's tenant-aware user model rather than the bare framework user.
 
-#### Livewire v4 Flash Notification Fix (`AppServiceProvider.php:28–44`)
-To prevent notification loss caused by Livewire v4 dehydration during component redirects:
-```php
-on('dehydrate', function (Component $component): void {
-    if (! Livewire::isLivewireRequest() || ! store($component)->has('redirect')) {
-        return;
-    }
-    $notifications = session()->pull('filament.notifications');
-    if (empty($notifications)) {
-        return;
-    }
-    session()->put('filament.claimed_notifications', $notifications);
-});
+$this->app->bind(BaseButtonComponent::class, ButtonComponent::class);
 ```
+- **`Authenticatable` -> `Webkul\Security\Models\User` (`AppServiceProvider.php:16`)**: Guarantees that dependency injection across the framework resolves the security plugin's tenant-aware user model rather than the bare framework user.
+- **WCAG AA Button Contrast (`ButtonComponent.php:9–23`, `AppServiceProvider.php:18`)**: `App\Filament\Support\View\Components\ButtonComponent` overrides `getColorMap()` for filled buttons via `ButtonComponentColorMap` with `minContrastRatio(Color::WCAG_AA_TEXT)` and shade `600`/`500`/`700` backgrounds across light and dark modes.
 
-#### Dynamic OKLCH Color Generator (`ApplyBrandSettings.php:16–155`)
+#### Dynamic OKLCH Color Generator (`ApplyBrandSettings.php:17–118`, `BrandPalette.php:7–119`)
 `App\Http\Middleware\ApplyBrandSettings` dynamically styles the Filament UI from database settings:
 1. Reads `settings(BrandSettings::class)` from `Webkul\Support\Settings\BrandSettings`.
-2. Inspects hex color overrides for 6 palette keys: `primary`, `success`, `danger`, `warning`, `info`, `gray`.
-3. Executes `paletteFromHex($hex)`: Converts hex color values into the modern **OKLCH perceptual color space** (`lightness`, `chroma`, `hue`). It generates an 11-step color palette (`50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `950`) maintaining uniform perceptual contrast across both light and dark modes.
+2. Inspects hex color overrides for 5 semantic palette keys (`primary`, `success`, `danger`, `warning`, `info`) plus `gray` (including primary-hue tinting via `BrandPalette::hueOf()` when `primary_color` is set).
+3. Delegates palette generation to `App\Support\BrandPalette::fromHex($seed, $tintHue)` (`app/Support/BrandPalette.php:79–118`): converts hex color values into the **OKLCH perceptual color space** (`lightness`, `chroma`, `hue`) and produces an 11-step palette (`50`–`950`) calibrated around anchor shade `600` (with dedicated `GRAY_LIGHTNESS` / `GRAY_CHROMA` curves for achromatic and tinted grays).
 4. Registers colors via `FilamentColor::register($brandColors)` and configures `$panel->brandLogo()`, `$panel->darkModeBrandLogo()`, `$panel->favicon()`, and `$panel->brandLogoHeight()`.
 
 #### Multi-Language Negotiation & RTL Pipeline (`SetLocale.php:20–44`)
@@ -626,7 +624,7 @@ plugins/webkul/<plugin>/
 
 ### 4.3 Service Provider Inheritance & Lifecycle Execution
 
-All 28 plugin service providers inherit from `Webkul\PluginManager\PackageServiceProvider`:
+All 30 plugin service providers inherit from `Webkul\PluginManager\PackageServiceProvider`:
 
 ```
 Illuminate\Support\ServiceProvider
@@ -638,7 +636,7 @@ Spatie\LaravelPackageTools\PackageServiceProvider
 Webkul\PluginManager\PackageServiceProvider
        ▲
        │
-Webkul\<Namespace>\<Plugin>ServiceProvider (all 28 plugins)
+Webkul\<Namespace>\<Plugin>ServiceProvider (all 30 plugins)
 ```
 
 #### Provider Lifecycle Execution Stages
@@ -720,7 +718,7 @@ public static function isPluginInstalled(string $name): bool
 }
 ```
 - Executes a single query on the first check: `Plugin::all()->keyBy('name')`.
-- All subsequent checks across all 28 plugins execute via **O(1) static array lookup**.
+- All subsequent checks across all 30 plugins execute via **O(1) static array lookup**.
 - Safely handles un-migrated databases by returning `false` without throwing exceptions.
 
 #### 4. Installation & Uninstallation Lifecycle Commands
@@ -754,34 +752,37 @@ Aureus ERP enforces three distinct layers of dependency coupling:
                              [ partners ]
                                   ▲
                                   │
-                             [ products ] ◄──────────┐
-                                  ▲                  │
-                                  │                  │
-                    ┌─────────────┴─────────────┐    │
-                    │                           │    │
-              [ accounts ]               [ inventories ]
-              ▲     ▲    ▲                      ▲    ▲
-              │     │    │                      │    │
-     ┌────────┘     │    └────────┐             │    │
-     │              │             │             │    │
-[ accounting ] [ invoices ]  [ payments ]  [ barcode ]│
-                    ▲             ▲                  │
-                    │             │                  │
-              ┌─────┴──────┐      │                  │
-              │            │      │                  │
-         [ purchases ]   [ sales ]                   │
-              │            │                         │
-              └────────────┼─────────────────────────┘
-                           │
-                           ▼
-                   [ manufacturing ]
+                             [ products ] ◄───────────────────┐
+                              ▲        ▲                      │
+                              │        │                      │
+                ┌─────────────┴───┐    │                      │
+                │                 │    │                      │
+          [ accounts ]      [ inventories ] ◄─────┐           │
+          ▲     ▲    ▲       ▲                    │           │
+          │     │    │       │                    │           │
+    ┌─────┘     │    └──┐    │                    │           │
+    │           │       │    │                    │           │
+[accounting][invoices][payments]  [ barcode ] ────┘           │
+            ▲   ▲   ▲                             │           │
+       ┌────┘   │   └────────┐                    │           │
+       │        │            │                    │           │
+ [ purchases ]  │      [ sales ]                  │           │
+                │            ▲                    │           │
+                │            │                    │           │
+                │         [ crm ]                 │           │
+                │   (depends: contacts, sales)    │           │
+                │                                 │           │
+                └────── [ point-of-sale ] ────────┴───────────┘
+                        (depends: products, inventories, invoices)
 
-Other Isolated Chains:
-[ employees ] ◄─── [ recruitments ]
-[ employees ] ◄─── [ time-off ]
-[ projects ]  ◄─── [ timesheets ]
-[ website ]   ◄─── [ blogs ]
-[ contacts ]  (Zero-table extension over partners)
+Multi-Parent & Isolated Chains:
+[ products ] + [ inventories ] ◄─── [ manufacturing ]
+[ contacts ] + [ sales ]       ◄─── [ crm ]
+[ partners ]                   ◄─── [ contacts ] (Zero-table extension)
+[ employees ]                  ◄─── [ recruitments ]
+[ employees ]                  ◄─── [ time-off ]
+[ projects ]                   ◄─── [ timesheets ]
+[ website ]                    ◄─── [ blogs ]
 [ maintenance ] (Independent domain relying on core + full-calendar)
 ```
 
@@ -806,32 +807,44 @@ Downstream plugins contribute form fields, infolist entries, table columns, and 
 - **Settings Registry Singleton**: `Webkul\Support\SettingsRegistry` (`plugins/webkul/support/src/SettingsRegistry.php:5–16`) is the container singleton registered in `SupportServiceProvider.php:146` backing the global `settings()` helper.
 
 #### 2. Dynamic Eloquent Relationships via `resolveRelationUsing`
-Downstream packages dynamically bind Eloquent relationships to upstream models during `packageBooted()`. The platform maintains exactly 22 dynamic relationship injections:
+Downstream packages dynamically bind Eloquent relationships to upstream models during `packageBooted()`. The platform maintains exactly 34 dynamic relationship injections:
 
 | # | Provider | Target Model | Relationship Name | Relation Type | Target Related Class | Source Citation |
 |---|---|---|---|---|---|---|
-| 1 | `AccountServiceProvider` | `Partner` | `CompanyProperty::RELATION` | `hasMany` | `PartnerCompanyProperty` | `AccountServiceProvider.php:264` |
-| 2 | `AccountServiceProvider` | `Partner` | `propertyAccountPayable` | `belongsTo` | `Account` | `AccountServiceProvider.php:271` |
-| 3 | `AccountServiceProvider` | `Partner` | `propertyAccountReceivable` | `belongsTo` | `Account` | `AccountServiceProvider.php:272` |
-| 4 | `AccountServiceProvider` | `Partner` | `propertyAccountPosition` | `belongsTo` | `FiscalPosition` | `AccountServiceProvider.php:273` |
-| 5 | `AccountServiceProvider` | `Partner` | `propertyPaymentTerm` | `belongsTo` | `PaymentTerm` | `AccountServiceProvider.php:274` |
-| 6 | `AccountServiceProvider` | `Partner` | `propertySupplierPaymentTerm` | `belongsTo` | `PaymentTerm` | `AccountServiceProvider.php:275` |
-| 7 | `AccountServiceProvider` | `Partner` | `propertyOutboundPaymentMethodLine` | `belongsTo` | `PaymentMethodLine` | `AccountServiceProvider.php:276` |
-| 8 | `AccountServiceProvider` | `Partner` | `propertyInboundPaymentMethodLine` | `belongsTo` | `PaymentMethodLine` | `AccountServiceProvider.php:277` |
-| 9 | `AccountServiceProvider` | `Product` | `productTaxes` | `belongsToMany` | `Tax` | `AccountServiceProvider.php:322` |
-| 10 | `AccountServiceProvider` | `Product` | `supplierTaxes` | `belongsToMany` | `Tax` | `AccountServiceProvider.php:329` |
-| 11 | `AccountServiceProvider` | `Product` | `CompanyProperty::RELATION` | `hasMany` | `ProductCompanyAccount` | `AccountServiceProvider.php:341` |
-| 12 | `AccountServiceProvider` | `Category` | `CompanyProperty::RELATION` | `hasMany` | `CategoryCompanyAccount` | `AccountServiceProvider.php:352` |
-| 13 | `AccountServiceProvider` | `Product` | `propertyAccountIncome` | `belongsTo` | `Account` | `AccountServiceProvider.php:357` |
-| 14 | `AccountServiceProvider` | `Product` | `propertyAccountExpense` | `belongsTo` | `Account` | `AccountServiceProvider.php:370` |
-| 15 | `InventoryServiceProvider` | `Product` | `routes` | `belongsToMany` | `Route` | `InventoryServiceProvider.php:255` |
-| 16 | `InventoryServiceProvider` | `Product` | `responsible` | `belongsTo` | `User` | `InventoryServiceProvider.php:262` |
-| 17 | `InventoryServiceProvider` | `Product` | `moveLines` | `hasMany` | `MoveLine` | `InventoryServiceProvider.php:267` |
-| 18 | `InventoryServiceProvider` | `Product` | `moves` | `hasMany` | `Move` | `InventoryServiceProvider.php:272` |
-| 19 | `InventoryServiceProvider` | `Product` | `quantities` | `hasMany` | `ProductQuantity` | `InventoryServiceProvider.php:277` |
-| 20 | `ManufacturingServiceProvider` | `Product` | `billsOfMaterials` | `hasMany` | `BillOfMaterial` | `ManufacturingServiceProvider.php:272` |
-| 21 | `ManufacturingServiceProvider` | `Product` | `billOfMaterialLines` | `hasMany` | `BillOfMaterialLine` | `ManufacturingServiceProvider.php:277` |
-| 22 | `PurchaseServiceProvider` | `Product` | `sellers` | `hasMany` | `ProductSupplier` | `PurchaseServiceProvider.php:131` |
+| 1 | `AccountServiceProvider` | `Partner` | `CompanyProperty::RELATION` | `hasMany` | `PartnerCompanyProperty` | `AccountServiceProvider.php:265` |
+| 2 | `AccountServiceProvider` | `Partner` | `propertyAccountPayable` | `belongsTo` | `Account` | `AccountServiceProvider.php:272` |
+| 3 | `AccountServiceProvider` | `Partner` | `propertyAccountReceivable` | `belongsTo` | `Account` | `AccountServiceProvider.php:273` |
+| 4 | `AccountServiceProvider` | `Partner` | `propertyAccountPosition` | `belongsTo` | `FiscalPosition` | `AccountServiceProvider.php:274` |
+| 5 | `AccountServiceProvider` | `Partner` | `propertyPaymentTerm` | `belongsTo` | `PaymentTerm` | `AccountServiceProvider.php:275` |
+| 6 | `AccountServiceProvider` | `Partner` | `propertySupplierPaymentTerm` | `belongsTo` | `PaymentTerm` | `AccountServiceProvider.php:276` |
+| 7 | `AccountServiceProvider` | `Partner` | `propertyOutboundPaymentMethodLine` | `belongsTo` | `PaymentMethodLine` | `AccountServiceProvider.php:277` |
+| 8 | `AccountServiceProvider` | `Partner` | `propertyInboundPaymentMethodLine` | `belongsTo` | `PaymentMethodLine` | `AccountServiceProvider.php:278` |
+| 9 | `AccountServiceProvider` | `Partner` | `invoices` | `hasMany` | `Move` | `AccountServiceProvider.php:280` |
+| 10 | `AccountServiceProvider` | `Partner` | `bills` | `hasMany` | `Move` | `AccountServiceProvider.php:283` |
+| 11 | `AccountServiceProvider` | `Product` | `productTaxes` | `belongsToMany` | `Tax` | `AccountServiceProvider.php:329` |
+| 12 | `AccountServiceProvider` | `Product` | `supplierTaxes` | `belongsToMany` | `Tax` | `AccountServiceProvider.php:336` |
+| 13 | `AccountServiceProvider` | `Product` | `CompanyProperty::RELATION` | `hasMany` | `ProductCompanyAccount` | `AccountServiceProvider.php:348` |
+| 14 | `AccountServiceProvider` | `Category` | `CompanyProperty::RELATION` | `hasMany` | `CategoryCompanyAccount` | `AccountServiceProvider.php:359` |
+| 15 | `AccountServiceProvider` | `Product` | `propertyAccountIncome` | `belongsTo` | `Account` | `AccountServiceProvider.php:364` |
+| 16 | `AccountServiceProvider` | `Product` | `propertyAccountExpense` | `belongsTo` | `Account` | `AccountServiceProvider.php:377` |
+| 17 | `CRMServiceProvider` | `Partner` | `crmPartner` | `hasOne` | `CRMPartner` | `CRMServiceProvider.php:208` |
+| 18 | `CRMServiceProvider` | `Partner` | `crmOpportunities` | `hasMany` | `Lead` | `CRMServiceProvider.php:213` |
+| 19 | `CRMServiceProvider` | `Partner` | `crmSaleOrders` | `hasMany` | `Order` | `CRMServiceProvider.php:218` |
+| 20 | `CRMServiceProvider` | `Order` | `opportunity` | `belongsTo` | `Lead` | `CRMServiceProvider.php:223` |
+| 21 | `CRMServiceProvider` | `Team` | `opportunities` | `hasMany` | `Lead` | `CRMServiceProvider.php:228` |
+| 22 | `CRMServiceProvider` | `Team` | `crmTeam` | `hasOne` | `CRMTeam` | `CRMServiceProvider.php:233` |
+| 23 | `CRMServiceProvider` | `Team` | `crmAlias` | `hasOne` | `MailAlias` | `CRMServiceProvider.php:238` |
+| 24 | `CRMServiceProvider` | `Team` | `crmMembers` | `hasMany` | `TeamMember` | `CRMServiceProvider.php:243` |
+| 25 | `InventoryServiceProvider` | `Product` | `routes` | `belongsToMany` | `Route` | `InventoryServiceProvider.php:261` |
+| 26 | `InventoryServiceProvider` | `Product` | `responsible` | `belongsTo` | `User` | `InventoryServiceProvider.php:268` |
+| 27 | `InventoryServiceProvider` | `Product` | `moveLines` | `hasMany` | `MoveLine` | `InventoryServiceProvider.php:273` |
+| 28 | `InventoryServiceProvider` | `Product` | `moves` | `hasMany` | `Move` | `InventoryServiceProvider.php:278` |
+| 29 | `InventoryServiceProvider` | `Product` | `quantities` | `hasMany` | `ProductQuantity` | `InventoryServiceProvider.php:283` |
+| 30 | `ManufacturingServiceProvider` | `Product` | `billsOfMaterials` | `hasMany` | `BillOfMaterial` | `ManufacturingServiceProvider.php:272` |
+| 31 | `ManufacturingServiceProvider` | `Product` | `billOfMaterialLines` | `hasMany` | `BillOfMaterialLine` | `ManufacturingServiceProvider.php:277` |
+| 32 | `PointOfSaleServiceProvider` | `Product` | `posCategories` | `belongsToMany` | `Category` | `PointOfSaleServiceProvider.php:197` |
+| 33 | `PointOfSaleServiceProvider` | `Product` | `posOrderLines` | `hasMany` | `OrderLine` | `PointOfSaleServiceProvider.php:204` |
+| 34 | `PurchaseServiceProvider` | `Product` | `sellers` | `hasMany` | `ProductSupplier` | `PurchaseServiceProvider.php:144` |
 
 #### 3. Contributed Attributes & Casts (`HasContributedAttributes`)
 Master models incorporate `Webkul\Support\Models\Concerns\HasContributedAttributes`. Downstream plugins call:
@@ -849,11 +862,14 @@ To support company-specific settings on global master records (`Partner`, `Produ
 
 #### 5. Product Usage Governance (`ProductUsageRegistry`)
 Prevents accidental deletion of products referenced in operational modules:
-- File: `plugins/webkul/products/src/Support/ProductUsageRegistry.php:9–82`.
+- File: `plugins/webkul/products/src/Support/ProductUsageRegistry.php:9–113`.
 - Downstream registration:
-  - `manufacturing`: `Order`, `WorkOrder`, `UnbuildOrder`, `BillOfMaterial`, `BillOfMaterialLine`.
-  - `purchases`: `OrderLine`, `RequisitionLine`.
-  - `sales`: `OrderLine`, `OrderOption`, `OrderTemplateProduct`.
+  - `accounts`: `MoveLine` (`AccountServiceProvider.php:181`).
+  - `inventories`: `Move`, `MoveLine`, `ProductQuantity`, `Lot`, `Scrap` (`InventoryServiceProvider.php:187–193`).
+  - `manufacturing`: `Order`, `WorkOrder`, `UnbuildOrder`, `BillOfMaterial`, `BillOfMaterialLine`, `BillOfMaterialByproduct`, `WorkCenterCapacity` (`ManufacturingServiceProvider.php:255–263`).
+  - `point-of-sale`: `OrderLine`, `Config` (`PointOfSaleServiceProvider.php:238–241`).
+  - `purchases`: `OrderLine`, `RequisitionLine` (`PurchaseServiceProvider.php:132–135`).
+  - `sales`: `OrderLine`, `OrderOption`, `OrderTemplateProduct` (`SaleServiceProvider.php:163–167`).
 - Deletion verification: `ProductUsageRegistry::isProductInUse($productId)` queries all registered models without global scopes prior to deletion.
 
 #### 6. Cross-Boundary Domain Events
@@ -900,6 +916,11 @@ Aureus ERP abstracts complex business logic away from Filament UI pages into ded
 │ Manufacturing │ Webkul\Manufacturing\      │ OrderWorkflow, Expander,  │
 │ (accessor:    │   ManufacturingManager     │ ProductionRecorder        │
 │'manufacturing'│                            │                           │
+├───────────────┼────────────────────────────┼───────────────────────────┤
+│ PointOfSale   │ Webkul\PointOfSale\        │ OrderProcessor,           │
+│ (accessor:    │   PointOfSaleManager       │ OrderWorkflow, PosInvoicer│
+│'point-of-sale'│                            │ OrderCalculator,          │
+│ )             │                            │ SessionCloser,BillSplitter│
 └───────────────┴────────────────────────────┴───────────────────────────┘
 ```
 
@@ -916,7 +937,7 @@ Aureus ERP enforces a strict architectural separation between **transactional en
 #### 1. Headless Engine Pattern (`plugins/webkul/accounts`)
 The `accounts` package encapsulates all financial ledger models, journal moves, reconciliation services, and tax calculators. However, it intentionally suppresses all Filament navigation:
 ```php
-// Declared on all 17 Resource classes in accounts:
+// Declared directly on 17 of 20 Resource classes in accounts (3 inherit it: CreditNoteResource, CustomerResource, VendorResource):
 protected static bool $shouldRegisterNavigation = false;
 ```
 Resources like `InvoiceResource`, `BillResource`, `PaymentResource`, and `AccountResource` define complete forms, tables, and infolists, but are never directly exposed in the top navigation or sidebar by `accounts`.
@@ -1305,7 +1326,7 @@ Aureus ERP configures three distinct Filament panels:
 
 ### 7.2 Inversion of Control: `Panel::configureUsing()`
 
-Neither `AdminPanelProvider` nor `CustomerPanelProvider` hardcodes business resources. The registration is inverted:
+Neither `AdminPanelProvider` nor `CustomerPanelProvider` hardcodes business resources, and `PosPanelProvider` likewise discovers its POS pages and widgets via `Panel::configureUsing()` in `PointOfSaleServiceProvider` (referencing `ConfigResource`, `Pos`, and `Registers` at `PosPanelProvider.php:25–27, 44, 79, 93` only for terminal chrome `homeUrl`, `backOffice` action, and PWA session metadata). The registration is inverted:
 1. In `packageRegistered()`, each plugin provider hooks into panel configuration:
    ```php
    Panel::configureUsing(function (Panel $panel): void {
@@ -1318,8 +1339,8 @@ Neither `AdminPanelProvider` nor `CustomerPanelProvider` hardcodes business reso
 
 Filament panel registration differentiates strictly between core infrastructure and optional domain packages:
 
-1. **19 Optional Domain Plugins Gate on Installation State**:
-   Within `*Plugin.php::register(Panel $panel)`, all 19 optional domain plugins evaluate `Package::isPluginInstalled($this->getId())` before discovering any UI components:
+1. **21 Optional Domain Plugins Gate on Installation State**:
+   Within `*Plugin.php::register(Panel $panel)`, all 21 optional domain plugins evaluate `Package::isPluginInstalled($this->getId())` before discovering any UI components:
    ```php
    public function register(Panel $panel): void
    {
@@ -1469,7 +1490,7 @@ Audit trails, follower subscriptions, and scheduled activities are powered by `p
 
 ## 8. Persistence & Database Conventions
 
-### 8.1 Schema Architecture Across 383 Migrations
+### 8.1 Schema Architecture Across 456 Migrations
 
 Aureus ERP contains **456 database migrations**:
 - Core application: `database/migrations/` (13 migrations).
@@ -1510,13 +1531,13 @@ The 13 root database migrations in `database/migrations/` provision the foundati
 
 ### 8.3 Foreign Key Semantics & Referential Cascade Tiers
 
-Audit of 907+ foreign key deletion rules establishes three distinct semantic tiers:
+Audit of 1,110+ fluent foreign key deletion rules across 456 migrations (plus 123 legacy `onDelete()`/`setNullOnDelete()` calls) establishes three distinct semantic tiers:
 
 | Delete Behavior | Occurrences | Semantic Lifecycle Rule | Repository Examples |
 |---|---|---|---|
-| `nullOnDelete()` | 551 | Optional reference; child entity survives parent deletion. | `creator_id` / `user_id`, `partner_id`, self-referencing `parent_id`, nullable `company_id` on global entities. |
-| `cascadeOnDelete()` | 185 | Strict composition / ownership; child is meaningless without parent. | `sales_order_lines.order_id`, `accounts_account_move_lines.move_id`, junction tables (`user_team`, `user_allowed_companies`). |
-| `restrictOnDelete()` | 171 | Critical referential, financial, or audit integrity; parent cannot be deleted while dependent records exist. | `currency_id` on financial moves/orders, `company_id` on posted journal entries and manufacturing orders, `uom_id` on products. |
+| `nullOnDelete()` | 670 | Optional reference; child entity survives parent deletion. | `creator_id` / `user_id`, `partner_id`, self-referencing `parent_id`, nullable `company_id` on global entities. |
+| `cascadeOnDelete()` | 241 | Strict composition / ownership; child is meaningless without parent. | `sales_order_lines.order_id`, `accounts_account_move_lines.move_id`, junction tables (`user_team`, `user_allowed_companies`). |
+| `restrictOnDelete()` | 199 | Critical referential, financial, or audit integrity; parent cannot be deleted while dependent records exist. | `currency_id` on financial moves/orders, `company_id` on posted journal entries and manufacturing orders, `uom_id` on products. |
 
 ### 8.4 Multi-Company Storage Models
 
@@ -1581,21 +1602,22 @@ Automated tests extend `Tests\TestCase` and utilize `DatabaseTransactions` (`tes
 
 #### Tier 2: Playwright TypeScript Browser Automation (`tests/e2e-pw/`)
 End-to-end browser workflows are validated using Playwright TypeScript:
-- **Configuration (`tests/e2e-pw/playwright.config.ts:1–62`)**:
+- **Configuration (`tests/e2e-pw/playwright.config.ts:1–61`)**:
   - Persistent authentication state caching via `.state/admin-auth.json`, eliminating redundant logins across test specs.
   - Automatic screenshot, video, and trace capture upon test failures.
-  - Configurable timeouts (30s action, 60s test navigation).
+  - Configurable timeouts (`420s` test timeout, `50s` expect timeout, `30s` action timeout).
 - **Reusable Abstractions**:
   - Locator repository (`tests/e2e-pw/locator/erp_locator.ts`): Centralizes Filament and ERP DOM selectors.
   - Administrative helpers (`tests/e2e-pw/utils/admin.ts`): Standardized login, company switching, and record actions.
-- **7 End-to-End Operational Suites (`tests/e2e-pw/tests/`)**:
-  - `01_plugins.spec.ts`: Validates dynamic plugin discovery, installation, and uninstallation rollback.
-  - `02_companies.spec.ts`: Validates multi-company switching and tenant isolation.
-  - `03_users.spec.ts`: Validates user creation, role assignment, and Bouncer permission boundaries.
-  - `04_sales.spec.ts`: Validates end-to-end sales quotation, confirmation, and invoice creation.
-  - `05_purchases.spec.ts`: Validates RFQ, purchase order approval, receipt planning, and vendor bill creation.
-  - `05_inventories.spec.ts`: Validates warehouse transfers, deliveries, receipts, and stock adjustments.
-  - `06_website.spec.ts`: Validates customer portal login, registration, and quotation approval.
+- **8 End-to-End Operational Suites (`tests/e2e-pw/tests/`, 26 `.spec.ts` files)**:
+  - `01_plugins/` (`01_plugins.spec.ts`): Validates dynamic plugin discovery, installation, and uninstallation rollback.
+  - `02_companies/` (`01_companies.spec.ts`): Validates multi-company switching and tenant isolation.
+  - `03_users/` (`01_users.spec.ts`): Validates user creation, role assignment, and Bouncer permission boundaries.
+  - `04_sales/` (`4` specs): Validates sales customers, products, quotations, and end-to-end sales flows.
+  - `05_inventories/` (`5` specs): Validates inventory settings, products, operations, warehouse flows, and configurations.
+  - `05_purchases/` (`5` specs): Validates purchase vendors, products, RFQs, agreements, and end-to-end purchase flows.
+  - `06_website/` (`2` specs): Validates website pages and blogs across admin and customer portal flows.
+  - `07_crm/` (`7` specs): Validates CRM pipeline Kanban, leads, opportunities, sales teams, sales pages, reporting, and configurations.
 
 ### 9.3 New Plugin Authoring & Extension Standards
 
