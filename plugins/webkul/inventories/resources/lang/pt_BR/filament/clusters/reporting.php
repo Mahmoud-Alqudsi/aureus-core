@@ -7,6 +7,9 @@ return [
     ],
 
     'moves' => [
+        'model-label'        => 'Movimentação de estoque',
+        'plural-model-label' => 'Movimentações de estoque',
+
         'navigation' => [
             'title' => 'Histórico de movimentações',
         ],
@@ -31,6 +34,9 @@ return [
     ],
 
     'quantities' => [
+        'model-label'        => 'Quantidade de estoque',
+        'plural-model-label' => 'Quantidades de estoque',
+
         'navigation' => [
             'title' => 'Locais',
         ],

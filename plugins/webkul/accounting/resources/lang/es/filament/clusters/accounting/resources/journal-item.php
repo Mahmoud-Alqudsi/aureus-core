@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Apuntes contables',
+    'title'              => 'Apuntes contables',
+    'model-label'        => 'Apunte contable',
+    'plural-model-label' => 'Apuntes contables',
 
     'navigation' => [
         'title' => 'Apuntes contables',

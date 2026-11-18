@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'خطة نشاط',
+    'plural-model-label' => 'خطط نشاط',
+
     'navigation' => [
         'title' => 'خطط النشاط',
     ],

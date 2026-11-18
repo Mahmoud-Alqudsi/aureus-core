@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Motifs de départ',
+    'title'              => 'Motifs de départ',
+    'model-label'        => 'Motif de départ',
+    'plural-model-label' => 'Motifs de départ',
 
     'navigation' => [
         'title' => 'Motifs de départ',

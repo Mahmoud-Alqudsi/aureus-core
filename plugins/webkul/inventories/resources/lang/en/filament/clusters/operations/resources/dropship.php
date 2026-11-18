@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Dropship',
+    'plural-model-label' => 'Dropships',
+
     'navigation' => [
         'title' => 'Dropships',
         'group' => 'Transfers',

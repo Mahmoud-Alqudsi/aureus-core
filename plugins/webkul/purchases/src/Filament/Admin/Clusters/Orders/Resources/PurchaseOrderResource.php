@@ -39,7 +39,12 @@ class PurchaseOrderResource extends OrderResource
 
     public static function getModelLabel(): string
     {
-        return __('purchases::filament/admin/clusters/orders/resources/purchase-order.navigation.title');
+        return __('purchases::filament/admin/clusters/orders/resources/purchase-order.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('purchases::filament/admin/clusters/orders/resources/purchase-order.plural-model-label');
     }
 
     public static function getRecordSubNavigation(Page $page): array

@@ -31,7 +31,12 @@ class EquipmentResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('maintenance::models/equipment.title');
+        return __('maintenance::filament/resources/equipment.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('maintenance::filament/resources/equipment.plural-model-label');
     }
 
     public static function getNavigationGroup(): string|\UnitEnum

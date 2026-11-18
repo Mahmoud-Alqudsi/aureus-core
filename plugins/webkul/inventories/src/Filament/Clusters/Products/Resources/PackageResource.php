@@ -45,6 +45,16 @@ class PackageResource extends Resource
         return settings(OperationSettings::class)->enable_packages;
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/products/resources/package.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/products/resources/package.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('inventories::filament/clusters/products/resources/package.navigation.title');

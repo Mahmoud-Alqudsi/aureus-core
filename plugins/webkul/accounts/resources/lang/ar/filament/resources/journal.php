@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'دفتر يومية',
+    'plural-model-label' => 'دفاتر يومية',
+
     'form' => [
         'tabs' => [
             'journal-entries' => [

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Socio',
+    'plural-model-label' => 'Socios',
     'global-search' => [
         'email' => 'Correo electrónico',
         'phone' => 'Teléfono',

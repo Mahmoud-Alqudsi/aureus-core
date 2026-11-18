@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'عملة',
+    'plural-model-label' => 'عملات',
     'title' => 'العملات',
 
     'navigation' => [

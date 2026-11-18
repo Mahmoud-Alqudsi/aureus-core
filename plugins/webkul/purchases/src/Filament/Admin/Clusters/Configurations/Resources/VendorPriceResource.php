@@ -29,6 +29,16 @@ class VendorPriceResource extends Resource
 
     protected static ?string $cluster = Configurations::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('purchases::filament/admin/clusters/configurations/resources/vendor-price.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('purchases::filament/admin/clusters/configurations/resources/vendor-price.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('purchases::filament/admin/clusters/configurations/resources/vendor-price.navigation.title');

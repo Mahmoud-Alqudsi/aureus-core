@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Condição de pagamento',
+    'plural-model-label' => 'Condições de pagamento',
+
     'form' => [
         'sections' => [
             'fields' => [

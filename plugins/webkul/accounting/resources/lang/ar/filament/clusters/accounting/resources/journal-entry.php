@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'القيود اليومية',
+    'title'              => 'القيود اليومية',
+    'model-label'        => 'قيد يومية',
+    'plural-model-label' => 'قيود يومية',
 
     'navigation' => [
         'title' => 'القيود اليومية',

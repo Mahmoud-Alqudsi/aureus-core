@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Type de colis',
+    'plural-model-label' => 'Types de colis',
+
     'navigation' => [
         'title' => 'Types de colis',
         'group' => 'Livraison',

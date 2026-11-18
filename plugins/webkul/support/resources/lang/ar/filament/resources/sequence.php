@@ -3,7 +3,7 @@
 return [
     'model-label' => 'تسلسل',
 
-    'plural-model-label' => 'التسلسلات',
+    'plural-model-label' => 'تسلسلات',
 
     'navigation' => [
         'title' => 'التسلسلات',

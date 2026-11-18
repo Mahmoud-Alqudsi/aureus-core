@@ -45,6 +45,16 @@ class RouteResource extends Resource
         return settings(WarehouseSettings::class)->enable_multi_steps_routes;
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/route.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/route.plural-model-label');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('inventories::filament/clusters/configurations/resources/route.navigation.group');

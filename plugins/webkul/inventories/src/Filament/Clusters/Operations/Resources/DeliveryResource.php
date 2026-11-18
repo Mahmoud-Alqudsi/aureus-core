@@ -38,7 +38,12 @@ class DeliveryResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('inventories::filament/clusters/operations/resources/delivery.navigation.title');
+        return __('inventories::filament/clusters/operations/resources/delivery.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/delivery.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

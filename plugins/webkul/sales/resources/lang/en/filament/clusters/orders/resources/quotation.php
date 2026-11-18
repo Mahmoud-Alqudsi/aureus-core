@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Quotation',
+    'title'              => 'Quotation',
+    'model-label'        => 'Quotation',
+    'plural-model-label' => 'Quotations',
 
     'navigation' => [
         'title' => 'Quotations',

@@ -39,7 +39,12 @@ class TaskResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('projects::models/task.title');
+        return __('projects::filament/resources/task.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('projects::filament/resources/task.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

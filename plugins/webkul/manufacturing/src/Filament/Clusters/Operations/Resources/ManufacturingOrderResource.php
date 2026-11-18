@@ -42,7 +42,12 @@ class ManufacturingOrderResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('manufacturing::models/order.title');
+        return __('manufacturing::filament/clusters/operations/resources/manufacturing-order.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('manufacturing::filament/clusters/operations/resources/manufacturing-order.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

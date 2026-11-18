@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Asientos contables',
+    'title'              => 'Asientos contables',
+    'model-label'        => 'Asiento contable',
+    'plural-model-label' => 'Asientos contables',
 
     'navigation' => [
         'title' => 'Asientos contables',

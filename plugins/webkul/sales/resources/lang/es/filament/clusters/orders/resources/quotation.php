@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Presupuesto',
+    'title'              => 'Presupuesto',
+    'model-label'        => 'Presupuesto',
+    'plural-model-label' => 'Presupuestos',
 
     'navigation' => [
         'title' => 'Presupuestos',

@@ -19,6 +19,16 @@ class RefundResource extends BillResource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/refund.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/refund.plural-model-label');
+    }
+
     public static function getPages(): array
     {
         return [

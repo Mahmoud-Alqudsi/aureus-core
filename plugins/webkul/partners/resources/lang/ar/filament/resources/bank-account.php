@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'حساب بنكي',
+    'plural-model-label' => 'حسابات بنكية',
     'navigation' => [
         'group' => 'البنوك',
         'title' => 'الحسابات البنكية',

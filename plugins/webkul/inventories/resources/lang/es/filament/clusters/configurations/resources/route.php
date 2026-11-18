@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Ruta',
+    'plural-model-label' => 'Rutas',
+
     'navigation' => [
         'title' => 'Rutas',
         'group' => 'Gestión de almacenes',

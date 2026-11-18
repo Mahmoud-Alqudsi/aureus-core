@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'الدرجات العلمية',
+    'title'              => 'الدرجات العلمية',
+    'model-label'        => 'درجة علمية',
+    'plural-model-label' => 'درجات علمية',
 
     'navigation' => [
         'title' => 'الدرجات العلمية',

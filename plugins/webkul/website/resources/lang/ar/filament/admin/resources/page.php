@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'صفحة',
+    'plural-model-label' => 'صفحات',
+
     'navigation' => [
         'title' => 'الصفحات',
     ],

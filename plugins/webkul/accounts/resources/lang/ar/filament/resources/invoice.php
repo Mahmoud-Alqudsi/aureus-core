@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'فاتورة',
-
-    'navigation' => [
-        'title' => 'الفواتير',
-        'group' => 'الفواتير',
-    ],
+    'model-label'        => 'فاتورة',
+    'plural-model-label' => 'فواتير',
 
     'global-search' => [
         'customer' => 'العميل',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Categoría de equipo',
+    'plural-model-label' => 'Categorías de equipo',
+
     'navigation' => [
         'title' => 'Categorías',
     ],

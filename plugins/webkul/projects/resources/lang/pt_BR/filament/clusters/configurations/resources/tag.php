@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Tag de projeto',
+    'plural-model-label' => 'Tags de projeto',
+
     'navigation' => [
         'title' => 'Tags',
     ],

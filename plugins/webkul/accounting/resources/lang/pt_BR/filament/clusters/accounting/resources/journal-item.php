@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Itens do lançamento',
+    'title'              => 'Itens do lançamento',
+    'model-label'        => 'Item do lançamento',
+    'plural-model-label' => 'Itens do lançamento',
 
     'navigation' => [
         'title' => 'Itens do lançamento',

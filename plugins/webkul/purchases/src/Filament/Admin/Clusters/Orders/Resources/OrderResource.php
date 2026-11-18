@@ -28,6 +28,16 @@ class OrderResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('purchases::filament/admin/clusters/orders/resources/order.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('purchases::filament/admin/clusters/orders/resources/order.plural-model-label');
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'partner.name'];

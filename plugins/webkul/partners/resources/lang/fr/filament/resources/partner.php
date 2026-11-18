@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Partenaire',
+    'plural-model-label' => 'Partenaires',
     'global-search' => [
         'email' => 'E-mail',
         'phone' => 'Téléphone',

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'Tipo de licença',
+    'title'              => 'Tipo de licença',
+    'model-label'        => 'Tipo de folga',
+    'plural-model-label' => 'Tipos de folga',
     'navigation' => [
         'title' => 'Tipo de licença',
     ],

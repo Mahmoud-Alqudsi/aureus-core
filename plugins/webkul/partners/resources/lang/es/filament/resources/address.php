@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Dirección',
+    'plural-model-label' => 'Direcciones',
     'navigation' => [
         'title' => 'Direcciones',
     ],

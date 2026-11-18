@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'أنواع التوظيف',
+    'title'              => 'أنواع التوظيف',
+    'model-label'        => 'نوع توظيف',
+    'plural-model-label' => 'أنواع توظيف',
 
     'navigation' => [
         'title' => 'أنواع التوظيف',

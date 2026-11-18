@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'فاتورة',
-
-    'navigation' => [
-        'title' => 'الفواتير',
-        'group' => 'الفواتير',
-    ],
+    'model-label'        => 'فاتورة مرتجعة',
+    'plural-model-label' => 'مرتجعات',
 
     'form' => [
         'section' => [

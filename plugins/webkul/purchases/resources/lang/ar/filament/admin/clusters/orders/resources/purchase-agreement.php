@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'اتفاقية شراء',
+    'plural-model-label' => 'اتفاقيات شراء',
+
     'navigation' => [
         'title' => 'اتفاقيات الشراء',
         'group' => 'الشراء',

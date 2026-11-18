@@ -21,6 +21,16 @@ class CategoryResource extends Resource
 
     protected static bool $shouldSkipAuthorization = true;
 
+    public static function getModelLabel(): string
+    {
+        return __('blogs::filament/customer/resources/category.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('blogs::filament/customer/resources/category.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('blogs::filament/customer/resources/category.navigation.title');

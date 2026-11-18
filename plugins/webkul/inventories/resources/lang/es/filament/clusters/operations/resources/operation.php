@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Operación',
+    'plural-model-label' => 'Operaciones',
+
     'navigation' => [
         'title' => 'Productos',
         'group' => 'Inventario',

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Tags',
+    'title'              => 'Tags',
+    'model-label'        => 'Tag de candidato',
+    'plural-model-label' => 'Tags de candidato',
 
     'navigation' => [
         'title' => 'Tags',

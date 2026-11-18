@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Journal',
+    'plural-model-label' => 'Journals',
+
     'form' => [
         'tabs' => [
             'journal-entries' => [

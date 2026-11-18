@@ -7,6 +7,9 @@ return [
     ],
 
     'moves' => [
+        'model-label'        => 'حركة مخزون',
+        'plural-model-label' => 'حركات مخزون',
+
         'navigation' => [
             'title' => 'سجل الحركات',
         ],
@@ -31,6 +34,9 @@ return [
     ],
 
     'quantities' => [
+        'model-label'        => 'كمية مخزون',
+        'plural-model-label' => 'كميات مخزون',
+
         'navigation' => [
             'title' => 'المواقع',
         ],

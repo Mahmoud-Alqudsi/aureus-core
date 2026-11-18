@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Tâches',
+    'model-label'        => 'Tâche',
+    'plural-model-label' => 'Tâches',
 
     'navigation' => [
         'title' => 'Tâches',

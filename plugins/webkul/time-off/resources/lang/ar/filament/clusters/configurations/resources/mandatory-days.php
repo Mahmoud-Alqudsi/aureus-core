@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'الأيام الإلزامية',
-
-    'model-label' => 'يوم إلزامي',
+    'title'              => 'الأيام الإلزامية',
+    'model-label'        => 'يوم إلزامي',
+    'plural-model-label' => 'أيام إلزامية',
 
     'navigation' => [
         'title' => 'العطل الإلزامية',

@@ -25,7 +25,12 @@ class DegreeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/configurations/resources/degree.title');
+        return __('recruitments::filament/clusters/configurations/resources/degree.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/degree.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

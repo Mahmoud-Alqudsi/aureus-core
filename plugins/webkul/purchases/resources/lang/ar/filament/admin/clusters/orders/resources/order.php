@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'طلب',
+    'plural-model-label' => 'طلبات',
+
     'global-search' => [
         'vendor'    => 'المورد',
         'reference' => 'المرجع',

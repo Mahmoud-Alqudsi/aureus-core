@@ -1,8 +1,11 @@
 <?php
 
 return [
+    'model-label'        => 'فئة معدات',
+    'plural-model-label' => 'فئات معدات',
+
     'navigation' => [
-        'title' => 'الفئات',
+        'title' => 'فئات المعدات',
     ],
 
     'form' => [

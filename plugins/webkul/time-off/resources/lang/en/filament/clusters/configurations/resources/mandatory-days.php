@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Mandatory Days',
-
-    'model-label' => 'Mandatory Day',
+    'title'              => 'Mandatory Days',
+    'model-label'        => 'Mandatory Day',
+    'plural-model-label' => 'Mandatory Days',
 
     'navigation' => [
         'title' => 'Mandatory Holidays',

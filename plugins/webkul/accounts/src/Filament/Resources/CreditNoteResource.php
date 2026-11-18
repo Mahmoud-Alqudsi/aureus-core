@@ -18,6 +18,16 @@ class CreditNoteResource extends InvoiceResource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/credit-note.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/credit-note.plural-model-label');
+    }
+
     public static function getPages(): array
     {
         return [

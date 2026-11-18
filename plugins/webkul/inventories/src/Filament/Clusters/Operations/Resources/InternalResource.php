@@ -47,7 +47,12 @@ class InternalResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('inventories::filament/clusters/operations/resources/internal.navigation.title');
+        return __('inventories::filament/clusters/operations/resources/internal.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/internal.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

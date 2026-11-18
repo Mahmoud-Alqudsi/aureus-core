@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Regla de redondeo de efectivo',
+    'plural-model-label' => 'Reglas de redondeo de efectivo',
+
     'form' => [
         'fields' => [
             'name'               => 'Nombre',

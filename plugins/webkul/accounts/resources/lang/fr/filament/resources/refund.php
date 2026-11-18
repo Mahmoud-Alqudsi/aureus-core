@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'Facture',
-
-    'navigation' => [
-        'title' => 'Factures',
-        'group' => 'Factures',
-    ],
+    'model-label'        => 'Remboursement',
+    'plural-model-label' => 'Remboursements',
 
     'form' => [
         'section' => [

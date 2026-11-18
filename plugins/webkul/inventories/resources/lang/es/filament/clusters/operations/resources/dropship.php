@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Envío directo',
+    'plural-model-label' => 'Envíos directos',
+
     'navigation' => [
         'title' => 'Envíos directos',
         'group' => 'Transferencias',

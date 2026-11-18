@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Rule',
+    'plural-model-label' => 'Rules',
+
     'navigation' => [
         'title' => 'Rules',
         'group' => 'Warehouse Management',

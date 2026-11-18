@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'دليل حسابات',
+    'plural-model-label' => 'دليل حسابات',
+
     'global-search' => [
         'code' => 'الرمز',
         'type' => 'النوع',

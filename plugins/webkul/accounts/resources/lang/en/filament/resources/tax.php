@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Tax',
+    'plural-model-label' => 'Taxes',
+
     'form' => [
         'tabs' => [
             'repartition-lines' => [

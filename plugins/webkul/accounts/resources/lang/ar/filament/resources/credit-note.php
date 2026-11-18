@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'إشعار دائن',
-
-    'navigation' => [
-        'title' => 'إشعارات دائنة',
-        'group' => 'الفواتير',
-    ],
+    'model-label'        => 'إشعار دائن',
+    'plural-model-label' => 'إشعارات دائنة',
 
     'form' => [
         'section' => [

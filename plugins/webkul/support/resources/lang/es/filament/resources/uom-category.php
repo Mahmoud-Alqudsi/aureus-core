@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Categoría de UdM',
+    'plural-model-label' => 'Categorías de UdM',
     'navigation' => [
         'title' => 'Categorías de unidad de medida',
     ],

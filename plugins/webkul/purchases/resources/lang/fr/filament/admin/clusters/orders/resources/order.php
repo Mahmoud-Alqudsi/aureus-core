@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Commande',
+    'plural-model-label' => 'Commandes',
+
     'global-search' => [
         'vendor'    => 'Fournisseur',
         'reference' => 'Référence',

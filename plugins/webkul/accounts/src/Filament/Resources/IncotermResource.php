@@ -23,6 +23,16 @@ class IncotermResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/incoterm.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/incoterm.plural-model-label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return IncotermForm::configure($schema);

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Bank Account',
+    'plural-model-label' => 'Bank Accounts',
     'navigation' => [
         'group' => 'Banks',
         'title' => 'Bank Accounts',

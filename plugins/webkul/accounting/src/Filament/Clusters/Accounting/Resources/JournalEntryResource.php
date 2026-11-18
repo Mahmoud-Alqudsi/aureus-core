@@ -41,7 +41,12 @@ class JournalEntryResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('accounting::filament/clusters/accounting/resources/journal-entry.title');
+        return __('accounting::filament/clusters/accounting/resources/journal-entry.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounting::filament/clusters/accounting/resources/journal-entry.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

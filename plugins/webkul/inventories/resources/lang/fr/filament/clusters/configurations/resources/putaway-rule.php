@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Règle de rangement',
+    'plural-model-label' => 'Règles de rangement',
+
     'navigation' => [
         'title' => 'Règles de rangement',
         'group' => 'Gestion d\'entrepôt',

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Días obligatorios',
-
-    'model-label' => 'Día obligatorio',
+    'title'              => 'Días obligatorios',
+    'model-label'        => 'Día obligatorio',
+    'plural-model-label' => 'Días obligatorios',
 
     'navigation' => [
         'title' => 'Días festivos obligatorios',

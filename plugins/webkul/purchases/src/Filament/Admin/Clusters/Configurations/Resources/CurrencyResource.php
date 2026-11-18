@@ -20,10 +20,6 @@ class CurrencyResource extends BaseCurrencyResource
 
     protected static ?string $cluster = Configurations::class;
 
-    public static function getModelLabel(): string
-    {
-        return __('purchases::filament/admin/clusters/configurations/resources/currency.model-label');
-    }
 
     public static function getNavigationLabel(): string
     {

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Role',
+    'plural-model-label' => 'Roles',
     'permission-descriptions' => [
         'view_any'         => 'List and browse all records.',
         'view'             => 'View a single record in detail.',

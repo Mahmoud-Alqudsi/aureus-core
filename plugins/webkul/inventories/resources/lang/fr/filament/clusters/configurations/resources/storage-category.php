@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Catégorie de stockage',
+    'plural-model-label' => 'Catégories de stockage',
+
     'navigation' => [
         'title' => 'Catégories de stockage',
         'group' => 'Gestion des entrepôts',

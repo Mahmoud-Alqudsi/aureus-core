@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'كمية مخزون',
+    'plural-model-label' => 'كميات مخزون',
+
     'navigation' => [
         'title' => 'الكميات',
         'group' => 'التعديلات',

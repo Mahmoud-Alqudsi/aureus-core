@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'مركز عمل',
+    'plural-model-label' => 'مراكز عمل',
+
     'navigation' => [
         'title' => 'مراكز العمل',
         'group' => 'الإعداد',

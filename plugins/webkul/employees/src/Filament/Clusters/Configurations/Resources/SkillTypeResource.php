@@ -34,7 +34,12 @@ class SkillTypeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('employees::filament/clusters/configurations/resources/skill-type.title');
+        return __('employees::filament/clusters/configurations/resources/skill-type.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('employees::filament/clusters/configurations/resources/skill-type.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

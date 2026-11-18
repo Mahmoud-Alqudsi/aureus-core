@@ -19,6 +19,16 @@ class PageResource extends Resource
 
     protected static bool $shouldSkipAuthorization = true;
 
+    public static function getModelLabel(): string
+    {
+        return __('website::filament/admin/resources/page.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('website::filament/admin/resources/page.plural-model-label');
+    }
+
     public static function getPages(): array
     {
         return [

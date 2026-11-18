@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Tipos de competencia',
+    'title'              => 'Tipos de competencia',
+    'model-label'        => 'Tipo de habilidad',
+    'plural-model-label' => 'Tipos de habilidades',
 
     'navigation' => [
         'title' => 'Tipos de competencia',

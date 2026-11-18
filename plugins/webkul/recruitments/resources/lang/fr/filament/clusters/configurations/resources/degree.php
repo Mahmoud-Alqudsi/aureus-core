@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Diplômes',
+    'title'              => 'Diplômes',
+    'model-label'        => 'Diplôme',
+    'plural-model-label' => 'Diplômes',
 
     'navigation' => [
         'title' => 'Diplômes',

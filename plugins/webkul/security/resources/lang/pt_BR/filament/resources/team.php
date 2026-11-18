@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Equipe',
+    'plural-model-label' => 'Equipes',
     'title' => 'Equipes',
 
     'navigation' => [

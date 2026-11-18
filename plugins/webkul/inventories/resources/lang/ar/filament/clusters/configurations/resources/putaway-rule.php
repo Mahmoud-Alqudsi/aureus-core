@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'قاعدة تخزين',
+    'plural-model-label' => 'قواعد تخزين',
+
     'navigation' => [
         'title' => 'قواعد التخزين',
         'group' => 'إدارة المستودعات',

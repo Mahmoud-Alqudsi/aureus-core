@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Bill of Material',
+    'plural-model-label' => 'Bills of Material',
+
     'navigation' => [
         'title' => 'Bills of Materials',
     ],

@@ -25,7 +25,12 @@ class OrderResource extends QuotationResource
 
     public static function getModelLabel(): string
     {
-        return __('sales::filament/clusters/orders/resources/order.title');
+        return __('sales::filament/clusters/orders/resources/order.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales::filament/clusters/orders/resources/order.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

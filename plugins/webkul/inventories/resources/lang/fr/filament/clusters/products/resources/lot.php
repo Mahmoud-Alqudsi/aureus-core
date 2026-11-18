@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Lot/Numéro de série',
+    'plural-model-label' => 'Lots/Numéros de série',
+
     'navigation' => [
         'title' => 'Lots / Numéros de série',
         'group' => 'Inventaire',

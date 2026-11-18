@@ -23,11 +23,6 @@ class TaxResource extends BaseTaxResource
 
     protected static ?string $cluster = Configurations::class;
 
-    public static function getModelLabel(): string
-    {
-        return __('point-of-sale::filament/admin/clusters/configurations/resources/tax.model-label');
-    }
-
     public static function getNavigationGroup(): ?string
     {
         return null;

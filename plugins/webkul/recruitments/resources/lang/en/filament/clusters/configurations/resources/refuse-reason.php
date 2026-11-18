@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Refuse Reason',
+    'title'              => 'Refuse Reason',
+    'model-label'        => 'Refuse Reason',
+    'plural-model-label' => 'Refuse Reasons',
 
     'navigation' => [
         'title' => 'Refuse Reasons',

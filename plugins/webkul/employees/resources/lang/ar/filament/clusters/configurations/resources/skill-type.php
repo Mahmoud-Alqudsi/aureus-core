@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'أنواع المهارات',
+    'title'              => 'أنواع المهارات',
+    'model-label'        => 'نوع',
+    'plural-model-label' => 'أنواع مهارات',
 
     'navigation' => [
         'title' => 'أنواع المهارات',

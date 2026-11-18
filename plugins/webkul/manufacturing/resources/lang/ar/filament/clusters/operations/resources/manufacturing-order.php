@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'أمر تصنيع',
+    'plural-model-label' => 'أوامر تصنيع',
+
     'navigation' => [
         'title' => 'أوامر التصنيع',
         'group' => 'العمليات',

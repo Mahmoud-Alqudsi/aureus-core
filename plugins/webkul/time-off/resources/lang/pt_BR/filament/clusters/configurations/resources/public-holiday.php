@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Feriados',
-
-    'model-label' => 'Feriado',
+    'title'              => 'Feriados',
+    'model-label'        => 'Feriado público',
+    'plural-model-label' => 'Feriados públicos',
 
     'navigation' => [
         'title' => 'Feriados',

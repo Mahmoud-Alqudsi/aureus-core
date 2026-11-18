@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'قائمة أسعار مورد',
+    'plural-model-label' => 'قوائم أسعار موردين',
+
     'navigation' => [
         'title' => 'قوائم أسعار الموردين',
     ],

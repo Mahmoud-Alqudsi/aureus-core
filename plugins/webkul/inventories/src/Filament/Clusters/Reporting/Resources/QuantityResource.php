@@ -28,6 +28,16 @@ class QuantityResource extends Resource
 
     protected static ?string $cluster = Reporting::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/reporting.quantities.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/reporting.quantities.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('inventories::filament/clusters/reporting.quantities.navigation.title');

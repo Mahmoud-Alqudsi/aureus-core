@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Tipo de actividad',
+    'plural-model-label' => 'Tipos de actividad',
     'title' => 'Departamentos',
 
     'navigation' => [

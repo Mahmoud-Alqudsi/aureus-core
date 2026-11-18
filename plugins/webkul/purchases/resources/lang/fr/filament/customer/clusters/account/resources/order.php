@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Commande',
+    'plural-model-label' => 'Commandes',
+
     'table' => [
         'columns' => [
             'reference'         => 'Référence',

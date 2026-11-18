@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'مركز مالي',
+    'plural-model-label' => 'مراكز مالية',
+
     'global-search' => [
         'zip-from' => 'الرمز البريدي من',
         'zip-to'   => 'الرمز البريدي إلى',

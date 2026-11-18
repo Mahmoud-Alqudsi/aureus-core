@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Package Type',
+    'plural-model-label' => 'Package Types',
+
     'navigation' => [
         'title' => 'Package Types',
         'group' => 'Delivery',

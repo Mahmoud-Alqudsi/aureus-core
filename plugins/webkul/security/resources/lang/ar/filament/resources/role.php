@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'دور',
+    'plural-model-label' => 'أدوار',
     'permission-descriptions' => [
         'view_any'         => 'عرض وتصفح جميع السجلات.',
         'view'             => 'عرض سجل واحد بالتفصيل.',
