@@ -28,6 +28,16 @@ class PartnerResource extends BasePartnerResource
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
+    public static function getModelLabel(): string
+    {
+        return __('contacts::filament/resources/partner.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('contacts::filament/resources/partner.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('contacts::filament/resources/partner.navigation.title');

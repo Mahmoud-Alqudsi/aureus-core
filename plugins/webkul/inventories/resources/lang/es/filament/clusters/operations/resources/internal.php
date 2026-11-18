@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Transferencia interna',
+    'plural-model-label' => 'Transferencias internas',
+
     'navigation' => [
         'title' => 'Transferencias internas',
         'group' => 'Transferencias',

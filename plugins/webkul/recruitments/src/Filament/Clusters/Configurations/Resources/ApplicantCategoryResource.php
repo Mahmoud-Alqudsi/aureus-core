@@ -25,7 +25,12 @@ class ApplicantCategoryResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/configurations/resources/applicant-category.navigation.title');
+        return __('recruitments::filament/clusters/configurations/resources/applicant-category.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/applicant-category.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

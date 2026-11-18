@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Vendor Price List',
+    'plural-model-label' => 'Vendor Price Lists',
+
     'navigation' => [
         'title' => 'Vendor Price Lists',
     ],

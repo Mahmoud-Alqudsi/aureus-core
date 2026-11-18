@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Página',
+    'plural-model-label' => 'Páginas',
+
     'navigation' => [
         'title' => 'Páginas',
     ],

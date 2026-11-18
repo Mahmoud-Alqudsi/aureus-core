@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Storage Category',
+    'plural-model-label' => 'Storage Categories',
+
     'navigation' => [
         'title' => 'Storage Categories',
         'group' => 'Warehouse Management',

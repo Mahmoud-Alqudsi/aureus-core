@@ -32,7 +32,12 @@ class EquipmentCategoryResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('maintenance::models/equipment-category.title');
+        return __('maintenance::filament/clusters/configurations/resources/equipment-category.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('maintenance::filament/clusters/configurations/resources/equipment-category.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'البنود اليومية',
+    'title'              => 'البنود اليومية',
+    'model-label'        => 'بند يومية',
+    'plural-model-label' => 'بنود يومية',
 
     'navigation' => [
         'title' => 'البنود اليومية',

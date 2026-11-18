@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'Plan d\'acquisition',
+    'title'              => 'Plan d\'acquisition',
+    'model-label'        => 'Plan d\'acquisition',
+    'plural-model-label' => 'Plans d\'acquisition',
     'navigation' => [
         'title' => 'Plan d\'acquisition',
     ],

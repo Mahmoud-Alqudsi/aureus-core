@@ -38,6 +38,16 @@ class WarehouseResource extends Resource
 
     protected static bool $isGloballySearchable = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/warehouse.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/configurations/resources/warehouse.plural-model-label');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('inventories::filament/clusters/configurations/resources/warehouse.navigation.group');

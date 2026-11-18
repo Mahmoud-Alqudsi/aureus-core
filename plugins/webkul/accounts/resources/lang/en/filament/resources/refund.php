@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'Invoice',
-
-    'navigation' => [
-        'title' => 'Invoices',
-        'group' => 'Invoices',
-    ],
+    'model-label'        => 'Refund',
+    'plural-model-label' => 'Refunds',
 
     'form' => [
         'section' => [

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Moeda',
+    'plural-model-label' => 'Moedas',
     'title' => 'Moedas',
 
     'navigation' => [

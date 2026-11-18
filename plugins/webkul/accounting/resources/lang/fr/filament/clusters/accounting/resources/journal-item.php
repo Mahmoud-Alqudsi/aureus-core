@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Éléments comptables',
+    'title'              => 'Éléments comptables',
+    'model-label'        => 'Ligne d\'écriture',
+    'plural-model-label' => 'Lignes d\'écriture',
 
     'navigation' => [
         'title' => 'Éléments comptables',

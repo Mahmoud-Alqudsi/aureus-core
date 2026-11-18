@@ -23,7 +23,12 @@ class TimesheetResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('timesheets::filament/resources/timesheet.title');
+        return __('timesheets::filament/resources/timesheet.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('timesheets::filament/resources/timesheet.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

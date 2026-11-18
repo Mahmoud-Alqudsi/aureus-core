@@ -37,6 +37,11 @@ class AllocationResource extends Resource
         return __('time-off::filament/clusters/management/resources/allocation.model-label');
     }
 
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/management/resources/allocation.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('time-off::filament/clusters/management/resources/allocation.navigation.title');

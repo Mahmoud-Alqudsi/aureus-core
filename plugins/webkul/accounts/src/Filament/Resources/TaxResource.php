@@ -34,6 +34,16 @@ class TaxResource extends Resource
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/tax.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/tax.plural-model-label');
+    }
+
     /**
      * The amount type reaches the schema either as the raw column value or as
      * the enum the model casts it to, depending on where it is read from.

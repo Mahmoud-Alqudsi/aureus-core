@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Tareas',
+    'model-label'        => 'Tarea',
+    'plural-model-label' => 'Tareas',
 
     'navigation' => [
         'title' => 'Tareas',

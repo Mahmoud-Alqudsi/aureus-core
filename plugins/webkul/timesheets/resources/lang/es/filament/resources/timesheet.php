@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Partes de horas',
+    'model-label'        => 'Parte de horas',
+    'plural-model-label' => 'Partes de horas',
 
     'navigation' => [
         'title' => 'Partes de horas',

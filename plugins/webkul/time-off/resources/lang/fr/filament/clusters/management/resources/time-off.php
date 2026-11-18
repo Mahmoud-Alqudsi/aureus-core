@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Congé',
-
-    'model-label' => 'Congé',
+    'title'              => 'Congé',
+    'model-label'        => 'Congé',
+    'plural-model-label' => 'Congés',
 
     'navigation' => [
         'title' => 'Congé',

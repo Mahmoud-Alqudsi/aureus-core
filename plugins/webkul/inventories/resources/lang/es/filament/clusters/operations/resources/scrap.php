@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Desecho',
+    'plural-model-label' => 'Desechos',
+
     'navigation' => [
         'title' => 'Mermas',
         'group' => 'Ajustes',

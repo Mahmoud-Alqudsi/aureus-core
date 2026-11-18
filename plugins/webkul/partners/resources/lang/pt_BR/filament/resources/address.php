@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Endereço',
+    'plural-model-label' => 'Endereços',
     'navigation' => [
         'title' => 'Endereços',
     ],

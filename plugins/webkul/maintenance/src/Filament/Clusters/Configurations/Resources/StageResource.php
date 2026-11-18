@@ -29,7 +29,12 @@ class StageResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('maintenance::models/stage.title');
+        return __('maintenance::filament/clusters/configurations/resources/stage.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('maintenance::filament/clusters/configurations/resources/stage.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

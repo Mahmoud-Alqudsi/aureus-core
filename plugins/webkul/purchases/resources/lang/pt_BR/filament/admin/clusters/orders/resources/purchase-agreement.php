@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Acordo de compra',
+    'plural-model-label' => 'Acordos de compra',
+
     'navigation' => [
         'title' => 'Acordos de compra',
         'group' => 'Compras',

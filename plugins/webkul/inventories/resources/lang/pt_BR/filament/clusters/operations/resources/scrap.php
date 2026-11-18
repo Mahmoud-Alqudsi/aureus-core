@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Sucata',
+    'plural-model-label' => 'Sucatas',
+
     'navigation' => [
         'title' => 'Descartes',
         'group' => 'Ajustes',

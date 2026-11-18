@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Etiqueta de cuenta',
+    'plural-model-label' => 'Etiquetas de cuentas',
+
     'form' => [
         'fields' => [
             'color'         => 'Color',

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Etiquetas',
+    'title'              => 'Etiquetas',
+    'model-label'        => 'Etiqueta de solicitante',
+    'plural-model-label' => 'Etiquetas de solicitante',
 
     'navigation' => [
         'title' => 'Etiquetas',

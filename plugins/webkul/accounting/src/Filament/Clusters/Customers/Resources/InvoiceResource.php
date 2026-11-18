@@ -28,11 +28,6 @@ class InvoiceResource extends BaseInvoiceResource
 
     protected static ?int $navigationSort = 1;
 
-    public static function getModelLabel(): string
-    {
-        return __('accounting::filament/clusters/customers/resources/invoice.title');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('accounting::filament/clusters/customers/resources/invoice.navigation.title');

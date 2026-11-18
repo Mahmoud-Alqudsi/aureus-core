@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Poste de travail',
+    'plural-model-label' => 'Postes de travail',
+
     'navigation' => [
         'title' => 'Postes de travail',
         'group' => 'Configuration',

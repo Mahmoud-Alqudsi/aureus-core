@@ -24,6 +24,16 @@ class AttributeResource extends Resource
 
     protected static bool $isGloballySearchable = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('products::models/attribute.title');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('products::models/attribute.plural-title');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('products::filament/resources/attribute.navigation.title');

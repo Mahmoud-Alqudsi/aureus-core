@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'Fatura',
-
-    'navigation' => [
-        'title' => 'Faturas',
-        'group' => 'Faturas',
-    ],
+    'model-label'        => 'Fatura de fornecedor',
+    'plural-model-label' => 'Faturas de fornecedor',
 
     'global-search' => [
         'vendor'   => 'Fornecedor',

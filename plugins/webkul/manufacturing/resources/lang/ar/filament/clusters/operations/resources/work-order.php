@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'أمر عمل',
+    'plural-model-label' => 'أوامر عمل',
+
     'navigation' => [
         'title' => 'أوامر العمل',
         'group' => 'العمليات',

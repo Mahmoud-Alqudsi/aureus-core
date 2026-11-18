@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Regra',
+    'plural-model-label' => 'Regras',
+
     'navigation' => [
         'title' => 'Regras',
         'group' => 'Gestão de armazéns',

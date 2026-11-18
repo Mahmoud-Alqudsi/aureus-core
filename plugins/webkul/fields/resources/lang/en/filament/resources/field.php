@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Custom Field',
+    'plural-model-label' => 'Custom Fields',
+
     'navigation' => [
         'title' => 'Custom Fields',
     ],

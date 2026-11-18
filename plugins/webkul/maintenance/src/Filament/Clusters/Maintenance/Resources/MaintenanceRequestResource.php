@@ -37,7 +37,12 @@ class MaintenanceRequestResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('maintenance::models/maintenance-request.title');
+        return __('maintenance::filament/clusters/maintenance/resources/maintenance-request.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('maintenance::filament/clusters/maintenance/resources/maintenance-request.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

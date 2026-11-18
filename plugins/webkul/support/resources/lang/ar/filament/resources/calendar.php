@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'جدول عمل',
+    'plural-model-label' => 'جداول عمل',
     'title' => 'جداول العمل',
 
     'navigation' => [

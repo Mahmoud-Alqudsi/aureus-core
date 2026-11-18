@@ -23,7 +23,12 @@ class OrderToInvoiceResource extends QuotationResource
 
     public static function getModelLabel(): string
     {
-        return __('sales::filament/clusters/to-invoice/resources/order-to-invoice.title');
+        return __('sales::filament/clusters/to-invoice/resources/order-to-invoice.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales::filament/clusters/to-invoice/resources/order-to-invoice.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

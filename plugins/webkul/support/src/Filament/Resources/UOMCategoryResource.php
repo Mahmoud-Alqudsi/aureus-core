@@ -26,6 +26,16 @@ class UOMCategoryResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('support::filament/resources/uom-category.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('support::filament/resources/uom-category.plural-model-label');
+    }
+
     public static function getNavigationGroup(): string|\UnitEnum
     {
         return NavigationGroup::Setting;

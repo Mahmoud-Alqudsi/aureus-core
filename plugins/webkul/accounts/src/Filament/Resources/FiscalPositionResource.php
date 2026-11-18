@@ -28,6 +28,16 @@ class FiscalPositionResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/fiscal-position.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/fiscal-position.plural-model-label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return FiscalPositionForm::configure($schema);

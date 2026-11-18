@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Cash Rounding Rule',
+    'plural-model-label' => 'Cash Rounding Rules',
+
     'form' => [
         'fields' => [
             'name'               => 'Name',

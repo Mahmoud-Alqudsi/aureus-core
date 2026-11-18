@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Lançamentos contábeis',
+    'title'              => 'Lançamentos contábeis',
+    'model-label'        => 'Lançamento contábil',
+    'plural-model-label' => 'Lançamentos contábeis',
 
     'navigation' => [
         'title' => 'Lançamentos contábeis',

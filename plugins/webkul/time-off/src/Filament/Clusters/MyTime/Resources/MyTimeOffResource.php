@@ -35,6 +35,11 @@ class MyTimeOffResource extends Resource
         return __('time-off::filament/clusters/my-time/resources/my-time-off.model-label');
     }
 
+    public static function getPluralModelLabel(): string
+    {
+        return __('time-off::filament/clusters/my-time/resources/my-time-off.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('time-off::filament/clusters/my-time/resources/my-time-off.navigation.title');

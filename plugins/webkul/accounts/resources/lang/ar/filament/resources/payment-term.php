@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'شرط دفع',
+    'plural-model-label' => 'شروط دفع',
+
     'form' => [
         'sections' => [
             'fields' => [

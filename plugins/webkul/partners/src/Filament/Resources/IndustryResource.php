@@ -18,6 +18,16 @@ class IndustryResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('partners::filament/resources/industry.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('partners::filament/resources/industry.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('partners::filament/resources/industry.navigation.title');

@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Origens',
+    'title'              => 'Origens',
+    'model-label'        => 'Fonte',
+    'plural-model-label' => 'Fontes',
 
     'navigation' => [
         'title' => 'Origens',

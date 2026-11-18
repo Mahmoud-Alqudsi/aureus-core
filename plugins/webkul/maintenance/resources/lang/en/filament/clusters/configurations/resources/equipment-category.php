@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Equipment Category',
+    'plural-model-label' => 'Equipment Categories',
+
     'navigation' => [
         'title' => 'Categories',
     ],

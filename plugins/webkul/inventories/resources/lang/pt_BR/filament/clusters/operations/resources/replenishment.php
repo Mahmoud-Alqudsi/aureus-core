@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Reabastecimento',
+    'plural-model-label' => 'Reabastecimentos',
+
     'navigation' => [
         'title' => 'Reabastecimento',
         'group' => 'Aquisição',

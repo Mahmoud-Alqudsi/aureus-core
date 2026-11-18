@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Campo personalizado',
+    'plural-model-label' => 'Campos personalizados',
+
     'navigation' => [
         'title' => 'Campos personalizados',
     ],

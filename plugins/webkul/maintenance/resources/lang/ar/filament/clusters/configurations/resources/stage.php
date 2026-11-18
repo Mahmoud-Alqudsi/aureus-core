@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'مرحلة صيانة',
+    'plural-model-label' => 'مراحل صيانة',
+
     'navigation' => [
         'title' => 'المراحل',
     ],

@@ -46,7 +46,12 @@ class DropshipResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('inventories::filament/clusters/operations/resources/dropship.navigation.title');
+        return __('inventories::filament/clusters/operations/resources/dropship.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('inventories::filament/clusters/operations/resources/dropship.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

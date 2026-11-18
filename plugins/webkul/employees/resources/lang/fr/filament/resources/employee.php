@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Employés',
+    'title'              => 'Employés',
+    'model-label'        => 'Employé',
+    'plural-model-label' => 'Employés',
 
     'navigation' => [
         'title' => 'Employés',

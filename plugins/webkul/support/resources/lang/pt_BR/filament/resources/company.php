@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Empresa',
+    'plural-model-label' => 'Empresas',
     'title' => 'Empresas',
 
     'navigation' => [

@@ -30,7 +30,12 @@ class StageResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/configurations/resources/stage.navigation.title');
+        return __('recruitments::filament/clusters/configurations/resources/stage.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/stage.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

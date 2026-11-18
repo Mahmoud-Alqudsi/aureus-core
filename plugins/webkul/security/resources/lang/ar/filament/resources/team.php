@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'فريق',
+    'plural-model-label' => 'فرق',
     'title' => 'الفرق',
 
     'navigation' => [

@@ -39,7 +39,12 @@ class ProjectResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('projects::models/project.title');
+        return __('projects::filament/resources/project.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('projects::filament/resources/project.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

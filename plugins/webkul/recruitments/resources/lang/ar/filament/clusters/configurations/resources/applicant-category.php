@@ -1,10 +1,12 @@
 <?php
 
 return [
-    'title' => 'الوسوم',
+    'title'              => 'الوسوم',
+    'model-label'        => 'فئة',
+    'plural-model-label' => 'فئات متقدمين',
 
     'navigation' => [
-        'title' => 'الوسوم',
+        'title' => 'فئات المتقدمين',
         'group' => 'الطلبات',
     ],
 

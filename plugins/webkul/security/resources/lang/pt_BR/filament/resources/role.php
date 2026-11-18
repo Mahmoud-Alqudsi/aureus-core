@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Função',
+    'plural-model-label' => 'Funções',
     'permission-descriptions' => [
         'view_any'         => 'Listar e navegar por todos os registros.',
         'view'             => 'Ver um registro em detalhe.',

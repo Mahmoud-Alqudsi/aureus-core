@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'طلب صيانة',
+    'plural-model-label' => 'طلبات صيانة',
+
     'navigation' => [
         'group' => 'الصيانة',
         'title' => 'طلبات الصيانة',

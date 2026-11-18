@@ -26,7 +26,12 @@ class UTMMediumResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/configurations/resources/utm-medium.title');
+        return __('recruitments::filament/clusters/configurations/resources/utm-medium.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/configurations/resources/utm-medium.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

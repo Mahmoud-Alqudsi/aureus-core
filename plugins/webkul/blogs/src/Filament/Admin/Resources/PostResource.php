@@ -33,6 +33,16 @@ class PostResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    public static function getModelLabel(): string
+    {
+        return __('blogs::filament/admin/resources/post.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('blogs::filament/admin/resources/post.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('blogs::filament/admin/resources/post.navigation.title');

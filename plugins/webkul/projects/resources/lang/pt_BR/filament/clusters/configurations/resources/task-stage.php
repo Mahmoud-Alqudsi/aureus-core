@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Etapa de tarefa',
+    'plural-model-label' => 'Etapas de tarefa',
+
     'navigation' => [
         'title' => 'Etapas da tarefa',
     ],

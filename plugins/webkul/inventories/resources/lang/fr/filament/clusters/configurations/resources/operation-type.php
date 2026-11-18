@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Type d\'opération',
+    'plural-model-label' => 'Types d\'opération',
+
     'navigation' => [
         'title' => 'Types d\'opération',
         'group' => 'Gestion des entrepôts',

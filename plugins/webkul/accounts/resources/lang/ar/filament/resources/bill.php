@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'فاتورة مورد',
-
-    'navigation' => [
-        'title' => 'فواتير الموردين',
-        'group' => 'الفواتير',
-    ],
+    'model-label'        => 'فاتورة مورد',
+    'plural-model-label' => 'فواتير موردين',
 
     'global-search' => [
         'vendor'   => 'المورد',

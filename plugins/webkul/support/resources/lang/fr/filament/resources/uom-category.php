@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Catégorie d\'UdM',
+    'plural-model-label' => 'Catégories d\'UdM',
     'navigation' => [
         'title' => 'Catégories UdM',
     ],

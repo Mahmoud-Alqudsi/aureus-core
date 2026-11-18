@@ -31,6 +31,16 @@ class DepartmentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('employees::filament/resources/department.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('employees::filament/resources/department.plural-model-label');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('employees::filament/resources/department.navigation.title');

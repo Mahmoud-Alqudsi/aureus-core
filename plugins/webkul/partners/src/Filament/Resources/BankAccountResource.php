@@ -21,6 +21,16 @@ class BankAccountResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
+    public static function getModelLabel(): string
+    {
+        return __('partners::filament/resources/bank-account.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('partners::filament/resources/bank-account.plural-model-label');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('partners::filament/resources/bank-account.navigation.group');

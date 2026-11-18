@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'UOM Category',
+    'plural-model-label' => 'UOM Categories',
     'navigation' => [
         'title' => 'UOM Categories',
     ],

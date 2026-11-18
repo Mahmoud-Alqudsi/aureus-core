@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'مستخدم',
+    'plural-model-label' => 'مستخدمين',
     'title' => 'المستخدمون',
 
     'navigation' => [

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Rôle',
+    'plural-model-label' => 'Rôles',
     'permission-descriptions' => [
         'view_any'         => 'Lister et parcourir tous les enregistrements.',
         'view'             => 'Voir un enregistrement en détail.',

@@ -48,7 +48,12 @@ class WorkCenterResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('manufacturing::models/work-center.title');
+        return __('manufacturing::filament/clusters/configurations/resources/work-center.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('manufacturing::filament/clusters/configurations/resources/work-center.plural-model-label');
     }
 
     public static function getNavigationGroup(): string

@@ -38,7 +38,12 @@ class EmployeeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('employees::filament/resources/employee.title');
+        return __('employees::filament/resources/employee.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('employees::filament/resources/employee.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

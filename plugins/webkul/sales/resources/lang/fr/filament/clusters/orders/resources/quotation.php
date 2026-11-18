@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Devis',
+    'title'              => 'Devis',
+    'model-label'        => 'Devis',
+    'plural-model-label' => 'Devis',
 
     'navigation' => [
         'title' => 'Devis',

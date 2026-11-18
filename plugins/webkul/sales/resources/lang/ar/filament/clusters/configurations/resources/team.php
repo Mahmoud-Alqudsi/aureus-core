@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'فرق المبيعات',
+    'title'              => 'فرق المبيعات',
+    'model-label'        => 'فريق مبيعات',
+    'plural-model-label' => 'فرق مبيعات',
 
     'navigation' => [
         'title' => 'فرق المبيعات',

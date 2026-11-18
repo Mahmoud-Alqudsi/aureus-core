@@ -32,6 +32,17 @@ class PaymentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/payment.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/payment.plural-model-label');
+    }
+
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'partner.name', 'amount'];

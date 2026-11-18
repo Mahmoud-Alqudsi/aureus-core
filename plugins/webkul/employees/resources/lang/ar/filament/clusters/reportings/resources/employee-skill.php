@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'المهارات',
+    'title'              => 'المهارات',
+    'model-label'        => 'مهارة موظف',
+    'plural-model-label' => 'مهارات موظفين',
 
     'navigation' => [
         'title' => 'المهارات',

@@ -2,6 +2,8 @@
 
 return [
     'title' => 'سجلات الوقت',
+    'model-label'        => 'سجل زمني',
+    'plural-model-label' => 'سجلات زمنية',
 
     'navigation' => [
         'title' => 'سجلات الوقت',

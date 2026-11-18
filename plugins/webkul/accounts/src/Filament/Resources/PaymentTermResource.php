@@ -36,6 +36,16 @@ class PaymentTermResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('accounts::filament/resources/payment-term.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('accounts::filament/resources/payment-term.plural-model-label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return PaymentTermForm::configure($schema);

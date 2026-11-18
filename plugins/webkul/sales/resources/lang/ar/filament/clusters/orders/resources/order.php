@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'طلب',
+    'title'              => 'طلب',
+    'model-label'        => 'أمر بيع',
+    'plural-model-label' => 'أوامر بيع',
 
     'navigation' => [
         'title' => 'الطلبات',

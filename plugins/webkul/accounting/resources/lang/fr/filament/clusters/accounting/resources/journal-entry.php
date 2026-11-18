@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Écritures comptables',
+    'title'              => 'Écritures comptables',
+    'model-label'        => 'Écriture comptable',
+    'plural-model-label' => 'Écritures comptables',
 
     'navigation' => [
         'title' => 'Écritures comptables',

@@ -26,7 +26,12 @@ class JobByPositionResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('recruitments::filament/clusters/applications/resources/job-by-application.title');
+        return __('recruitments::filament/clusters/applications/resources/job-by-application.model-label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('recruitments::filament/clusters/applications/resources/job-by-application.plural-model-label');
     }
 
     public static function getNavigationLabel(): string

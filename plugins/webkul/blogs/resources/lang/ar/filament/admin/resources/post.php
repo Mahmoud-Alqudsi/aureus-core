@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'مقالة',
+    'plural-model-label' => 'مقالات',
+
     'navigation' => [
         'title' => 'مقالات المدونة',
     ],

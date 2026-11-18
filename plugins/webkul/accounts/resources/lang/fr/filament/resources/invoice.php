@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'title' => 'Facture',
-
-    'navigation' => [
-        'title' => 'Factures',
-        'group' => 'Factures',
-    ],
+    'model-label'        => 'Facture',
+    'plural-model-label' => 'Factures',
 
     'global-search' => [
         'customer' => 'Client',

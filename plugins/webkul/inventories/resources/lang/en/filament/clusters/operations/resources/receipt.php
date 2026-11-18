@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Receipt',
+    'plural-model-label' => 'Receipts',
+
     'navigation' => [
         'title' => 'Receipts',
         'group' => 'Transfers',

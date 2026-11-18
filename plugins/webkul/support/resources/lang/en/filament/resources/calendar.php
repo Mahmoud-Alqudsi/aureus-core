@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'model-label'        => 'Working Schedule',
+    'plural-model-label' => 'Working Schedules',
     'title' => 'Working Schedules',
 
     'navigation' => [

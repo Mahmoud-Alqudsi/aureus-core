@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'تخصيصاتي',
-
-    'model-label' => 'تخصيصاتي',
+    'title'              => 'تخصيصاتي',
+    'model-label'        => 'تخصيص إجازتي',
+    'plural-model-label' => 'تخصيصات إجازاتي',
 
     'navigation' => [
         'title' => 'تخصيصاتي',

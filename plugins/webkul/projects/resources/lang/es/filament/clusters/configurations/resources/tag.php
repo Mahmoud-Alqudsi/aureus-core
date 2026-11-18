@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Etiqueta de proyecto',
+    'plural-model-label' => 'Etiquetas de proyecto',
+
     'navigation' => [
         'title' => 'Etiquetas',
     ],

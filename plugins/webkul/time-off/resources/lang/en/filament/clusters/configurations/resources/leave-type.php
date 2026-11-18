@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title'      => 'Leave Type',
+    'title'              => 'Leave Type',
+    'model-label'        => 'Time Off Type',
+    'plural-model-label' => 'Time Off Types',
     'navigation' => [
         'title' => 'Leave Type',
     ],

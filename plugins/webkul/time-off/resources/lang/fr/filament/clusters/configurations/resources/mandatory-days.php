@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Jours obligatoires',
-
-    'model-label' => 'Jour obligatoire',
+    'title'              => 'Jours obligatoires',
+    'model-label'        => 'Jour obligatoire',
+    'plural-model-label' => 'Jours obligatoires',
 
     'navigation' => [
         'title' => 'Jours fériés obligatoires',

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'العطل الرسمية',
-
-    'model-label' => 'عطلة رسمية',
+    'title'              => 'العطل الرسمية',
+    'model-label'        => 'عطلة رسمية',
+    'plural-model-label' => 'عطلات رسمية',
 
     'navigation' => [
         'title' => 'العطل الرسمية',

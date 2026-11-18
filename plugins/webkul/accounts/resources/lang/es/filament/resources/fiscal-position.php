@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'model-label'        => 'Posición fiscal',
+    'plural-model-label' => 'Posiciones fiscales',
+
     'global-search' => [
         'zip-from' => 'Código postal desde',
         'zip-to'   => 'Código postal hasta',
