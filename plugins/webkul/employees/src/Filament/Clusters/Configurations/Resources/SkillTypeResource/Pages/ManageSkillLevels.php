@@ -42,9 +42,9 @@ class ManageSkillLevels extends ManageRelatedRecords
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
-        return __('Levels');
+        return __('employees::filament/clusters/configurations/resources/skill-type/pages/manage-skill-levels.title');
     }
 
     public static function getNavigationBadge($parameters = []): ?string

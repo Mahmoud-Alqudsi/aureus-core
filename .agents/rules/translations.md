@@ -44,13 +44,26 @@ To maintain consistency across all 30 local plugins, adhere strictly to the plat
 - **Status / State**: الحالة
 - **Delivery / Shipping**: التسليم / الشحن
 
-## Verification
+## Verification & Testing Scope
 
-Before completing any task that modifies or introduces Filament resources, schemas, or language files, run:
+### Tier 1: Routine Translation Modifications (Plugin Manager Consistency Engine)
+Whenever any translation file is created or modified (`resources/lang/**` or `lang/**`):
+Execute the translation parity and consistency check from `plugin-manager`:
 ```bash
-php scripts/audit-translations.php --plugin=<plugin_name>
+php artisan translations:check --plugin=<plugin_name> --details
 ```
-To verify the entire platform:
+This ensures 5-locale parity (`ar`, `en`, `es`, `fr`, `pt_BR`), structural consistency, matching placeholders, and key ordering against English.
+
+### Tier 2: New Plugin Authoring & Upstream Synchronization (Full UI Component Audit)
+The comprehensive UI localization auditor (`scripts/audit-translations.php`) scans every Filament schema, table, infolist, and action for missing labels and hardcoded strings. To avoid developer friction, this full audit is strictly reserved for:
+1. **Authoring a new plugin package** under `plugins/webkul/<new-plugin>`.
+2. **Synchronizing with upstream** whenever a new plugin package is merged or introduced.
+
+When either of those two events occurs, run:
+```bash
+php scripts/audit-translations.php --plugin=<new_plugin> -v
+```
+To verify the entire platform during full release audits:
 ```bash
 php scripts/audit-translations.php --check
 ```

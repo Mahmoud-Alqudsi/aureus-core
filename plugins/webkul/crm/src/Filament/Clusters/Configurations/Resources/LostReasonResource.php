@@ -12,9 +12,12 @@ use Webkul\Crm\Filament\Clusters\Configurations\Resources\LostReasonResource\Pag
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\LostReasonResource\Schemas\LostReasonForm;
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\LostReasonResource\Tables\LostReasonsTable;
 use Webkul\Crm\Models\LostReason;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class LostReasonResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = LostReason::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-hand-thumb-down';

@@ -9,9 +9,12 @@ use Webkul\Crm\Filament\Clusters\Sales;
 use Webkul\Crm\Filament\Clusters\Sales\Resources\ActivityResource\Pages\ListActivities;
 use Webkul\Crm\Filament\Clusters\Sales\Resources\ActivityResource\Tables\ActivitiesTable;
 use Webkul\Crm\Models\Activity;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class ActivityResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Activity::class;
 
     protected static ?string $slug = 'activities';

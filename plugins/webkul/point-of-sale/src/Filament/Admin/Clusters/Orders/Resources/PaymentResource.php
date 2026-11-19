@@ -9,9 +9,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Orders;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\PaymentResource\Pages\ListPayments;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\PaymentResource\Tables\PaymentsTable;
 use Webkul\PointOfSale\Models\Payment;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PaymentResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Payment::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';

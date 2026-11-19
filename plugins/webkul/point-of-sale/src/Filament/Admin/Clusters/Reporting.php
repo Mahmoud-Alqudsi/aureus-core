@@ -4,9 +4,12 @@ namespace Webkul\PointOfSale\Filament\Admin\Clusters;
 
 use Filament\Clusters\Cluster;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Traits\HasClusterBreadcrumbs;
 
 class Reporting extends Cluster
 {
+    use HasClusterBreadcrumbs;
+
     protected static ?string $slug = 'point-of-sale/reporting';
 
     protected static ?int $navigationSort = 3;

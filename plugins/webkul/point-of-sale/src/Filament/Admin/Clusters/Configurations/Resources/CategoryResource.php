@@ -18,9 +18,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\Category
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\CategoryResource\Schemas\CategoryInfolist;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\CategoryResource\Tables\CategoriesTable;
 use Webkul\PointOfSale\Models\Category;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class CategoryResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Category::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';

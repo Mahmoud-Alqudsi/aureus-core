@@ -18,9 +18,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\PrinterResource\
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\PrinterResource\Schemas\PrinterInfolist;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\PrinterResource\Tables\PrintersTable;
 use Webkul\PointOfSale\Models\Printer;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class PrinterResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Printer::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-printer';

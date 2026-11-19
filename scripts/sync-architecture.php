@@ -11,7 +11,7 @@ use Scripts\Architecture\Extractor;
 use Scripts\Architecture\HookHandler;
 use Scripts\Architecture\Synchronizer;
 
-$options = getopt('', ['check', 'sync', 'json', 'hook:', 'help']);
+$options = getopt('', ['check', 'sync', 'json', 'hook:', 'dry-run', 'diff', 'help']);
 
 if (isset($options['help'])) {
     echo <<<'HELP'
@@ -23,6 +23,8 @@ Usage:
 Options:
   --check        Check for architectural drift against ARCHITECTURE.md (exit 0: sync, exit 1: drift)
   --sync         Automatically synchronize ARCHITECTURE.md with current codebase metrics
+  --dry-run      Simulate synchronization without modifying ARCHITECTURE.md
+  --diff         Display unified line diff of pending synchronization changes
   --json         Output current extracted architecture metrics as JSON
   --hook=<type>  Execute Antigravity lifecycle hook handler (e.g. --hook=stop)
   --help         Show this help message
@@ -41,7 +43,30 @@ if (isset($options['hook'])) {
 $extractor = new Extractor;
 $synchronizer = new Synchronizer($extractor);
 
-// 2. JSON Mode
+// 2. Diff Mode
+if (isset($options['diff'])) {
+    echo $synchronizer->diff().PHP_EOL;
+    exit(0);
+}
+
+// 3. Dry-Run Mode (Standalone)
+if (isset($options['dry-run']) && ! isset($options['sync'])) {
+    echo 'Simulating synchronization with ARCHITECTURE.md...'.PHP_EOL;
+    try {
+        $wouldUpdate = $synchronizer->sync(true);
+        if ($wouldUpdate) {
+            echo ' [DRY-RUN] ARCHITECTURE.md would be updated. Run with --diff to see changes or --sync to apply.'.PHP_EOL;
+        } else {
+            echo ' [DRY-RUN] ARCHITECTURE.md is already up to date.'.PHP_EOL;
+        }
+        exit(0);
+    } catch (Throwable $e) {
+        fwrite(STDERR, ' [ERROR] Dry-run validation failed: '.$e->getMessage().PHP_EOL);
+        exit(1);
+    }
+}
+
+// 4. JSON Mode
 if (isset($options['json'])) {
     $data = [
         'baseline'   => $extractor->getBaselineVersions(),
@@ -54,13 +79,14 @@ if (isset($options['json'])) {
     exit(0);
 }
 
-// 3. Sync Mode
+// 5. Sync Mode
 if (isset($options['sync'])) {
-    echo 'Synchronizing ARCHITECTURE.md with codebase metrics...'.PHP_EOL;
+    $isDry = isset($options['dry-run']);
+    echo ($isDry ? 'Simulating synchronization of' : 'Synchronizing').' ARCHITECTURE.md with codebase metrics...'.PHP_EOL;
     try {
-        $updated = $synchronizer->sync();
+        $updated = $synchronizer->sync($isDry);
         if ($updated) {
-            echo ' [OK] ARCHITECTURE.md successfully updated and synchronized.'.PHP_EOL;
+            echo ' [OK] ARCHITECTURE.md '.($isDry ? 'would be updated (dry-run).' : 'successfully updated and synchronized.').PHP_EOL;
         } else {
             echo ' [OK] ARCHITECTURE.md is already up to date with codebase metrics.'.PHP_EOL;
         }
@@ -71,7 +97,7 @@ if (isset($options['sync'])) {
     }
 }
 
-// 4. Check Mode (Default)
+// 6. Check Mode (Default)
 $drift = $synchronizer->checkDrift();
 
 if (empty($drift)) {

@@ -11,9 +11,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\BillReso
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\BillResource\Schemas\BillForm;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Configurations\Resources\BillResource\Tables\BillsTable;
 use Webkul\PointOfSale\Models\Bill;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class BillResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Bill::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-rupee';

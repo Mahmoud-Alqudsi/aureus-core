@@ -16,9 +16,12 @@ use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\SessionResource\
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\SessionResource\Schemas\SessionInfolist;
 use Webkul\PointOfSale\Filament\Admin\Clusters\Orders\Resources\SessionResource\Tables\SessionsTable;
 use Webkul\PointOfSale\Models\Session;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class SessionResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Session::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clock';

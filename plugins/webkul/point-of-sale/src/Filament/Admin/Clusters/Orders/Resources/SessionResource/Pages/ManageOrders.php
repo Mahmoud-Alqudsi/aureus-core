@@ -21,7 +21,7 @@ class ManageOrders extends ManageRelatedRecords
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('point-of-sale::filament/admin/clusters/orders/resources/session/pages/manage-orders.navigation.title');
     }

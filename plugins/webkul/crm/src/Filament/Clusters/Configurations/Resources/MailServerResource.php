@@ -10,9 +10,12 @@ use Webkul\Crm\Filament\Clusters\Configurations\Resources\MailServerResource\Sch
 use Webkul\Crm\Filament\Clusters\Configurations\Resources\MailServerResource\Tables\MailServersTable;
 use Webkul\Crm\Models\MailServer;
 use Webkul\Support\Filament\Clusters\Settings;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class MailServerResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = MailServer::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-inbox-stack';

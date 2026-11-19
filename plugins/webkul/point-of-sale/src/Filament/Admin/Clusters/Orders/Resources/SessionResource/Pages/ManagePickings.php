@@ -27,7 +27,7 @@ class ManagePickings extends ManageRelatedRecords
         return parent::canAccess($parameters) && Package::isPluginInstalled('inventories');
     }
 
-    public static function getNavigationLabel(): string
+    public static function getRelationshipTitle(): string
     {
         return __('point-of-sale::filament/admin/clusters/orders/resources/session/pages/manage-pickings.navigation.title');
     }

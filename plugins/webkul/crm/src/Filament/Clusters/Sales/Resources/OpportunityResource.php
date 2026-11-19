@@ -22,9 +22,12 @@ use Webkul\Crm\Filament\Clusters\Sales\Resources\OpportunityResource\Schemas\Opp
 use Webkul\Crm\Filament\Clusters\Sales\Resources\OpportunityResource\Tables\OpportunitiesTable;
 use Webkul\Crm\Filament\Support\SimilarLeads as SimilarLeadsNavigation;
 use Webkul\Crm\Models\Lead;
+use Webkul\Support\Filament\Concerns\HasNavigationLabelTitles;
 
 class OpportunityResource extends Resource
 {
+    use HasNavigationLabelTitles;
+
     protected static ?string $model = Lead::class;
 
     protected static ?string $slug = 'pipeline';
